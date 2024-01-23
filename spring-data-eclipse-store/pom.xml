@@ -5,17 +5,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>software.xdev</groupId>
-	<artifactId>standard-maven-template</artifactId>
+	<artifactId>spring-data-eclipse-store</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>standard-maven-template</name>
-	<description>standard-maven-template</description>
-	<url>https://github.com/xdev-software/standard-maven-template</url>
+	<name>spring-data-eclipse-store</name>
+	<description>spring-data-eclipse-store</description>
+	<url>https://github.com/xdev-software/spring-data-eclipse-store</url>
 
 	<scm>
-		<url>https://github.com/xdev-software/standard-maven-template</url>
-		<connection>https://github.com/xdev-software/standard-maven-template.git</connection>
+		<url>https://github.com/xdev-software/spring-data-eclipse-store</url>
+		<connection>https://github.com/xdev-software/spring-data-eclipse-store.git</connection>
 	</scm>
 
 	<inceptionYear>2023</inceptionYear>
