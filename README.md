@@ -3,7 +3,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xdev-software_spring-data-eclipse-store&metric=alert_status)](https://sonarcloud.io/dashboard?id=xdev-software_spring-data-eclipse-store)
 
 <div align="center">
-    <img src="assets/Logo.png" width="200" alt="XDEV Spring-Data Eclipse-Store Logo">
+    <img src="assets/Logo.png" height="200" alt="XDEV Spring-Data Eclipse-Store Logo">
 </div>
 
 # spring-data-eclipse-store
@@ -23,7 +23,7 @@ The library provides following features:
 * **[Drop in compatible](#usage)** for your existing Spring application
 * Utilizes **ultra-fast EclipseStore serializing and storing**
 * Enables your application to **select
-  any [EclipseStore target](https://docs.eclipsestore.io/manual/storage/storage-targets/index.html)** (f.e.
+  any [EclipseStore target](https://docs.eclipsestore.io/manual/storage/storage-targets/index.html)** (e.f.
   [PostgreSQL](https://docs.eclipsestore.io/manual/storage/storage-targets/sql-databases/postgresql.html),
   [AWS S3](https://docs.eclipsestore.io/manual/storage/storage-targets/blob-stores/aws-s3.html) or
   [IBM COS](https://github.com/xdev-software/eclipse-store-afs-ibm-cos))
@@ -68,7 +68,7 @@ After adding the library in your dependencies, using it is as easy as adding the
 ## Demo
 
 To see how easy it is to implement EclipseStore in your Spring project, take a look at the two
-[demos](./spring-data-eclipse-store-demo):
+[demos](./spring-data-eclipse-store-demo):<br/>
 A [simple](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple)
 and a
 more [complex demo](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex).
