@@ -66,6 +66,9 @@ target/
 .flattened-pom.xml
 .tern-project
 
+# EclipseStore
+storage
+
 # == IntelliJ ==
 *.iml
 *.ipr
