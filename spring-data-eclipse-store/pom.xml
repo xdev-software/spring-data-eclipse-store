@@ -42,11 +42,23 @@
 	</licenses>
 
 	<properties>
+		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
 		<javaVersion>17</javaVersion>
 		<maven.compiler.release>${javaVersion}</maven.compiler.release>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<eclipse-store.version>1.1.0-SNAPSHOT</eclipse-store.version>
+		<junit-jupiter.version>5.8.1</junit-jupiter.version>
+		<spring-context-beans-tx.version>6.1.2</spring-context-beans-tx.version>
+		<spring-data-commons.version>3.2.1</spring-data-commons.version>
+		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
+		<spring-boot.version>3.2.0</spring-boot.version>
+		<spring-test.version>5.3.3</spring-test.version>
+		<slf4j.version>2.0.9</slf4j.version>
+		<jakarta.enterprise.version>4.0.1</jakarta.enterprise.version>
+		<jakarta.version>3.1.0</jakarta.version>
 	</properties>
 
 	<repositories>
@@ -59,6 +71,20 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
+
+		<!-- TODO: REMOVE BEFORE PROD RELEASE -->
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
 	</repositories>
 
 	<pluginRepositories>
@@ -72,6 +98,116 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+			<version>${spring-data-commons.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring-context-beans-tx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-context-beans-tx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring-context-beans-tx.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.enterprise</groupId>
+			<artifactId>jakarta.enterprise.cdi-api</artifactId>
+			<version>${jakarta.enterprise.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>${jakarta.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.eclipse.store</groupId>
+			<artifactId>storage-embedded</artifactId>
+			<version>${eclipse-store.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.store</groupId>
+			<artifactId>integrations-spring-boot3</artifactId>
+			<version>${eclipse-store.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.serializer</groupId>
+			<artifactId>serializer</artifactId>
+			<version>${eclipse-store.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.serializer</groupId>
+			<artifactId>persistence-binary-jdk17</artifactId>
+			<version>${eclipse-store.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.22.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.22.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j2-impl</artifactId>
+			<version>2.22.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>${spring-boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -142,6 +278,19 @@
 				<configuration>
 					<quiet>true</quiet>
 					<doclint>none</doclint>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<argLine>
+						--add-opens java.base/java.util=ALL-UNNAMED
+						--add-opens java.base/java.lang=ALL-UNNAMED
+						--add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+						--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+					</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
