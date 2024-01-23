@@ -17,6 +17,7 @@
 	<modules>
 		<module>spring-data-eclipse-store</module>
 		<module>spring-data-eclipse-store-demo</module>
+		<module>spring-data-eclipse-store-benchmark</module>
 	</modules>
 
 	<licenses>
