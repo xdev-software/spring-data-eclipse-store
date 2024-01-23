@@ -19,10 +19,11 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 
+import jakarta.annotation.Nonnull;
+
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
-import jakarta.annotation.Nonnull;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRepositoryFactoryBean;
 
@@ -39,11 +40,14 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 		return "EclipseStoreDatastore";
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Nonnull
 	public String getModulePrefix()
 	{
-		return "EclipseStore";
+		return this.getModuleIdentifier();
 	}
 	
 	@Override
@@ -57,7 +61,7 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	@Nonnull
 	public String getModuleIdentifier()
 	{
-		return this.getModulePrefix();
+		return "EclipseStore";
 	}
 	
 	@Override
