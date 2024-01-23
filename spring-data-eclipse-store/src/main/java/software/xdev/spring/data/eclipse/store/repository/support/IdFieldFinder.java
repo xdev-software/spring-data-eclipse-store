@@ -22,11 +22,10 @@ import java.util.Optional;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 
 
-public class IdFieldFinder
+public final class IdFieldFinder
 {
 	private IdFieldFinder()
 	{
-		// Only static methods available
 	}
 	
 	/**

@@ -27,13 +27,12 @@ import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteri
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
 
-public class QueryExecutorCreator
+public final class QueryExecutorCreator
 {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryExecutorCreator.class);
 	
 	private QueryExecutorCreator()
 	{
-		// Only static methods
 	}
 	
 	/**

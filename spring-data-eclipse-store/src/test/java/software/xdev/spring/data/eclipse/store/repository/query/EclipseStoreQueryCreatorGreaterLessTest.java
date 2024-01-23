@@ -259,7 +259,8 @@ class EclipseStoreQueryCreatorGreaterLessTest
 		
 		List<QueryCreatorUtil.Customer> findByFirstNameLessThan(final String maxStringExcluding);
 		
-		List<QueryCreatorUtil.Customer> findByIncomparableLessThan(final QueryCreatorUtil.Incomparable lessIncomparable);
+		List<QueryCreatorUtil.Customer> findByIncomparableLessThan(
+			final QueryCreatorUtil.Incomparable lessIncomparable);
 		
 		List<QueryCreatorUtil.Customer> findByIdBetween(final int minIdIncluding, final int maxIdIncluding);
 	}

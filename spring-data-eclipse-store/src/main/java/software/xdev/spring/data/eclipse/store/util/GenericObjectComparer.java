@@ -18,11 +18,10 @@ package software.xdev.spring.data.eclipse.store.util;
 import software.xdev.spring.data.eclipse.store.exceptions.NotComparableException;
 
 
-public class GenericObjectComparer
+public final class GenericObjectComparer
 {
 	private GenericObjectComparer()
 	{
-		// Only static methods
 	}
 	
 	public static <E> int compare(final E o1, final E o2)

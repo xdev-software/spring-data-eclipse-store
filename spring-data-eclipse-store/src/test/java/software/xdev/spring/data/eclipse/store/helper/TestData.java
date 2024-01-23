@@ -15,10 +15,14 @@
  */
 package software.xdev.spring.data.eclipse.store.helper;
 
-public class TestData
+public final class TestData
 {
 	public static final String LAST_NAME = "Fleetwood";
 	public static final String FIRST_NAME = "Mick";
 	public static final String LAST_NAME_ALTERNATIVE = "Nicks";
 	public static final String FIRST_NAME_ALTERNATIVE = "Stevie";
+	
+	private TestData()
+	{
+	}
 }

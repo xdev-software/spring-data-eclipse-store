@@ -111,8 +111,8 @@ public abstract class AbstractCriteriaNode<T> implements Criteria<T>
 		Objects.requireNonNull(maxValue);
 		this.predicates.add(entity -> {
 			final Object value = Objects.requireNonNull(this.field).readValue(entity);
-			return GenericObjectComparer.isLessOrEqualTo(value, maxValue) &&
-				GenericObjectComparer.isGreaterOrEqualTo(value, minValue);
+			return GenericObjectComparer.isLessOrEqualTo(value, maxValue)
+				&& GenericObjectComparer.isGreaterOrEqualTo(value, minValue);
 		});
 		return this;
 	}

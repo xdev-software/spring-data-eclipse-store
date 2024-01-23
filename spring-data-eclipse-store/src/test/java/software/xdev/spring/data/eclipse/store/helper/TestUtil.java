@@ -23,7 +23,7 @@ import org.opentest4j.AssertionFailedError;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
-public class TestUtil
+public final class TestUtil
 {
 	public static <T> List<T> iterableToList(final Iterable<T> iterable)
 	{
@@ -40,8 +40,7 @@ public class TestUtil
 	
 	public static void doBeforeAndAfterRestartOfDatastore(
 		final EclipseStoreStorage storage,
-		final Runnable thingToDoBeforeAndAfterRestart
-	)
+		final Runnable thingToDoBeforeAndAfterRestart)
 	{
 		try
 		{
@@ -60,5 +59,9 @@ public class TestUtil
 		{
 			throw new AssertionFailedError("Error after restart of storage", error);
 		}
+	}
+	
+	private TestUtil()
+	{
 	}
 }

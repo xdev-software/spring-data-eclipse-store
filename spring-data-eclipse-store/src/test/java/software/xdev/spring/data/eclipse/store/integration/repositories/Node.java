@@ -55,10 +55,10 @@ public class Node
 	@Override
 	public String toString()
 	{
-		return "Node{" +
-			"name='" + this.name + '\'' +
-			", children=" + this.children.size() +
-			'}';
+		return "Node{"
+			+ "name='" + this.name + '\''
+			+ ", children=" + this.children.size()
+			+ '}';
 	}
 	
 	public static Optional<Node> getNodeWithName(final List<Node> nodes, final String name)

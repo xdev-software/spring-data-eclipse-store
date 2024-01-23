@@ -50,7 +50,11 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstName", String.class);
 		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(entities, QueryCreatorUtil.Customer.class, method, new Object[]{TestData.FIRST_NAME});
+			QueryCreatorUtil.executeQuery(
+				entities,
+				QueryCreatorUtil.Customer.class,
+				method,
+				new Object[]{TestData.FIRST_NAME});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
 	}
 	

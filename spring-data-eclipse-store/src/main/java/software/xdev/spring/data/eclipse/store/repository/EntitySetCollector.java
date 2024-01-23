@@ -31,11 +31,9 @@ public class EntitySetCollector
 	private static final Logger LOG = LoggerFactory.getLogger(EntitySetCollector.class);
 	private final Map<Class<?>, List<IdentitySet<? super Object>>> childClassToParentSets = new HashMap<>();
 	
-	public EntitySetCollector
-		(
-			final Map<String, IdentitySet<Object>> entityLists,
-			final Map<Class<?>, String> entityClassToRepositoryName
-		)
+	public EntitySetCollector(
+		final Map<String, IdentitySet<Object>> entityLists,
+		final Map<Class<?>, String> entityClassToRepositoryName)
 	{
 		this.buildParentClassList(entityLists, entityClassToRepositoryName);
 	}

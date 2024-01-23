@@ -17,7 +17,6 @@
 package software.xdev.spring.data.eclipse.store.demo.complex;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,13 +124,14 @@ public class ComplexDemoApplication implements CommandLineRunner
 		return vet;
 	}
 	
+	@SuppressWarnings("checkstyle:MagicNumber")
 	private static Owner createOwner()
 	{
 		final Owner owner = new Owner();
 		owner.setFirstName("Stevie");
 		owner.setLastName("Nicks");
 		final Pet pet = new Pet();
-		pet.setBirthDate(LocalDate.now().minus(6, ChronoUnit.WEEKS));
+		pet.setBirthDate(LocalDate.now().minusWeeks(6));
 		pet.setName("Peter");
 		final PetType petType = new PetType();
 		petType.setName("Dog");

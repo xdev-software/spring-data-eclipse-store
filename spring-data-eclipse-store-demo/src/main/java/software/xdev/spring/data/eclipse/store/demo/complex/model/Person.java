@@ -44,9 +44,9 @@ public class Person extends BaseEntity
 	@Override
 	public String toString()
 	{
-		return "Person{" +
-			"firstName='" + this.firstName + '\'' +
-			", lastName='" + this.lastName + '\'' +
-			'}';
+		return "Person{"
+			+ "firstName='" + this.firstName + '\''
+			+ ", lastName='" + this.lastName + '\''
+			+ '}';
 	}
 }

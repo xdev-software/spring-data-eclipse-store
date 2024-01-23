@@ -21,13 +21,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -92,12 +93,12 @@ public class PageableSortableCollectionQuerier<T>
 			.toList();
 	}
 	
-	private Stream<T> pageEntityStream(final Pageable pageable, Stream<T> entityStream)
+	private Stream<T> pageEntityStream(final Pageable pageable, final Stream<T> entityStream)
 	{
 		if(pageable != null && pageable.isPaged())
 		{
 			final long skipCount = pageable.getOffset();
-			entityStream = entityStream
+			return entityStream
 				.skip(skipCount)
 				.limit(pageable.getPageSize());
 		}

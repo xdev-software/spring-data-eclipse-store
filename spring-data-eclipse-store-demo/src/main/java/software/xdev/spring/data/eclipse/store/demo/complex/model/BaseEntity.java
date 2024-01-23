@@ -17,10 +17,10 @@ package software.xdev.spring.data.eclipse.store.demo.complex.model;
 
 import java.io.Serializable;
 
-import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+
+import org.springframework.data.annotation.Id;
 
 
 public class BaseEntity implements Serializable
@@ -42,8 +42,8 @@ public class BaseEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "BaseEntity{" +
-			"id=" + this.id +
-			'}';
+		return "BaseEntity{"
+			+ "id=" + this.id
+			+ '}';
 	}
 }

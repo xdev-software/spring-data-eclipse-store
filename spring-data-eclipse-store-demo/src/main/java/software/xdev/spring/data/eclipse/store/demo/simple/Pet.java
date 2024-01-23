@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 public class Pet
 {
 	@Id
-	public String id;
+	private String id;
 	
 	private String name;
 	private Integer age;

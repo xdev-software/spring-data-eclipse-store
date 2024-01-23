@@ -18,13 +18,14 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.inject.Inject;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import jakarta.inject.Inject;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
@@ -116,10 +117,12 @@ class QueryTest
 			this.storage,
 			() -> {
 				final Pageable pageable = PageRequest.of(0, 1);
-				final List<Customer> customersPage1 = TestUtil.iterableToList(this.customerRepository.findAll(pageable));
+				final List<Customer> customersPage1 =
+					TestUtil.iterableToList(this.customerRepository.findAll(pageable));
 				Assertions.assertEquals(1, customersPage1.size());
 				
-				final List<Customer> customersPage2 = TestUtil.iterableToList(this.customerRepository.findAll(pageable.next()));
+				final List<Customer> customersPage2 =
+					TestUtil.iterableToList(this.customerRepository.findAll(pageable.next()));
 				Assertions.assertEquals(1, customersPage2.size());
 				
 				Assertions.assertNotEquals(customersPage1.get(0), customersPage2.get(0));
@@ -158,7 +161,8 @@ class QueryTest
 			this.storage,
 			() -> {
 				final Pageable pageable = PageRequest.of(0, 2);
-				final List<Customer> customersPage1 = TestUtil.iterableToList(this.customerRepository.findAll(pageable));
+				final List<Customer> customersPage1 =
+					TestUtil.iterableToList(this.customerRepository.findAll(pageable));
 				Assertions.assertEquals(2, customersPage1.size());
 				Assertions.assertEquals(
 					customer1,

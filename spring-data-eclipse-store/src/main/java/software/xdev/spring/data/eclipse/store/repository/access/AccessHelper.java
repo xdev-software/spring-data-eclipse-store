@@ -31,13 +31,12 @@ import software.xdev.spring.data.eclipse.store.util.StringUtil;
 /**
  * Helps finding and handling {@link Field}s.
  */
-public class AccessHelper
+public final class AccessHelper
 {
 	private static final Logger LOG = LoggerFactory.getLogger(AccessHelper.class);
 	
 	private AccessHelper()
 	{
-		// Only static methods
 	}
 	
 	/**

@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import jakarta.persistence.GeneratedValue;
+
 import software.xdev.spring.data.eclipse.store.repository.support.IdFieldFinder;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
 
@@ -29,8 +30,6 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.id.stra
 /**
  * A IdSetter <b>must be unique</b> in one storage for one entity-class. It creates Ids and therefore must know all
  * existing entities of one class.
- *
- * @param <T>
  */
 public interface IdSetter<T>
 {

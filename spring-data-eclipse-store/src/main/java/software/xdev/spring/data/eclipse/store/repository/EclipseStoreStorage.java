@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
 import org.eclipse.serializer.persistence.types.Storer;
 import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -32,8 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
@@ -54,7 +55,7 @@ public class EclipseStoreStorage implements EntityListProvider, IdSetterProvider
 	private final EclipseStoreProvider storeProvider;
 	
 	private StorageManager storageManager;
-	private Root root = null;
+	private Root root;
 	
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
 	private RepositorySynchronizer repositorySynchronizer;

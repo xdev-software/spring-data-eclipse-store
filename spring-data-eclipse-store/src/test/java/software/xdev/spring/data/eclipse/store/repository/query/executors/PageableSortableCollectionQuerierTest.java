@@ -36,15 +36,16 @@ import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteri
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.CriteriaSingleNode;
 
 
+@SuppressWarnings("checkstyle:MethodName")
 class PageableSortableCollectionQuerierTest
 {
-	private final static Field customerFirstNameField;
+	private static final Field CUSTOMER_FIRST_NAME_FIELD;
 	
 	static
 	{
 		try
 		{
-			customerFirstNameField = Customer.class.getDeclaredField("firstName");
+			CUSTOMER_FIRST_NAME_FIELD = Customer.class.getDeclaredField("firstName");
 		}
 		catch(final NoSuchFieldException e)
 		{
@@ -52,17 +53,17 @@ class PageableSortableCollectionQuerierTest
 		}
 	}
 	
-	private final static Collection<Customer> DATA_CUSTOMERS_EMPTY = new ArrayList<>();
-	private final static Collection<Customer> DATA_CUSTOMERS_ONE =
+	private static final Collection<Customer> DATA_CUSTOMERS_EMPTY = new ArrayList<>();
+	private static final Collection<Customer> DATA_CUSTOMERS_ONE =
 		List.of(new Customer(TestData.FIRST_NAME, TestData.LAST_NAME));
-	private final static Collection<Customer> DATA_CUSTOMERS_TWO = List.of(
+	private static final Collection<Customer> DATA_CUSTOMERS_TWO = List.of(
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME),
 		new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE));
-	private final static Collection<Customer> DATA_CUSTOMERS_THREE = List.of(
+	private static final Collection<Customer> DATA_CUSTOMERS_THREE = List.of(
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME),
 		new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE),
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME));
-	private final static Collection<Customer> DATA_CUSTOMERS_DABC_ABCD = List.of(
+	private static final Collection<Customer> DATA_CUSTOMERS_DABC_ABCD = List.of(
 		new Customer("D", "A"),
 		new Customer("A", "B"),
 		new Customer("B", "C"),
@@ -199,7 +200,8 @@ class PageableSortableCollectionQuerierTest
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
-			new CriteriaSingleNode<>(new ReflectedField<Customer, String>(customerFirstNameField)).is(TestData.FIRST_NAME)
+			new CriteriaSingleNode<>(
+				new ReflectedField<Customer, String>(CUSTOMER_FIRST_NAME_FIELD)).is(TestData.FIRST_NAME)
 		);
 		Assertions.assertEquals(countOfEntitiesWithFirstName, querier.getEntities(entities, Customer.class).size());
 	}

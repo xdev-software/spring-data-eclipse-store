@@ -37,8 +37,6 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.object.
 
 /**
  * Creates copies and puts them back. Recognizes already persisted Objects and checks them for changes as well.
- *
- * @param <T>
  */
 public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 {

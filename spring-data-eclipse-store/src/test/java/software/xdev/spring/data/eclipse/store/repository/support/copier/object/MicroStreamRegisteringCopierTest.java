@@ -16,7 +16,6 @@
 package software.xdev.spring.data.eclipse.store.repository.support.copier.object;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Assertions;
@@ -27,37 +26,8 @@ import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 
 class EclipseStoreRegisteringCopierTest
 {
-	static private class DummyData
+	private record DummyData(String data, int number)
 	{
-		private final String data;
-		private final int number;
-		
-		public DummyData(final String data, final int number)
-		{
-			this.data = data;
-			this.number = number;
-		}
-		
-		@Override
-		public boolean equals(final Object o)
-		{
-			if(this == o)
-			{
-				return true;
-			}
-			if(o == null || this.getClass() != o.getClass())
-			{
-				return false;
-			}
-			final DummyData dummyData = (DummyData)o;
-			return this.number == dummyData.number && Objects.equals(this.data, dummyData.data);
-		}
-		
-		@Override
-		public int hashCode()
-		{
-			return Objects.hash(this.data, this.number);
-		}
 	}
 	
 	@Test

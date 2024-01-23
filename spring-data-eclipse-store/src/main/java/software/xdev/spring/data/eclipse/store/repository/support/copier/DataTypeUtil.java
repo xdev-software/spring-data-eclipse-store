@@ -15,33 +15,29 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier;
 
-import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.annotation.Nonnull;
 
-public class DataTypeUtil
+
+public final class DataTypeUtil
 {
-	private static final HashSet<Class<?>> WRAPPER_TYPES;
-	
-	static
-	{
-		WRAPPER_TYPES = new HashSet<>(10);
-		WRAPPER_TYPES.add(Integer.class);
-		WRAPPER_TYPES.add(Byte.class);
-		WRAPPER_TYPES.add(Character.class);
-		WRAPPER_TYPES.add(Boolean.class);
-		WRAPPER_TYPES.add(Double.class);
-		WRAPPER_TYPES.add(Float.class);
-		WRAPPER_TYPES.add(Long.class);
-		WRAPPER_TYPES.add(Short.class);
-		WRAPPER_TYPES.add(Void.class);
-		WRAPPER_TYPES.add(String.class);
-	}
+	private static final Set<Class<?>> WRAPPER_TYPES = Set.of(
+		Integer.class,
+		Byte.class,
+		Character.class,
+		Boolean.class,
+		Double.class,
+		Float.class,
+		Long.class,
+		Short.class,
+		Void.class,
+		String.class
+	);
 	
 	private DataTypeUtil()
 	{
-		// Only static methods available
 	}
 	
 	public static boolean isObjectArray(final Object obj)
@@ -51,11 +47,11 @@ public class DataTypeUtil
 	
 	public static boolean isPrimitiveArray(final Object obj)
 	{
-		return obj instanceof boolean[] ||
-			obj instanceof byte[] || obj instanceof short[] ||
-			obj instanceof char[] || obj instanceof int[] ||
-			obj instanceof long[] || obj instanceof float[] ||
-			obj instanceof double[];
+		return obj instanceof boolean[]
+			|| obj instanceof byte[] || obj instanceof short[]
+			|| obj instanceof char[] || obj instanceof int[]
+			|| obj instanceof long[] || obj instanceof float[]
+			|| obj instanceof double[];
 	}
 	
 	public static <T> boolean isPrimitiveType(@Nonnull final Class<T> source)

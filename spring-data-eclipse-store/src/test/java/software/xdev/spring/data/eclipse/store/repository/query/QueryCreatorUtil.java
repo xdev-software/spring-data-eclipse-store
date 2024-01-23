@@ -31,32 +31,31 @@ import software.xdev.spring.data.eclipse.store.helper.DummyWorkingCopier;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 
 
-public class QueryCreatorUtil
+public final class QueryCreatorUtil
 {
-	
-	public final static Collection<Customer> DATA_CUSTOMERS_EMPTY =
+	public static final Collection<Customer> DATA_CUSTOMERS_EMPTY =
 		new ArrayList<>();
-	public final static Collection<Customer> DATA_CUSTOMERS_ONE =
+	public static final Collection<Customer> DATA_CUSTOMERS_ONE =
 		List.of(new Customer(1, TestData.FIRST_NAME, TestData.LAST_NAME, new Incomparable(""), true));
-	public final static Collection<Customer> DATA_CUSTOMERS_TWO = List.of(
+	public static final Collection<Customer> DATA_CUSTOMERS_TWO = List.of(
 		new Customer(1, TestData.FIRST_NAME, TestData.LAST_NAME, new Incomparable(""), true),
 		new Customer(
 			2,
 			TestData.FIRST_NAME_ALTERNATIVE,
 			TestData.LAST_NAME_ALTERNATIVE, new Incomparable(""), false));
-	public final static Collection<Customer> DATA_CUSTOMERS_THREE = List.of(
+	public static final Collection<Customer> DATA_CUSTOMERS_THREE = List.of(
 		new Customer(1, TestData.FIRST_NAME, TestData.LAST_NAME, new Incomparable(""), true),
 		new Customer(
 			2,
 			TestData.FIRST_NAME_ALTERNATIVE,
 			TestData.LAST_NAME_ALTERNATIVE, new Incomparable(""), false),
 		new Customer(3, TestData.FIRST_NAME, TestData.LAST_NAME_ALTERNATIVE, null, false));
-	public final static Collection<Customer> DATA_CUSTOMERS_DABC_ABCD = List.of(
+	public static final Collection<Customer> DATA_CUSTOMERS_DABC_ABCD = List.of(
 		new Customer(1, "D", "A", new Incomparable(""), true),
 		new Customer(2, "A", "B", new Incomparable(""), false),
 		new Customer(3, "B", "C", new Incomparable(""), true),
 		new Customer(4, "C", "D", null, false));
-	public final static Collection<Customer> DATA_CUSTOMERS_WITH_NULL_STRING = List.of(
+	public static final Collection<Customer> DATA_CUSTOMERS_WITH_NULL_STRING = List.of(
 		new Customer(1, TestData.FIRST_NAME, TestData.LAST_NAME, new Incomparable(""), true),
 		new Customer(2, null, TestData.LAST_NAME_ALTERNATIVE, new Incomparable(""), false),
 		new Customer(3, TestData.FIRST_NAME_ALTERNATIVE, null, new Incomparable(""), true),
@@ -90,6 +89,10 @@ public class QueryCreatorUtil
 	
 	
 	public record Incomparable(String value)
+	{
+	}
+	
+	private QueryCreatorUtil()
 	{
 	}
 }

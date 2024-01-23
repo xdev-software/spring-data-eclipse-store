@@ -20,11 +20,10 @@ import java.util.Objects;
 import software.xdev.spring.data.eclipse.store.exceptions.StringBlankException;
 
 
-public class StringUtil
+public final class StringUtil
 {
 	private StringUtil()
 	{
-		// Only static methods
 	}
 	
 	@SuppressWarnings("UnusedReturnValue")

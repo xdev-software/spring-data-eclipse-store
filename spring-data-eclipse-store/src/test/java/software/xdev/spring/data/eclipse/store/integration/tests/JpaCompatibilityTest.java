@@ -18,10 +18,11 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.inject.Inject;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
@@ -65,7 +66,8 @@ class JpaCompatibilityTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
 			() -> {
-				final Optional<CustomerWithQuery> foundCustomer = this.customerRepository.findByFirstName(TestData.FIRST_NAME);
+				final Optional<CustomerWithQuery> foundCustomer =
+					this.customerRepository.findByFirstName(TestData.FIRST_NAME);
 				Assertions.assertTrue(foundCustomer.isPresent());
 				Assertions.assertEquals(customer1, foundCustomer.get());
 				Assertions.assertNotSame(customer1, foundCustomer.get());
@@ -82,7 +84,8 @@ class JpaCompatibilityTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
 			() -> {
-				final List<CustomerWithQuery> customers = TestUtil.iterableToList(this.customerRepository.findAllByLastName(TestData.LAST_NAME));
+				final List<CustomerWithQuery> customers =
+					TestUtil.iterableToList(this.customerRepository.findAllByLastName(TestData.LAST_NAME));
 				Assertions.assertEquals(1, customers.size());
 				Assertions.assertEquals(customer1, customers.get(0));
 				Assertions.assertNotSame(customer1, customers.get(0));

@@ -21,8 +21,8 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
 /**
- * Since EclipseStore is not table-oriented, but the access through the repositories is, we must keep the lists/tables of
- * entities in sync with the existing entities in the graph.
+ * Since EclipseStore is not table-oriented, but the access through the repositories is, we must keep the lists/tables
+ * of entities in sync with the existing entities in the graph.
  * <p>
  * With every store we must check, if there is a new entity in the graph, that isn't yet in the entity-list.
  */

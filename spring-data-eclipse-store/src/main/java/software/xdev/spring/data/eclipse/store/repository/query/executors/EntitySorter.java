@@ -26,14 +26,13 @@ import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.util.GenericObjectComparer;
 
 
-public class EntitySorter
+public final class EntitySorter
 {
 	private EntitySorter()
 	{
-		// Only static methods
 	}
 	
-	public static <T> Stream<T> sortEntitiesStream(final Class<T> clazz, final Sort sort, Stream<T> entityStream)
+	public static <T> Stream<T> sortEntitiesStream(final Class<T> clazz, final Sort sort, final Stream<T> entityStream)
 	{
 		if(sort != null)
 		{
@@ -45,7 +44,7 @@ public class EntitySorter
 						AccessHelper.getInheritedPrivateField(clazz, order.getProperty());
 					final Comparator<? super T> comparator =
 						EntitySorter.getComparator(fieldForOrder, order.getDirection());
-					entityStream = entityStream.sorted(comparator);
+					return entityStream.sorted(comparator);
 				}
 				catch(final NoSuchFieldException e)
 				{
