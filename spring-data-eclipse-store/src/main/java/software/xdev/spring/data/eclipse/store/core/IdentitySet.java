@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.annotation.Nonnull;
+
 import org.eclipse.serializer.meta.NotImplementedYetError;
 import org.springframework.lang.NonNull;
-
-import jakarta.annotation.Nonnull;
 
 
 /**
@@ -113,7 +113,8 @@ public class IdentitySet<E> implements Set<E>
 	@Override
 	public boolean removeAll(final Collection<?> c)
 	{
-		return c.stream().map(this.internalMap::remove).anyMatch(Objects::nonNull);
+		// "Why toList?" - So that if you input your own reference (this) into this funciton, it does not break.
+		return c.stream().toList().stream().map(this.internalMap::remove).anyMatch(Objects::nonNull);
 	}
 	
 	@Override

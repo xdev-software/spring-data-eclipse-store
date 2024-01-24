@@ -20,9 +20,14 @@ import java.util.List;
 
 public class Invoice
 {
-	private final List<Position> positions;
+	private List<Position> positions;
 	
 	public Invoice(final List<Position> positions)
+	{
+		this.positions = positions;
+	}
+	
+	public void setPositions(final List<Position> positions)
 	{
 		this.positions = positions;
 	}

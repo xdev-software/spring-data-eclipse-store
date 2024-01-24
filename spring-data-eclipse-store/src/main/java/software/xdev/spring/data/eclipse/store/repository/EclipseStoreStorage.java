@@ -225,7 +225,7 @@ public class EclipseStoreStorage
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		entityLists.forEach(entityList ->
 		{
-			entityList.removeAll(entities);
+			entityList.removeAll(entityList);
 			this.storageManager.store(entityList.getInternalMap());
 		});
 		if(LOG.isDebugEnabled())
