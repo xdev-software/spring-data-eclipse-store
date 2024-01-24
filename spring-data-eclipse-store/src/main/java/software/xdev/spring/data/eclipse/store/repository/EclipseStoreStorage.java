@@ -43,14 +43,14 @@ import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.Sim
 
 
 @Component
-public class EclipseStoreStorage implements EntityListProvider, IdSetterProvider, PersistableChecker
+public class EclipseStoreStorage
+	implements EntityListProvider, IdSetterProvider, PersistableChecker
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, String> entityClassToRepositoryName = new HashMap<>();
 	private final Map<Class<?>, IdSetter<?>> entityClassToIdSetter = new HashMap<>();
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
-	
 	private final EclipseStoreProperties storeConfiguration;
 	private final EclipseStoreProvider storeProvider;
 	

@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.repositories;
+package software.xdev.spring.data.eclipse.store.integration.repositories.immutables;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 
-public interface CustomerWithFinalChildRepository
-	extends CrudRepository<CustomerWithFinalChild, String>, PagingAndSortingRepository<CustomerWithFinalChild, String>
+public interface CustomerWithFinalRepository
+	extends CrudRepository<CustomerWithFinal, String>, PagingAndSortingRepository<CustomerWithFinal, String>
 {
 }

@@ -21,12 +21,22 @@ import java.util.Optional;
 
 public class Position
 {
-	private final Article article;
-	private final int amount;
+	private Article article;
+	private int amount;
 	
 	public Position(final Article article, final int amount)
 	{
 		this.article = article;
+		this.amount = amount;
+	}
+	
+	public void setArticle(final Article article)
+	{
+		this.article = article;
+	}
+	
+	public void setAmount(final int amount)
+	{
 		this.amount = amount;
 	}
 	

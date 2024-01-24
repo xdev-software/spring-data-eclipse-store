@@ -16,11 +16,12 @@
 package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
+import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
-import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifierToEditable;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
 
 
@@ -35,12 +36,24 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 		this.idField = idField;
 		this.idFinder = idFinder;
 		this.lastIdPersister = lastIdPersister::accept;
+		this.checkIfIdFieldIsFinal();
+	}
+	
+	private void checkIfIdFieldIsFinal()
+	{
+		final int fieldModifiers = this.idField.getModifiers();
+		if(Modifier.isFinal(fieldModifiers))
+		{
+			throw new IdFieldFinalException(String.format(
+				"Field %s is final and cannot be modified. ID fields must not be final.",
+				this.idField.getName()));
+		}
 	}
 	
 	@Override
 	public void ensureId(final T objectToSetIdIn)
 	{
-		try(final FieldAccessModifierToEditable<T> fam = FieldAccessModifier.makeFieldEditable(
+		try(final FieldAccessModifier<T> fam = FieldAccessModifier.makeFieldReadable(
 			this.idField,
 			objectToSetIdIn))
 		{
@@ -48,7 +61,7 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 			if(existingId == null)
 			{
 				final ID newId = this.idFinder.findId();
-				fam.writeValueOfField(objectToSetIdIn, newId);
+				fam.writeValueOfField(objectToSetIdIn, newId, true);
 				this.lastIdPersister.accept(newId);
 			}
 		}

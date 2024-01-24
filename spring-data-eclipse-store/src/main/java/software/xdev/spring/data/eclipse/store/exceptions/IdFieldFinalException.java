@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.access.modifier;
+package software.xdev.spring.data.eclipse.store.exceptions;
 
-/**
- * Provides a way to open member variables (fields) to changes.
- */
-public interface FieldAccessModifierToEditable<E> extends FieldAccessModifier<E>
+public class IdFieldFinalException extends RuntimeException
 {
-	void writeValueOfField(E objectOfFieldToWriteTo, Object valueToWrite) throws IllegalAccessException;
+	public IdFieldFinalException(final String message)
+	{
+		super(message);
+	}
 }

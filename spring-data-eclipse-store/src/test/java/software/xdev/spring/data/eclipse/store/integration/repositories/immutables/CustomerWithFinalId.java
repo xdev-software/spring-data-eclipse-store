@@ -13,18 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.repositories;
+package software.xdev.spring.data.eclipse.store.integration.repositories.immutables;
 
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-public class CustomerWithFinal
+
+public class CustomerWithFinalId
 {
-	private final String firstName;
-	private final String lastName;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private final int id = 1;
 	
-	public CustomerWithFinal(final String firstName, final String lastName)
+	private String firstName;
+	private String lastName;
+	
+	public CustomerWithFinalId()
+	{
+	}
+	
+	public CustomerWithFinalId(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -38,6 +50,11 @@ public class CustomerWithFinal
 	public String getLastName()
 	{
 		return this.lastName;
+	}
+	
+	public Integer getId()
+	{
+		return this.id;
 	}
 	
 	@Override
@@ -59,7 +76,7 @@ public class CustomerWithFinal
 		{
 			return false;
 		}
-		final CustomerWithFinal customer = (CustomerWithFinal)o;
+		final CustomerWithFinalId customer = (CustomerWithFinalId)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -72,8 +89,8 @@ public class CustomerWithFinal
 	}
 	
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithFinal getCustomerWithFirstName(
-		final List<CustomerWithFinal> customers,
+	public static CustomerWithFinalId getCustomerWithFirstName(
+		final List<CustomerWithFinalId> customers,
 		final String firstName)
 	{
 		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();

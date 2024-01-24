@@ -17,6 +17,8 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.util.Optional;
 
+import jakarta.annotation.Nonnull;
+
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -29,7 +31,6 @@ import org.springframework.data.repository.query.QueryMethodEvaluationContextPro
 import org.springframework.data.util.TypeInformation;
 import org.springframework.lang.Nullable;
 
-import jakarta.annotation.Nonnull;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;

@@ -86,7 +86,7 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 					.setPersistenceTarget(target))
 					// Make every type persistable.
 					// This is quite dangerous!
-					// But if this is not set we get problems f.e. with HashMap$Node
+					// But if this is not set we get problems e.g. with HashMap$Node
 					.setTypeEvaluatorPersistable(a -> true)
 					.createPersistenceManager();
 		}

@@ -22,11 +22,16 @@ import java.util.Set;
 public class Warehouse
 {
 	private String name;
-	private final Set<Article> articles = new HashSet<>();
+	private Set<Article> articles = new HashSet<>();
 	
 	public Set<Article> getArticles()
 	{
 		return this.articles;
+	}
+	
+	public void setArticles(final Set<Article> articles)
+	{
+		this.articles = articles;
 	}
 	
 	public String getName()

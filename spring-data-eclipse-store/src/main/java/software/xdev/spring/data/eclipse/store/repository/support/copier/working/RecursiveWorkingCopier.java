@@ -19,6 +19,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import software.xdev.spring.data.eclipse.store.repository.PersistableChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
-import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifierToEditable;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.object.EclipseSerializerRegisteringCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.object.RegisteringObjectCopier;
@@ -161,6 +161,12 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			return;
 		}
 		alreadyMergedTargets.collectMergedTarget(targetObject);
+		
+		if(sourceObject instanceof String)
+		{
+			// no merge needed and no merge possible
+			return;
+		}
 		AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
 			field ->
 				this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
@@ -182,7 +188,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				return;
 			}
 			
-			try(final FieldAccessModifierToEditable<E> fam = FieldAccessModifier.makeFieldEditable(
+			try(final FieldAccessModifier<E> fam = FieldAccessModifier.makeFieldReadable(
 				field,
 				sourceObject))
 			{
@@ -191,16 +197,24 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				// If the same, then there is nothing to do
 				if(valueOfTargetObject != valueOfSourceObject)
 				{
+					// If the class is part of the java package, some fields are final and not changeable.
+					// These special cases are properly handled through the EclipseStore Serialization.
+					// But to prevent our system to through an error when setting a final field in the java package,
+					// we use this parameter.
+					final boolean isPartOfJavaPackage = targetObject.getClass().getPackageName().startsWith("java.");
 					// Something in the containingObject has changed
 					changedCollector.collectChangedObject(targetObject);
 					if(DataTypeUtil.isPrimitiveType(field.getType()))
 					{
-						fam.writeValueOfField(targetObject, valueOfSourceObject);
+						if(!Objects.equals(valueOfTargetObject, valueOfSourceObject))
+						{
+							fam.writeValueOfField(targetObject, valueOfSourceObject, !isPartOfJavaPackage);
+						}
 					}
 					else if(DataTypeUtil.isPrimitiveArray(valueOfSourceObject))
 					{
 						// Copy complete Array
-						fam.writeValueOfField(targetObject, valueOfSourceObject);
+						fam.writeValueOfField(targetObject, valueOfSourceObject, !isPartOfJavaPackage);
 					}
 					else if(DataTypeUtil.isObjectArray(valueOfSourceObject))
 					{
@@ -211,7 +225,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 							alreadyMergedTargets,
 							changedCollector
 						);
-						fam.writeValueOfField(targetObject, newArray);
+						fam.writeValueOfField(targetObject, newArray, !isPartOfJavaPackage);
 					}
 					else
 					{
@@ -226,7 +240,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 						if(valueOfTargetObject != originalValueObjectOfSource)
 						{
 							// If the reference is new, it must be set
-							fam.writeValueOfField(targetObject, originalValueObjectOfSource);
+							fam.writeValueOfField(targetObject, originalValueObjectOfSource, !isPartOfJavaPackage);
 						}
 						// Merge after setting reference to avoid endless loops
 						this.mergeValues(

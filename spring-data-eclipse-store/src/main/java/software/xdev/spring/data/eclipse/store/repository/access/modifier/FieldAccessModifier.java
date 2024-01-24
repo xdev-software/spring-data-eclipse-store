@@ -16,9 +16,7 @@
 package software.xdev.spring.data.eclipse.store.repository.access.modifier;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -26,28 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public interface FieldAccessModifier<E> extends AutoCloseable
 {
-	AtomicInteger javaVersion = new AtomicInteger(0);
-	
-	static <T> FieldAccessModifierToEditable<T> makeFieldEditable(final Field field, final T sourceObject)
-		throws InvocationTargetException, IllegalAccessException
-	{
-		if(javaVersion.get() == 0)
-		{
-			javaVersion.set(getJavaVersion());
-		}
-		if(javaVersion.get() < 18)
-		{
-			return new FieldEditableMakerForJavaLowerThan18<>(
-				Objects.requireNonNull(field),
-				Objects.requireNonNull(sourceObject)
-			);
-		}
-		return new FieldEditableMakerForJavaHigherOrEqualTo18<>(
-			Objects.requireNonNull(field),
-			Objects.requireNonNull(sourceObject)
-		);
-	}
-	
 	static <T> FieldAccessModifier<T> makeFieldReadable(final Field field, final T sourceObject)
 	{
 		return new FieldAccessibleMaker<>(Objects.requireNonNull(field), Objects.requireNonNull(sourceObject));
@@ -55,21 +31,6 @@ public interface FieldAccessModifier<E> extends AutoCloseable
 	
 	Object getValueOfField(E objectOfFieldToRead) throws IllegalAccessException;
 	
-	private static int getJavaVersion()
-	{
-		String version = System.getProperty("java.version");
-		if(version.startsWith("1."))
-		{
-			version = version.substring(2, 3);
-		}
-		else
-		{
-			final int dot = version.indexOf(".");
-			if(dot != -1)
-			{
-				version = version.substring(0, dot);
-			}
-		}
-		return Integer.parseInt(version);
-	}
+	void writeValueOfField(E objectOfFieldToWriteTo, Object valueToWrite, boolean throwExceptionIfFinal)
+		throws IllegalAccessException;
 }

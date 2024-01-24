@@ -22,13 +22,16 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithFinal;
-import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithFinalChild;
-import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithFinalChildRepository;
-import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithFinalRepository;
+import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinal;
+import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalChild;
+import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalChildRepository;
+import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalId;
+import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalIdRepository;
+import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalRepository;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
@@ -39,6 +42,8 @@ class FinalTest
 	private CustomerWithFinalRepository repository;
 	@Inject
 	private CustomerWithFinalChildRepository withChildRepository;
+	@Inject
+	private CustomerWithFinalIdRepository withFinalIdRepository;
 	
 	@Inject
 	private EclipseStoreStorage storage;
@@ -78,5 +83,13 @@ class FinalTest
 					customers.get(0).getChild().getFirstName());
 			}
 		);
+	}
+	
+	@Test
+	void testSaveAndFindSingleWithFinalId()
+	{
+		final CustomerWithFinalId originalCustomer =
+			new CustomerWithFinalId(TestData.FIRST_NAME, TestData.LAST_NAME);
+		Assertions.assertThrows(IdFieldFinalException.class, () -> this.withFinalIdRepository.save(originalCustomer));
 	}
 }
