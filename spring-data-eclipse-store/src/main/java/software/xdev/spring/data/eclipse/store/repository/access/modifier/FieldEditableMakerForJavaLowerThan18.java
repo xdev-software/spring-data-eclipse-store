@@ -78,7 +78,10 @@ public class FieldEditableMakerForJavaLowerThan18<E> implements FieldAccessModif
 	
 	private void startMakingEditable()
 	{
-		this.field.setAccessible(true);
+		if(!this.wasAccessible)
+		{
+			this.field.setAccessible(true);
+		}
 		if(this.wasFinal)
 		{
 			if(LOG.isTraceEnabled())
@@ -106,7 +109,10 @@ public class FieldEditableMakerForJavaLowerThan18<E> implements FieldAccessModif
 			}
 			MODIFIERS.set(this.field, this.field.getModifiers() | Modifier.FINAL);
 		}
-		this.field.setAccessible(this.wasAccessible);
+		if(!this.wasAccessible)
+		{
+			this.field.setAccessible(this.wasAccessible);
+		}
 	}
 	
 	@Override
