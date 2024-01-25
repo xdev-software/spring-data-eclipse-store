@@ -56,7 +56,7 @@
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
 		<spring-boot.version>3.2.2</spring-boot.version>
 		<spring-test.version>5.3.3</spring-test.version>
-		<slf4j.version>2.0.9</slf4j.version>
+		<slf4j.version>2.0.11</slf4j.version>
 		<jakarta.enterprise.version>4.0.1</jakarta.enterprise.version>
 		<jakarta.version>3.1.0</jakarta.version>
 	</properties>
