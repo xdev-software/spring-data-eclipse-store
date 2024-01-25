@@ -25,7 +25,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.real.life.example.Article;
@@ -49,11 +49,11 @@ public class RealLifeTests
 	public static final int PEN_AMOUNT = 5;
 	public static final int BRICK_AMOUNT = 2;
 	public static final String WAREHOUSE_WEIDEN = "Weiden";
-	@Inject
+	@Autowired
 	InvoiceRepository invoiceRepository;
-	@Inject
+	@Autowired
 	PositionRepository positionRepository;
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	private Invoice buildDefaultModel()

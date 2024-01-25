@@ -23,9 +23,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.types.Storer;
@@ -35,6 +32,7 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
@@ -62,9 +60,9 @@ public class EclipseStoreStorage
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
 	private RepositorySynchronizer repositorySynchronizer;
 	
-	@Inject
+	@Autowired
 	public EclipseStoreStorage(
-		@Named("eclipseStoreProperties") final EclipseStoreProperties storeConfiguration,
+		final EclipseStoreProperties storeConfiguration,
 		final EclipseStoreProvider storeProvider)
 	{
 		this.storeConfiguration = storeConfiguration;

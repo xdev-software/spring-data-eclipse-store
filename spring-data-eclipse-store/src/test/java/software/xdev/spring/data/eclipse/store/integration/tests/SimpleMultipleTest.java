@@ -20,7 +20,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
@@ -34,11 +34,11 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @DefaultTestAnnotations
 class SimpleMultipleTest
 {
-	@Inject
+	@Autowired
 	private CustomerRepository customerRepository;
-	@Inject
+	@Autowired
 	private OwnerRepository ownerRepository;
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	@Test

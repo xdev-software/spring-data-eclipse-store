@@ -17,10 +17,9 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
@@ -38,15 +37,15 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @DefaultTestAnnotations
 class FinalTest
 {
-	@Inject
-	private CustomerWithFinalRepository repository;
-	@Inject
-	private CustomerWithFinalChildRepository withChildRepository;
-	@Inject
-	private CustomerWithFinalIdRepository withFinalIdRepository;
+	@Autowired
+	CustomerWithFinalRepository repository;
+	@Autowired
+	CustomerWithFinalChildRepository withChildRepository;
+	@Autowired
+	CustomerWithFinalIdRepository withFinalIdRepository;
 	
-	@Inject
-	private EclipseStoreStorage storage;
+	@Autowired
+	EclipseStoreStorage storage;
 	
 	@Test
 	void testSaveAndFindSingle()

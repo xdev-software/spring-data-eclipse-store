@@ -18,7 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -37,12 +37,12 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @DefaultTestAnnotations
 class HashSetTest
 {
-	@Inject
+	@Autowired
 	private CustomerRepositoryWithHashSet repository;
-	@Inject
+	@Autowired
 	private CustomerRepositoryWithNonFinalHashSet nonFinalRepository;
 	
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	@Test

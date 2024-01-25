@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Customer;
@@ -43,10 +43,10 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 class ConcurrencyTest
 {
 	public static final String CUSTOMER_NO = "Customer No.";
-	@Inject
+	@Autowired
 	private CustomerRepository repository;
 	
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	private final List<Customer> testCustomers =

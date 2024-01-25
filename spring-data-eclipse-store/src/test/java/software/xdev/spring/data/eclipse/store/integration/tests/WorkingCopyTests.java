@@ -20,8 +20,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.inject.Inject;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
@@ -39,11 +39,11 @@ public class WorkingCopyTests
 	public static final String CHILD_NAME_1 = "child1";
 	public static final String PARENT_NAME_2 = "parent2";
 	public static final String PARENT_NAME_1 = "parent1";
-	@Inject
+	@Autowired
 	CustomerRepository customerRepository;
-	@Inject
+	@Autowired
 	NodeRepository nodeRepository;
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	@Test

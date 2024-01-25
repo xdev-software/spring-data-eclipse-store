@@ -17,13 +17,14 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.io.Serializable;
 
+import jakarta.annotation.Nonnull;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
-import jakarta.annotation.Nonnull;
-import jakarta.inject.Inject;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
@@ -35,7 +36,7 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 {
 	private final EclipseStoreStorage storage;
 	
-	@Inject
+	@Autowired
 	public EclipseStoreRepositoryFactoryBean(
 		final Class<? extends T> repositoryInterface,
 		final EclipseStoreStorage storage)

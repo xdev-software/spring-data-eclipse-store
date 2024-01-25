@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Customer;
@@ -33,10 +33,10 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @DefaultTestAnnotations
 class StressTest
 {
-	@Inject
+	@Autowired
 	private CustomerRepository repository;
 	
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	/**

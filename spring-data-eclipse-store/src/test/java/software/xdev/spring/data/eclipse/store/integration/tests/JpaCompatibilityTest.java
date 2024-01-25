@@ -18,7 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,10 +34,10 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @DefaultTestAnnotations
 class JpaCompatibilityTest
 {
-	@Inject
+	@Autowired
 	private CustomerRepositoryWithQuery customerRepository;
 	
-	@Inject
+	@Autowired
 	private EclipseStoreStorage storage;
 	
 	@Test

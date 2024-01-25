@@ -24,7 +24,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.FileSystemUtils;
 
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
@@ -33,7 +33,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 @EnableEclipseStoreRepositories
 public class TestConfiguration implements DisposableBean
 {
-	@Inject
+	@Autowired
 	EclipseStoreStorage storage;
 	
 	@Value("${org.eclipse.store.storage-directory}")
