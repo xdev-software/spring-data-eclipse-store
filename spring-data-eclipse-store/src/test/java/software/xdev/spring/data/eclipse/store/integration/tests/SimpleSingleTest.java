@@ -18,15 +18,18 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.inject.Inject;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.inject.Inject;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Customer;
+import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerAsRecord;
+import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerAsRecordRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerNotCrud;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerNotCrudRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepository;
@@ -38,6 +41,8 @@ class SimpleSingleTest
 {
 	@Inject
 	private CustomerRepository repository;
+	@Inject
+	private CustomerAsRecordRepository recordRepository;
 	
 	@Inject
 	private EclipseStoreStorage storage;
@@ -50,6 +55,65 @@ class SimpleSingleTest
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertTrue(customers.isEmpty());
+			}
+		);
+	}
+	
+	@Test
+	void testBasicSaveAndFindSingleRecords()
+	{
+		final CustomerAsRecord customer = new CustomerAsRecord(TestData.FIRST_NAME, TestData.LAST_NAME);
+		this.recordRepository.save(customer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerAsRecord> customers = TestUtil.iterableToList(this.recordRepository.findAll());
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertEquals(customer, customers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void testBasicSaveAndFindMultipleRecords()
+	{
+		final CustomerAsRecord customer = new CustomerAsRecord(TestData.FIRST_NAME, TestData.LAST_NAME);
+		this.recordRepository.save(customer);
+		final CustomerAsRecord customer2 = new CustomerAsRecord(null, null);
+		this.recordRepository.save(customer2);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerAsRecord> customers = TestUtil.iterableToList(this.recordRepository.findAll());
+				final CustomerAsRecord foundCustomer =
+					customers.stream().filter(c -> TestData.FIRST_NAME.equals(c.firstName())).findFirst().get();
+				final CustomerAsRecord foundCustomer2 =
+					customers.stream().filter(c -> c.firstName() == null).findFirst().get();
+				Assertions.assertEquals(2, customers.size());
+				Assertions.assertEquals(customer, foundCustomer);
+				Assertions.assertEquals(customer2, foundCustomer2);
+			}
+		);
+	}
+	
+	@Test
+	void testBasicSaveAndFindByFirstNameRecords()
+	{
+		final CustomerAsRecord customer = new CustomerAsRecord(TestData.FIRST_NAME, TestData.LAST_NAME);
+		this.recordRepository.save(customer);
+		final CustomerAsRecord customer2 =
+			new CustomerAsRecord(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.recordRepository.save(customer2);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final Optional<CustomerAsRecord> foundCustomer =
+					this.recordRepository.findByFirstName(TestData.FIRST_NAME);
+				Assertions.assertTrue(foundCustomer.isPresent());
+				Assertions.assertEquals(customer, foundCustomer.get());
 			}
 		);
 	}
