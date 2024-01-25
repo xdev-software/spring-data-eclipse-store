@@ -58,12 +58,12 @@ class InheritanceTest
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
 				Assertions.assertEquals(1, parentCustomers.size());
-				Assertions.assertEquals(parentCustomers.get(0).getFirstName(), TestData.FIRST_NAME);
+				Assertions.assertEquals(TestData.FIRST_NAME, parentCustomers.get(0).getFirstName());
 				
 				final List<ChildCustomer> childCustomers =
 					TestUtil.iterableToList(this.childCustomerRepository.findAll());
 				Assertions.assertEquals(1, childCustomers.size());
-				Assertions.assertEquals(childCustomers.get(0).getFirstName(), TestData.FIRST_NAME);
+				Assertions.assertEquals(TestData.FIRST_NAME, childCustomers.get(0).getFirstName());
 			}
 		);
 	}
@@ -109,12 +109,12 @@ class InheritanceTest
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
 				Assertions.assertEquals(1, parentCustomers.size());
-				Assertions.assertEquals(parentCustomers.get(0).getFirstName(), TestData.FIRST_NAME_ALTERNATIVE);
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, parentCustomers.get(0).getFirstName());
 				
 				final List<ChildCustomer> childCustomers =
 					TestUtil.iterableToList(this.childCustomerRepository.findAll());
 				Assertions.assertEquals(1, childCustomers.size());
-				Assertions.assertEquals(childCustomers.get(0).getFirstName(), TestData.FIRST_NAME_ALTERNATIVE);
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, childCustomers.get(0).getFirstName());
 			}
 		);
 	}
