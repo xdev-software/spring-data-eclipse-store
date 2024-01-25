@@ -55,7 +55,7 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 					this.field.getDeclaringClass().getSimpleName(),
 					this.field.getName());
 			}
-			this.field.setAccessible(true);
+			this.field.trySetAccessible();
 		}
 	}
 	
@@ -98,6 +98,7 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 					this.field.getDeclaringClass().getSimpleName(),
 					this.field.getName());
 			}
+			
 			this.field.setAccessible(false);
 		}
 	}
