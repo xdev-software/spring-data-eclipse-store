@@ -55,11 +55,11 @@ With *Spring-Data-Eclipse-Store* every time an object is loaded from the datasto
 
 ### Prerequisites
 
-|              | Minimal Version   |
-|--------------|-----------|
-| Java         | ``17``    |
-| Spring Data  | ``3.2.1`` |
-| EclipseStore | ``1.1.0`` |
+|              | Minimal Version |
+|--------------|-----------------|
+| Java         | ``17``          |
+| Spring Data  | ``3.2.2``       |
+| EclipseStore | ``1.1.0``       |
 
 ### Usage
 
