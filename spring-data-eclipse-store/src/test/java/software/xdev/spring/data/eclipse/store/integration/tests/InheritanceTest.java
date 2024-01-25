@@ -91,6 +91,135 @@ class InheritanceTest
 	}
 	
 	@Test
+	void testAddChildAndParent()
+	{
+		final ChildCustomer customer1 =
+			new ChildCustomer(TestData.FIRST_NAME, TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME);
+		this.childCustomerRepository.save(customer1);
+		
+		final ParentCustomer parentCustomer =
+			new ParentCustomer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.parentCustomerRepository.save(parentCustomer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<ParentCustomer> parentCustomers =
+					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
+				Assertions.assertEquals(2, parentCustomers.size());
+			}
+		);
+	}
+	
+	@Test
+	void testRemoveOnlyChildFindParent()
+	{
+		final ChildCustomer customer1 =
+			new ChildCustomer(TestData.FIRST_NAME, TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME);
+		this.childCustomerRepository.save(customer1);
+		
+		final ParentCustomer parentCustomer =
+			new ParentCustomer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.parentCustomerRepository.save(parentCustomer);
+		
+		this.childCustomerRepository.delete(customer1);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<ParentCustomer> parentCustomers =
+					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
+				Assertions.assertEquals(1, parentCustomers.size());
+				
+				final List<ChildCustomer> childCustomers =
+					TestUtil.iterableToList(this.childCustomerRepository.findAll());
+				Assertions.assertTrue(childCustomers.isEmpty());
+			}
+		);
+	}
+	
+	@Test
+	void testRemoveOnlyParentFindParent()
+	{
+		final ChildCustomer customer1 =
+			new ChildCustomer(TestData.FIRST_NAME, TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME);
+		this.childCustomerRepository.save(customer1);
+		
+		final ParentCustomer parentCustomer =
+			new ParentCustomer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.parentCustomerRepository.save(parentCustomer);
+		
+		this.parentCustomerRepository.delete(parentCustomer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<ParentCustomer> parentCustomers =
+					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
+				Assertions.assertEquals(1, parentCustomers.size());
+				
+				final List<ChildCustomer> childCustomers =
+					TestUtil.iterableToList(this.childCustomerRepository.findAll());
+				Assertions.assertEquals(1, childCustomers.size());
+			}
+		);
+	}
+	
+	@Test
+	void testRemoveAllChildren()
+	{
+		final ChildCustomer customer1 =
+			new ChildCustomer(TestData.FIRST_NAME, TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME);
+		this.childCustomerRepository.save(customer1);
+		
+		final ParentCustomer parentCustomer =
+			new ParentCustomer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.parentCustomerRepository.save(parentCustomer);
+		
+		this.childCustomerRepository.deleteAll();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<ParentCustomer> parentCustomers =
+					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
+				Assertions.assertEquals(1, parentCustomers.size());
+				
+				final List<ChildCustomer> childCustomers =
+					TestUtil.iterableToList(this.childCustomerRepository.findAll());
+				Assertions.assertTrue(childCustomers.isEmpty());
+			}
+		);
+	}
+	
+	@Test
+	void testRemoveAllParents()
+	{
+		final ChildCustomer customer1 =
+			new ChildCustomer(TestData.FIRST_NAME, TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME);
+		this.childCustomerRepository.save(customer1);
+		
+		final ParentCustomer parentCustomer =
+			new ParentCustomer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.parentCustomerRepository.save(parentCustomer);
+		
+		this.parentCustomerRepository.deleteAll();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<ParentCustomer> parentCustomers =
+					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
+				Assertions.assertTrue(parentCustomers.isEmpty());
+				
+				final List<ChildCustomer> childCustomers =
+					TestUtil.iterableToList(this.childCustomerRepository.findAll());
+				Assertions.assertEquals(1, childCustomers.size());
+			}
+		);
+	}
+	
+	@Test
 	void testChangeChildFindParent()
 	{
 		// Save customer

@@ -223,11 +223,12 @@ public class EclipseStoreStorage
 		this.ensureEntitiesInRoot();
 		final IdentitySet<?> entities = this.root.getEntityLists().get(this.getEntityName(clazz));
 		final int oldSize = entities.size();
+		final List<?> entitiesToRemove = entities.stream().toList();
 		final List<IdentitySet<? super Object>> entityLists =
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		entityLists.forEach(entityList ->
 		{
-			entityList.removeAll(entityList);
+			entityList.removeAll(entitiesToRemove);
 			this.storageManager.store(entityList.getInternalMap());
 		});
 		if(LOG.isDebugEnabled())
