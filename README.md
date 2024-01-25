@@ -23,7 +23,7 @@ The library provides following features:
 * **[Drop in compatible](#usage)** for your existing Spring application
 * Utilizes **ultra-fast EclipseStore serializing and storing**
 * Enables your application to **select
-  any [EclipseStore target](https://docs.eclipsestore.io/manual/storage/storage-targets/index.html)** (e.f.
+  any [EclipseStore target](https://docs.eclipsestore.io/manual/storage/storage-targets/index.html)** (e.g.
   [PostgreSQL](https://docs.eclipsestore.io/manual/storage/storage-targets/sql-databases/postgresql.html),
   [AWS S3](https://docs.eclipsestore.io/manual/storage/storage-targets/blob-stores/aws-s3.html) or
   [IBM COS](https://github.com/xdev-software/eclipse-store-afs-ibm-cos))
