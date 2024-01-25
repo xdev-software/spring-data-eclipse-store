@@ -47,17 +47,17 @@ public class EntitySetCollector
 		{
 			LOG.debug("Initializing parent class list...");
 		}
-		for(final Class<?> possibleParentClass : entityClassToRepositoryName.keySet())
+		for(final Map.Entry<Class<?>, String> possibleParentEntry : entityClassToRepositoryName.entrySet())
 		{
-			for(final Class<?> possibleChildClass : entityClassToRepositoryName.keySet())
+			for(final Map.Entry<Class<?>, String> possibleChildEntry : entityClassToRepositoryName.entrySet())
 			{
 				this.childClassToParentSets.putIfAbsent(
-					possibleChildClass, new ArrayList<>()
+					possibleChildEntry.getKey(), new ArrayList<>()
 				);
-				if(possibleParentClass.isAssignableFrom(possibleChildClass))
+				if(possibleParentEntry.getKey().isAssignableFrom(possibleChildEntry.getKey()))
 				{
-					this.childClassToParentSets.get(possibleChildClass)
-						.add(entityLists.get(entityClassToRepositoryName.get(possibleParentClass)));
+					this.childClassToParentSets.get(possibleChildEntry.getKey())
+						.add(entityLists.get(entityClassToRepositoryName.get(possibleParentEntry.getKey())));
 				}
 			}
 		}
@@ -70,7 +70,7 @@ public class EntitySetCollector
 	/**
 	 * @return a list with all related IdentitySets (including its own).
 	 */
-	public <T> List<IdentitySet<? super Object>> getRelatedIdentitySets(final Class<T> clazz)
+	public <T> List<IdentitySet<Object>> getRelatedIdentitySets(final Class<T> clazz)
 	{
 		return this.childClassToParentSets.get(clazz);
 	}

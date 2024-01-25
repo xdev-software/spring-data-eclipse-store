@@ -179,7 +179,7 @@ public class EclipseStoreStorage
 	 */
 	private <T> Collection<Object> collectRootEntitiesToStore(final Class<T> clazz, final Iterable<T> entitiesToStore)
 	{
-		final List<IdentitySet<? super Object>> entityLists =
+		final List<IdentitySet<Object>> entityLists =
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		final Collection<Object> objectsToStore = new ArrayList<>();
 		for(final T entityToStore : entitiesToStore)
@@ -205,7 +205,7 @@ public class EclipseStoreStorage
 	
 	public synchronized <T> void delete(final Class<T> clazz, final T objectToRemove)
 	{
-		final List<IdentitySet<? super Object>> entityLists =
+		final List<IdentitySet<Object>> entityLists =
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		entityLists.forEach(entityList ->
 		{
@@ -224,7 +224,7 @@ public class EclipseStoreStorage
 		final IdentitySet<?> entities = this.root.getEntityLists().get(this.getEntityName(clazz));
 		final int oldSize = entities.size();
 		final List<?> entitiesToRemove = entities.stream().toList();
-		final List<IdentitySet<? super Object>> entityLists =
+		final List<IdentitySet<Object>> entityLists =
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		entityLists.forEach(entityList ->
 		{
