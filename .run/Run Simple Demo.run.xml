@@ -2,7 +2,6 @@
   <configuration default="false" name="Run Simple Demo" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="software.xdev.spring.data.eclipse.store.demo.simple.SimpleDemoApplication" />
     <module name="spring-data-eclipse-store-demo" />
-    <option name="VM_PARAMETERS" value="--add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED" />
     <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
     <extension name="coverage">
       <pattern>

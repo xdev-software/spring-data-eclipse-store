@@ -24,7 +24,7 @@ public class Node
 {
 	private String name;
 	
-	private final List<Node> children;
+	private List<Node> children;
 	
 	public Node(final String name, final List<Node> children)
 	{
@@ -45,6 +45,11 @@ public class Node
 	public void setName(final String name)
 	{
 		this.name = name;
+	}
+	
+	public void setChildren(final List<Node> children)
+	{
+		this.children = children;
 	}
 	
 	public List<Node> getChildren()

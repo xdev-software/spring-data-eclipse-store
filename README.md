@@ -76,15 +76,17 @@ more [complex demo](./spring-data-eclipse-store-demo/src/main/java/software/xdev
 > [!NOTE]  
 > Since the library is using reflection to copy data, the following JVM-Arguments may have to be set:
 > ```
-> --add-opens=java.base/java.lang=ALL-UNNAMED
-> --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
 > --add-opens=java.base/java.util=ALL-UNNAMED
+> --add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+> --add-opens=java.base/java.lang=ALL-UNNAMED
 > --add-opens=java.base/java.time=ALL-UNNAMED 
 > ```
 
 
 ## Support
-If you need support as soon as possible and you can't wait for any pull request, feel free to use [our support](https://xdev.software/en/services/support).
+
+If you need support as soon as possible, and you can't wait for any pull request, feel free to
+use [our support](https://xdev.software/en/services/support).
 
 ## Contributing
 See the [contributing guide](./CONTRIBUTING.md) for detailed instructions on how to get started with our project.

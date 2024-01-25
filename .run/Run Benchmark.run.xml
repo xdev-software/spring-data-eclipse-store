@@ -2,7 +2,7 @@
   <configuration default="false" name="Run Benchmark" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="software.xdev.spring.data.eclipse.store.benchmark.BenchmarkRunner" />
     <module name="spring-data-eclipse-store-benchmark" />
-    <option name="VM_PARAMETERS" value="-Xmx24g --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED" />
+    <option name="VM_PARAMETERS" value="--add-opens java.base/java.util=ALL-UNNAMED" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="software.xdev.spring.data.eclipse.store.benchmark.benchmarks.simple.user.*" />

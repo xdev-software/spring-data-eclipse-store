@@ -16,17 +16,21 @@
 package software.xdev.spring.data.eclipse.store.integration.tests;
 
 import java.util.List;
+import java.util.Set;
+
+import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepositoryWithHashSet;
+import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepositoryWithNonFinalHashSet;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithHashSet;
+import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithNonFinalHashSet;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
@@ -35,6 +39,8 @@ class HashSetTest
 {
 	@Inject
 	private CustomerRepositoryWithHashSet repository;
+	@Inject
+	private CustomerRepositoryWithNonFinalHashSet nonFinalRepository;
 	
 	@Inject
 	private EclipseStoreStorage storage;
@@ -52,6 +58,109 @@ class HashSetTest
 				final List<CustomerWithHashSet> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());
 				Assertions.assertEquals(1, customers.get(0).getValues().size());
+			}
+		);
+	}
+	
+	@Test
+	void testSaveAndResaveFindAll()
+	{
+		final CustomerWithHashSet customer = new CustomerWithHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customer.getValues().add("Test");
+		this.repository.save(customer);
+		
+		final CustomerWithHashSet customerWithHashSet =
+			TestUtil.iterableToList(this.repository.findAll()).stream().findFirst().get();
+		customerWithHashSet.getValues().add("Test2");
+		this.repository.save(customerWithHashSet);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerWithHashSet> customers = TestUtil.iterableToList(this.repository.findAll());
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertEquals(2, customers.get(0).getValues().size());
+			}
+		);
+	}
+	
+	@Test
+	void testSaveAndFindAllNonFinal()
+	{
+		final CustomerWithNonFinalHashSet customer =
+			new CustomerWithNonFinalHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customer.getValues().add("Test");
+		this.nonFinalRepository.save(customer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerWithNonFinalHashSet> customers =
+					TestUtil.iterableToList(this.nonFinalRepository.findAll());
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertEquals(1, customers.get(0).getValues().size());
+			}
+		);
+	}
+	
+	@Test
+	void testSaveAndSetAndFindAllNonFinal()
+	{
+		final CustomerWithNonFinalHashSet customer =
+			new CustomerWithNonFinalHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customer.setValues(Set.of("Test"));
+		this.nonFinalRepository.save(customer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerWithNonFinalHashSet> customers =
+					TestUtil.iterableToList(this.nonFinalRepository.findAll());
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertEquals(1, customers.get(0).getValues().size());
+			}
+		);
+	}
+	
+	@Test
+	void testSaveAndResetAndFindAllNonFinal()
+	{
+		final CustomerWithNonFinalHashSet customer =
+			new CustomerWithNonFinalHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customer.setValues(Set.of("Test"));
+		this.nonFinalRepository.save(customer);
+		
+		final CustomerWithNonFinalHashSet customerWithHashSet =
+			TestUtil.iterableToList(this.nonFinalRepository.findAll()).stream().findFirst().get();
+		customerWithHashSet.setValues(Set.of("Test", "Test2"));
+		this.nonFinalRepository.save(customerWithHashSet);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerWithNonFinalHashSet> customers =
+					TestUtil.iterableToList(this.nonFinalRepository.findAll());
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertEquals(2, customers.get(0).getValues().size());
+			}
+		);
+	}
+	
+	@Test
+	void testSaveAndSetNullAndFindAllNonFinal()
+	{
+		final CustomerWithNonFinalHashSet customer =
+			new CustomerWithNonFinalHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customer.setValues(null);
+		this.nonFinalRepository.save(customer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerWithNonFinalHashSet> customers =
+					TestUtil.iterableToList(this.nonFinalRepository.findAll());
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertNull(customers.get(0).getValues());
 			}
 		);
 	}

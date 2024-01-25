@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
+import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.types.Storer;
 import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -88,6 +90,8 @@ public class EclipseStoreStorage
 			this.root = new Root();
 			final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
 				this.storeProvider.createStorageFoundation(this.storeConfiguration);
+			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
+			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
 			this.storageManager = embeddedStorageFoundation.start(this.root);
 			this.persistenceChecker = new RelayedPersistenceChecker(embeddedStorageFoundation);
 			this.initRoot();

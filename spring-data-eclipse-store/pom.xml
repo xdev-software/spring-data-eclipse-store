@@ -295,10 +295,7 @@
 				<configuration>
 					<argLine>
 						--add-opens java.base/java.util=ALL-UNNAMED
-						--add-opens java.base/java.lang=ALL-UNNAMED
-						--add-opens=java.base/java.lang.reflect=ALL-UNNAMED
 						--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
-						-Djdk.reflect.useDirectMethodHandle=false
 					</argLine>
 				</configuration>
 			</plugin>

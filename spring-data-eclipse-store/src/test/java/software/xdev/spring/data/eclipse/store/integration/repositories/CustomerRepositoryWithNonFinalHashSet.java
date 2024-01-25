@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.exceptions;
+package software.xdev.spring.data.eclipse.store.integration.repositories;
 
-public class MergeFailedException extends RuntimeException
+import org.springframework.data.repository.CrudRepository;
+
+
+public interface CustomerRepositoryWithNonFinalHashSet extends CrudRepository<CustomerWithNonFinalHashSet, String>
 {
-	public MergeFailedException(final Object sourceObject, final Object targetObject, final Exception e)
-	{
-		super(
-			String.format(
-				"Could not merge values of object %s with object %s",
-				sourceObject.getClass().getName(),
-				targetObject.getClass().getName()
-			),
-			e
-		);
-	}
 }
