@@ -23,7 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<mainClass>software.xdev.Application</mainClass>
+		<mainClass>software.xdev.spring.data.eclipse.store.demo.complex.ComplexDemoApplication</mainClass>
 
 		<org.springframework.boot.version>3.2.2</org.springframework.boot.version>
 	</properties>
@@ -80,6 +80,13 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${org.springframework.boot.version}</version>
+				<configuration>
+					<mainClass>${mainClass}</mainClass>
+					<jvmArguments>
+						--add-opens java.base/java.util=ALL-UNNAMED
+						--add-opens java.base/java.time=ALL-UNNAMED
+					</jvmArguments>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
