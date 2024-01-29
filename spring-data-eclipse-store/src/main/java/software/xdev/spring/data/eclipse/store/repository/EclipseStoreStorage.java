@@ -280,10 +280,15 @@ public class EclipseStoreStorage
 				final String entityName = this.getEntityName(domainClass);
 				final Consumer<Object> idSetter = id ->
 				{
+					this.ensureEntitiesInRoot();
 					this.root.getLastIds().put(entityName, id);
 					this.storageManager.store(this.root.getLastIds());
 				};
-				final Supplier<Object> idGetter = () -> this.root.getLastIds().get(entityName);
+				final Supplier<Object> idGetter = () ->
+				{
+					this.ensureEntitiesInRoot();
+					return this.root.getLastIds().get(entityName);
+				};
 				return IdSetter.createIdSetter(domainClass, idSetter, idGetter);
 			}
 		);
