@@ -297,6 +297,7 @@ public class EclipseStoreStorage
 	@Override
 	public boolean isPersistable(final Class<?> clazz)
 	{
+		this.ensureEntitiesInRoot();
 		return this.persistenceChecker.isPersistable(clazz);
 	}
 }
