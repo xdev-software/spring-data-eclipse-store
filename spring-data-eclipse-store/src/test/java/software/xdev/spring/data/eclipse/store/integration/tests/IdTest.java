@@ -15,6 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.tests;
 
+import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDatastore;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +24,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
@@ -52,6 +53,27 @@ class IdTest
 	@Test
 	void testCreateSingleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
+		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(customer1);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(0);
+				Assertions.assertTrue(loadedCustomer.isPresent());
+				Assertions.assertEquals(customer1, loadedCustomer.get());
+			}
+		);
+	}
+	
+	/**
+	 * In other tests {@link EclipseStoreStorage#clearData} is called. Here the datastore is restarted again to ensure
+	 * no previous method is called before the test.
+	 */
+	@Test
+	void testSaveSingleWithoutAnyPreviousCall(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	{
+		restartDatastore(this.storage);
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
 		

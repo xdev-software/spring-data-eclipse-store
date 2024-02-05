@@ -23,18 +23,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import jakarta.annotation.Nonnull;
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
@@ -42,7 +47,13 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
 
 
-public class SimpleEclipseStoreRepository<T, ID> implements EclipseStoreRepository<T, ID>
+public class SimpleEclipseStoreRepository<T, ID>
+	implements
+	EclipseStoreRepository<T, ID>,
+	EclipseStorePagingAndSortingRepositoryRepository<T, ID>,
+	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
+	EclipseStoreCrudRepository<T, ID>,
+	EclipseStoreListCrudRepository<T, ID>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleEclipseStoreRepository.class);
 	private final EclipseStoreStorage storage;

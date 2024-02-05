@@ -35,9 +35,6 @@ import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRe
 
 /**
  * Enables the user to enable EclipseStore and configure it to some extent.
- * <p>
- * Currently no configuration is possible!
- * </p>
  */
 @SuppressWarnings("unused")
 @Target(ElementType.TYPE)
@@ -55,18 +52,12 @@ public @interface EnableEclipseStoreRepositories
 	 * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation declarations e.g.:
 	 * {@code @EnableEclipseStoreRepositories("org.my.pkg")} instead of
 	 * {@code @EnableEclipseStoreRepositories(basePackages="org.my.pkg")}.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 */
 	String[] value() default {};
 	
 	/**
 	 * Base packages to scan for annotated components. {@link #value()} is an alias for (and mutually exclusive with)
 	 * this attribute. Use {@link #basePackageClasses()} for a type-safe alternative to String-based package names.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 */
 	String[] basePackages() default {};
 	
@@ -74,27 +65,18 @@ public @interface EnableEclipseStoreRepositories
 	 * Type-safe alternative to {@link #basePackages()} for specifying the packages to scan for annotated components.
 	 * The package of each class specified will be scanned. Consider creating a special no-op marker class or interface
 	 * in each package that serves no purpose other than being referenced by this attribute.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 */
 	Class<?>[] basePackageClasses() default {};
 	
 	/**
 	 * Specifies which types are eligible for component scanning. Narrows the set of candidate components from
 	 * everything in {@link #basePackages()} to everything in the base packages that matches the given filter or
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 * filters.
 	 */
 	Filter[] includeFilters() default {};
 	
 	/**
 	 * Specifies which types are not eligible for component scanning.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 */
 	Filter[] excludeFilters() default {};
 	
@@ -102,9 +84,6 @@ public @interface EnableEclipseStoreRepositories
 	 * Returns the postfix to be used when looking up custom repository implementations. Defaults to {@literal Impl} .
 	 * So for a repository named {@code PersonRepository} the corresponding implementation class will be looked up
 	 * scanning for {@code PersonRepositoryImpl}.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@literal Impl} by default.
 	 */
@@ -113,9 +92,6 @@ public @interface EnableEclipseStoreRepositories
 	/**
 	 * Configures the location of where to find the Spring Data named queries properties file. Will default to
 	 * {@code META-INFO/eclipse-store-named-queries.properties}.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return empty {@link String} by default.
 	 */
@@ -124,9 +100,6 @@ public @interface EnableEclipseStoreRepositories
 	/**
 	 * Returns the key of the {@link QueryLookupStrategy} to be used for lookup queries for query methods. Defaults to
 	 * {@link Key#CREATE_IF_NOT_FOUND}.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@link Key#CREATE_IF_NOT_FOUND} by default.
 	 */
@@ -135,9 +108,6 @@ public @interface EnableEclipseStoreRepositories
 	/**
 	 * Returns the {@link FactoryBean} class to be used for each repository instance. Defaults to
 	 * {@link EclipseStoreRepositoryFactoryBean}.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@link EclipseStoreRepositoryFactoryBean} by default.
 	 */
@@ -145,20 +115,13 @@ public @interface EnableEclipseStoreRepositories
 	
 	/**
 	 * Configure the repository base class to be used to create repository proxies for this particular configuration.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@link DefaultRepositoryBaseClass} by default.
-	 * @since 1.8
 	 */
 	Class<?> repositoryBaseClass() default DefaultRepositoryBaseClass.class;
 	
 	/**
 	 * Configures the name of the EclipseStoreTemplate bean to be used with the repositories detected.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@literal eclipse-storeTemplate} by default.
 	 */
@@ -166,9 +129,6 @@ public @interface EnableEclipseStoreRepositories
 	
 	/**
 	 * Whether to automatically create indexes for query methods defined in the repository interface.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@literal false} by default.
 	 */
@@ -177,9 +137,6 @@ public @interface EnableEclipseStoreRepositories
 	/**
 	 * Configures whether nested repository-interfaces (e.g. defined as inner classes) should be discovered by the
 	 * repositories infrastructure.
-	 * <p>
-	 * <b>This currently does nothing! Must get implemented in the future. TODO</b>
-	 * </p>
 	 *
 	 * @return {@literal false} by default.
 	 */

@@ -199,22 +199,23 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				{
 					// If the class is part of the java package, some fields are final and not changeable.
 					// These special cases are properly handled through the EclipseStore Serialization.
-					// But to prevent our system to through an error when setting a final field in the java package,
+					// But to prevent our system to throw an error when setting a final field in the java package,
 					// we use this parameter.
-					final boolean isPartOfJavaPackage = targetObject.getClass().getPackageName().startsWith("java.");
+					final boolean targetObjectIsPartOfJavaPackage =
+						targetObject.getClass().getPackageName().startsWith("java.");
 					// Something in the containingObject has changed
 					changedCollector.collectChangedObject(targetObject);
 					if(DataTypeUtil.isPrimitiveType(field.getType()))
 					{
 						if(!Objects.equals(valueOfTargetObject, valueOfSourceObject))
 						{
-							fam.writeValueOfField(targetObject, valueOfSourceObject, !isPartOfJavaPackage);
+							fam.writeValueOfField(targetObject, valueOfSourceObject, !targetObjectIsPartOfJavaPackage);
 						}
 					}
 					else if(DataTypeUtil.isPrimitiveArray(valueOfSourceObject))
 					{
 						// Copy complete Array
-						fam.writeValueOfField(targetObject, valueOfSourceObject, !isPartOfJavaPackage);
+						fam.writeValueOfField(targetObject, valueOfSourceObject, !targetObjectIsPartOfJavaPackage);
 					}
 					else if(DataTypeUtil.isObjectArray(valueOfSourceObject))
 					{
@@ -225,7 +226,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 							alreadyMergedTargets,
 							changedCollector
 						);
-						fam.writeValueOfField(targetObject, newArray, !isPartOfJavaPackage);
+						fam.writeValueOfField(targetObject, newArray, !targetObjectIsPartOfJavaPackage);
 					}
 					else
 					{
@@ -240,7 +241,10 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 						if(valueOfTargetObject != originalValueObjectOfSource)
 						{
 							// If the reference is new, it must be set
-							fam.writeValueOfField(targetObject, originalValueObjectOfSource, !isPartOfJavaPackage);
+							fam.writeValueOfField(
+								targetObject,
+								originalValueObjectOfSource,
+								!targetObjectIsPartOfJavaPackage);
 						}
 						// Merge after setting reference to avoid endless loops
 						this.mergeValues(

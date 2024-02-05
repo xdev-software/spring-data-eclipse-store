@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository;
+package software.xdev.spring.data.eclipse.store.repository.interfaces;
 
-import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 
 @NoRepositoryBean
-public interface EclipseStoreRepository<T, ID>
-	extends ListCrudRepository<T, ID>, ListPagingAndSortingRepository<T, ID>
+public interface EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>
+	extends ListPagingAndSortingRepository<T, ID>
 {
 }
