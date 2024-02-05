@@ -16,10 +16,12 @@
 package software.xdev.spring.data.eclipse.store.repository.interfaces;
 
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.repository.Repository;
 
 
 @NoRepositoryBean
-public interface EclipseStoreRepository<T, ID> extends Repository<T, ID>
+public interface EclipseStoreRepository<T, ID>
+	extends
+	EclipseStoreListCrudRepository<T, ID>,
+	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>
 {
 }

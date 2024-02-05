@@ -21,9 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
@@ -33,25 +30,22 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
  * In this example we want to coexist with Spring data JPA. This is possible by using
  * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}s instead of the generic
  * {@link org.springframework.data.repository.Repository}s of the Spring framework.
- * <p>
- * The {@code exclude} in {@link SpringBootApplication} prevents JPA from getting configured.
- * </p>
  */
-@SpringBootApplication(
-	exclude = {
-		DataSourceAutoConfiguration.class,
-		DataSourceTransactionManagerAutoConfiguration.class,
-		HibernateJpaAutoConfiguration.class
-	})
+@SpringBootApplication
 @EnableEclipseStoreRepositories
 public class JpaDemoApplication implements CommandLineRunner
 {
 	private static final Logger LOG = LoggerFactory.getLogger(JpaDemoApplication.class);
-	private final CustomerRepository customerRepository;
+	private final CustomerInEclipseStoreRepository eclipseStoreRepository;
+	private final CustomerInJpaRepository jpaRepository;
 	
-	public JpaDemoApplication(final CustomerRepository customerRepository)
+	public JpaDemoApplication(
+		final CustomerInEclipseStoreRepository eclipseStoreRepository,
+		final CustomerInJpaRepository jpaRepository
+	)
 	{
-		this.customerRepository = customerRepository;
+		this.eclipseStoreRepository = eclipseStoreRepository;
+		this.jpaRepository = jpaRepository;
 	}
 	
 	public static void main(final String[] args)
@@ -63,14 +57,35 @@ public class JpaDemoApplication implements CommandLineRunner
 	@Override
 	public void run(final String... args)
 	{
-		this.customerRepository.deleteAll();
+		this.saveEntityInEclipseStoreRepository();
+		this.saveEntityInJpaRepository();
+	}
+	
+	private void saveEntityInEclipseStoreRepository()
+	{
+		LOG.info("-------- EclipseStore-Actions --------");
+		this.eclipseStoreRepository.deleteAll();
 		
 		// save a couple of customers
-		this.customerRepository.save(new Customer("Stevie", "Nicks"));
-		this.customerRepository.save(new Customer("Mick", "Fleetwood"));
+		this.eclipseStoreRepository.save(new CustomerInEclipseStore("1", "Stevie", "Nicks"));
+		this.eclipseStoreRepository.save(new CustomerInEclipseStore("2", "Mick", "Fleetwood"));
 		
 		// fetch all customers
-		LOG.info("Customers found with findAll():");
-		this.customerRepository.findAll().forEach(c -> LOG.info(c.toString()));
+		LOG.info("Customers found with findAll() in EclipseStore:");
+		this.eclipseStoreRepository.findAll().forEach(c -> LOG.info(c.toString()));
+	}
+	
+	private void saveEntityInJpaRepository()
+	{
+		LOG.info("-------- JPA-Actions --------");
+		this.jpaRepository.deleteAll();
+		
+		// save a couple of customers
+		this.jpaRepository.save(new CustomerInJpa("1", "Stevie", "Nicks"));
+		this.jpaRepository.save(new CustomerInJpa("2", "Mick", "Fleetwood"));
+		
+		// fetch all customers
+		LOG.info("Customers found with findAll() in JPA:");
+		this.jpaRepository.findAll().forEach(c -> LOG.info(c.toString()));
 	}
 }

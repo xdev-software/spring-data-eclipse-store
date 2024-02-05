@@ -34,6 +34,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.interfac
 import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerListCrud;
 import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerListPagingAndSorting;
 import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerPagingAndSorting;
+import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerSimple;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
@@ -53,6 +54,22 @@ class SpecificInterfacesTest
 	
 	@Autowired
 	private EclipseStoreStorage storage;
+	
+	@Test
+	void testSimple()
+	{
+		final CustomerSimple customer = new CustomerSimple(TestData.FIRST_NAME, TestData.LAST_NAME);
+		this.repository.save(customer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final List<CustomerSimple> customers = this.repository.findAll();
+				Assertions.assertEquals(1, customers.size());
+				Assertions.assertEquals(customer, customers.get(0));
+			}
+		);
+	}
 	
 	@Test
 	void testCrud()
@@ -79,7 +96,7 @@ class SpecificInterfacesTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
 			() -> {
-				final List<CustomerListCrud> customers = TestUtil.iterableToList(this.listCrudRepository.findAll());
+				final List<CustomerListCrud> customers = this.listCrudRepository.findAll();
 				Assertions.assertEquals(1, customers.size());
 				Assertions.assertEquals(customer, customers.get(0));
 			}

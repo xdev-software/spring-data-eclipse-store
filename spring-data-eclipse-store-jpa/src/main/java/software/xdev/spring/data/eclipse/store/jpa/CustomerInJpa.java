@@ -1,20 +1,28 @@
 package software.xdev.spring.data.eclipse.store.jpa;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 
-public class Customer
+@Entity
+public class CustomerInJpa
 {
 	@Id
 	private String id;
 	
-	private final String firstName;
-	private final String lastName;
+	private String firstName;
+	private String lastName;
 	
-	public Customer(final String firstName, final String lastName)
+	public CustomerInJpa(final String id, final String firstName, final String lastName)
 	{
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+	
+	public CustomerInJpa()
+	{
+	
 	}
 	
 	@Override
