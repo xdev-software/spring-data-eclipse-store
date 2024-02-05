@@ -1,8 +1,8 @@
 package software.xdev.spring.data.eclipse.store.jpa;
 
-import org.springframework.data.repository.CrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 
 
-public interface CustomerRepository extends CrudRepository<Customer, String>
+public interface CustomerRepository extends EclipseStoreCrudRepository<Customer, String>
 {
 }

@@ -21,12 +21,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
-@SpringBootApplication
+/**
+ * In this example we want to coexist with Spring data JPA. This is possible by using
+ * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}s instead of the generic
+ * {@link org.springframework.data.repository.Repository}s of the Spring framework.
+ * <p>
+ * The {@code exclude} in {@link SpringBootApplication} prevents JPA from getting configured.
+ * </p>
+ */
+@SpringBootApplication(
+	exclude = {
+		DataSourceAutoConfiguration.class,
+		DataSourceTransactionManagerAutoConfiguration.class,
+		HibernateJpaAutoConfiguration.class
+	})
 @EnableEclipseStoreRepositories
 public class JpaDemoApplication implements CommandLineRunner
 {
