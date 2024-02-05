@@ -48,12 +48,10 @@ public class JpaDemoApplication implements CommandLineRunner
 {
 	private static final Logger LOG = LoggerFactory.getLogger(JpaDemoApplication.class);
 	private final CustomerRepository customerRepository;
-	private final PetRepository petRepository;
 	
-	public JpaDemoApplication(final CustomerRepository customerRepository, final PetRepository petRepository)
+	public JpaDemoApplication(final CustomerRepository customerRepository)
 	{
 		this.customerRepository = customerRepository;
-		this.petRepository = petRepository;
 	}
 	
 	public static void main(final String[] args)
@@ -74,12 +72,5 @@ public class JpaDemoApplication implements CommandLineRunner
 		// fetch all customers
 		LOG.info("Customers found with findAll():");
 		this.customerRepository.findAll().forEach(c -> LOG.info(c.toString()));
-		
-		// save a pet
-		this.petRepository.save(new Pet("Peter", 2));
-		
-		// fetch all pets
-		LOG.info("Pets found with findAll():");
-		this.petRepository.findAll().forEach(p -> LOG.info(p.toString()));
 	}
 }

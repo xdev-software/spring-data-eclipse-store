@@ -1,11 +1,11 @@
-package software.xdev.spring.data.eclipse.store.jpa.repository;
+package software.xdev.spring.data.eclipse.store.jpa.integration.repository;
 
 import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
 
 
-public class Customer
+public class PersonToTest
 {
 	@Id
 	private String id;
@@ -13,7 +13,7 @@ public class Customer
 	private final String firstName;
 	private final String lastName;
 	
-	public Customer(final String firstName, final String lastName)
+	public PersonToTest(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -30,7 +30,7 @@ public class Customer
 		{
 			return false;
 		}
-		final Customer customer = (Customer)o;
+		final PersonToTest customer = (PersonToTest)o;
 		return Objects.equals(this.id, customer.id) && Objects.equals(this.firstName, customer.firstName)
 			&& Objects.equals(this.lastName, customer.lastName);
 	}
