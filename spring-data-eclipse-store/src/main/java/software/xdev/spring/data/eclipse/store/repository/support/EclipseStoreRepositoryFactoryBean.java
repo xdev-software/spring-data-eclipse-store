@@ -19,11 +19,11 @@ import java.io.Serializable;
 
 import jakarta.annotation.Nonnull;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import org.springframework.stereotype.Component;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
@@ -31,12 +31,12 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @ComponentScan({
 	"software.xdev.spring.data.eclipse.store.repository",
 	"org.eclipse.store.integrations.spring.boot.types"})
+@Component
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {
 	private final EclipseStoreStorage storage;
 	
-	@Autowired
 	public EclipseStoreRepositoryFactoryBean(
 		final Class<? extends T> repositoryInterface,
 		final EclipseStoreStorage storage)
