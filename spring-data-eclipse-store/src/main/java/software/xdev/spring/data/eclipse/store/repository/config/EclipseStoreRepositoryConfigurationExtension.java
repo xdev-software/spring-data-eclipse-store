@@ -18,13 +18,18 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import jakarta.annotation.Nonnull;
 
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRepositoryFactoryBean;
 
 
@@ -75,6 +80,12 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	@Nonnull
 	protected Collection<Class<?>> getIdentifyingTypes()
 	{
-		return Collections.singleton(EclipseStoreRepository.class);
+		return List.of(
+			EclipseStoreRepository.class,
+			EclipseStorePagingAndSortingRepositoryRepository.class,
+			EclipseStoreListPagingAndSortingRepositoryRepository.class,
+			EclipseStoreCrudRepository.class,
+			EclipseStoreListCrudRepository.class
+		);
 	}
 }
