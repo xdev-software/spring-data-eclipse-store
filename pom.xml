@@ -5,8 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>software.xdev</groupId>
-	<artifactId>standard-maven-template-root</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>spring-data-eclipse-store-root</artifactId>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<organization>
@@ -15,8 +15,10 @@
 	</organization>
 
 	<modules>
-		<module>standard-maven-template</module>
-		<module>standard-maven-template-demo</module>
+		<module>spring-data-eclipse-store</module>
+		<module>spring-data-eclipse-store-demo</module>
+		<module>spring-data-eclipse-store-benchmark</module>
+		<module>spring-data-eclipse-store-jpa</module>
 	</modules>
 
 	<licenses>
