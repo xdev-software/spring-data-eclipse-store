@@ -67,11 +67,12 @@ After adding the library in your dependencies, using it is as easy as adding the
 
 ## Demo
 
-To see how easy it is to implement EclipseStore in your Spring project, take a look at the two
+To see how easy it is to implement EclipseStore in your Spring project, take a look at the three
 [demos](./spring-data-eclipse-store-demo):<br/>
-A [simple](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple)
-and a
-more [complex demo](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex).
+A [simple](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple), a
+more [complex demo](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
+and
+a [demo with coexisting JPA](./spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa).
 
 > [!NOTE]  
 > Since the library is using reflection to copy data, the following JVM-Arguments may have to be set:
