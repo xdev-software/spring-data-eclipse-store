@@ -26,6 +26,7 @@ import org.springframework.data.repository.config.RepositoryConfigurationExtensi
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCustomRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
@@ -82,6 +83,7 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	{
 		return List.of(
 			EclipseStoreRepository.class,
+			EclipseStoreCustomRepository.class,
 			EclipseStorePagingAndSortingRepositoryRepository.class,
 			EclipseStoreListPagingAndSortingRepositoryRepository.class,
 			EclipseStoreCrudRepository.class,
