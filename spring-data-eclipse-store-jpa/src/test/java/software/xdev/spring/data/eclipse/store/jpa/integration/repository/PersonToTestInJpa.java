@@ -2,21 +2,28 @@ package software.xdev.spring.data.eclipse.store.jpa.integration.repository;
 
 import java.util.Objects;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 
-public class PersonToTest
+@Entity
+public class PersonToTestInJpa
 {
 	@Id
 	private String id;
 	
-	private final String firstName;
-	private final String lastName;
+	private String firstName;
+	private String lastName;
 	
-	public PersonToTest(final String firstName, final String lastName)
+	public PersonToTestInJpa(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+	
+	public PersonToTestInJpa()
+	{
+	
 	}
 	
 	@Override
@@ -30,7 +37,7 @@ public class PersonToTest
 		{
 			return false;
 		}
-		final PersonToTest customer = (PersonToTest)o;
+		final PersonToTestInJpa customer = (PersonToTestInJpa)o;
 		return Objects.equals(this.id, customer.id) && Objects.equals(this.firstName, customer.firstName)
 			&& Objects.equals(this.lastName, customer.lastName);
 	}

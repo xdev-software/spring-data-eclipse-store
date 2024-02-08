@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -28,7 +29,9 @@ import org.springframework.util.FileSystemUtils;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
+
 @Configuration
+@ComponentScan("software.xdev.spring.data.eclipse.store.importer")
 @EnableEclipseStoreRepositories
 public class TestConfiguration implements DisposableBean
 {
