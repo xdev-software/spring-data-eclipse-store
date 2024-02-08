@@ -158,6 +158,7 @@ public class EclipseStoreStorage
 		final Class<T> clazz,
 		final Iterable<T> entitiesToStore)
 	{
+		this.ensureEntitiesInRoot();
 		final Collection<Object> entitiesAndPossiblyNonEntitiesToStore =
 			this.collectRootEntitiesToStore(clazz, entitiesToStore);
 		entitiesAndPossiblyNonEntitiesToStore.addAll(nonEntitiesToStore);
@@ -205,6 +206,7 @@ public class EclipseStoreStorage
 	
 	public synchronized <T> void delete(final Class<T> clazz, final T objectToRemove)
 	{
+		this.ensureEntitiesInRoot();
 		final List<IdentitySet<Object>> entityLists =
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		entityLists.forEach(entityList ->
@@ -239,6 +241,7 @@ public class EclipseStoreStorage
 	
 	public synchronized void clearData()
 	{
+		this.ensureEntitiesInRoot();
 		this.root = new Root();
 		final StorageManager instanceOfstorageManager = this.getInstanceOfStorageManager();
 		this.initRoot();
@@ -273,6 +276,7 @@ public class EclipseStoreStorage
 	@SuppressWarnings("unchecked")
 	public <T> IdSetter<T> ensureIdSetter(final Class<T> domainClass)
 	{
+		this.ensureEntitiesInRoot();
 		return (IdSetter<T>)this.entityClassToIdSetter.computeIfAbsent(
 			domainClass,
 			clazz ->
