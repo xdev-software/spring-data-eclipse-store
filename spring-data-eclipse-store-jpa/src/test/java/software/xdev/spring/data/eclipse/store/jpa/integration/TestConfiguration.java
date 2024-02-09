@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.jpa;
+package software.xdev.spring.data.eclipse.store.jpa.integration;
 
 import java.nio.file.Path;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -28,8 +31,12 @@ import org.springframework.util.FileSystemUtils;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
+
 @Configuration
+@ComponentScan("software.xdev.spring.data.eclipse.store.importer")
 @EnableEclipseStoreRepositories
+@SpringBootConfiguration
+@EnableAutoConfiguration
 public class TestConfiguration implements DisposableBean
 {
 	@Autowired

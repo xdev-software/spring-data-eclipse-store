@@ -227,7 +227,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public long count()
 	{
-		return this.storage.getEntityList(this.domainClass).size();
+		return this.storage.getEntityCount(this.domainClass);
 	}
 	
 	@Override

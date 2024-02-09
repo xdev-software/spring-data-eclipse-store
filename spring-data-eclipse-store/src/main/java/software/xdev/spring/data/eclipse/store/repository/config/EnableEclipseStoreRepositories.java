@@ -43,6 +43,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRe
 @Inherited
 @Import(EclipseStoreRepositoriesRegistrar.class)
 @ComponentScan({
+	"software.xdev.spring.data.eclipse.store.importer",
 	"software.xdev.spring.data.eclipse.store.repository",
 	"org.eclipse.store.integrations.spring.boot.types"})
 public @interface EnableEclipseStoreRepositories

@@ -32,7 +32,6 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
@@ -60,7 +59,6 @@ public class EclipseStoreStorage
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
 	private RepositorySynchronizer repositorySynchronizer;
 	
-	@Autowired
 	public EclipseStoreStorage(
 		final EclipseStoreProperties storeConfiguration,
 		final EclipseStoreProvider storeProvider)
@@ -138,6 +136,13 @@ public class EclipseStoreStorage
 			throw new AlreadyRegisteredException(entityName);
 		}
 		this.entityClassToRepositoryName.put(classToRegister, entityName);
+		
+		// If the storage is running and a new entity is registered, we need to stop the storage to restart
+		// again with the registered entity.
+		if(this.storageManager != null)
+		{
+			this.stop();
+		}
 	}
 	
 	private <T> String getEntityName(final Class<T> classToRegister)
@@ -153,11 +158,21 @@ public class EclipseStoreStorage
 		return (IdentitySet<T>)this.root.getEntityLists().get(this.getEntityName(clazz));
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized <T> long getEntityCount(final Class<T> clazz)
+	{
+		this.ensureEntitiesInRoot();
+		final IdentitySet<T> entityList = (IdentitySet<T>)this.root.getEntityLists().get(this.getEntityName(clazz));
+		return entityList == null ? 0 : entityList.size();
+	}
+	
 	public synchronized <T> void store(
 		final Collection<Object> nonEntitiesToStore,
 		final Class<T> clazz,
 		final Iterable<T> entitiesToStore)
 	{
+		this.ensureEntitiesInRoot();
 		final Collection<Object> entitiesAndPossiblyNonEntitiesToStore =
 			this.collectRootEntitiesToStore(clazz, entitiesToStore);
 		entitiesAndPossiblyNonEntitiesToStore.addAll(nonEntitiesToStore);
@@ -205,6 +220,7 @@ public class EclipseStoreStorage
 	
 	public synchronized <T> void delete(final Class<T> clazz, final T objectToRemove)
 	{
+		this.ensureEntitiesInRoot();
 		final List<IdentitySet<Object>> entityLists =
 			this.entitySetCollector.getRelatedIdentitySets(clazz);
 		entityLists.forEach(entityList ->
@@ -239,6 +255,7 @@ public class EclipseStoreStorage
 	
 	public synchronized void clearData()
 	{
+		this.ensureEntitiesInRoot();
 		this.root = new Root();
 		final StorageManager instanceOfstorageManager = this.getInstanceOfStorageManager();
 		this.initRoot();
@@ -273,6 +290,7 @@ public class EclipseStoreStorage
 	@SuppressWarnings("unchecked")
 	public <T> IdSetter<T> ensureIdSetter(final Class<T> domainClass)
 	{
+		this.ensureEntitiesInRoot();
 		return (IdSetter<T>)this.entityClassToIdSetter.computeIfAbsent(
 			domainClass,
 			clazz ->
