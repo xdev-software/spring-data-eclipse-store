@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.metamodel.EntityType;
 
@@ -43,17 +44,24 @@ public class EclipseStoreDataImporter
 		this.eclipseStoreStorage = eclipseStoreStorage;
 	}
 	
+	@SuppressWarnings("java:S1452")
 	public List<SimpleEclipseStoreRepository<?, ?>> importData(final EntityManagerFactory... entityManagerFactories)
 	{
 		return this.importData(Arrays.stream(entityManagerFactories));
 	}
 	
-	public List<SimpleEclipseStoreRepository<?, ?>> importData(final Iterable<EntityManagerFactory> entityManagerFactories)
+	@SuppressWarnings("java:S1452")
+	public List<SimpleEclipseStoreRepository<?, ?>> importData(
+		final Iterable<EntityManagerFactory> entityManagerFactories
+	)
 	{
 		return this.importData(StreamSupport.stream(entityManagerFactories.spliterator(), false));
 	}
 	
-	public List<SimpleEclipseStoreRepository<?, ?>> importData(final Stream<EntityManagerFactory> entityManagerFactories)
+	@SuppressWarnings({"java:S1452", "java:S6204"})
+	public List<SimpleEclipseStoreRepository<?, ?>> importData(
+		final Stream<EntityManagerFactory> entityManagerFactories
+	)
 	{
 		LOG.info("Start importing data from JPA Repositories to EclipseStore...");
 		
@@ -62,7 +70,7 @@ public class EclipseStoreDataImporter
 			entityManagerFactories
 				.map(this::createEclipseStoreRepositoriesFromEntityManager)
 				.toList();
-		LOG.info(String.format("Found %d repositories to export data from.", allRepositories.size()));
+		LOG.info("Found {} repositories to export data from.", allRepositories.size());
 		
 		// Now copy the data
 		allRepositories.forEach(
@@ -89,28 +97,33 @@ public class EclipseStoreDataImporter
 	{
 		final String className = classRepositoryPair.domainClass.getName();
 		
-		LOG.info(String.format("Loading entities of %s...", className));
-		final List<T> existingEntitiesToExport =
-			entityManagerFactoryRepositoryListPair.entityManagerFactory.createEntityManager()
-				.createQuery("SELECT c FROM " + className + " c")
-				.getResultList();
-		LOG.info(String.format(
-			"Loaded %d entities of type %s to export.",
-			existingEntitiesToExport.size(),
-			className
-		));
-		
-		LOG.info(String.format(
-			"Saving %d entities of type %s to the EclipseStore Repository...",
-			existingEntitiesToExport.size(),
-			className
-		));
-		classRepositoryPair.repository.saveAll(existingEntitiesToExport);
-		LOG.info(String.format(
-			"Done saving entities of type %s. The EclipseStore now holds %d entities of that type.",
-			className,
-			classRepositoryPair.repository.count()
-		));
+		LOG.info("Loading entities of {}...", className);
+		try(final EntityManager entityManager =
+			entityManagerFactoryRepositoryListPair.entityManagerFactory.createEntityManager())
+		{
+			final List<T> existingEntitiesToExport =
+				entityManager
+					.createQuery("SELECT c FROM " + className + " c", classRepositoryPair.domainClass)
+					.getResultList();
+			
+			LOG.info(
+				"Loaded {} entities of type {} to export.",
+				existingEntitiesToExport.size(),
+				className
+			);
+			
+			LOG.info(
+				"Saving {} entities of type {} to the EclipseStore Repository...",
+				existingEntitiesToExport.size(),
+				className
+			);
+			classRepositoryPair.repository.saveAll(existingEntitiesToExport);
+			LOG.info(
+				"Done saving entities of type {}. The EclipseStore now holds {} entities of that type.",
+				className,
+				classRepositoryPair.repository.count()
+			);
+		}
 	}
 	
 	private EntityManagerFactoryRepositoryListPair createEclipseStoreRepositoriesFromEntityManager(
