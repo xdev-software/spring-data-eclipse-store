@@ -153,6 +153,15 @@ public class EclipseStoreStorage
 		return (IdentitySet<T>)this.root.getEntityLists().get(this.getEntityName(clazz));
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized <T> long getEntityCount(final Class<T> clazz)
+	{
+		this.ensureEntitiesInRoot();
+		final IdentitySet<T> entityList = (IdentitySet<T>)this.root.getEntityLists().get(this.getEntityName(clazz));
+		return entityList == null ? 0 : entityList.size();
+	}
+	
 	public synchronized <T> void store(
 		final Collection<Object> nonEntitiesToStore,
 		final Class<T> clazz,

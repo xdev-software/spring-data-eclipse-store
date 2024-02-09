@@ -60,7 +60,7 @@ public class IntegrationTest
 	@Test
 	void testEclipseStoreImport()
 	{
-		final PersonToTestInJpa customer = new PersonToTestInJpa("", "");
+		final PersonToTestInJpa customer = new PersonToTestInJpa("1", "", "");
 		this.personToTestInJpaRepository.save(customer);
 		
 		final List<SimpleEclipseStoreRepository<?, ?>> simpleEclipseStoreRepositories =

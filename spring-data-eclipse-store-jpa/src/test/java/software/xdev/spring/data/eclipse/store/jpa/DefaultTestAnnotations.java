@@ -28,8 +28,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
-
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -37,7 +35,6 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 @ContextConfiguration(classes = {TestConfiguration.class})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @TestPropertySource("/application.properties")
-@EnableEclipseStoreRepositories
 public @interface DefaultTestAnnotations
 {
 }

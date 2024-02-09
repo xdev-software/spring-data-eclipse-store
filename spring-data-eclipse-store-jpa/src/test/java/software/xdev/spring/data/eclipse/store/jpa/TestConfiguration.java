@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -33,6 +35,8 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 @Configuration
 @ComponentScan("software.xdev.spring.data.eclipse.store.importer")
 @EnableEclipseStoreRepositories
+@SpringBootConfiguration
+@EnableAutoConfiguration
 public class TestConfiguration implements DisposableBean
 {
 	@Autowired

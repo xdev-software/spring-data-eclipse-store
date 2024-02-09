@@ -15,8 +15,9 @@ public class PersonToTestInJpa
 	private String firstName;
 	private String lastName;
 	
-	public PersonToTestInJpa(final String firstName, final String lastName)
+	public PersonToTestInJpa(final String id, final String firstName, final String lastName)
 	{
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
