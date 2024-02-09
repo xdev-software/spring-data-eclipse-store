@@ -1,3 +1,7 @@
+# 1.0.3
+
+* Added the EclipseStoreDataImporter to import data from JPA repositories.
+
 # 1.0.2
 
 * Added the EclipseStoreCustomRepository which has no methods defined at all.
