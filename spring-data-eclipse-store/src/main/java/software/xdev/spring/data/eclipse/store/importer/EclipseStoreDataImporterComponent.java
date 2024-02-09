@@ -56,7 +56,7 @@ public class EclipseStoreDataImporterComponent
 	 *
 	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
 	 */
-	public List<SimpleEclipseStoreRepository<?,?>> importData()
+	public List<SimpleEclipseStoreRepository<?, ?>> importData()
 	{
 		final Map<String, EntityManagerFactory> beansOfEms =
 			this.applicationContext.getBeansOfType(EntityManagerFactory.class);
