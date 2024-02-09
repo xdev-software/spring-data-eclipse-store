@@ -34,6 +34,9 @@ import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseS
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 
 
+/**
+ * Imports entities from {@link EntityManagerFactory}s into the EclipseStore storage.
+ */
 public class EclipseStoreDataImporter
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreDataImporter.class);
@@ -44,12 +47,39 @@ public class EclipseStoreDataImporter
 		this.eclipseStoreStorage = eclipseStoreStorage;
 	}
 	
+	/**
+	 * Imports entities from all given {@link EntityManagerFactory}s that are available into the EclipseStore storage.
+	 * <p>
+	 * This should be done only once. Otherwise entities may be imported multiple times.
+	 * </p>
+	 * <p>
+	 * After importing all the entities, the existing repositories should be converted to
+	 * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}.
+	 * </p>
+	 *
+	 * @param entityManagerFactories which are searched for entities
+	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
+	 */
 	@SuppressWarnings("java:S1452")
 	public List<SimpleEclipseStoreRepository<?, ?>> importData(final EntityManagerFactory... entityManagerFactories)
 	{
 		return this.importData(Arrays.stream(entityManagerFactories));
 	}
 	
+	/**
+	 * Imports entities from all given {@link EntityManagerFactory}s that are available into the EclipseStore storage.
+	 * <p>
+	 * This should be done only once. Otherwise entities may be imported multiple times.
+	 * </p>
+	 * <p>
+	 * After importing all the entities, the existing repositories should be converted to
+	 * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}.
+	 * </p>
+	 *
+	 * @param entityManagerFactories which are searched for entities
+	 *
+	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
+	 */
 	@SuppressWarnings("java:S1452")
 	public List<SimpleEclipseStoreRepository<?, ?>> importData(
 		final Iterable<EntityManagerFactory> entityManagerFactories
@@ -58,6 +88,20 @@ public class EclipseStoreDataImporter
 		return this.importData(StreamSupport.stream(entityManagerFactories.spliterator(), false));
 	}
 	
+	/**
+	 * Imports entities from all given {@link EntityManagerFactory}s that are available into the EclipseStore storage.
+	 * <p>
+	 * This should be done only once. Otherwise entities may be imported multiple times.
+	 * </p>
+	 * <p>
+	 * After importing all the entities, the existing repositories should be converted to
+	 * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}.
+	 * </p>
+	 *
+	 * @param entityManagerFactories which are searched for entities
+	 *
+	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
+	 */
 	@SuppressWarnings({"java:S1452", "java:S6204"})
 	public List<SimpleEclipseStoreRepository<?, ?>> importData(
 		final Stream<EntityManagerFactory> entityManagerFactories
@@ -78,7 +122,8 @@ public class EclipseStoreDataImporter
 				entityManagerFactoryRepositoryListPair
 					.classRepositoryPairs
 					.forEach(
-						classRepositoryPair -> copyData(entityManagerFactoryRepositoryListPair, classRepositoryPair)
+						classRepositoryPair ->
+							this.copyData(entityManagerFactoryRepositoryListPair, classRepositoryPair)
 					)
 		);
 		LOG.info("Done importing data from JPA Repositories to EclipseStore.");
@@ -91,7 +136,7 @@ public class EclipseStoreDataImporter
 			.collect(Collectors.toList());
 	}
 	
-	private static <T> void copyData(
+	private <T> void copyData(
 		final EntityManagerFactoryRepositoryListPair entityManagerFactoryRepositoryListPair,
 		final ClassRepositoryPair<T> classRepositoryPair)
 	{
@@ -103,7 +148,10 @@ public class EclipseStoreDataImporter
 		{
 			final List<T> existingEntitiesToExport =
 				entityManager
-					.createQuery("SELECT c FROM " + className + " c", classRepositoryPair.domainClass)
+					.createQuery(
+						"SELECT c FROM " + className + " c",
+						classRepositoryPair.domainClass
+					)
 					.getResultList();
 			
 			LOG.info(

@@ -23,16 +23,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.importer.EclipseStoreDataImporterComponent;
-import software.xdev.spring.data.eclipse.store.jpa.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInEclipseStore;
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInJpa;
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInJpaRepository;
+import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 
 
 @DefaultTestAnnotations
-public class IntegrationTest
+class IntegrationTest
 {
 	@Autowired
 	private PersonToTestInEclipseStoreRepository personToTestInEclipseStoreRepository;
@@ -42,6 +42,9 @@ public class IntegrationTest
 	
 	@Autowired
 	private EclipseStoreDataImporterComponent eclipseStoreDataImporter;
+	
+	@Autowired
+	private EclipseStoreStorage eclipseStoreStorage;
 	
 	/**
 	 * Super simple test if there are any start-up errors when running parallel to a JPA configuration
@@ -68,5 +71,21 @@ public class IntegrationTest
 		Assertions.assertEquals(1, simpleEclipseStoreRepositories.size());
 		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
 		Assertions.assertEquals(1, allEntities.size());
+		
+		this.eclipseStoreStorage.stop();
+		Assertions.assertEquals(
+			1,
+			this.eclipseStoreStorage.getEntityCount(PersonToTestInJpa.class),
+			"After restart the imported entities are not there anymore.");
+	}
+	
+	@Test
+	void testEclipseStoreEmptyImport()
+	{
+		final List<SimpleEclipseStoreRepository<?, ?>> simpleEclipseStoreRepositories =
+			this.eclipseStoreDataImporter.importData();
+		Assertions.assertEquals(1, simpleEclipseStoreRepositories.size());
+		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
+		Assertions.assertEquals(0, allEntities.size());
 	}
 }

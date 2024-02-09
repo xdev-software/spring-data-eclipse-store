@@ -32,7 +32,6 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
@@ -60,7 +59,6 @@ public class EclipseStoreStorage
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
 	private RepositorySynchronizer repositorySynchronizer;
 	
-	@Autowired
 	public EclipseStoreStorage(
 		final EclipseStoreProperties storeConfiguration,
 		final EclipseStoreProvider storeProvider)
@@ -138,6 +136,13 @@ public class EclipseStoreStorage
 			throw new AlreadyRegisteredException(entityName);
 		}
 		this.entityClassToRepositoryName.put(classToRegister, entityName);
+		
+		// If the storage is running and a new entity is registered, we need to stop the storage to restart
+		// again with the registered entity.
+		if(this.storageManager != null)
+		{
+			this.stop();
+		}
 	}
 	
 	private <T> String getEntityName(final Class<T> classToRegister)

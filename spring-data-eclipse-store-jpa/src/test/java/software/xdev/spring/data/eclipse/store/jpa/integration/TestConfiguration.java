@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.jpa;
+package software.xdev.spring.data.eclipse.store.jpa.integration;
 
 import java.nio.file.Path;
 

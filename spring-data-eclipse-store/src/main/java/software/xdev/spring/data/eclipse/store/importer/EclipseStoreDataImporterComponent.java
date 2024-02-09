@@ -27,6 +27,9 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 
 
+/**
+ * Imports entities from {@link EntityManagerFactory}s into the EclipseStore storage.
+ */
 @Component
 public class EclipseStoreDataImporterComponent
 {
@@ -41,6 +44,18 @@ public class EclipseStoreDataImporterComponent
 		this.applicationContext = applicationContext;
 	}
 	
+	/**
+	 * Imports entities from all {@link EntityManagerFactory}s that are available into the EclipseStore storage.
+	 * <p>
+	 * This should be done only once. Otherwise entities may be imported multiple times.
+	 * </p>
+	 * <p>
+	 * After importing all the entities, the existing repositories should be converted to
+	 * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}.
+	 * </p>
+	 *
+	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
+	 */
 	public List<SimpleEclipseStoreRepository<?,?>> importData()
 	{
 		final Map<String, EntityManagerFactory> beansOfEms =
