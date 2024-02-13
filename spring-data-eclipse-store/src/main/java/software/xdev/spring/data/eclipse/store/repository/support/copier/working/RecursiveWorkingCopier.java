@@ -19,6 +19,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -253,12 +256,23 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 								originalValueObjectOfSource,
 								!targetObjectIsPartOfJavaPackage);
 						}
-						// Merge after setting reference to avoid endless loops
-						this.mergeValues(
-							valueOfSourceObject,
-							originalValueObjectOfSource,
-							alreadyMergedTargets,
-							changedCollector);
+						
+						if(this.isSpecialCaseWhereOnlyAFullCopyWorks(valueOfSourceObject))
+						{
+							fam.writeValueOfField(
+								targetObject,
+								this.onlyCreateCopy(valueOfSourceObject, true),
+								!targetObjectIsPartOfJavaPackage);
+						}
+						else
+						{
+							// Merge after setting reference to avoid endless loops
+							this.mergeValues(
+								valueOfSourceObject,
+								originalValueObjectOfSource,
+								alreadyMergedTargets,
+								changedCollector);
+						}
 					}
 				}
 			}
@@ -267,6 +281,21 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			throw new MergeFailedException(sourceObject, targetObject, e);
 		}
+	}
+	
+	/**
+	 * Super special case for HashMap or similar java-classes which can't be merged nicely. Thus, we make a simple copy
+	 * of the whole object.
+	 */
+	private boolean isSpecialCaseWhereOnlyAFullCopyWorks(final Object valueOfSourceObject)
+	{
+		return
+			valueOfSourceObject != null
+				&& (
+				valueOfSourceObject.getClass().isAssignableFrom(HashMap.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(LinkedHashMap.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(Hashtable.class)
+			);
 	}
 	
 	@SuppressWarnings("unchecked")

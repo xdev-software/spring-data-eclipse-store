@@ -21,7 +21,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,8 +126,6 @@ class TypesTest
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)
-	// TODO: Fix this.
-	@Disabled("Is not fixed yet, but will be.")
 	<T extends ComplexObject<?>> void doubleStoreSameEntityWithChange(
 		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
 		final Function<Integer, T> objectCreator,
