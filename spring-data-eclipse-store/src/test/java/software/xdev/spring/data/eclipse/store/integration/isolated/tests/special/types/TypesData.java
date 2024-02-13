@@ -22,16 +22,19 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -198,6 +201,16 @@ public final class TypesData
 					object -> object.getValue().remove("1")
 				),
 				new TestArguments<>(
+					ListRepository.class,
+					id -> new ListDaoObject(id, new Vector<>(Set.of("1"))),
+					object -> object.getValue().remove("1")
+				),
+				new TestArguments<>(
+					ListRepository.class,
+					id -> new ListDaoObject(id, Collections.emptyList()),
+					object -> object.setValue(List.of("1"))
+				),
+				new TestArguments<>(
 					LocalDateRepository.class,
 					id -> new LocalDateDaoObject(id, LocalDate.of(2000, 1, 1)),
 					object -> object.getValue().plusDays(1)
@@ -255,6 +268,21 @@ public final class TypesData
 				new TestArguments<>(
 					MapRepository.class,
 					id -> new MapDaoObject(id, new LinkedHashMap<>(Map.of("1", "1", "2", "2"))),
+					set -> set.getValue().put("3", "3")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new Hashtable<>()),
+					set -> set.getValue().put("1", "1")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new Hashtable<>(Map.of("1", "1"))),
+					set -> set.getValue().put("2", "2")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new Hashtable<>(Map.of("1", "1", "2", "2"))),
 					set -> set.getValue().put("3", "3")
 				),
 				new TestArguments<>(
