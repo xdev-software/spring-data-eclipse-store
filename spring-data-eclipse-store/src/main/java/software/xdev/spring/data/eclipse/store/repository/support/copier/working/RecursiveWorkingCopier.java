@@ -160,17 +160,24 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			// alreadyMergedTargets prevent endless loops
 			return;
 		}
-		alreadyMergedTargets.collectMergedTarget(targetObject);
-		
-		if(sourceObject instanceof String)
+		try
 		{
-			// no merge needed and no merge possible
-			return;
+			alreadyMergedTargets.collectMergedTarget(targetObject);
+			
+			if(sourceObject instanceof String)
+			{
+				// no merge needed and no merge possible
+				return;
+			}
+			AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
+				field ->
+					this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
+			);
 		}
-		AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
-			field ->
-				this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
-		);
+		catch(final Exception e)
+		{
+			throw new MergeFailedException(sourceObject, targetObject, e);
+		}
 	}
 	
 	private <E> void mergeValueOfField(

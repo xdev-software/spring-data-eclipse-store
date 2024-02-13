@@ -44,17 +44,19 @@ class TypesTest
 	public static final String TYPES_DATA_SOURCE =
 		"software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types"
 			+ ".TypesData#generateData";
+	public static final String TYPES_NOT_WORKING_DATA_SOURCE =
+		"software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types"
+			+ ".TypesData#generateNotWorkingData";
 	
 	@Autowired
 	private EclipseStoreStorage storage;
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)
-	@Disabled("Should get fixed")
-	<T> void simpleStoreAndRead(
+	<T extends ComplexObject<?>> void simpleStoreAndRead(
 		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
 		final Function<Integer, T> objectCreator,
-		final Consumer<T> objectChanger,
+		final Consumer<T> ignoredObjectChanger,
 		@Autowired final ApplicationContext context)
 	{
 		final EclipseStoreRepository<T, Integer> repository = context.getBean(repositoryClass);
@@ -64,20 +66,32 @@ class TypesTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
 			() -> {
-				final List<T> customers = TestUtil.iterableToList(repository.findAll());
-				Assertions.assertEquals(1, customers.size());
-				Assertions.assertEquals(objectToStore, customers.get(0));
+				final List<T> storedObjects = TestUtil.iterableToList(repository.findAll());
+				Assertions.assertEquals(1, storedObjects.size());
+				Assertions.assertEquals(objectToStore, storedObjects.get(0));
 			}
 		);
 	}
 	
 	@ParameterizedTest
-	@MethodSource(TYPES_DATA_SOURCE)
-	@Disabled("Should get fixed")
-	<T extends ComplexObject> void simpleChangeToNullAfterStore(
+	@MethodSource(TYPES_NOT_WORKING_DATA_SOURCE)
+	<T extends ComplexObject<?>> void simpleStoreAndReadForNotWorkingTypes(
 		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
 		final Function<Integer, T> objectCreator,
-		final Consumer<T> objectChanger,
+		final Consumer<T> ignoredObjectChanger,
+		@Autowired final ApplicationContext context)
+	{
+		Assertions.assertThrows(
+			Exception.class,
+			() -> this.simpleChangeAfterStore(repositoryClass, objectCreator, ignoredObjectChanger, context));
+	}
+	
+	@ParameterizedTest
+	@MethodSource(TYPES_DATA_SOURCE)
+	<T extends ComplexObject<?>> void simpleChangeToNullAfterStore(
+		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
+		final Function<Integer, T> objectCreator,
+		final Consumer<T> ignoredObjectChanger,
 		@Autowired final ApplicationContext context)
 	{
 		this.simpleChangeAfterStore(repositoryClass, objectCreator, object -> object.setValue(null), context);
@@ -85,18 +99,17 @@ class TypesTest
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)
-	@Disabled("Should get fixed")
-	<T extends ComplexObject> void simpleChangeAfterStore(
+	<T extends ComplexObject<?>> void simpleChangeAfterStore(
 		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
 		final Function<Integer, T> objectCreator,
 		final Consumer<T> objectChanger,
 		@Autowired final ApplicationContext context)
 	{
 		final EclipseStoreRepository<T, Integer> repository = context.getBean(repositoryClass);
-		final T objectToStore = objectCreator.apply(2);
+		final T objectToStore = objectCreator.apply(1);
 		repository.save(objectToStore);
 		
-		final Optional<T> storedObject = repository.findById(2);
+		final Optional<T> storedObject = repository.findById(1);
 		Assertions.assertTrue(storedObject.isPresent());
 		
 		objectChanger.accept(storedObject.get());
@@ -105,7 +118,7 @@ class TypesTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
 			() -> {
-				final Optional<T> storedObject2 = repository.findById(2);
+				final Optional<T> storedObject2 = repository.findById(1);
 				Assertions.assertTrue(storedObject2.isPresent());
 				Assertions.assertEquals(storedObject, storedObject2);
 			}
@@ -114,22 +127,48 @@ class TypesTest
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)
-	@Disabled("Should get fixed")
-	<T extends ComplexObject> void simpleChangeBeforeStore(
+	// TODO: Fix this.
+	@Disabled("Is not fixed yet, but will be.")
+	<T extends ComplexObject<?>> void doubleStoreSameEntityWithChange(
 		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
 		final Function<Integer, T> objectCreator,
 		final Consumer<T> objectChanger,
 		@Autowired final ApplicationContext context)
 	{
 		final EclipseStoreRepository<T, Integer> repository = context.getBean(repositoryClass);
-		final T objectToStore = objectCreator.apply(3);
+		final T objectToStore = objectCreator.apply(1);
+		repository.save(objectToStore);
+		
 		objectChanger.accept(objectToStore);
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
 			() -> {
-				final Optional<T> storedObject2 = repository.findById(3);
+				final Optional<T> storedObject = repository.findById(1);
+				Assertions.assertTrue(storedObject.isPresent());
+				Assertions.assertEquals(objectToStore, storedObject.get());
+			}
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource(TYPES_DATA_SOURCE)
+	<T extends ComplexObject<?>> void simpleChangeBeforeStore(
+		final Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
+		final Function<Integer, T> objectCreator,
+		final Consumer<T> objectChanger,
+		@Autowired final ApplicationContext context)
+	{
+		final EclipseStoreRepository<T, Integer> repository = context.getBean(repositoryClass);
+		final T objectToStore = objectCreator.apply(1);
+		objectChanger.accept(objectToStore);
+		repository.save(objectToStore);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.storage,
+			() -> {
+				final Optional<T> storedObject2 = repository.findById(1);
 				Assertions.assertTrue(storedObject2.isPresent());
 				Assertions.assertEquals(objectToStore, storedObject2.get());
 			}

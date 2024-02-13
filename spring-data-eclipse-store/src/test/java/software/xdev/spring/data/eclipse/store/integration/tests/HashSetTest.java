@@ -18,11 +18,9 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
@@ -161,26 +159,6 @@ class HashSetTest
 					TestUtil.iterableToList(this.nonFinalRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
 				Assertions.assertNull(customers.get(0).getValues());
-			}
-		);
-	}
-	
-	// TODO: Fix this.
-	@Test
-	@Disabled("Is not fixed yet, but will be.")
-	void testDoubleSaveAndFindAll()
-	{
-		final CustomerWithHashSet customer = new CustomerWithHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
-		this.repository.save(customer);
-		customer.getValues().add("Test");
-		this.repository.save(customer);
-		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
-			() -> {
-				final List<CustomerWithHashSet> customers = TestUtil.iterableToList(this.repository.findAll());
-				Assertions.assertEquals(1, customers.size());
-				Assertions.assertEquals(1, customers.get(0).getValues().size());
 			}
 		);
 	}

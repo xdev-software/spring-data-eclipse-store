@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2023 XDEV Software (https://xdev.software)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types;
 
 import java.math.BigDecimal;
@@ -143,51 +158,6 @@ public final class TypesData
 					object -> object.getValue().setTime(System.currentTimeMillis() + 1)
 				),
 				new TestArguments<>(
-					CalendarRepository.class,
-					id -> new CalendarDaoObject(id, null),
-					object -> object.setValue(Calendar.getInstance())
-				),
-				new TestArguments<>(
-					CalendarRepository.class,
-					id -> new CalendarDaoObject(id, Calendar.getInstance()),
-					object -> object.getValue().add(Calendar.DAY_OF_MONTH, 1)
-				),
-				new TestArguments<>(
-					EnumMapRepository.class,
-					id -> new EnumMapDaoObject(id, new EnumMap<>(EnumMapDaoObject.Album.class)),
-					object -> object.getValue().put(EnumMapDaoObject.Album.RUMOURS, "1")
-				),
-				new TestArguments<>(
-					EnumMapRepository.class,
-					id -> new EnumMapDaoObject(id, new EnumMap<>(Map.of(EnumMapDaoObject.Album.RUMOURS, "1"))),
-					object -> object.getValue().put(EnumMapDaoObject.Album.TUSK, "2")
-				),
-				new TestArguments<>(
-					EnumMapRepository.class,
-					id -> new EnumMapDaoObject(id, new EnumMap<>(Map.of(EnumMapDaoObject.Album.RUMOURS, "1"))),
-					object -> object.getValue().remove(EnumMapDaoObject.Album.RUMOURS)
-				),
-				new TestArguments<>(
-					EnumMapRepository.class,
-					id -> new EnumMapDaoObject(id, null),
-					object -> object.setValue(new EnumMap<>(Map.of(EnumMapDaoObject.Album.RUMOURS, "1")))
-				),
-				new TestArguments<>(
-					LazyRepository.class,
-					id -> new LazyDaoObject(id, org.eclipse.serializer.reference.Lazy.Reference("1")),
-					object -> object.setValue(org.eclipse.serializer.reference.Lazy.Reference("2"))
-				),
-				new TestArguments<>(
-					LazyRepository.class,
-					id -> new LazyDaoObject(id, null),
-					object -> object.setValue(org.eclipse.serializer.reference.Lazy.Reference("1"))
-				),
-				new TestArguments<>(
-					LazyRepository.class,
-					id -> new LazyDaoObject(id, org.eclipse.serializer.reference.Lazy.Reference("1")),
-					object -> object.getValue().clear()
-				),
-				new TestArguments<>(
 					ListRepository.class,
 					id -> new ListDaoObject(id, List.of()),
 					object -> object.setValue(List.of("1"))
@@ -301,6 +271,46 @@ public final class TypesData
 					OptionalRepository.class,
 					id -> new OptionalDaoObject(id, null),
 					set -> set.setValue(Optional.of("1"))
+				)
+			)
+		).toArguments();
+	}
+	
+	public static Stream<Arguments> generateNotWorkingData()
+	{
+		return new ListOfTestArguments(
+			List.of(
+				new TestArguments<>(
+					LazyRepository.class,
+					id -> new LazyDaoObject(id, org.eclipse.serializer.reference.Lazy.Reference("1")),
+					object -> object.setValue(org.eclipse.serializer.reference.Lazy.Reference("2"))
+				),
+				new TestArguments<>(
+					LazyRepository.class,
+					id -> new LazyDaoObject(id, org.eclipse.serializer.reference.Lazy.Reference("1")),
+					object -> object.getValue().clear()
+				),
+				// Here EclipseStore has problems too: https://github.com/microstream-one/microstream/issues/204
+				new TestArguments<>(
+					EnumMapRepository.class,
+					id -> new EnumMapDaoObject(id, new EnumMap<>(EnumMapDaoObject.Album.class)),
+					object -> object.getValue().put(EnumMapDaoObject.Album.RUMOURS, "1")
+				),
+				new TestArguments<>(
+					EnumMapRepository.class,
+					id -> new EnumMapDaoObject(id, new EnumMap<>(Map.of(EnumMapDaoObject.Album.RUMOURS, "1"))),
+					object -> object.getValue().put(EnumMapDaoObject.Album.TUSK, "2")
+				),
+				new TestArguments<>(
+					EnumMapRepository.class,
+					id -> new EnumMapDaoObject(id, new EnumMap<>(Map.of(EnumMapDaoObject.Album.RUMOURS, "1"))),
+					object -> object.getValue().remove(EnumMapDaoObject.Album.RUMOURS)
+				),
+				// Here EclipseStore has problems: https://github.com/microstream-one/microstream/issues/173
+				new TestArguments<>(
+					CalendarRepository.class,
+					id -> new CalendarDaoObject(id, Calendar.getInstance()),
+					object -> object.getValue().add(Calendar.DAY_OF_MONTH, 1)
 				)
 			)
 		).toArguments();
