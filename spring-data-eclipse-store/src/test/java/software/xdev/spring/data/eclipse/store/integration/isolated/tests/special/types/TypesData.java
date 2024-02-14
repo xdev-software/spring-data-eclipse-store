@@ -28,13 +28,18 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Stack;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
+import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -46,7 +51,7 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 
 public final class TypesData
 {
-	public record ListOfTestArguments(List<TestArguments> testArguments)
+	public record ListOfTestArguments(List<TestArguments<?>> testArguments)
 	{
 		public Stream<Arguments> toArguments()
 		{
@@ -55,7 +60,7 @@ public final class TypesData
 	}
 	
 	
-	public record TestArguments<T extends ComplexObject>(
+	public record TestArguments<T extends ComplexObject<?>>(
 		Class<? extends EclipseStoreRepository<T, Integer>> repositoryClass,
 		Function<Integer, T> objectCreator,
 		Consumer<T> objectChanger)
@@ -68,8 +73,9 @@ public final class TypesData
 	
 	public static Stream<Arguments> generateData()
 	{
+		// noinspection RedundantTypeArguments (explicit type arguments speedup compilation and analysis time)
 		return new ListOfTestArguments(
-			List.of(
+			List.<TestArguments<?>>of(
 				new TestArguments<>(
 					SetRepository.class,
 					id -> new SetDaoObject(id, Set.of()),
@@ -102,6 +108,21 @@ public final class TypesData
 				),
 				new TestArguments<>(
 					SetRepository.class,
+					id -> new SetDaoObject(id, new TreeSet<>()),
+					set -> set.getValue().add("1")
+				),
+				new TestArguments<>(
+					SetRepository.class,
+					id -> new SetDaoObject(id, new TreeSet<>(List.of("1"))),
+					set -> set.getValue().add("2")
+				),
+				new TestArguments<>(
+					SetRepository.class,
+					id -> new SetDaoObject(id, new TreeSet<>(List.of("1", "2"))),
+					set -> set.getValue().add("3")
+				),
+				new TestArguments<>(
+					SetRepository.class,
 					id -> new SetDaoObject(id, new LinkedHashSet<>()),
 					set -> set.getValue().add("1")
 				),
@@ -118,12 +139,12 @@ public final class TypesData
 				new TestArguments<>(
 					BigDecimalRepository.class,
 					id -> new BigDecimalDaoObject(id, BigDecimal.ONE),
-					object -> object.getValue().add(BigDecimal.ONE)
+					object -> object.setValue(object.getValue().add(BigDecimal.ONE))
 				),
 				new TestArguments<>(
 					BigDecimalRepository.class,
 					id -> new BigDecimalDaoObject(id, BigDecimal.ZERO),
-					object -> object.getValue().add(BigDecimal.ONE)
+					object -> object.setValue(object.getValue().add(BigDecimal.ONE))
 				),
 				new TestArguments<>(
 					BigDecimalRepository.class,
@@ -133,12 +154,12 @@ public final class TypesData
 				new TestArguments<>(
 					BigIntegerRepository.class,
 					id -> new BigIntegerDaoObject(id, BigInteger.ONE),
-					object -> object.getValue().add(BigInteger.ONE)
+					object -> object.setValue(object.getValue().add(BigInteger.ONE))
 				),
 				new TestArguments<>(
 					BigIntegerRepository.class,
 					id -> new BigIntegerDaoObject(id, BigInteger.ZERO),
-					object -> object.getValue().add(BigInteger.ONE)
+					object -> object.setValue(object.getValue().add(BigInteger.ONE))
 				),
 				new TestArguments<>(
 					BigIntegerRepository.class,
@@ -197,6 +218,32 @@ public final class TypesData
 				),
 				new TestArguments<>(
 					ListRepository.class,
+					id -> new ListDaoObject(id, new Stack<>()),
+					object -> object.getValue().add("1")
+				),
+				new TestArguments<>(
+					ListRepository.class,
+					id ->
+					{
+						final Stack<String> stack = new Stack<>();
+						stack.add("1");
+						return new ListDaoObject(id, stack);
+					},
+					object -> object.getValue().add("2")
+				),
+				new TestArguments<>(
+					ListRepository.class,
+					id ->
+					{
+						final Stack<String> stack = new Stack<>();
+						stack.push("1");
+						stack.push("2");
+						return new ListDaoObject(id, stack);
+					},
+					object -> object.getValue().add("3")
+				),
+				new TestArguments<>(
+					ListRepository.class,
 					id -> new ListDaoObject(id, new ArrayList<>(Set.of("1"))),
 					object -> object.getValue().remove("1")
 				),
@@ -213,17 +260,17 @@ public final class TypesData
 				new TestArguments<>(
 					LocalDateRepository.class,
 					id -> new LocalDateDaoObject(id, LocalDate.of(2000, 1, 1)),
-					object -> object.getValue().plusDays(1)
+					object -> object.setValue(object.getValue().plusDays(1))
 				),
 				new TestArguments<>(
 					LocalDateTimeRepository.class,
 					id -> new LocalDateTimeDaoObject(id, LocalDateTime.of(2000, 1, 1, 1, 1, 1)),
-					object -> object.getValue().plusDays(1)
+					object -> object.setValue(object.getValue().plusDays(1))
 				),
 				new TestArguments<>(
 					LocalTimeRepository.class,
 					id -> new LocalTimeDaoObject(id, LocalTime.of(1, 1, 1)),
-					object -> object.getValue().plusHours(1)
+					object -> object.setValue(object.getValue().plusHours(1))
 				),
 				new TestArguments<>(
 					MapRepository.class,
@@ -286,6 +333,36 @@ public final class TypesData
 					set -> set.getValue().put("3", "3")
 				),
 				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new TreeMap<>()),
+					set -> set.getValue().put("1", "1")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new TreeMap<>(Map.of("1", "1"))),
+					set -> set.getValue().put("2", "2")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new TreeMap<>(Map.of("1", "1", "2", "2"))),
+					set -> set.getValue().put("3", "3")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new IdentityHashMap<>()),
+					set -> set.getValue().put("1", "1")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new IdentityHashMap<>(Map.of("1", "1"))),
+					set -> set.getValue().put("2", "2")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new IdentityHashMap<>(Map.of("1", "1", "2", "2"))),
+					set -> set.getValue().put("3", "3")
+				),
+				new TestArguments<>(
 					OptionalRepository.class,
 					id -> new OptionalDaoObject(id, Optional.of("1")),
 					set -> set.setValue(Optional.of("2"))
@@ -333,6 +410,21 @@ public final class TypesData
 					EnumMapRepository.class,
 					id -> new EnumMapDaoObject(id, new EnumMap<>(Map.of(EnumMapDaoObject.Album.RUMOURS, "1"))),
 					object -> object.getValue().remove(EnumMapDaoObject.Album.RUMOURS)
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new WeakHashMap<>()),
+					set -> set.getValue().put("1", "1")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new WeakHashMap<>(Map.of("1", "1"))),
+					set -> set.getValue().put("2", "2")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new WeakHashMap<>(Map.of("1", "1", "2", "2"))),
+					set -> set.getValue().put("3", "3")
 				),
 				// Here EclipseStore has problems: https://github.com/microstream-one/microstream/issues/173
 				new TestArguments<>(

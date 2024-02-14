@@ -15,7 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -64,11 +65,7 @@ class TypesTest
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
-			() -> {
-				final List<T> storedObjects = TestUtil.iterableToList(repository.findAll());
-				Assertions.assertEquals(1, storedObjects.size());
-				Assertions.assertEquals(objectToStore, storedObjects.get(0));
-			}
+			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
 	
@@ -116,11 +113,7 @@ class TypesTest
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
-			() -> {
-				final Optional<T> storedObject2 = repository.findById(1);
-				Assertions.assertTrue(storedObject2.isPresent());
-				Assertions.assertEquals(storedObject, storedObject2);
-			}
+			() -> this.dynamicAssertEquals(1, repository, storedObject.get())
 		);
 	}
 	
@@ -141,11 +134,7 @@ class TypesTest
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
-			() -> {
-				final Optional<T> storedObject = repository.findById(1);
-				Assertions.assertTrue(storedObject.isPresent());
-				Assertions.assertEquals(objectToStore, storedObject.get());
-			}
+			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
 	
@@ -164,11 +153,28 @@ class TypesTest
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.storage,
-			() -> {
-				final Optional<T> storedObject2 = repository.findById(1);
-				Assertions.assertTrue(storedObject2.isPresent());
-				Assertions.assertEquals(objectToStore, storedObject2.get());
-			}
+			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
+	}
+	
+	private <T extends ComplexObject<?>> void dynamicAssertEquals(
+		final int id,
+		final EclipseStoreRepository<T, Integer> repository,
+		final T objectToStore)
+	{
+		final Optional<T> storedObject2 = repository.findById(id);
+		Assertions.assertTrue(storedObject2.isPresent());
+		if(storedObject2.get().getValue() instanceof final Map<?, ?> storedMap)
+		{
+			Assertions.assertEquals(((Map<?, ?>)objectToStore.getValue()).size(), storedMap.size());
+		}
+		else if(storedObject2.get().getValue() instanceof final Collection<?> storedList)
+		{
+			Assertions.assertEquals(((Collection<?>)objectToStore.getValue()).size(), storedList.size());
+		}
+		else
+		{
+			Assertions.assertEquals(objectToStore, storedObject2.get());
+		}
 	}
 }

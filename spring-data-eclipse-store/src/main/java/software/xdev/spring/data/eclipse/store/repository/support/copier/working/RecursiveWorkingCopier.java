@@ -21,8 +21,11 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,6 +298,9 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				valueOfSourceObject.getClass().isAssignableFrom(HashMap.class)
 					|| valueOfSourceObject.getClass().isAssignableFrom(LinkedHashMap.class)
 					|| valueOfSourceObject.getClass().isAssignableFrom(Hashtable.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(TreeSet.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(TreeMap.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(IdentityHashMap.class)
 			);
 	}
 	
