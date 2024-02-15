@@ -22,6 +22,8 @@ import software.xdev.spring.data.eclipse.store.exceptions.StringBlankException;
 
 public final class StringUtil
 {
+	public static final String REPOSITORY_URL = "https://github.com/xdev-software/spring-data-eclipse-store";
+	
 	private StringUtil()
 	{
 	}

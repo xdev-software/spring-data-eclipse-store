@@ -44,6 +44,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.eclipse.serializer.reference.Lazy;
 import org.junit.jupiter.params.provider.Arguments;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
@@ -382,21 +383,25 @@ final class TypesData
 		).toArguments();
 	}
 	
+	/**
+	 * Should be identical to
+	 * {@link
+	 * software.xdev.spring.data.eclipse.store.repository.SupportedChecker.Implementation#UNSUPPORTED_DATA_TYPES}
+	 */
 	public static Stream<Arguments> generateNotWorkingData()
 	{
 		return new ListOfTestArguments(
 			List.of(
 				new TestArguments<>(
 					LazyRepository.class,
-					id -> new LazyDaoObject(id, org.eclipse.serializer.reference.Lazy.Reference("1")),
-					object -> object.setValue(org.eclipse.serializer.reference.Lazy.Reference("2"))
+					id -> new LazyDaoObject(id, Lazy.Reference("1")),
+					object -> object.setValue(Lazy.Reference("2"))
 				),
 				new TestArguments<>(
 					LazyRepository.class,
-					id -> new LazyDaoObject(id, org.eclipse.serializer.reference.Lazy.Reference("1")),
+					id -> new LazyDaoObject(id, Lazy.Reference("1")),
 					object -> object.getValue().clear()
 				),
-				// Here EclipseStore has problems too: https://github.com/microstream-one/microstream/issues/204
 				new TestArguments<>(
 					EnumMapRepository.class,
 					id -> new EnumMapDaoObject(id, new EnumMap<>(EnumMapDaoObject.Album.class)),
@@ -427,7 +432,6 @@ final class TypesData
 					id -> new MapDaoObject(id, new WeakHashMap<>(Map.of("1", "1", "2", "2"))),
 					set -> set.getValue().put("3", "3")
 				),
-				// Here EclipseStore has problems: https://github.com/microstream-one/microstream/issues/173
 				new TestArguments<>(
 					CalendarRepository.class,
 					id -> new CalendarDaoObject(id, Calendar.getInstance()),

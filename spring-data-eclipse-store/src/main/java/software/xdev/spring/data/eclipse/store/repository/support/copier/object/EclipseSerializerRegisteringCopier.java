@@ -32,6 +32,8 @@ import org.eclipse.serializer.util.X;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
+import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
 
@@ -45,16 +47,20 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseSerializerRegisteringCopier.class);
 	private final SerializerFoundation<?> foundation;
 	private PersistenceManager<Binary> persistenceManager;
+	private final SupportedChecker supportedChecker;
 	
 	private final WorkingCopyRegistry registry;
 	
-	public EclipseSerializerRegisteringCopier(final WorkingCopyRegistry registry)
+	public EclipseSerializerRegisteringCopier(
+		final WorkingCopyRegistry registry,
+		final SupportedChecker supportedChecker)
 	{
 		final SerializerFoundation<?> newFoundation = SerializerFoundation.New();
 		newFoundation.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
 		newFoundation.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
 		this.foundation = newFoundation;
 		this.registry = registry;
+		this.supportedChecker = supportedChecker;
 	}
 	
 	@Override
@@ -134,6 +140,10 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 		loader.iterateEntries(
 			(id, copiedObject) ->
 			{
+				if(copiedObject != null && !this.supportedChecker.isSupported(copiedObject.getClass()))
+				{
+					throw new DataTypeNotSupportedException(copiedObject.getClass());
+				}
 				summarizer.incrementCopiedObjectsCount();
 				if(DataTypeUtil.isPrimitiveType(copiedObject.getClass()))
 				{

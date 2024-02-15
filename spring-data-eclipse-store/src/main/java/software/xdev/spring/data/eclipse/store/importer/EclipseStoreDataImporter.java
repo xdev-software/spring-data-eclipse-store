@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 
@@ -201,7 +202,8 @@ public class EclipseStoreDataImporter
 				domainClass,
 				this.eclipseStoreStorage.getRegistry(),
 				this.eclipseStoreStorage,
-				this.eclipseStoreStorage),
+				this.eclipseStoreStorage,
+				new SupportedChecker.Implementation()),
 			domainClass);
 	}
 	

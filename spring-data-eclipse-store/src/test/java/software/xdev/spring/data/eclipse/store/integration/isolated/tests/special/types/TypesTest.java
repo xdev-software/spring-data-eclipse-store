@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
+import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.IsolatedTestAnnotations;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
@@ -78,7 +79,7 @@ class TypesTest
 		@Autowired final ApplicationContext context)
 	{
 		Assertions.assertThrows(
-			Exception.class,
+			DataTypeNotSupportedException.class,
 			() -> this.simpleChangeAfterStore(repositoryClass, objectCreator, ignoredObjectChanger, context));
 	}
 	

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import software.xdev.spring.data.eclipse.store.exceptions.MergeFailedException;
 import software.xdev.spring.data.eclipse.store.repository.IdSetterProvider;
 import software.xdev.spring.data.eclipse.store.repository.PersistableChecker;
+import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
@@ -57,11 +58,12 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final Class<T> domainClass,
 		final WorkingCopyRegistry registry,
 		final IdSetterProvider idSetterProvider,
-		final PersistableChecker persistableChecker)
+		final PersistableChecker persistableChecker,
+		final SupportedChecker supportedChecker)
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
-		this.objectCopier = new EclipseSerializerRegisteringCopier(registry);
+		this.objectCopier = new EclipseSerializerRegisteringCopier(registry, supportedChecker);
 		this.idSetterProvider = idSetterProvider;
 		this.persistableChecker = persistableChecker;
 	}

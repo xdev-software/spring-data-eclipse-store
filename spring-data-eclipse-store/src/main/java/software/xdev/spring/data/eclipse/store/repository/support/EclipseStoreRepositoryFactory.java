@@ -32,6 +32,7 @@ import org.springframework.data.util.TypeInformation;
 import org.springframework.lang.Nullable;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -80,7 +81,13 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 		final Class<T> domainType,
 		final EclipseStoreStorage storage)
 	{
-		return new RecursiveWorkingCopier<>(domainType, storage.getRegistry(), storage, storage);
+		return new RecursiveWorkingCopier<>(
+			domainType,
+			storage.getRegistry(),
+			storage,
+			storage,
+			new SupportedChecker.Implementation()
+		);
 	}
 	
 	@Override
