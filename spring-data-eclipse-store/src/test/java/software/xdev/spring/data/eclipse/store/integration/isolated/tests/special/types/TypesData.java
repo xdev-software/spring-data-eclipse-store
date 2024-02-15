@@ -49,7 +49,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-public final class TypesData
+final class TypesData
 {
 	public record ListOfTestArguments(List<TestArguments<?>> testArguments)
 	{
@@ -71,6 +71,7 @@ public final class TypesData
 		}
 	}
 	
+	@SuppressWarnings("checkstyle:MethodLength")
 	public static Stream<Arguments> generateData()
 	{
 		// noinspection RedundantTypeArguments (explicit type arguments speedup compilation and analysis time)

@@ -105,8 +105,8 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 	 * A storer is created. Then a loader. By then calling {@link PersistenceStorer#store(Object)} the source-object is
 	 * serialized in memory. Then the created objects are put in a Map which holds the EclipseStore-ObjectId and all
 	 * the
-	 * serialized objects. By calling {@link PersistenceLoader#get()} the serilized objects are deserialized. Then we
-	 * iterate over the deserlized objects and pair them with the corresponding source-objects through the
+	 * serialized objects. By calling {@link PersistenceLoader#get()} the serialized objects are deserialized. Then we
+	 * iterate over the deserialized objects and pair them with the corresponding source-objects through the
 	 * EclipseStore-ObjectId.
 	 * </p>
 	 */
@@ -182,7 +182,7 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 			this.copiedObjectsCount += 1;
 		}
 		
-		public void incrementRegisteredObjectsCountt()
+		public void incrementRegisteredObjectsCount()
 		{
 			this.registeredObjectsCount += 1;
 		}
