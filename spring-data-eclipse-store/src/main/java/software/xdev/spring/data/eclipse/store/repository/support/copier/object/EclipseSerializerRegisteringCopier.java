@@ -142,7 +142,7 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 				final Object originalObject = originalObjects.get(id);
 				if(originalObject != null)
 				{
-					summarizer.incrementRegisteredObjectsCountt();
+					summarizer.incrementRegisteredObjectsCount();
 					if(invertRegistering)
 					{
 						this.registry.invertRegister(copiedObject, originalObject);
