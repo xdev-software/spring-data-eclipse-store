@@ -1,0 +1,12 @@
+name: manual
+title: Spring-Data-Eclipse-Store
+version: master
+display_version: '1.0'
+start_page: index.adoc  # The starting page for the documentation. 
+nav:
+- modules/ROOT/nav.adoc  # Navigation information, specifying the location of the navigation file.
+asciidoc:
+  attributes:
+    varVersion: 1.0  # AsciiDoc attributes, such as 'varVersion' with its value.
+    page-editable: false  # Whether pages are editable (in this case, set to 'false').
+    page-out-of-support: false  # Whether pages are out of support (in this case, set to 'false').
