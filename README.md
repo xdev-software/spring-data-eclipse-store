@@ -53,13 +53,12 @@ With *Spring-Data-Eclipse-Store* every time an object is loaded from the datasto
 ## Installation
 [Installation guide for the latest release](https://github.com/xdev-software/spring-data-eclipse-store/releases/latest#Installation)
 
-### Prerequisites
+### Supported versions
 
-|              | Minimal Version |
-|--------------|-----------------|
-| Java         | ``17``          |
-| Spring Data  | ``3.2.2``       |
-| EclipseStore | ``1.1.0``       |
+| Spring-Data-Eclipse-Store | Java   | Spring Data | EclipseStore |
+|---------------------------|--------|-------------|--------------|
+| ``<= 1.0.2``              | ``17`` | ``3.2.2``   | ``1.1.0``    |
+| ``1.0.3``                 | ``17`` | ``3.2.3``   | ``1.2.0``    |
 
 ### Usage
 

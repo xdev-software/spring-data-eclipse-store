@@ -21,6 +21,7 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 
 
@@ -34,7 +35,7 @@ class EclipseStoreRegisteringCopierTest
 	void testCopyManyCopiesSingle()
 	{
 		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry()))
+			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 1_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -50,7 +51,7 @@ class EclipseStoreRegisteringCopierTest
 	void testCopyAgainSameObject()
 	{
 		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry()))
+			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -65,7 +66,7 @@ class EclipseStoreRegisteringCopierTest
 	void testCopyAgainTheCopy()
 	{
 		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry()))
+			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -82,7 +83,7 @@ class EclipseStoreRegisteringCopierTest
 	void testCopyManyCopiesBulk()
 	{
 		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry()))
+			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 100_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -98,7 +99,7 @@ class EclipseStoreRegisteringCopierTest
 	void testCopyEmpty()
 	{
 		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry()))
+			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
 		{
 			Assertions.assertThrows(NullPointerException.class, () -> copier.copy(null));
 		}

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.jpa;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests;
 
 import java.nio.file.Path;
 
@@ -28,9 +28,10 @@ import org.springframework.util.FileSystemUtils;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
+
 @Configuration
 @EnableEclipseStoreRepositories
-public class TestConfiguration implements DisposableBean
+public class IsolatedTestConfiguration implements DisposableBean
 {
 	@Autowired
 	EclipseStoreStorage storage;

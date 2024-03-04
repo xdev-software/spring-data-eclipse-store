@@ -15,8 +15,16 @@
  */
 package software.xdev.spring.data.eclipse.store.repository;
 
+/**
+ * Checks if a class is persistable by EclipseStore through the
+ * {@link org.eclipse.store.storage.embedded.types.EmbeddedStorage}.
+ */
 @FunctionalInterface
 public interface PersistableChecker
 {
+	/**
+	 * Checks if a class is persistable by EclipseStore through the
+	 * {@link org.eclipse.store.storage.embedded.types.EmbeddedStorage}.
+	 */
 	boolean isPersistable(Class<?> clazz);
 }
