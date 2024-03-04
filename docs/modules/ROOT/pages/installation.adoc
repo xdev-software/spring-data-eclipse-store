@@ -42,4 +42,4 @@ To see how easy it is to implement EclipseStore in your Spring project, take a l
 A https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple[simple], a more https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex[complex demo] and a https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa[demo with coexisting JPA].
 
 == Drop in compatible [[drop-in-compatible]]
-
+//TODO
