@@ -50,8 +50,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
-		<org.springframework.boot.version>3.2.2</org.springframework.boot.version>
-		<org.eclipse.store.version>1.1.0</org.eclipse.store.version>
+		<org.springframework.boot.version>3.2.3</org.springframework.boot.version>
+		<org.eclipse.store.version>1.2.0</org.eclipse.store.version>
 	</properties>
 
 	<repositories>
@@ -339,7 +339,7 @@
 							<dependency>
 								<groupId>com.puppycrawl.tools</groupId>
 								<artifactId>checkstyle</artifactId>
-								<version>10.13.0</version>
+								<version>10.14.0</version>
 							</dependency>
 						</dependencies>
 						<configuration>
