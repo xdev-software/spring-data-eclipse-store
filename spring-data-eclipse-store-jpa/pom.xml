@@ -6,7 +6,7 @@
 
 	<groupId>software.xdev</groupId>
 	<artifactId>spring-data-eclipse-store-jpa</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<packaging>jar</packaging>
 
 	<inceptionYear>2023</inceptionYear>
