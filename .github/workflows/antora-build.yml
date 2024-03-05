@@ -35,7 +35,7 @@ jobs:
         run: npm i antora @antora/lunr-extension
 
       - name: Generate Site  # Step to generate the documentation site
-        run: GIT_CREDENTIALS=https://${{ secrets.GITHUB_TOKEN }}:@github.com npx antora docs/antora-playbook.yml --fetch=${{ github.ref }} --stacktrace #GIT_CREDENTIALS are needed if the source repo with the documentation is private!
+        run: npx antora docs/antora-playbook.yml
 
       - name: Setup Pages  # Step to set up GitHub Pages
         uses: actions/configure-pages@v3
