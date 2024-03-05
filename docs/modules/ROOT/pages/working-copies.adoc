@@ -2,12 +2,12 @@
 
 If you use EclipseStore without our library, EclipseStore loads the data from the datastore directly into memory. You make your changes on these loaded Java objects and by calling ``store`` EclipseStore writes it directly from memory to the datastore.
 
-image::../images/WorkingCopy_1.svg[Native behavior of EclipseStore]
+image::WorkingCopy_1.svg[Native behavior of EclipseStore]
 
 If you e.g. change the address of a person, the changed address is already in your data model, *even before storing* this person.
 This is very different from the behavior a Spring user expects.
 
-image::../images/WorkingCopy_2.svg[Behavior of EclipseStore with Spring-Data-Eclipse-Store]
+image::WorkingCopy_2.svg[Behavior of EclipseStore with Spring-Data-Eclipse-Store]
 
 With {product-name} every time an object is loaded from the datastore, a working copy of that object (or rather the object tree) is created and returned to the user.
 Therefore, the user can make the changes on the working copy without any changes to the actual data model.
