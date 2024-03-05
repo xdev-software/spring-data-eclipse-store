@@ -40,12 +40,12 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          name: manual
-          path: docs/site/manual
+          name: site
+          path: docs/site
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: manual
+          artifact_name: site
