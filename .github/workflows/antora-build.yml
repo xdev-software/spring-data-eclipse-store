@@ -1,4 +1,4 @@
-name: Antora Documentation Build  # Name of the GitHub Actions workflow
+name: Antora Documentation Build
 
 on:
   workflow_dispatch:
@@ -14,39 +14,38 @@ permissions:
   
 jobs:
   build:
-    runs-on: ubuntu-latest  # Run the job on a machine with the latest version of Ubuntu
+    runs-on: ubuntu-latest
 
     environment:
-      name: github-pages  # Environment name
-      url: https://github.com/xdev-software/spring-data-eclipse-store
+      name: github-pages
 
     steps:
-      - name: Checkout repository  # Step to check out the repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Node.js  # Step to install Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Specify Node.js version
+          node-version: 18
 
-      - name: Install Antora and the Antora Lunr Extension  # Step to install Antora and the Lunr extension
+      - name: Install Antora and the Antora Lunr Extension
         run: npm i antora @antora/lunr-extension
 
-      - name: Generate Site  # Step to generate the documentation site
+      - name: Generate Site
         run: npx antora docs/antora-playbook.yml
 
-      - name: Setup Pages  # Step to set up GitHub Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v3
 
-      - name: Upload artifact  # Step to upload an artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          name: site  # Specify the name of the artifact
-          path: docs/site  # Specify the path to the artifact
+          name: site
+          path: docs/site
 
-      - name: Deploy to GitHub Pages  # Step to deploy the site to GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Specify the GitHub token for deployment
-          artifact_name: site  # Specify the name of the artifact to deploy
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: site
