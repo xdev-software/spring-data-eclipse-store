@@ -1,6 +1,9 @@
 name: Antora Documentation Build  # Name of the GitHub Actions workflow
 
-on: workflow_dispatch  # This workflow is triggered manually
+on:
+  workflow_dispatch:
+    branches:
+      - develop
 
 env:
   ACTIONS_STEP_DEBUG : true
@@ -32,7 +35,7 @@ jobs:
         run: npm i antora @antora/lunr-extension
 
       - name: Generate Site  # Step to generate the documentation site
-        run: GIT_CREDENTIALS=https://${{ secrets.GITHUB_TOKEN }}:@github.com npx antora docs/antora-playbook.yml --fetch --stacktrace #GIT_CREDENTIALS are needed if the source repo with the documentation is private! 
+        run: GIT_CREDENTIALS=https://${{ secrets.GITHUB_TOKEN }}:@github.com#${{ github.ref }} npx antora docs/antora-playbook.yml --fetch --stacktrace #GIT_CREDENTIALS are needed if the source repo with the documentation is private!
 
       - name: Setup Pages  # Step to set up GitHub Pages
         uses: actions/configure-pages@v3
