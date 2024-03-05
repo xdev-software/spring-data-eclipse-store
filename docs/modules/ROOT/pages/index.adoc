@@ -1,8 +1,10 @@
 = Overview
 
-== About Spring-Data-Eclipse-Store
+image::Logo.svg[Logo XDEV Spring-Data-Eclipse-Store,200]
 
-A library to simplify using https://eclipsestore.io/[EclipseStore] in the https://spring.io/projects/spring-data/[Spring environment].
+== About {product-name}
+
+A Open-Source library to simplify using https://eclipsestore.io/[EclipseStore] in a https://spring.io/projects/spring-data/[Spring environment].
 
 What makes this library special is, that it creates a xref:working-copies.adoc[working copy] of the data.
 This way EclipseStore behaves almost exactly like relational database from a coding perspective.

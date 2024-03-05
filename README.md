@@ -19,8 +19,9 @@ The library provides following features:
 
 * Enforces the
   **[Spring data repository concept](https://docs.spring.io/spring-data/jpa/reference/repositories/core-concepts.html)**
-  for EclipseStore by using [working copies](#working-copies)
-* **[Drop in compatible](#usage)** for your existing Spring application
+  for EclipseStore by
+  using [working copies](https://xdev-software.github.io/spring-data-eclipse-store/working-copies.html)
+* **[Drop in compatible](https://xdev-software.github.io/spring-data-eclipse-store/installation.html#drop-in-compatible)** for your existing Spring application
 * Utilizes **ultra-fast EclipseStore serializing and storing**
 * Enables your application to **select
   any [EclipseStore target](https://docs.eclipsestore.io/manual/storage/storage-targets/index.html)** (e.g.
@@ -37,21 +38,13 @@ GB of data are stored. ([IBM Cloud Pricing](https://cloud.ibm.com/estimator/esti
 AWS. ([AWS Pricing Calculator](https://calculator.aws/#/estimate?id=ab85cddf77f0d1aa0457111ed82785dfb836b1d8), as of
 08.01.2024)
 
-### Working copies
+## Installation & Usage
 
-If you use EclipseStore without our library, EclipseStore loads the data from the datastore directly into memory. You make your changes on these loaded Java objects and by calling ``store`` EclipseStore writes it directly from memory to the datastore.
+[**Installation
+guide** for the latest release](https://github.com/xdev-software/spring-data-eclipse-store/releases/latest#Installation)
 
-![Native behavior of EclipseStore](assets/WorkingCopy_1.svg)
-
-If you e.g. change the address of a person, the changed address is already in your data model, **even before storing** this person.
-This is very different from the behavior a Spring user expects.
-
-With *Spring-Data-Eclipse-Store* every time an object is loaded from the datastore, a working copy of that object (or rather the object tree) is created and returned to the user. Therefore, the user can make the changes on the working copy without any changes to the actual data model. The changes are only persisted after calling ``save`` on a repository.
-
-![Behavior of EclipseStore with Spring-Data-Eclipse-Store](assets/WorkingCopy_2.svg)
-
-## Installation
-[Installation guide for the latest release](https://github.com/xdev-software/spring-data-eclipse-store/releases/latest#Installation)
+[**Detailed
+instructions** are in the documentation](https://xdev-software.github.io/spring-data-eclipse-store/installation.html)
 
 ### Supported versions
 
@@ -59,10 +52,6 @@ With *Spring-Data-Eclipse-Store* every time an object is loaded from the datasto
 |---------------------------|--------|-------------|--------------|
 | ``<= 1.0.2``              | ``17`` | ``3.2.2``   | ``1.1.0``    |
 | ``1.0.3``                 | ``17`` | ``3.2.3``   | ``1.2.0``    |
-
-### Usage
-
-After adding the library in your dependencies, using it is as easy as adding the ``@EnableEclipseStoreRepositories`` annotation to your ``@SpringBootApplication`` annotation.
 
 ## Demo
 
