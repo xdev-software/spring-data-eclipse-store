@@ -20,7 +20,7 @@ content:
   - url: https://github.com/xdev-software/spring-data-eclipse-store
     start_path: docs
     branches:
-      - "master" 
+      - "develop"
 
 ui: 
   bundle:

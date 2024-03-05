@@ -2,8 +2,6 @@ name: Antora Documentation Build  # Name of the GitHub Actions workflow
 
 on:
   workflow_dispatch:
-    branches:
-      - develop
 
 env:
   ACTIONS_STEP_DEBUG : true
@@ -35,7 +33,7 @@ jobs:
         run: npm i antora @antora/lunr-extension
 
       - name: Generate Site  # Step to generate the documentation site
-        run: npx antora ./docs/antora-playbook.yml
+        run: npx antora docs/antora-playbook.yml
 
       - name: Setup Pages  # Step to set up GitHub Pages
         uses: actions/configure-pages@v3
