@@ -1,0 +1,36 @@
+site:
+  title: Spring-Data-Eclipse-Store
+  url: https://xdev-software.github.io/spring-data-eclipse-store/
+  robots: allow
+
+# see https://docs.antora.org/antora/2.3/playbook/configure-runtime/
+runtime:
+  cache_dir: ./.cache/antora
+  log:
+    # use pretty even on CI
+    format: pretty
+    # set to info to get details from the Antora extensions
+    level: info
+    # Antora exits with a non-zero exit code if an error is logged -> https://docs.antora.org/antora/latest/playbook/runtime-log-failure-level
+    failure_level: error
+  
+content:
+  sources:
+  # url of the repo 
+  - url: https://github.com/xdev-software/spring-data-eclipse-store
+    start_path: docs
+    branches:
+      - "master" 
+
+ui: 
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+  supplemental_files: ./supplemental-ui
+
+output:
+  dir: ./site
+
+antora:
+  extensions:
+  - require: '@antora/lunr-extension'

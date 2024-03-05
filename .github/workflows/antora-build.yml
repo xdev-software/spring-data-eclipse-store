@@ -1,0 +1,51 @@
+name: Antora Documentation Build  # Name of the GitHub Actions workflow
+
+on: workflow_dispatch  # This workflow is triggered manually
+
+env:
+  ACTIONS_STEP_DEBUG : true
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read  # Read permission for repository contents
+  pages: write    # Write permission for GitHub Pages
+  id-token: write  # Write permission for ID token
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Run the job on a machine with the latest version of Ubuntu
+
+    environment:
+      name: github-pages  # Environment name
+      url: https://github.com/xdev-software/spring-data-eclipse-store
+
+    steps:
+      - name: Checkout repository  # Step to check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js  # Step to install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Specify Node.js version
+
+      - name: Install Antora and the Antora Lunr Extension  # Step to install Antora and the Lunr extension
+        run: npm i antora @antora/lunr-extension
+
+      - name: Generate Site  # Step to generate the documentation site
+        run: GIT_CREDENTIALS=https://${{ secrets.GITHUB_TOKEN }}:@github.com npx antora docs/antora-playbook.yml --fetch --stacktrace #GIT_CREDENTIALS are needed if the source repo with the documentation is private! 
+
+      - name: Setup Pages  # Step to set up GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact  # Step to upload an artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          name: site  # Specify the name of the artifact
+          path: docs/site  # Specify the path to the artifact
+
+      - name: Deploy to GitHub Pages  # Step to deploy the site to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Specify the GitHub token for deployment
+          artifact_name: site  # Specify the name of the artifact to deploy

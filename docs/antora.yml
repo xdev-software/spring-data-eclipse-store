@@ -1,0 +1,14 @@
+name: manual
+title: Spring-Data-Eclipse-Store
+version: master
+display_version: '1.0'
+start_page: index.adoc
+nav:
+  - modules/ROOT/nav.adoc
+asciidoc:
+  attributes:
+    product-name: 'Spring-Data-Eclipse-Store'
+    display-version: '1.0.3'
+    maven-version: '1.0.3'
+    page-editable: false
+    page-out-of-support: false

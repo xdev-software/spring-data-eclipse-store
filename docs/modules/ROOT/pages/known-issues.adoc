@@ -1,0 +1,39 @@
+= Known issues
+
+== Lazy references
+
+One of the core features of EclipseStore is its https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/index.html[Lazy references].
+Unfortunately this requires our library to implement some kind of proxy.
+That's something that takes a lot of effort to implement in our {product-name}.
+
+We created https://github.com/xdev-software/spring-data-eclipse-store/issues/31[an issue] for that but right now we *do not support Lazy references*.
+
+== Query annotations
+
+In Spring-Data-JPA you can write a Query over methods of repositories like this:
+
+[source,java,title="From https://github.com/spring-projects/spring-petclinic/blob/main/src/main/java/org/springframework/samples/petclinic/owner/OwnerRepository.java[spring-petclinic]"]
+----
+@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
+List<PetType> findPetTypes();
+----
+
+We created https://github.com/xdev-software/spring-data-eclipse-store/issues/32[an issue] for that but right now we *do not support Query annotations*.
+
+== Data changes
+
+There are two basic ways to keep your data up to date.
+
+=== Structural
+
+As with most projects, data that needs persisting changes over time.
+In EclipseStore that's handled through https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html[Legacy Type Mapping].
+
+That consists of https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html#_automatic_mapping[Automatic Mapping] through EclipseStores internal heuristic and https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html#explicit-mapping[Explicit Mapping] by the user.
+
+=== Values
+
+There is a library to version your data in the store called https://github.com/xdev-software/micro-migration[XDEV MicroMigration].
+This helps you keep your data up to date regardless of the current version.
+
+We created https://github.com/xdev-software/spring-data-eclipse-store/issues/33[an issue] for that but right now we *do not support XDEVs MicroMigration*.
