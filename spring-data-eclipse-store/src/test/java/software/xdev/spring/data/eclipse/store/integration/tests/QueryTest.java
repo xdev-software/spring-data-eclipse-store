@@ -18,10 +18,9 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,7 +33,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.Customer
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithChild;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithChildRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -46,7 +45,7 @@ class QueryTest
 	private CustomerWithChildRepository customerWithChildRepository;
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testBasicFindAllByLastNameTwoResults()
@@ -57,7 +56,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers =
 					TestUtil.iterableToList(this.customerRepository.findAllByLastName(TestData.LAST_NAME));
@@ -79,7 +78,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers =
 					TestUtil.iterableToList(this.customerRepository.findAllByLastName(TestData.LAST_NAME_ALTERNATIVE));
@@ -96,7 +95,7 @@ class QueryTest
 		this.customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<Customer> foundCustomer = this.customerRepository.findByFirstName(TestData.FIRST_NAME);
 				Assertions.assertTrue(foundCustomer.isPresent());
@@ -114,7 +113,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Pageable pageable = PageRequest.of(0, 1);
 				final List<Customer> customersPage1 =
@@ -139,7 +138,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Pageable pageable = Pageable.unpaged();
 				final List<Customer> customersPage = TestUtil.iterableToList(this.customerRepository.findAll(pageable));
@@ -158,7 +157,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Pageable pageable = PageRequest.of(0, 2);
 				final List<Customer> customersPage1 =
@@ -183,7 +182,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Pageable pageable = PageRequest.of(0, 10);
 				final List<Customer> customersPage =
@@ -203,7 +202,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Pageable pageable = PageRequest.of(0, 10);
 				final List<Customer> customersPage =
@@ -223,7 +222,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Sort sort = Sort.by("firstName");
 				final List<Customer> customersPage =
@@ -244,7 +243,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Sort sort = Sort.by("firstName").ascending();
 				final List<Customer> customersPage =
@@ -265,7 +264,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Sort sort = Sort.by(Sort.Direction.ASC, "lastName");
 				final List<Customer> customersPage =
@@ -286,7 +285,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customersPage =
 					TestUtil.iterableToList(this.customerRepository.findByOrderByLastNameAsc());
@@ -306,7 +305,7 @@ class QueryTest
 		this.customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Sort sort = Sort.by("firstName").descending();
 				final List<Customer> customersPage =
@@ -326,7 +325,7 @@ class QueryTest
 		this.customerWithChildRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithChild> foundCustomer = this.customerWithChildRepository.findByChild(child);
 				Assertions.assertTrue(foundCustomer.isPresent());
@@ -342,7 +341,7 @@ class QueryTest
 		this.customerWithChildRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Child queryChild = new Child(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
 				final Optional<CustomerWithChild> foundCustomer =
@@ -360,7 +359,7 @@ class QueryTest
 		this.customerWithChildRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithChild> foundCustomer = this.customerWithChildRepository.findByChild(null);
 				Assertions.assertTrue(foundCustomer.isEmpty());
@@ -375,7 +374,7 @@ class QueryTest
 		this.customerWithChildRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithChild> foundCustomer = this.customerWithChildRepository.findByChild(null);
 				Assertions.assertTrue(foundCustomer.isPresent());

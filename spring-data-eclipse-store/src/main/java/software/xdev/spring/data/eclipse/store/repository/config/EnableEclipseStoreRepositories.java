@@ -81,6 +81,14 @@ public @interface EnableEclipseStoreRepositories
 	 */
 	Filter[] excludeFilters() default {};
 	
+	String CLIENT_CONFIGURATION_ANNOTATION_VALUE = "clientConfiguration";
+	
+	String clientConfiguration() default "defaultEclipseStoreClientConfiguration";
+	
+	String CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE = "clientConfigurationClass";
+	
+	Class<? extends EclipseStoreClientConfiguration> clientConfigurationClass() default DefaultEclipseStoreClientConfiguration.class;
+	
 	/**
 	 * Returns the postfix to be used when looking up custom repository implementations. Defaults to {@literal Impl} .
 	 * So for a repository named {@code PersonRepository} the corresponding implementation class will be looked up

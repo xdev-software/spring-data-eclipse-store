@@ -18,17 +18,16 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepositoryWithQuery;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithQuery;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -38,7 +37,7 @@ class JpaCompatibilityTest
 	private CustomerRepositoryWithQuery customerRepository;
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testUseQueryAnnotationFindAll()
@@ -47,7 +46,7 @@ class JpaCompatibilityTest
 		this.customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithQuery> customers = TestUtil.iterableToList(this.customerRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -64,7 +63,7 @@ class JpaCompatibilityTest
 		this.customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithQuery> foundCustomer =
 					this.customerRepository.findByFirstName(TestData.FIRST_NAME);
@@ -82,7 +81,7 @@ class JpaCompatibilityTest
 		this.customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithQuery> customers =
 					TestUtil.iterableToList(this.customerRepository.findAllByLastName(TestData.LAST_NAME));

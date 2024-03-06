@@ -29,7 +29,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.Customer
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Node;
 import software.xdev.spring.data.eclipse.store.integration.repositories.NodeRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -44,7 +44,7 @@ public class WorkingCopyTests
 	@Autowired
 	NodeRepository nodeRepository;
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testBasicChangeOnlyAfterSave()
@@ -66,7 +66,7 @@ public class WorkingCopyTests
 		this.customerRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				// Check saved customer
 				final List<Customer> customers2 = TestUtil.iterableToList(this.customerRepository.findAll());
@@ -115,7 +115,7 @@ public class WorkingCopyTests
 		this.nodeRepository.save(parentNode1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> loadedNodes = TestUtil.iterableToList(this.nodeRepository.findAll());
 				Assertions.assertEquals(3, loadedNodes.size());
@@ -154,7 +154,7 @@ public class WorkingCopyTests
 		this.nodeRepository.save(parentNode2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> loadedNodes = TestUtil.iterableToList(this.nodeRepository.findAll());
 				Assertions.assertEquals(3, loadedNodes.size());
@@ -194,7 +194,7 @@ public class WorkingCopyTests
 		this.nodeRepository.save(childNode);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> loadedNodes = TestUtil.iterableToList(this.nodeRepository.findAll());
 				Assertions.assertEquals(3, loadedNodes.size());
@@ -250,7 +250,7 @@ public class WorkingCopyTests
 		this.nodeRepository.saveAll(loadedNodes1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> loadedNodes3 = TestUtil.iterableToList(this.nodeRepository.findAll());
 				final Node loadedChildNode2 =
@@ -267,7 +267,7 @@ public class WorkingCopyTests
 		this.customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<Customer> foundCustomer = this.customerRepository.findByFirstName(TestData.FIRST_NAME);
 				Assertions.assertNotSame(customer1, foundCustomer.get());

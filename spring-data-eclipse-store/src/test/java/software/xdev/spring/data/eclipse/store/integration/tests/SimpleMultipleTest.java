@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
@@ -28,7 +28,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.Customer
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Owner;
 import software.xdev.spring.data.eclipse.store.integration.repositories.OwnerRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -39,7 +39,7 @@ class SimpleMultipleTest
 	@Autowired
 	private OwnerRepository ownerRepository;
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testBasicSaveAndFindAll()
@@ -53,7 +53,7 @@ class SimpleMultipleTest
 		this.ownerRepository.save(owner);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.customerRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -84,7 +84,7 @@ class SimpleMultipleTest
 		this.ownerRepository.save(owner2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.customerRepository.findAll());
 				Assertions.assertEquals(2, customers.size());
@@ -115,7 +115,7 @@ class SimpleMultipleTest
 		this.ownerRepository.delete(owner);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.customerRepository.findAll());
 				Assertions.assertTrue(customers.isEmpty());
@@ -150,7 +150,7 @@ class SimpleMultipleTest
 		this.ownerRepository.save(owner);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				// Check saved customer
 				final List<Customer> customers = TestUtil.iterableToList(this.customerRepository.findAll());

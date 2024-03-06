@@ -29,7 +29,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.Customer
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepositoryWithNonFinalHashSet;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithHashSet;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerWithNonFinalHashSet;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -41,7 +41,7 @@ class HashSetTest
 	private CustomerRepositoryWithNonFinalHashSet nonFinalRepository;
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testSaveAndFindAll()
@@ -51,7 +51,7 @@ class HashSetTest
 		this.repository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithHashSet> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -73,7 +73,7 @@ class HashSetTest
 		this.repository.save(customerWithHashSet);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithHashSet> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -91,7 +91,7 @@ class HashSetTest
 		this.nonFinalRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithNonFinalHashSet> customers =
 					TestUtil.iterableToList(this.nonFinalRepository.findAll());
@@ -110,7 +110,7 @@ class HashSetTest
 		this.nonFinalRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithNonFinalHashSet> customers =
 					TestUtil.iterableToList(this.nonFinalRepository.findAll());
@@ -134,7 +134,7 @@ class HashSetTest
 		this.nonFinalRepository.save(customerWithHashSet);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithNonFinalHashSet> customers =
 					TestUtil.iterableToList(this.nonFinalRepository.findAll());
@@ -153,7 +153,7 @@ class HashSetTest
 		this.nonFinalRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithNonFinalHashSet> customers =
 					TestUtil.iterableToList(this.nonFinalRepository.findAll());
@@ -174,7 +174,7 @@ class HashSetTest
 		this.repository.save(reloadedCustomer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithHashSet> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());

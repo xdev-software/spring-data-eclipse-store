@@ -19,13 +19,13 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Node;
 import software.xdev.spring.data.eclipse.store.integration.repositories.NodeRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -39,7 +39,7 @@ public class ChangeRootTests
 	@Autowired
 	private NodeRepository repository;
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	//@formatter:off
 	/**
@@ -55,7 +55,7 @@ public class ChangeRootTests
 		this.repository.save(parentNode);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> nodes = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(3, nodes.size());
@@ -82,7 +82,7 @@ public class ChangeRootTests
 		this.repository.save(parentNode1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> nodes = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(3, nodes.size());
@@ -110,7 +110,7 @@ public class ChangeRootTests
 		this.repository.save(parentNode);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Node> nodes = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(3, nodes.size());

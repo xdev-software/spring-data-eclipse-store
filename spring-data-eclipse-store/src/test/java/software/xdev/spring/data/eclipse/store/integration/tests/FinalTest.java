@@ -31,7 +31,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.immutabl
 import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalId;
 import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalIdRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.immutables.CustomerWithFinalRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -45,7 +45,7 @@ class FinalTest
 	CustomerWithFinalIdRepository withFinalIdRepository;
 	
 	@Autowired
-	EclipseStoreStorage storage;
+	EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testSaveAndFindSingle()
@@ -54,7 +54,7 @@ class FinalTest
 		this.repository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithFinal> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -71,7 +71,7 @@ class FinalTest
 		this.withChildRepository.save(originalCustomer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithFinalChild> customers =
 					TestUtil.iterableToList(this.withChildRepository.findAll());

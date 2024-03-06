@@ -41,6 +41,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.id.Custo
 import software.xdev.spring.data.eclipse.store.integration.repositories.id.CustomerWithPurchaseRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.id.Purchase;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -48,7 +49,7 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 class IdTest
 {
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testCreateSingleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
@@ -57,7 +58,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(0);
 				Assertions.assertTrue(loadedCustomer.isPresent());
@@ -73,12 +74,12 @@ class IdTest
 	@Test
 	void testSaveSingleWithoutAnyPreviousCall(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
-		restartDatastore(this.storage);
+		restartDatastore(this.configuration);
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(0);
 				Assertions.assertTrue(loadedCustomer.isPresent());
@@ -107,7 +108,7 @@ class IdTest
 		customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithIdInteger> loadedCustomers =
 					TestUtil.iterableToList(customerRepository.findAllById(List.of(0, 1)));
@@ -128,7 +129,7 @@ class IdTest
 		customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(0);
 				Assertions.assertEquals(customer1, loadedCustomer1.get());
@@ -145,7 +146,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdInt> loadedCustomer = customerRepository.findById(0);
 				Assertions.assertTrue(loadedCustomer.isPresent());
@@ -161,7 +162,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdString> loadedCustomer = customerRepository.findById("0");
 				Assertions.assertTrue(loadedCustomer.isPresent());
@@ -180,7 +181,7 @@ class IdTest
 		customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithIdString> loadedCustomers =
 					TestUtil.iterableToList(customerRepository.findAllById(List.of("0", "1")));
@@ -197,7 +198,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdLong> loadedCustomer = customerRepository.findById(0L);
 				Assertions.assertTrue(loadedCustomer.isPresent());
@@ -217,13 +218,13 @@ class IdTest
 		customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithIdLong> loadedCustomers =
 					TestUtil.iterableToList(customerRepository.findAllById(List.of(0L, 1L)));
 				Assertions.assertEquals(2, loadedCustomers.size());
 				Assertions.assertNotEquals(loadedCustomers.get(0), loadedCustomers.get(1));
-				final List<Long> idList = loadedCustomers.stream().map(c -> c.getId()).toList();
+				final List<Long> idList = loadedCustomers.stream().map(CustomerWithIdLong::getId).toList();
 				Assertions.assertTrue(idList.contains(0L));
 				Assertions.assertTrue(idList.contains(1L));
 			}
@@ -239,7 +240,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer = customerRepository.findById(0);
 				Assertions.assertTrue(loadedCustomer.isPresent());
@@ -261,7 +262,7 @@ class IdTest
 		customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomers =
 					TestUtil.iterableToList(customerRepository.findAllById(List.of(0, 1)));
@@ -280,7 +281,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithIdInteger> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
@@ -300,7 +301,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
@@ -322,7 +323,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithPurchase> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
@@ -345,7 +346,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithPurchase> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
@@ -370,7 +371,7 @@ class IdTest
 		customerRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithPurchase> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
@@ -400,7 +401,7 @@ class IdTest
 		customerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerWithPurchase> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());

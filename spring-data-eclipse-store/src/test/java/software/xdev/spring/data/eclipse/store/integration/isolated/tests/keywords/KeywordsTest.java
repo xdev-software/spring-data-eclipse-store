@@ -23,7 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.IsolatedTestAnnotations;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 /**
@@ -39,7 +39,7 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 class KeywordsTest
 {
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	@Disabled("For now we don't need 'existsBy'")
@@ -48,7 +48,7 @@ class KeywordsTest
 		repository.save(new MinimalDaoObject("1"));
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				Assertions.assertTrue(repository.existsByValue("1"));
 				Assertions.assertFalse(repository.existsByValue("2"));

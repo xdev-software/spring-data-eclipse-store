@@ -18,14 +18,14 @@ package software.xdev.spring.data.eclipse.store.integration;
 import java.nio.file.Path;
 
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.FileSystemUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
@@ -34,7 +34,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 public class TestConfiguration implements DisposableBean
 {
 	@Autowired
-	EclipseStoreStorage storage;
+	EclipseStoreClientConfiguration configuration;
 	
 	@Value("${org.eclipse.store.storage-directory}")
 	private String storageDirectory;
@@ -43,15 +43,15 @@ public class TestConfiguration implements DisposableBean
 	public void handleContextRefresh(final ContextRefreshedEvent event)
 	{
 		// Init with empty root object
-		this.storage.clearData();
+		this.configuration.getStorageInstance().clearData();
 	}
 	
 	@Override
 	public void destroy() throws Exception
 	{
 		// End with empty root object
-		this.storage.clearData();
-		this.storage.stop();
+		this.configuration.getStorageInstance().clearData();
+		this.configuration.getStorageInstance().stop();
 		FileSystemUtils.deleteRecursively(Path.of(this.storageDirectory));
 	}
 }

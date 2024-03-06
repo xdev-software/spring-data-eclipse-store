@@ -23,7 +23,7 @@ import jakarta.persistence.EntityManagerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 
 
@@ -37,10 +37,10 @@ public class EclipseStoreDataImporterComponent
 	private final ApplicationContext applicationContext;
 	
 	public EclipseStoreDataImporterComponent(
-		final EclipseStoreStorage eclipseStoreStorage,
+		final EclipseStoreClientConfiguration configuration,
 		final ApplicationContext applicationContext)
 	{
-		this.importer = new EclipseStoreDataImporter(eclipseStoreStorage);
+		this.importer = new EclipseStoreDataImporter(configuration);
 		this.applicationContext = applicationContext;
 	}
 	

@@ -24,8 +24,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.real.life.example.Article;
@@ -35,7 +35,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.real.lif
 import software.xdev.spring.data.eclipse.store.integration.repositories.real.life.example.Position;
 import software.xdev.spring.data.eclipse.store.integration.repositories.real.life.example.PositionRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.real.life.example.Warehouse;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -54,7 +54,7 @@ public class RealLifeTests
 	@Autowired
 	PositionRepository positionRepository;
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	private Invoice buildDefaultModel()
 	{
@@ -90,7 +90,7 @@ public class RealLifeTests
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Invoice loadedInvoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
 				Assertions.assertEquals(2, loadedInvoice.getPositions().size());
@@ -121,7 +121,7 @@ public class RealLifeTests
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Invoice loadedInvoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
 				final Optional<Position>
@@ -154,7 +154,7 @@ public class RealLifeTests
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Invoice loadedInvoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
 				final Optional<Position>
@@ -191,7 +191,7 @@ public class RealLifeTests
 		this.positionRepository.saveAll(positions);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Position> loadedPositions = TestUtil.iterableToList(this.positionRepository.findAll());
 				final Optional<Position>
@@ -223,7 +223,7 @@ public class RealLifeTests
 		this.positionRepository.saveAll(positions);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Position> loadedPositions = TestUtil.iterableToList(this.positionRepository.findAll());
 				Assertions.assertSame(
@@ -238,7 +238,7 @@ public class RealLifeTests
 	{
 		this.buildDefaultModelAndSaveIt();
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
 				Assertions.assertSame(
@@ -253,7 +253,7 @@ public class RealLifeTests
 	{
 		this.buildDefaultModelAndSaveIt();
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Invoice> invoices = TestUtil.iterableToList(this.invoiceRepository.findAll());
 				Assertions.assertSame(
@@ -268,7 +268,7 @@ public class RealLifeTests
 	{
 		this.buildDefaultModelAndSaveIt();
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Invoice> invoices = TestUtil.iterableToList(this.invoiceRepository.findAll());
 				final List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
@@ -286,7 +286,7 @@ public class RealLifeTests
 	{
 		this.buildDefaultModelAndSaveIt();
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Invoice> invoices1 = TestUtil.iterableToList(this.invoiceRepository.findAll());
 				final List<Invoice> invoices2 = TestUtil.iterableToList(this.invoiceRepository.findAll());
@@ -308,7 +308,7 @@ public class RealLifeTests
 		this.positionRepository.save(position1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Position position2 = TestUtil.iterableToList(this.positionRepository.findAll()).get(1);
 				Assertions.assertEquals(newWarehouseName, position2.getArticle().getWarehouses().get(0).getName());
@@ -328,7 +328,7 @@ public class RealLifeTests
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Position> positions2 = TestUtil.iterableToList(this.positionRepository.findAll());
 				Assertions.assertEquals(2, positions2.size());

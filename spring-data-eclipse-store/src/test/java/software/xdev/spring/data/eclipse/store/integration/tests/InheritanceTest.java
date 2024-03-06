@@ -30,7 +30,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.ParentCu
 import software.xdev.spring.data.eclipse.store.integration.repositories.ParentCustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.SubCustomer;
 import software.xdev.spring.data.eclipse.store.integration.repositories.SubCustomerRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -43,7 +43,7 @@ class InheritanceTest
 	@Autowired
 	private SubCustomerRepository subCustomerRepository;
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testSaveChildFindParent()
@@ -53,7 +53,7 @@ class InheritanceTest
 		this.childCustomerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -77,7 +77,7 @@ class InheritanceTest
 		this.childCustomerRepository.delete(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -102,7 +102,7 @@ class InheritanceTest
 		this.parentCustomerRepository.save(parentCustomer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -125,7 +125,7 @@ class InheritanceTest
 		this.childCustomerRepository.delete(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -152,7 +152,7 @@ class InheritanceTest
 		this.parentCustomerRepository.delete(parentCustomer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -179,7 +179,7 @@ class InheritanceTest
 		this.childCustomerRepository.deleteAll();
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -206,7 +206,7 @@ class InheritanceTest
 		this.parentCustomerRepository.deleteAll();
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -233,7 +233,7 @@ class InheritanceTest
 		this.childCustomerRepository.save(foundCustomer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
@@ -255,7 +255,7 @@ class InheritanceTest
 		this.subCustomerRepository.save(customer1);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final SubCustomer foundCustomer = this.subCustomerRepository.findByFirstName(TestData.FIRST_NAME);
 				Assertions.assertNotNull(foundCustomer);

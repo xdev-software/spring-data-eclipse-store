@@ -18,8 +18,6 @@ package software.xdev.spring.data.eclipse.store.integration.tests;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.Customer
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerNotCrud;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerNotCrudRepository;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -45,13 +43,13 @@ class SimpleSingleTest
 	private CustomerAsRecordRepository recordRepository;
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testNullFindAll()
 	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertTrue(customers.isEmpty());
@@ -66,7 +64,7 @@ class SimpleSingleTest
 		this.recordRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerAsRecord> customers = TestUtil.iterableToList(this.recordRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -84,7 +82,7 @@ class SimpleSingleTest
 		this.recordRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerAsRecord> customers = TestUtil.iterableToList(this.recordRepository.findAll());
 				final CustomerAsRecord foundCustomer =
@@ -108,7 +106,7 @@ class SimpleSingleTest
 		this.recordRepository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<CustomerAsRecord> foundCustomer =
 					this.recordRepository.findByFirstName(TestData.FIRST_NAME);
@@ -139,7 +137,7 @@ class SimpleSingleTest
 		this.repository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -157,7 +155,7 @@ class SimpleSingleTest
 		this.repository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final Optional<Customer> foundCustomer =
 					this.repository.findByFirstName(TestData.FIRST_NAME_ALTERNATIVE);
@@ -173,7 +171,7 @@ class SimpleSingleTest
 		notCrudRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerNotCrud> customers = TestUtil.iterableToList(notCrudRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -191,7 +189,7 @@ class SimpleSingleTest
 		this.repository.save(customer2);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(2, customers.size());
@@ -213,7 +211,7 @@ class SimpleSingleTest
 		this.repository.delete(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertTrue(customers.isEmpty());
@@ -234,7 +232,7 @@ class SimpleSingleTest
 		this.repository.save(customer);
 		// Check saved customer
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -247,7 +245,7 @@ class SimpleSingleTest
 	@Test
 	void testRestart()
 	{
-		TestUtil.restartDatastore(this.storage);
+		TestUtil.restartDatastore(this.configuration);
 		final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 		Assertions.assertTrue(customers.isEmpty());
 	}
@@ -257,7 +255,7 @@ class SimpleSingleTest
 	{
 		final Customer customer = new Customer(TestData.FIRST_NAME, TestData.LAST_NAME);
 		this.repository.save(customer);
-		TestUtil.restartDatastore(this.storage);
+		TestUtil.restartDatastore(this.configuration);
 		// Automatically restarts if needed
 		final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 		Assertions.assertEquals(1, customers.size());

@@ -29,13 +29,13 @@ import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.DefaultTestAnnotations;
 import software.xdev.spring.data.eclipse.store.integration.repositories.Customer;
 import software.xdev.spring.data.eclipse.store.integration.repositories.CustomerRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -47,7 +47,7 @@ class ConcurrencyTest
 	private CustomerRepository repository;
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	private final List<Customer> testCustomers =
 		IntStream.range(1, 100).mapToObj((i) -> new Customer(CUSTOMER_NO + i, "")).toList();
@@ -72,7 +72,7 @@ class ConcurrencyTest
 		final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
 		assertEquals(this.testCustomers.size(), customers.size());
 		
-		restartDatastore(this.storage);
+		restartDatastore(this.configuration);
 		final List<Customer> customers2 = TestUtil.iterableToList(this.repository.findAll());
 		assertEquals(this.testCustomers.size(), customers2.size());
 	}
@@ -98,7 +98,7 @@ class ConcurrencyTest
 		final List<Customer> customers2 = TestUtil.iterableToList(this.repository.findAll());
 		assertTrue(customers2.isEmpty());
 		
-		restartDatastore(this.storage);
+		restartDatastore(this.configuration);
 		final List<Customer> customers3 = TestUtil.iterableToList(this.repository.findAll());
 		assertTrue(customers3.isEmpty());
 	}

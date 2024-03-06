@@ -35,7 +35,7 @@ import software.xdev.spring.data.eclipse.store.integration.repositories.interfac
 import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerListPagingAndSorting;
 import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerPagingAndSorting;
 import software.xdev.spring.data.eclipse.store.integration.repositories.interfaces.CustomerSimple;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @DefaultTestAnnotations
@@ -53,7 +53,7 @@ class SpecificInterfacesTest
 	private CustomerEclipseStoreListPagingAndSortingRepository listPagingAndSortingRepository;
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
 	void testSimple()
@@ -62,7 +62,7 @@ class SpecificInterfacesTest
 		this.repository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerSimple> customers = this.repository.findAll();
 				Assertions.assertEquals(1, customers.size());
@@ -78,7 +78,7 @@ class SpecificInterfacesTest
 		this.crudRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerCrud> customers = TestUtil.iterableToList(this.crudRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
@@ -94,7 +94,7 @@ class SpecificInterfacesTest
 		this.listCrudRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerListCrud> customers = this.listCrudRepository.findAll();
 				Assertions.assertEquals(1, customers.size());
@@ -107,7 +107,7 @@ class SpecificInterfacesTest
 	void testPagingAndSorting()
 	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerPagingAndSorting> customers =
 					TestUtil.iterableToList(this.pagingAndSortingRepository.findAll(
@@ -121,7 +121,7 @@ class SpecificInterfacesTest
 	void testListPagingAndSorting()
 	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> {
 				final List<CustomerListPagingAndSorting> customers = this.listPagingAndSortingRepository.findAll(
 					Sort.unsorted());

@@ -26,22 +26,19 @@ import java.util.function.Supplier;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.types.Storer;
-import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProvider;
-import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreStorageFoundationProvider;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.RepositorySynchronizer;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
-
-@Component
 public class EclipseStoreStorage
 	implements EntityListProvider, IdSetterProvider, PersistableChecker
 {
@@ -50,8 +47,7 @@ public class EclipseStoreStorage
 	private final Map<Class<?>, IdSetter<?>> entityClassToIdSetter = new HashMap<>();
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
-	private final EclipseStoreProperties storeConfiguration;
-	private final EclipseStoreProvider storeProvider;
+	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	
 	private StorageManager storageManager;
 	private Root root;
@@ -59,12 +55,9 @@ public class EclipseStoreStorage
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
 	private RepositorySynchronizer repositorySynchronizer;
 	
-	public EclipseStoreStorage(
-		final EclipseStoreProperties storeConfiguration,
-		final EclipseStoreProvider storeProvider)
+	public EclipseStoreStorage(final EclipseStoreClientConfiguration storeConfiguration)
 	{
-		this.storeConfiguration = storeConfiguration;
-		this.storeProvider = storeProvider;
+		this.foundationProvider = storeConfiguration;
 	}
 	
 	private synchronized StorageManager getInstanceOfStorageManager()
@@ -85,7 +78,7 @@ public class EclipseStoreStorage
 			LOG.info("Starting storage...");
 			this.root = new Root();
 			final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
-				this.storeProvider.createStorageFoundation(this.storeConfiguration);
+				this.foundationProvider.getEmbeddedStorageFoundation();
 			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
 			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
 			this.storageManager = embeddedStorageFoundation.start(this.root);

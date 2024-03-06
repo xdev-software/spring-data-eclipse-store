@@ -15,6 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
+import static software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories.CLIENT_CONFIGURATION_ANNOTATION_VALUE;
+import static software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories.CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE;
+
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,8 +25,12 @@ import java.util.List;
 
 import jakarta.annotation.Nonnull;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
+import org.springframework.util.ClassUtils;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCustomRepository;
@@ -61,6 +68,19 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	public String getRepositoryFactoryBeanClassName()
 	{
 		return EclipseStoreRepositoryFactoryBean.class.getName();
+	}
+	
+	@Override
+	public void postProcess(final BeanDefinitionBuilder builder, final AnnotationRepositoryConfigurationSource config)
+	{
+		final AnnotationAttributes attributes = config.getAttributes();
+		final Class<?> configurationClass = attributes.getClass(CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE);
+		String configurationString = attributes.getString(CLIENT_CONFIGURATION_ANNOTATION_VALUE);
+		if(!configurationClass.equals(DefaultEclipseStoreClientConfiguration.class))
+		{
+			configurationString = ClassUtils.getShortNameAsProperty(configurationClass);
+		}
+		builder.addPropertyReference("configuration", configurationString);
 	}
 	
 	@Override

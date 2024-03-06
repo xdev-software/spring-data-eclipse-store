@@ -31,7 +31,7 @@ import org.springframework.test.context.TestPropertySource;
 import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.IsolatedTestAnnotations;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
@@ -50,7 +50,7 @@ class TypesTest
 			+ ".TypesData#generateNotWorkingData";
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)
@@ -65,7 +65,7 @@ class TypesTest
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
@@ -113,7 +113,7 @@ class TypesTest
 		repository.save(storedObject.get());
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, storedObject.get())
 		);
 	}
@@ -134,7 +134,7 @@ class TypesTest
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
@@ -153,7 +153,7 @@ class TypesTest
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
