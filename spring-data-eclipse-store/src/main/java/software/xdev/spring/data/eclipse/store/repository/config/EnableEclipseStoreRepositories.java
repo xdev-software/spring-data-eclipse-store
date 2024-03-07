@@ -95,7 +95,8 @@ public @interface EnableEclipseStoreRepositories
 	 * @return the class of a {@link EclipseStoreClientConfiguration} to use.
 	 * {@link DefaultEclipseStoreClientConfiguration} is used if not defined.
 	 */
-	Class<? extends EclipseStoreClientConfiguration> clientConfigurationClass() default DefaultEclipseStoreClientConfiguration.class;
+	Class<? extends EclipseStoreClientConfiguration> clientConfigurationClass()
+		default DefaultEclipseStoreClientConfiguration.class;
 	
 	/**
 	 * Returns the postfix to be used when looking up custom repository implementations. Defaults to {@literal Impl} .
