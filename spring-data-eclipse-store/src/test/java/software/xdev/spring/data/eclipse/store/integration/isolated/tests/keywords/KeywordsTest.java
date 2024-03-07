@@ -19,11 +19,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.IsolatedTestAnnotations;
-import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestConfiguration;
 
 
 /**
@@ -32,14 +31,10 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
  * keywords</a>
  */
 @IsolatedTestAnnotations
-@TestPropertySource(
-	properties =
-		"org.eclipse.store.storage-directory=./target/keywords-tests-storage"
-)
 class KeywordsTest
 {
 	@Autowired
-	private EclipseStoreClientConfiguration configuration;
+	private IsolatedTestConfiguration configuration;
 	
 	@Test
 	@Disabled("For now we don't need 'existsBy'")

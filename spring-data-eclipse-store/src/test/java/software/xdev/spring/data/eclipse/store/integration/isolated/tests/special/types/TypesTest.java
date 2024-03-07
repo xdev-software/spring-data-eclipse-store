@@ -26,20 +26,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.TestPropertySource;
 
 import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.IsolatedTestAnnotations;
-import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
 @IsolatedTestAnnotations
-@TestPropertySource(
-	properties =
-		"org.eclipse.store.storage-directory=./target/isolated-tests-storage"
-)
 class TypesTest
 {
 	public static final String TYPES_DATA_SOURCE =
@@ -50,7 +45,7 @@ class TypesTest
 			+ ".TypesData#generateNotWorkingData";
 	
 	@Autowired
-	private EclipseStoreClientConfiguration configuration;
+	private IsolatedTestConfiguration configuration;
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)

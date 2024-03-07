@@ -21,6 +21,7 @@ import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseSto
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
@@ -72,6 +73,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		return this.getStoreProvider().createStorageFoundation(this.getStoreConfiguration());
 	}
 	
+	@Bean
 	public EclipseStoreStorage getStorageInstance()
 	{
 		if(this.storageInstance == null)
