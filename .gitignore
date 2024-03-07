@@ -68,6 +68,8 @@ target/
 
 # EclipseStore
 storage
+storage-person
+storage-invoice
 storage-jpa
 
 # == IntelliJ ==

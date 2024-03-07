@@ -55,12 +55,13 @@ instructions** are in the documentation](https://xdev-software.github.io/spring-
 
 ## Demo
 
-To see how easy it is to implement EclipseStore in your Spring project, take a look at the three
-[demos](./spring-data-eclipse-store-demo):<br/>
-A [simple](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple), a
-more [complex demo](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
-and
-a [demo with coexisting JPA](./spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa).
+To see how easy it is to implement EclipseStore in your Spring project, take a look at
+the [demos](./spring-data-eclipse-store-demo):
+
+* [Simple demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple)
+* [Complex demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
+* [Demo with coexisting JPA](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa)
+* [Dual storage demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage)
 
 > [!NOTE]  
 > Since the library is using reflection to copy data, the following JVM-Arguments may have to be set:
@@ -70,7 +71,6 @@ a [demo with coexisting JPA](./spring-data-eclipse-store-jpa/src/main/java/softw
 > --add-opens=java.base/java.lang=ALL-UNNAMED
 > --add-opens=java.base/java.time=ALL-UNNAMED 
 > ```
-
 
 ## Support
 
