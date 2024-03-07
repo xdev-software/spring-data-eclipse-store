@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Customer;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepository;
 
@@ -47,7 +47,7 @@ class ConcurrencyTest
 	private CustomerRepository repository;
 	
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	private final List<Customer> testCustomers =
 		IntStream.range(1, 100).mapToObj((i) -> new Customer(CUSTOMER_NO + i, "")).toList();

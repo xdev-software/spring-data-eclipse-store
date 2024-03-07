@@ -31,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@ContextConfiguration(classes = {SharedTestConfiguration.class})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public @interface DefaultTestAnnotations
 {

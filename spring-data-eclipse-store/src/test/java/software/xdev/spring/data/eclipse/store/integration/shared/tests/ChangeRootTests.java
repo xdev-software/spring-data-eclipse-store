@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Node;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.NodeRepository;
 
@@ -39,7 +39,7 @@ public class ChangeRootTests
 	@Autowired
 	private NodeRepository repository;
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	//@formatter:off
 	/**

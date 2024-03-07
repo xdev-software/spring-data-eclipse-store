@@ -28,7 +28,7 @@ import org.springframework.data.domain.Sort;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Child;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Customer;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepository;
@@ -45,7 +45,7 @@ class QueryTest
 	private CustomerWithChildRepository customerWithChildRepository;
 	
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	@Test
 	void testBasicFindAllByLastNameTwoResults()

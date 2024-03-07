@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.ChildCustomer;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.ChildCustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.ParentCustomer;
@@ -43,7 +43,7 @@ class InheritanceTest
 	@Autowired
 	private SubCustomerRepository subCustomerRepository;
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	@Test
 	void testSaveChildFindParent()

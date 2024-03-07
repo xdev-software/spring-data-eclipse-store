@@ -25,7 +25,7 @@ import org.springframework.data.domain.Sort;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.interfaces.CustomerCrud;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.interfaces.CustomerEclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.interfaces.CustomerEclipseStoreListCrudRepository;
@@ -53,7 +53,7 @@ class SpecificInterfacesTest
 	private CustomerEclipseStoreListPagingAndSortingRepository listPagingAndSortingRepository;
 	
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	@Test
 	void testSimple()

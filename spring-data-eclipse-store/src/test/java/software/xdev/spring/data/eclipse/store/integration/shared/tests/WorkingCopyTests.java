@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Customer;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Node;
@@ -44,7 +44,7 @@ public class WorkingCopyTests
 	@Autowired
 	NodeRepository nodeRepository;
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	@Test
 	void testBasicChangeOnlyAfterSave()

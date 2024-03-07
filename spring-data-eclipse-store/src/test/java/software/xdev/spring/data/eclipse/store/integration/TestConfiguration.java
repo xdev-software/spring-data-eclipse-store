@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated;
+package software.xdev.spring.data.eclipse.store.integration;
 
 import static org.eclipse.store.storage.embedded.types.EmbeddedStorage.Foundation;
 
@@ -30,14 +30,10 @@ import org.springframework.util.FileSystemUtils;
 
 import software.xdev.spring.data.eclipse.store.helper.StorageDirectoryNameProvider;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
-import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
 @Configuration
-@EnableEclipseStoreRepositories(
-	value = "software.xdev.spring.data.eclipse.store.integration.isolated",
-	clientConfigurationClass = IsolatedTestConfiguration.class)
-public class IsolatedTestConfiguration extends EclipseStoreClientConfiguration
+public class TestConfiguration extends EclipseStoreClientConfiguration
 {
 	private final String storageDirectory = StorageDirectoryNameProvider.getNewStorageDirectoryPath();
 	

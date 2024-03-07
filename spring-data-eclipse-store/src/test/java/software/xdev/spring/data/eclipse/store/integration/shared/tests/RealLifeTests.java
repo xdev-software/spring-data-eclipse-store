@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Article;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.ArticleGroup;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Invoice;
@@ -54,7 +54,7 @@ public class RealLifeTests
 	@Autowired
 	PositionRepository positionRepository;
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	private Invoice buildDefaultModel()
 	{

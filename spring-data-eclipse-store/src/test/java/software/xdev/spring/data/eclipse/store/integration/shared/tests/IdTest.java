@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdInt;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdIntRepository;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdInteger;
@@ -49,7 +49,7 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 class IdTest
 {
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	@Test
 	void testCreateSingleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)

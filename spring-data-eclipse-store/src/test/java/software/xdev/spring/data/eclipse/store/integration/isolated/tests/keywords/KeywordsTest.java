@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestConfiguration;
 
 
 /**
@@ -31,10 +31,11 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
  * keywords</a>
  */
 @IsolatedTestAnnotations
+@ContextConfiguration(classes = {KeywordsTestConfiguration.class})
 class KeywordsTest
 {
 	@Autowired
-	private IsolatedTestConfiguration configuration;
+	private KeywordsTestConfiguration configuration;
 	
 	@Test
 	@Disabled("For now we don't need 'existsBy'")

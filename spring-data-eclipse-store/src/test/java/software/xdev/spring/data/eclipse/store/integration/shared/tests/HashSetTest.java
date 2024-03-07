@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepositoryWithHashSet;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepositoryWithNonFinalHashSet;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerWithHashSet;
@@ -41,7 +41,7 @@ class HashSetTest
 	private CustomerRepositoryWithNonFinalHashSet nonFinalRepository;
 	
 	@Autowired
-	private TestConfiguration configuration;
+	private SharedTestConfiguration configuration;
 	
 	@Test
 	void testSaveAndFindAll()

@@ -25,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.immutables.CustomerWithFinal;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.immutables.CustomerWithFinalChild;
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.immutables.CustomerWithFinalChildRepository;
@@ -45,7 +45,7 @@ class FinalTest
 	CustomerWithFinalIdRepository withFinalIdRepository;
 	
 	@Autowired
-	TestConfiguration configuration;
+	SharedTestConfiguration configuration;
 	
 	@Test
 	void testSaveAndFindSingle()
