@@ -38,8 +38,12 @@ Since the library is using reflection to copy data, the following JVM-Arguments 
 
 == Demo
 
-To see how easy it is to implement EclipseStore in your Spring project, take a look at the three https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo[demos]:
-A https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple[simple], a more https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex[complex demo] and a https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa[demo with coexisting JPA].
+To see how easy it is to implement EclipseStore in your Spring project, take a look at the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo[demos]:
+
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple[Simple demo]
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex[Complex demo]
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa[Demo with coexisting JPA]
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage[Dual storage demo]
 
 == Drop in compatible [[drop-in-compatible]]
 

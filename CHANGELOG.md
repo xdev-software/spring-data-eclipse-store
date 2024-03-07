@@ -1,3 +1,7 @@
+# 1.0.4
+
+* Added possibility to use multiple storages
+
 # 1.0.3
 
 * Added the EclipseStoreDataImporter to import data from JPA repositories.

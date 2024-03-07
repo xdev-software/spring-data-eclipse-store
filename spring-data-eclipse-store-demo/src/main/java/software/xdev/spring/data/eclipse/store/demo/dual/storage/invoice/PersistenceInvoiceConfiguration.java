@@ -1,9 +1,8 @@
 package software.xdev.spring.data.eclipse.store.demo.dual.storage.invoice;
 
-import static org.eclipse.store.storage.embedded.types.EmbeddedStorage.Foundation;
-
 import java.nio.file.Path;
 
+import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.Storage;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +21,6 @@ public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfigura
 	@Override
 	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
-		return Foundation(Storage.Configuration(Storage.FileProvider(Path.of("storage-invoice"))));
+		return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of("storage-invoice"))));
 	}
 }
