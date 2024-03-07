@@ -70,6 +70,12 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 		return EclipseStoreRepositoryFactoryBean.class.getName();
 	}
 	
+	/**
+	 * This method puts the {@link EclipseStoreRepositoryFactoryBean#configuration} in the created
+	 * {@link EclipseStoreRepositoryFactoryBean}. This is important to link
+	 * {@link EnableEclipseStoreRepositories#clientConfiguration()} with the actual
+	 * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage}.
+	 */
 	@Override
 	public void postProcess(final BeanDefinitionBuilder builder, final AnnotationRepositoryConfigurationSource config)
 	{

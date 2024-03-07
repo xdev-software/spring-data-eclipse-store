@@ -78,7 +78,7 @@ public class EclipseStoreStorage
 			LOG.info("Starting storage...");
 			this.root = new Root();
 			final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
-				this.foundationProvider.getEmbeddedStorageFoundation();
+				this.foundationProvider.createEmbeddedStorageFoundation();
 			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
 			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
 			this.storageManager = embeddedStorageFoundation.start(this.root);

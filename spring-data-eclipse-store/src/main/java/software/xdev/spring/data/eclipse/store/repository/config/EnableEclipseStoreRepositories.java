@@ -83,10 +83,18 @@ public @interface EnableEclipseStoreRepositories
 	
 	String CLIENT_CONFIGURATION_ANNOTATION_VALUE = "clientConfiguration";
 	
+	/**
+	 * @return the name of a {@link EclipseStoreClientConfiguration} to use.
+	 * {@link DefaultEclipseStoreClientConfiguration} is used if not defined.
+	 */
 	String clientConfiguration() default "defaultEclipseStoreClientConfiguration";
 	
 	String CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE = "clientConfigurationClass";
 	
+	/**
+	 * @return the class of a {@link EclipseStoreClientConfiguration} to use.
+	 * {@link DefaultEclipseStoreClientConfiguration} is used if not defined.
+	 */
 	Class<? extends EclipseStoreClientConfiguration> clientConfigurationClass() default DefaultEclipseStoreClientConfiguration.class;
 	
 	/**

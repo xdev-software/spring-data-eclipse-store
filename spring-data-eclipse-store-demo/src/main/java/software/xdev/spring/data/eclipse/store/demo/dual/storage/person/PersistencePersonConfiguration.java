@@ -20,7 +20,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 public class PersistencePersonConfiguration extends EclipseStoreClientConfiguration
 {
 	@Override
-	public EmbeddedStorageFoundation<?> getEmbeddedStorageFoundation()
+	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
 		return Foundation(Storage.Configuration(Storage.FileProvider(Path.of("storage-person"))));
 	}

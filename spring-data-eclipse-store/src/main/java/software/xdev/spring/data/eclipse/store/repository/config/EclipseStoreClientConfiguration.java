@@ -20,15 +20,31 @@ import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProviderImpl
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
+/**
+ * Defines the configuration of a single EclipseStore-Storage.
+ * <p>
+ * Configuration is possible through default EclipseStore-Behavior.<br/> See <a
+ * href="https://docs.eclipsestore.io/manual/misc/integrations/spring-boot.html">EclipseStore documentation</a>
+ * </p>
+ * <p>
+ * It's also possible to inherit this configuration and override {@link #createEmbeddedStorageFoundation()}
+ * </p>
+ * <p>
+ * Also creates a singleton reference to a {@link EclipseStoreStorage}. This is to only create one EclipseStore-Storage
+ * for one configuration.
+ * </p>
+ */
 @Configuration(proxyBeanMethods = false)
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
 	@Autowired
+	@Qualifier("eclipseStoreProperties")
 	private EclipseStoreProperties defaultEclipseStoreProperties;
 	
 	@Autowired
@@ -46,8 +62,12 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		return this.defaultEclipseStoreProvider;
 	}
 	
+	/**
+	 * Creates a {@link EmbeddedStorageFoundation} out of the two other provided functions {@link #getStoreProvider()}
+	 * and {@link #getStoreConfiguration()}.
+	 */
 	@Override
-	public EmbeddedStorageFoundation<?> getEmbeddedStorageFoundation()
+	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
 		return this.getStoreProvider().createStorageFoundation(this.getStoreConfiguration());
 	}

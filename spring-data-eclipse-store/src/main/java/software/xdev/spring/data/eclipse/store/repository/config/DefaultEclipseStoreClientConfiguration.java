@@ -18,6 +18,11 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 import org.springframework.context.annotation.Configuration;
 
 
+/**
+ * Provides the Default implementation of an {@link EclipseStoreClientConfiguration}. The class can't be final because
+ * of the {@link Configuration}-Annotation. It's mostly used to check if the user wants the default implementation or if
+ * he created a different {@link EclipseStoreClientConfiguration}.
+ */
 @Configuration(proxyBeanMethods = false)
 public class DefaultEclipseStoreClientConfiguration extends EclipseStoreClientConfiguration
 {

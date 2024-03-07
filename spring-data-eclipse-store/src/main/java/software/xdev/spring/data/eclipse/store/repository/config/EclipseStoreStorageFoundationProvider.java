@@ -18,7 +18,11 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 
 
+/**
+ * Wraps access to a {@link EmbeddedStorageFoundation} into a single interface to have looser coupling towards
+ * EclipseStore.
+ */
 public interface EclipseStoreStorageFoundationProvider
 {
-	EmbeddedStorageFoundation<?> getEmbeddedStorageFoundation();
+	EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation();
 }
