@@ -47,9 +47,9 @@ class LazyTest
 			this.configuration,
 			() -> {
 				Assertions.assertEquals(1, repository.findAll().size());
-				final LazyList<SimpleObject> loadedLazyList = repository.findAll().getFirst().getLazyList();
+				final LazyList<SimpleObject> loadedLazyList = repository.findAll().get(0).getLazyList();
 				Assertions.assertEquals(1, loadedLazyList.size());
-				Assertions.assertEquals(objectToStore, loadedLazyList.getFirst());
+				Assertions.assertEquals(objectToStore, loadedLazyList.get(0));
 			}
 		);
 	}

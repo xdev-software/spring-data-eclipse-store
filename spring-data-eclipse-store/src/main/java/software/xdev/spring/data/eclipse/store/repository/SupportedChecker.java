@@ -41,18 +41,12 @@ public interface SupportedChecker
 	 * <p>
 	 * Some classes are not supported, because Eclipse Store doesn't support them.
 	 * </p>
-	 * <p>
-	 * {@link Lazy} is not supported, because a lot of hidden stuff must be done to keep Lazy-References really Lazy
-	 * when creating a working copy.
-	 * </p>
 	 */
 	boolean isSupported(Class<?> clazz);
 	
 	class Implementation implements SupportedChecker
 	{
 		private static final List<Class<?>> UNSUPPORTED_DATA_TYPES = List.of(
-			// Is difficult to handle when creating working copies
-			Lazy.class,
 			// Here EclipseStore has problems: https://github.com/microstream-one/microstream/issues/173
 			Calendar.class,
 			WeakHashMap.class,

@@ -20,6 +20,8 @@ import java.util.Set;
 
 import jakarta.annotation.Nonnull;
 
+import org.eclipse.serializer.reference.Lazy;
+
 
 public final class DataTypeUtil
 {
@@ -43,6 +45,11 @@ public final class DataTypeUtil
 	public static boolean isObjectArray(final Object obj)
 	{
 		return obj instanceof Object[];
+	}
+	
+	public static boolean isLazy(final Object obj)
+	{
+		return obj instanceof Lazy<?>;
 	}
 	
 	public static boolean isPrimitiveArray(final Object obj)

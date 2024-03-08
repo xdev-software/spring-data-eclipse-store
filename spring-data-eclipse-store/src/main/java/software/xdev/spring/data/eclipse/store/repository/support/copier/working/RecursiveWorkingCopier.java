@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.serializer.reference.Lazy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +38,11 @@ import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
+import software.xdev.spring.data.eclipse.store.repository.lazy.LazyProxyGenerator;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.object.EclipseSerializerRegisteringCopier;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.object.RegisteringObjectCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringObjectCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringStorageToWorkingCopyCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringWorkingCopyToStorageCopier;
 
 
 /**
@@ -47,8 +50,14 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.object.
  */
 public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 {
+	public enum MergingDirection
+	{
+		STORAGE_TO_WORKING_COPY,
+		WORKING_COPY_TO_STORAGE
+	}
 	private static final Logger LOG = LoggerFactory.getLogger(RecursiveWorkingCopier.class);
-	private final RegisteringObjectCopier objectCopier;
+	private final RegisteringObjectCopier workingCopyToStorageCopier;
+	private final RegisteringObjectCopier storageToWorkingCopyCopier;
 	private final WorkingCopyRegistry registry;
 	private final IdSetterProvider idSetterProvider;
 	private final Class<T> domainClass;
@@ -63,7 +72,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
-		this.objectCopier = new EclipseSerializerRegisteringCopier(registry, supportedChecker);
+		this.workingCopyToStorageCopier = new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker);
+		this.storageToWorkingCopyCopier = new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker);
 		this.idSetterProvider = idSetterProvider;
 		this.persistableChecker = persistableChecker;
 	}
@@ -110,7 +120,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			workingCopy,
 			true,
 			new HashSetMergedTargetsCollector(),
-			changedObjectCollector);
+			changedObjectCollector,
+			MergingDirection.WORKING_COPY_TO_STORAGE);
 		if(LOG.isTraceEnabled())
 		{
 			LOG.trace("Merging back the working copy object of class {}", workingCopy.getClass().getSimpleName());
@@ -123,7 +134,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final E workingCopy,
 		final boolean mergeValues,
 		final MergedTargetsCollector alreadyMergedTargets,
-		final ChangedObjectCollector changedCollector)
+		final ChangedObjectCollector changedCollector,
+		final MergingDirection mergingDirection)
 	{
 		if(workingCopy == null)
 		{
@@ -135,7 +147,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			if(mergeValues)
 			{
-				this.mergeValues(workingCopy, originalObject, alreadyMergedTargets, changedCollector);
+				this.mergeValues(workingCopy, originalObject, alreadyMergedTargets, changedCollector,
+					mergingDirection);
 			}
 			changedCollector.collectChangedObject(originalObject);
 			return originalObject;
@@ -146,7 +159,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final E objectForDatastore = this.genericCopy(workingCopy, true);
 		// "Why merging values of an identical object?" you might ask.
 		// Well, because some sub-objects might already be in the datastore.
-		this.mergeValues(workingCopy, objectForDatastore, alreadyMergedTargets, changedCollector);
+		this.mergeValues(workingCopy, objectForDatastore, alreadyMergedTargets, changedCollector, mergingDirection);
 		changedCollector.collectChangedObject(objectForDatastore);
 		return objectForDatastore;
 	}
@@ -161,7 +174,9 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final E sourceObject,
 		final E targetObject,
 		final MergedTargetsCollector alreadyMergedTargets,
-		final ChangedObjectCollector changedCollector)
+		final ChangedObjectCollector changedCollector,
+		final MergingDirection mergingDirection
+	)
 	{
 		if(sourceObject == targetObject || alreadyMergedTargets.isAlreadyMerged(targetObject) || targetObject == null)
 		{
@@ -179,7 +194,13 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			}
 			AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
 				field ->
-					this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
+					this.mergeValueOfField(
+						sourceObject,
+						targetObject,
+						field,
+						alreadyMergedTargets,
+						changedCollector,
+						mergingDirection)
 			);
 		}
 		catch(final Exception e)
@@ -193,7 +214,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final E targetObject,
 		final Field field,
 		final MergedTargetsCollector alreadyMergedTargets,
-		final ChangedObjectCollector changedCollector)
+		final ChangedObjectCollector changedCollector,
+		final MergingDirection mergingDirection)
 	{
 		try
 		{
@@ -239,9 +261,15 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 							valueOfSourceObject.getClass().getComponentType(),
 							(Object[])valueOfSourceObject,
 							alreadyMergedTargets,
-							changedCollector
+							changedCollector,
+							mergingDirection
 						);
 						fam.writeValueOfField(targetObject, newArray, !targetObjectIsPartOfJavaPackage);
+					}
+					else if(DataTypeUtil.isLazy(valueOfSourceObject))
+					{
+						final Lazy<?> newLazy = this.createNewLazy((Lazy<?>)valueOfSourceObject, mergingDirection);
+						fam.writeValueOfField(targetObject, newLazy, true);
 					}
 					else
 					{
@@ -252,7 +280,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 								valueOfSourceObject,
 								false,
 								alreadyMergedTargets,
-								changedCollector);
+								changedCollector,
+								mergingDirection);
 						if(valueOfTargetObject != originalValueObjectOfSource)
 						{
 							// If the reference is new, it must be set
@@ -276,7 +305,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 								valueOfSourceObject,
 								originalValueObjectOfSource,
 								alreadyMergedTargets,
-								changedCollector);
+								changedCollector,
+								mergingDirection);
 						}
 					}
 				}
@@ -286,6 +316,34 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			throw new MergeFailedException(sourceObject, targetObject, e);
 		}
+	}
+	
+	private <E> Lazy<E> createNewLazy(
+		final Lazy<E> valueOfSourceObject,
+		final MergingDirection mergingDirection
+	)
+	{
+		final Lazy<E> oldLazy = valueOfSourceObject;
+		final Lazy<E> newLazy;
+		if(mergingDirection.equals(MergingDirection.STORAGE_TO_WORKING_COPY))
+		{
+			// If this object is generated for a working copy we need a proxy that only loads the actual
+			// stored lazy if needed and not before.
+			newLazy = LazyProxyGenerator.generateLazyProxy(oldLazy);
+		}
+		else
+		{
+			// TODO
+			if(oldLazy.isLoaded())
+			{
+				newLazy = Lazy.Reference(oldLazy.get());
+			}
+			else
+			{
+				throw new RuntimeException("");
+			}
+		}
+		return newLazy;
 	}
 	
 	/**
@@ -311,7 +369,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final Class<E> clazz,
 		final Object[] valueOfSourceObjectArray,
 		final MergedTargetsCollector alreadyMergedTargets,
-		final ChangedObjectCollector changedCollector)
+		final ChangedObjectCollector changedCollector,
+		final MergingDirection mergingDirection)
 	{
 		// Create new Array with original objects with merged data
 		final E[] newArray = (E[])Array.newInstance(clazz, valueOfSourceObjectArray.length);
@@ -321,14 +380,19 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				(E)valueOfSourceObjectArray[i],
 				true,
 				alreadyMergedTargets,
-				changedCollector);
+				changedCollector,
+				mergingDirection);
 		}
 		return newArray;
 	}
 	
 	private <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
 	{
-		return this.objectCopier.copy(objectToCopy, invertRegistry);
+		if(invertRegistry)
+		{
+			return this.workingCopyToStorageCopier.copy(objectToCopy);
+		}
+		return this.storageToWorkingCopyCopier.copy(objectToCopy);
 	}
 	
 	@Override

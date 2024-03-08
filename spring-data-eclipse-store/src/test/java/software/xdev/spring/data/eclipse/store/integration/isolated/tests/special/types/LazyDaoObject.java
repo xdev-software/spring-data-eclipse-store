@@ -15,6 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types;
 
+import java.util.Objects;
+
 import org.eclipse.serializer.reference.Lazy;
 
 
@@ -23,5 +25,22 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 	public LazyDaoObject(final Integer id, final Lazy<String> value)
 	{
 		super(id, value);
+	}
+	
+	@Override
+	public boolean equals(final Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || this.getClass() != o.getClass())
+		{
+			return false;
+		}
+		final ComplexObject<Lazy<String>> that = (ComplexObject<Lazy<String>>)o;
+		return Objects.equals(this.getId(), that.getId()) && Objects.equals(
+			this.getValue().get(),
+			that.getValue().get());
 	}
 }

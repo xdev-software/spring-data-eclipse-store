@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.object;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
 
-import org.eclipse.serializer.ObjectCopier;
-
-
-public interface RegisteringObjectCopier extends ObjectCopier
+public interface RegisteringObjectCopier extends AutoCloseable
 {
-	<T> T copy(T t, boolean invertRegistering);
+	<T> T copy(T t);
 }

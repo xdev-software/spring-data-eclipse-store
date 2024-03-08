@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.object;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -25,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 
 
-class EclipseStoreRegisteringCopierTest
+class RegisteringStorageToWorkingCopyCopierTest
 {
 	private record DummyData(String data, int number)
 	{
@@ -34,8 +34,10 @@ class EclipseStoreRegisteringCopierTest
 	@Test
 	void testCopyManyCopiesSingle()
 	{
-		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
+		try(final RegisteringStorageToWorkingCopyCopier copier =
+			new RegisteringStorageToWorkingCopyCopier(
+				new WorkingCopyRegistry(),
+				new SupportedChecker.Implementation()))
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 1_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -50,8 +52,10 @@ class EclipseStoreRegisteringCopierTest
 	@Test
 	void testCopyAgainSameObject()
 	{
-		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
+		try(final RegisteringStorageToWorkingCopyCopier copier =
+			new RegisteringStorageToWorkingCopyCopier(
+				new WorkingCopyRegistry(),
+				new SupportedChecker.Implementation()))
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -65,8 +69,10 @@ class EclipseStoreRegisteringCopierTest
 	@Test
 	void testCopyAgainTheCopy()
 	{
-		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
+		try(final RegisteringStorageToWorkingCopyCopier copier =
+			new RegisteringStorageToWorkingCopyCopier(
+				new WorkingCopyRegistry(),
+				new SupportedChecker.Implementation()))
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -82,8 +88,10 @@ class EclipseStoreRegisteringCopierTest
 	@Test
 	void testCopyManyCopiesBulk()
 	{
-		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
+		try(final RegisteringStorageToWorkingCopyCopier copier =
+			new RegisteringStorageToWorkingCopyCopier(
+				new WorkingCopyRegistry(),
+				new SupportedChecker.Implementation()))
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 100_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -98,8 +106,10 @@ class EclipseStoreRegisteringCopierTest
 	@Test
 	void testCopyEmpty()
 	{
-		try(final EclipseSerializerRegisteringCopier copier =
-			new EclipseSerializerRegisteringCopier(new WorkingCopyRegistry(), new SupportedChecker.Implementation()))
+		try(final RegisteringStorageToWorkingCopyCopier copier =
+			new RegisteringStorageToWorkingCopyCopier(
+				new WorkingCopyRegistry(),
+				new SupportedChecker.Implementation()))
 		{
 			Assertions.assertThrows(NullPointerException.class, () -> copier.copy(null));
 		}

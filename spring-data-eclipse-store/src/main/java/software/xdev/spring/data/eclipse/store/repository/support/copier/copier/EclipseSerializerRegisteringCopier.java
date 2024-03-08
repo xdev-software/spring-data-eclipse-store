@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.object;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.serializer.Serializer;
-import org.eclipse.serializer.SerializerFoundation;
-import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
-import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.binary.types.BinaryStorer;
 import org.eclipse.serializer.persistence.types.PersistenceLoader;
 import org.eclipse.serializer.persistence.types.PersistenceManager;
 import org.eclipse.serializer.persistence.types.PersistenceStorer;
-import org.eclipse.serializer.reference.Reference;
-import org.eclipse.serializer.util.X;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
-import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
 
 
@@ -42,32 +35,23 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTyp
  * This class utilizes EclipseStore-Serialization and copies objects by serializing and deserializing objects in
  * memory.
  */
-public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopier
+public class EclipseSerializerRegisteringCopier implements AutoCloseable
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseSerializerRegisteringCopier.class);
-	private final SerializerFoundation<?> foundation;
 	private PersistenceManager<Binary> persistenceManager;
 	private final SupportedChecker supportedChecker;
-	
-	private final WorkingCopyRegistry registry;
+	private final RegisteringWorkingCopyAndOriginal register;
 	
 	public EclipseSerializerRegisteringCopier(
-		final WorkingCopyRegistry registry,
-		final SupportedChecker supportedChecker)
+		final SupportedChecker supportedChecker,
+		final RegisteringWorkingCopyAndOriginal register,
+		final PersistenceManager<Binary> persistenceManager)
 	{
-		final SerializerFoundation<?> newFoundation = SerializerFoundation.New();
-		newFoundation.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
-		newFoundation.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
-		this.foundation = newFoundation;
-		this.registry = registry;
 		this.supportedChecker = supportedChecker;
+		this.register = register;
+		this.persistenceManager = persistenceManager;
 	}
-	
-	@Override
-	public synchronized <T> T copy(final T source)
-	{
-		return this.copy(source, false);
-	}
+
 	
 	@Override
 	public synchronized void close()
@@ -77,28 +61,6 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 			this.persistenceManager.objectRegistry().clearAll();
 			this.persistenceManager.close();
 			this.persistenceManager = null;
-		}
-	}
-	
-	private void lazyInit()
-	{
-		if(this.persistenceManager == null)
-		{
-			final Reference<Binary> buffer = X.Reference(null);
-			final Serializer.Source source = () -> X.Constant(buffer.get());
-			final Serializer.Target target = buffer::set;
-			this.persistenceManager =
-				(((SerializerFoundation<?>)this.foundation.setPersistenceSource(source))
-					.setPersistenceTarget(target))
-					// Make every type persistable.
-					// This is quite dangerous!
-					// But if this is not set we get problems e.g. with HashMap$Node
-					.setTypeEvaluatorPersistable(a -> true)
-					.createPersistenceManager();
-		}
-		else
-		{
-			this.persistenceManager.objectRegistry().truncateAll();
 		}
 	}
 	
@@ -116,11 +78,9 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 	 * EclipseStore-ObjectId.
 	 * </p>
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public synchronized <T> T copy(final T source, final boolean invertRegistering)
+	public synchronized <T> T copy(final T source)
 	{
-		this.lazyInit();
+		this.persistenceManager.objectRegistry().truncateAll();
 		final BinaryStorer.Default storer = (BinaryStorer.Default)this.persistenceManager.createStorer();
 		// Loader erstellen
 		final PersistenceLoader loader = this.persistenceManager.createLoader();
@@ -153,14 +113,7 @@ public class EclipseSerializerRegisteringCopier implements RegisteringObjectCopi
 				if(originalObject != null)
 				{
 					summarizer.incrementRegisteredObjectsCount();
-					if(invertRegistering)
-					{
-						this.registry.invertRegister(copiedObject, originalObject);
-					}
-					else
-					{
-						this.registry.register(copiedObject, originalObject);
-					}
+					this.register.register(copiedObject, originalObject);
 				}
 			}
 		);
