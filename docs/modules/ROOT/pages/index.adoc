@@ -1,8 +1,8 @@
-= Overview
+= {product-name}
 
 image::Logo.svg[Logo XDEV Spring-Data-Eclipse-Store,200]
 
-== About {product-name}
+== About
 
 A Open-Source library to simplify using https://eclipsestore.io/[EclipseStore] in a https://spring.io/projects/spring-data/[Spring environment].
 

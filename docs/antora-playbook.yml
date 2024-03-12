@@ -1,6 +1,6 @@
 site:
   title: Spring-Data-Eclipse-Store
-  url: https://xdev-software.github.io/spring-data-eclipse-store/
+  url: https://spring-eclipsestore.xdev.software/
   robots: allow
 
 # see https://docs.antora.org/antora/2.3/playbook/configure-runtime/
