@@ -20,10 +20,13 @@ import org.eclipse.serializer.SerializerFoundation;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.binary.types.Binary;
+import org.eclipse.serializer.persistence.types.PersistenceManager;
+import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reference.Reference;
 import org.eclipse.serializer.util.X;
 
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazyBinaryHandler;
 
 
 /**
@@ -37,25 +40,36 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 	public AbstractRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
-		final PersistenceManagerProvider persistenceManagerProvider)
+		final ObjectSwizzling objectSwizzling)
 	{
 		this.actualCopier = new EclipseSerializerRegisteringCopier(
 			supportedChecker,
 			register,
-			persistenceManagerProvider.createPersistenceManager(this.createSerializerFoundation())
+			this.createPersistenceManager(
+				this.createSerializerFoundation(),
+				objectSwizzling
+			)
 		);
+	}
+	
+	private PersistenceManager<Binary> createPersistenceManager(
+		final SerializerFoundation<?> serializerFoundation,
+		final ObjectSwizzling objectSwizzling)
+	{
+		return serializerFoundation
+			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New())
+			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New())
+			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling))
+			.createPersistenceManager();
 	}
 	
 	protected SerializerFoundation<?> createSerializerFoundation()
 	{
-		final SerializerFoundation<?> newFoundation = SerializerFoundation.New();
-		newFoundation.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
-		newFoundation.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
-		
 		final Reference<Binary> buffer = X.Reference(null);
 		final Serializer.Source source = () -> X.Constant(buffer.get());
 		final Serializer.Target target = buffer::set;
-		return newFoundation
+		
+		return SerializerFoundation.New()
 			.setPersistenceSource(source)
 			.setPersistenceTarget(target)
 			// Make every type persistable.

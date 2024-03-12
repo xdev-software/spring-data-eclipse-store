@@ -21,6 +21,7 @@ import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyList;
 import org.eclipse.serializer.reference.Lazy;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,6 +40,7 @@ class LazyTest
 	private LazyTestConfiguration configuration;
 	
 	@Test
+	@Disabled("This should work at some point. At least a warning should be displayed.")
 	void lazyListStore(@Autowired final ObjectWithLazyListRepository repository)
 	{
 		final ObjectWithLazyList newList = new ObjectWithLazyList();
@@ -84,6 +86,16 @@ class LazyTest
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		Assertions.assertThrows(IllegalStateException.class, () -> newLazy.getLazy().clear());
+	}
+	
+	@Test
+	@Disabled("This should work at some point. At least a warning should be displayed.")
+	void lazyUseEclipseStoreLazy(@Autowired final ObjectWithLazyRepository repository)
+	{
+		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(Lazy.Reference(objectToStore));
+		Assertions.assertThrows(Exception.class, () -> repository.save(newLazy));
 	}
 	
 	@Test
