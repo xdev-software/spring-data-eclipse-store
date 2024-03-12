@@ -20,7 +20,6 @@ import org.eclipse.serializer.SerializerFoundation;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.binary.types.Binary;
-import org.eclipse.serializer.persistence.types.PersistenceManager;
 import org.eclipse.serializer.reference.Reference;
 import org.eclipse.serializer.util.X;
 
@@ -37,16 +36,15 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 	
 	public AbstractRegisteringCopier(
 		final SupportedChecker supportedChecker,
-		final RegisteringWorkingCopyAndOriginal register)
+		final RegisteringWorkingCopyAndOriginal register,
+		final PersistenceManagerProvider persistenceManagerProvider)
 	{
 		this.actualCopier = new EclipseSerializerRegisteringCopier(
 			supportedChecker,
 			register,
-			this.createPersistenceManager()
+			persistenceManagerProvider.createPersistenceManager(this.createSerializerFoundation())
 		);
 	}
-	
-	protected abstract PersistenceManager<Binary> createPersistenceManager();
 	
 	protected SerializerFoundation<?> createSerializerFoundation()
 	{

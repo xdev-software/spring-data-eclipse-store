@@ -47,10 +47,10 @@ import java.util.stream.Stream;
 import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyHashMap;
 import org.eclipse.serializer.collections.lazy.LazyHashSet;
-import org.eclipse.serializer.reference.Lazy;
 import org.junit.jupiter.params.provider.Arguments;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
 final class TypesData
@@ -436,12 +436,12 @@ final class TypesData
 				),
 				new TestArguments<>(
 					LazyRepository.class,
-					id -> new LazyDaoObject(id, Lazy.Reference("1")),
-					object -> object.setValue(Lazy.Reference("2"))
+					id -> new LazyDaoObject(id, SpringDataEclipseStoreLazy.build("1")),
+					object -> object.setValue(SpringDataEclipseStoreLazy.build("2"))
 				),
 				new TestArguments<>(
 					LazyRepository.class,
-					id -> new LazyDaoObject(id, Lazy.Reference("1")),
+					id -> new LazyDaoObject(id, SpringDataEclipseStoreLazy.build("1")),
 					object -> object.getValue().clear()
 				),
 				new TestArguments<>(

@@ -15,12 +15,14 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
 
+import org.eclipse.serializer.SerializerFoundation;
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.types.PersistenceManager;
+import org.eclipse.serializer.reference.ObjectSwizzling;
 
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
-import software.xdev.spring.data.eclipse.store.repository.lazy.SuperLazyBinaryHandler;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazyBinaryHandler;
 
 
 /**
@@ -31,19 +33,22 @@ public class RegisteringStorageToWorkingCopyCopier extends AbstractRegisteringCo
 {
 	public RegisteringStorageToWorkingCopyCopier(
 		final WorkingCopyRegistry registry,
-		final SupportedChecker supportedChecker)
+		final SupportedChecker supportedChecker,
+		final ObjectSwizzling objectSwizzling)
 	{
 		super(
 			supportedChecker,
-			(workingCopy, objectToStore) -> registry.register(workingCopy, objectToStore)
+			(workingCopy, objectToStore) -> registry.register(workingCopy, objectToStore),
+			(serializerFoundation) -> createPersistenceManager(serializerFoundation, objectSwizzling)
 		);
 	}
 	
-	@Override
-	protected PersistenceManager<Binary> createPersistenceManager()
+	private static PersistenceManager<Binary> createPersistenceManager(
+		final SerializerFoundation<?> serializerFoundation,
+		final ObjectSwizzling objectSwizzling)
 	{
-		return this.createSerializerFoundation()
-			.registerCustomTypeHandlers(SuperLazyBinaryHandler.New())
+		return serializerFoundation
+			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling))
 			.createPersistenceManager();
 	}
 }

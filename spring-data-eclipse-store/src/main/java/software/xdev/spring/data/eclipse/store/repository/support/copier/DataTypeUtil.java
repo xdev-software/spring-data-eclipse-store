@@ -20,7 +20,7 @@ import java.util.Set;
 
 import jakarta.annotation.Nonnull;
 
-import org.eclipse.serializer.reference.Lazy;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
 public final class DataTypeUtil
@@ -47,9 +47,9 @@ public final class DataTypeUtil
 		return obj instanceof Object[];
 	}
 	
-	public static boolean isLazy(final Object obj)
+	public static boolean isSpringDataEclipseStoreLazy(final Object obj)
 	{
-		return obj instanceof Lazy<?>;
+		return obj instanceof SpringDataEclipseStoreLazy<?>;
 	}
 	
 	public static boolean isPrimitiveArray(final Object obj)

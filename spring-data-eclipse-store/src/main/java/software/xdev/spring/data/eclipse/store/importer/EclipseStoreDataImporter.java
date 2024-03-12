@@ -205,8 +205,11 @@ public class EclipseStoreDataImporter
 				storageInstance.getRegistry(),
 				storageInstance,
 				storageInstance,
-				new SupportedChecker.Implementation()),
-			domainClass);
+				new SupportedChecker.Implementation(),
+				storageInstance
+			),
+			domainClass
+		);
 	}
 	
 	private record EntityManagerFactoryRepositoryListPair(

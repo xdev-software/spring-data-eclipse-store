@@ -37,7 +37,8 @@ class RegisteringStorageToWorkingCopyCopierTest
 		try(final RegisteringStorageToWorkingCopyCopier copier =
 			new RegisteringStorageToWorkingCopyCopier(
 				new WorkingCopyRegistry(),
-				new SupportedChecker.Implementation()))
+				new SupportedChecker.Implementation(),
+				o -> null))
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 1_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -55,7 +56,8 @@ class RegisteringStorageToWorkingCopyCopierTest
 		try(final RegisteringStorageToWorkingCopyCopier copier =
 			new RegisteringStorageToWorkingCopyCopier(
 				new WorkingCopyRegistry(),
-				new SupportedChecker.Implementation()))
+				new SupportedChecker.Implementation(),
+				o -> null))
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -72,7 +74,8 @@ class RegisteringStorageToWorkingCopyCopierTest
 		try(final RegisteringStorageToWorkingCopyCopier copier =
 			new RegisteringStorageToWorkingCopyCopier(
 				new WorkingCopyRegistry(),
-				new SupportedChecker.Implementation()))
+				new SupportedChecker.Implementation(),
+				o -> null))
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -91,7 +94,8 @@ class RegisteringStorageToWorkingCopyCopierTest
 		try(final RegisteringStorageToWorkingCopyCopier copier =
 			new RegisteringStorageToWorkingCopyCopier(
 				new WorkingCopyRegistry(),
-				new SupportedChecker.Implementation()))
+				new SupportedChecker.Implementation(),
+				o -> null))
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 100_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -109,7 +113,8 @@ class RegisteringStorageToWorkingCopyCopierTest
 		try(final RegisteringStorageToWorkingCopyCopier copier =
 			new RegisteringStorageToWorkingCopyCopier(
 				new WorkingCopyRegistry(),
-				new SupportedChecker.Implementation()))
+				new SupportedChecker.Implementation(),
+				o -> null))
 		{
 			Assertions.assertThrows(NullPointerException.class, () -> copier.copy(null));
 		}
