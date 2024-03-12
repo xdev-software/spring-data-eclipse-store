@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
+import org.eclipse.serializer.reference.Swizzling;
 
 
 public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
@@ -11,11 +12,6 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 	static <T> SpringDataEclipseStoreLazy.Default<T> build(final T objectToWrapInLazy)
 	{
 		return new Default<>(objectToWrapInLazy);
-	}
-	
-	static SpringDataEclipseStoreLazy.Default<?> buildFromStorage(final long objectId, final ObjectSwizzling loader)
-	{
-		return new Default<>(objectId, loader);
 	}
 	
 	static SpringDataEclipseStoreLazy.Default<?> buildOnlyForStorage(final long objectId)
@@ -28,8 +24,9 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 	class Default<T> implements SpringDataEclipseStoreLazy<T>
 	{
 		private Lazy<T> wrappedLazy;
-		private long objectId;
-		private ObjectSwizzling loader;
+		private long objectId = Swizzling.notFoundId();
+		private transient ObjectSwizzling loader;
+		private transient boolean isStored = false;
 		
 		private Default(final T wrappedObject)
 		{
@@ -80,6 +77,12 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		@Override
 		public T clear()
 		{
+			if(!this.isStored())
+			{
+				throw new IllegalStateException("Cannot clear an unstored lazy reference.");
+			}
+			// Make sure to save the correct objectId.
+			this.objectId = this.objectId();
 			this.wrappedLazy = null;
 			return null;
 		}
@@ -87,7 +90,12 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		@Override
 		public boolean isStored()
 		{
-			return this.ensureLazy().isStored();
+			return this.isStored;
+		}
+		
+		void setStored()
+		{
+			this.isStored = true;
 		}
 		
 		@Override

@@ -440,11 +440,6 @@ final class TypesData
 					object -> object.setValue(SpringDataEclipseStoreLazy.build("2"))
 				),
 				new TestArguments<>(
-					LazyRepository.class,
-					id -> new LazyDaoObject(id, SpringDataEclipseStoreLazy.build("1")),
-					object -> object.getValue().clear()
-				),
-				new TestArguments<>(
 					MapRepository.class,
 					id -> new MapDaoObject(id, new LazyHashMap<>()),
 					set -> set.getValue().put("1", "1")

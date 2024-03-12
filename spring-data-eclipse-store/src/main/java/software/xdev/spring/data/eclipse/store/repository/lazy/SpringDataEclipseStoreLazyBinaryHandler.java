@@ -12,8 +12,6 @@ import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reflect.XReflect;
 
-import software.xdev.spring.data.eclipse.store.exceptions.BinaryHandlerOnlyForCopyingException;
-
 
 /**
  * Copied from
@@ -55,6 +53,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		final long referenceOid = instance.objectId();
 		data.storeEntityHeader(Binary.referenceBinaryLength(1), this.typeId(), objectId);
 		data.store_long(referenceOid);
+		instance.setStored();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -75,7 +74,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		final PersistenceLoadHandler handler
 	)
 	{
-		throw new BinaryHandlerOnlyForCopyingException();
+		// no-op
 	}
 	
 	@Override

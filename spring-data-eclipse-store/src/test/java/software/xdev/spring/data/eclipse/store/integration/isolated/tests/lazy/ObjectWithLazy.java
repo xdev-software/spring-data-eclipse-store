@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.helper;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
-public final class TestData
+import org.eclipse.serializer.reference.Lazy;
+
+
+public class ObjectWithLazy
 {
-	public static final String LAST_NAME = "Fleetwood";
-	public static final String FIRST_NAME = "Mick";
-	public static final String LAST_NAME_ALTERNATIVE = "Nicks";
-	public static final String FIRST_NAME_ALTERNATIVE = "Stevie";
+	private Lazy<SimpleObject> lazy;
 	
-	public static final String DUMMY_STRING = "-- skldfoöüä+#+!(/%&/%($§\"=)()nxjkß?  _:.. ,-.;";
-	public static final String DUMMY_STRING_ALTERNATIVE = " abc ";
-	
-	private TestData()
+	public Lazy<SimpleObject> getLazy()
 	{
+		return this.lazy;
+	}
+	
+	public void setLazy(final Lazy<SimpleObject> lazy)
+	{
+		this.lazy = lazy;
 	}
 }
