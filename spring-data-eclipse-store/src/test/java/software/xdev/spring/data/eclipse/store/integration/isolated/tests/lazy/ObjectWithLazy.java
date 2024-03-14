@@ -18,16 +18,16 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 import org.eclipse.serializer.reference.Lazy;
 
 
-public class ObjectWithLazy
+public class ObjectWithLazy<T>
 {
-	private Lazy<SimpleObject> lazy;
+	private Lazy<T> lazy;
 	
-	public Lazy<SimpleObject> getLazy()
+	public Lazy<T> getLazy()
 	{
 		return this.lazy;
 	}
 	
-	public void setLazy(final Lazy<SimpleObject> lazy)
+	public void setLazy(final Lazy<T> lazy)
 	{
 		this.lazy = lazy;
 	}

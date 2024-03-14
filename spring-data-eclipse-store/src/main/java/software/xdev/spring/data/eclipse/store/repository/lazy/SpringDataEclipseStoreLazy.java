@@ -22,6 +22,12 @@ import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reference.Swizzling;
 
 
+/**
+ * This is the Lazy-Wrapper a user of the Spring-Data-Eclipse-Store-Library should use. Please <b>do not use the
+ * {@link Lazy}-Wrapper!</b> Because SDES is making working copies of the stored data, the {@link Lazy} does not work as
+ * expected. Instead, use this Wrapper. It brings the same functionality as the native {@link Lazy}-Wrapper but works
+ * with working copies.
+ */
 public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 {
 	static <T> SpringDataEclipseStoreLazy.Default<T> build(final T objectToWrapInLazy)
@@ -29,15 +35,19 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		return new Default<>(objectToWrapInLazy);
 	}
 	
-	static SpringDataEclipseStoreLazy.Default<?> buildOnlyForStorage(final long objectId)
-	{
-		return new Default<>(objectId);
-	}
+	SpringDataEclipseStoreLazy<T> copy();
 	
 	long objectId();
 	
+	/**
+	 * This class is very complex and its various membervariables all have their reason to exist. This code is very
+	 * difficult to read due to its the functionality explained in the {@link SpringDataEclipseStoreLazyBinaryHandler}.
+	 *
+	 * @param <T>
+	 */
 	class Default<T> implements SpringDataEclipseStoreLazy<T>
 	{
+		private T objectToBeWrapped;
 		private Lazy<T> wrappedLazy;
 		private long objectId = Swizzling.notFoundId();
 		private transient ObjectSwizzling loader;
@@ -45,18 +55,13 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		
 		private Default(final T wrappedObject)
 		{
-			this.wrappedLazy = Lazy.Reference(wrappedObject);
+			this.objectToBeWrapped = wrappedObject;
 		}
 		
 		private Default(final long objectId, final ObjectSwizzling loader)
 		{
 			this.objectId = objectId;
 			this.loader = loader;
-		}
-		
-		private Default(final long objectId)
-		{
-			this.objectId = objectId;
 		}
 		
 		private Lazy<T> ensureLazy()
@@ -80,6 +85,10 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		@Override
 		public T get()
 		{
+			if(this.objectToBeWrapped != null)
+			{
+				return this.objectToBeWrapped;
+			}
 			return this.ensureLazy().get();
 		}
 		
@@ -116,6 +125,10 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		@Override
 		public boolean isLoaded()
 		{
+			if(this.objectToBeWrapped != null)
+			{
+				return true;
+			}
 			if(this.wrappedLazy == null)
 			{
 				return false;
@@ -147,6 +160,25 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 				return ((Lazy.Default<T>)this.wrappedLazy).objectId();
 			}
 			return this.objectId;
+		}
+		
+		void setWrappedLazy(final Lazy<T> wrappedLazy)
+		{
+			this.wrappedLazy = wrappedLazy;
+		}
+		
+		public T getObjectToBeWrapped()
+		{
+			return this.objectToBeWrapped;
+		}
+		
+		@Override
+		public SpringDataEclipseStoreLazy<T> copy()
+		{
+			return new SpringDataEclipseStoreLazy.Default(
+				this.objectId,
+				this.loader
+			);
 		}
 	}
 }

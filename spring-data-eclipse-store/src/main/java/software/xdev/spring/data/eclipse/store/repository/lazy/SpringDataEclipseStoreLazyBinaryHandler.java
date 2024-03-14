@@ -18,8 +18,10 @@ package software.xdev.spring.data.eclipse.store.repository.lazy;
 import java.lang.reflect.Constructor;
 import java.util.Objects;
 
+import org.eclipse.serializer.memory.XMemory;
 import org.eclipse.serializer.persistence.binary.types.AbstractBinaryHandlerCustom;
 import org.eclipse.serializer.persistence.binary.types.Binary;
+import org.eclipse.serializer.persistence.binary.types.BinaryTypeHandler;
 import org.eclipse.serializer.persistence.types.PersistenceLoadHandler;
 import org.eclipse.serializer.persistence.types.PersistenceReferenceLoader;
 import org.eclipse.serializer.persistence.types.PersistenceStoreHandler;
@@ -29,14 +31,30 @@ import org.eclipse.serializer.reflect.XReflect;
 
 
 /**
- * Copied from
- * {@link org.eclipse.serializer.persistence.binary.org.eclipse.serializer.reference.BinaryHandlerLazyDefault}.
+ * This is a complicated one. First off: this handler should only be used for WorkingCopies (see
+ * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.copier.EclipseSerializerRegisteringCopier})!
+ * <p>
+ *     First case:<br/>
+ *     The user creates a {@link SpringDataEclipseStoreLazy} and puts a object in it.
+ *     This object is stored as with a default {@link BinaryTypeHandler}. But when it gets loaded,
+ *     it <b>does not</b> load as the stored object, but it gets wrapped in a {@link Lazy#Reference(Object)}.
+ * </p>
+ * <p>
+ *     Second case:<br/>
+ *     The actual lazy object gets loaded from the actual storage. In this case the {@link ObjectSwizzling} is
+ *     important! It's the actual {@link ObjectSwizzling} from the storage (not from the
+ * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.copier.EclipseSerializerRegisteringCopier}).
+ *     This means, the {@link SpringDataEclipseStoreLazy} holds the objectId of the original lazy in the original
+ *     storage.
+ *     Therefore if {@link SpringDataEclipseStoreLazy#get()} is called a new working copy of the lazy from the
+ *     storage is loaded.
+ * </p>
  */
 public final class SpringDataEclipseStoreLazyBinaryHandler
 	extends AbstractBinaryHandlerCustom<SpringDataEclipseStoreLazy.Default<?>>
 {
 	@SuppressWarnings("rawtypes")
-	static final Constructor<SpringDataEclipseStoreLazy.Default> CONSTRUCTOR = XReflect.setAccessible(
+	static final Constructor<SpringDataEclipseStoreLazy.Default> CONSTRUCTOR_SURROGATE_LAZY = XReflect.setAccessible(
 		XReflect.getDeclaredConstructor(
 			SpringDataEclipseStoreLazy.Default.class,
 			long.class,
@@ -44,52 +62,84 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		)
 	);
 	
-	private final ObjectSwizzling objectSwizzling;
+	public static final int OFFSET_UNWRAPPED_OBJECT = 8;
+	public static final int OFFSET_LAZY = 0;
 	
-	public SpringDataEclipseStoreLazyBinaryHandler(final ObjectSwizzling objectSwizzling)
+	private final ObjectSwizzling originalStoreLoader;
+	
+	public SpringDataEclipseStoreLazyBinaryHandler(final ObjectSwizzling originalStoreLoader)
 	{
 		super(
 			SpringDataEclipseStoreLazy.Default.genericType(),
 			CustomFields(
-				CustomField(Object.class, "subject")
+				CustomField(Object.class, "lazySubject"),
+				CustomField(Object.class, "unwrappedSubject")
 			)
 		);
-		this.objectSwizzling = Objects.requireNonNull(objectSwizzling);
+		this.originalStoreLoader = Objects.requireNonNull(originalStoreLoader);
 	}
 	
 	@Override
-	public final void store(
+	public void store(
 		final Binary data,
 		final SpringDataEclipseStoreLazy.Default<?> instance,
 		final long objectId,
 		final PersistenceStoreHandler<Binary> handler
 	)
 	{
-		final long referenceOid = instance.objectId();
-		data.storeEntityHeader(Binary.referenceBinaryLength(1), this.typeId(), objectId);
-		data.store_long(referenceOid);
+		data.storeEntityHeader(Binary.referenceBinaryLength(2), this.typeId(), objectId);
+		if(instance.getObjectToBeWrapped() != null)
+		{
+			// Store unwrapped Object
+			final long newObjectId = handler.applyEager(instance.getObjectToBeWrapped());
+			data.store_long(OFFSET_UNWRAPPED_OBJECT, newObjectId);
+		}
+		else
+		{
+			// Store only reference to lazy
+			data.store_long(OFFSET_LAZY, instance.objectId());
+		}
 		instance.setStored();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public final SpringDataEclipseStoreLazy.Default<?> create(final Binary data, final PersistenceLoadHandler handler)
+	public SpringDataEclipseStoreLazy.Default<?> create(final Binary data, final PersistenceLoadHandler handler)
 	{
-		final long objectId = data.read_long(0);
+		final long objectIdOfLazy = data.read_long(OFFSET_LAZY);
+		final long objectIdOfUnwrappedObject = data.read_long(OFFSET_UNWRAPPED_OBJECT);
 		
-		return Lazy.register(
-			XReflect.invoke(CONSTRUCTOR, objectId, this.objectSwizzling)
-		);
+		if(objectIdOfUnwrappedObject == 0)
+		{
+			return Lazy.register(
+				XReflect.invoke(CONSTRUCTOR_SURROGATE_LAZY, objectIdOfLazy, this.originalStoreLoader)
+			);
+		}
+		return XMemory.instantiateBlank(SpringDataEclipseStoreLazy.Default.class);
 	}
 	
 	@Override
-	public final void updateState(
+	public void updateState(
 		final Binary data,
 		final SpringDataEclipseStoreLazy.Default<?> instance,
 		final PersistenceLoadHandler handler
 	)
 	{
-		// no-op
+		this.updateStateT(data, instance, handler);
+	}
+	
+	private <T> void updateStateT(
+		final Binary data,
+		final SpringDataEclipseStoreLazy.Default<T> instance,
+		final PersistenceLoadHandler handler
+	)
+	{
+		final long objectIdOfUnwrappedObject = data.read_long(OFFSET_UNWRAPPED_OBJECT);
+		
+		if(objectIdOfUnwrappedObject != 0)
+		{
+			instance.setWrappedLazy(Lazy.Reference((T)handler.lookupObject(objectIdOfUnwrappedObject)));
+		}
 	}
 	
 	@Override
@@ -122,10 +172,15 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 	
 	@Override
 	public final void iterateLoadableReferences(
-		final Binary offset,
+		final Binary data,
 		final PersistenceReferenceLoader iterator
 	)
 	{
-		// the lazy reference is not naturally loadable, but special-handled by this handler
+		final long objectIdOfUnwrappedObject = data.read_long(OFFSET_UNWRAPPED_OBJECT);
+		
+		if(objectIdOfUnwrappedObject != 0)
+		{
+			iterator.acceptObjectId(objectIdOfUnwrappedObject);
+		}
 	}
 }

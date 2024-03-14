@@ -113,32 +113,6 @@ final class TypesData
 				),
 				new TestArguments<>(
 					SetRepository.class,
-					id -> new SetDaoObject(id, new LazyHashSet<>()),
-					set -> set.getValue().add("1")
-				),
-				new TestArguments<>(
-					SetRepository.class,
-					id ->
-					{
-						final LazyHashSet<String> set = new LazyHashSet<>();
-						set.add("1");
-						return new SetDaoObject(id, set);
-					},
-					set -> set.getValue().add("2")
-				),
-				new TestArguments<>(
-					SetRepository.class,
-					id ->
-					{
-						final LazyHashSet<String> set = new LazyHashSet<>();
-						set.add("1");
-						set.add("2");
-						return new SetDaoObject(id, set);
-					},
-					set -> set.getValue().add("3")
-				),
-				new TestArguments<>(
-					SetRepository.class,
 					id -> new SetDaoObject(id, new TreeSet<>()),
 					set -> set.getValue().add("1")
 				),
@@ -270,32 +244,6 @@ final class TypesData
 						stack.push("1");
 						stack.push("2");
 						return new ListDaoObject(id, stack);
-					},
-					object -> object.getValue().add("3")
-				),
-				new TestArguments<>(
-					ListRepository.class,
-					id -> new ListDaoObject(id, new LazyArrayList<>()),
-					object -> object.getValue().add("1")
-				),
-				new TestArguments<>(
-					ListRepository.class,
-					id ->
-					{
-						final LazyArrayList<String> list = new LazyArrayList<>();
-						list.add("1");
-						return new ListDaoObject(id, list);
-					},
-					object -> object.getValue().add("2")
-				),
-				new TestArguments<>(
-					ListRepository.class,
-					id ->
-					{
-						final LazyArrayList<String> list = new LazyArrayList<>();
-						list.add("1");
-						list.add("2");
-						return new ListDaoObject(id, list);
 					},
 					object -> object.getValue().add("3")
 				),
@@ -438,30 +386,6 @@ final class TypesData
 					LazyRepository.class,
 					id -> new LazyDaoObject(id, SpringDataEclipseStoreLazy.build("1")),
 					object -> object.setValue(SpringDataEclipseStoreLazy.build("2"))
-				),
-				new TestArguments<>(
-					MapRepository.class,
-					id -> new MapDaoObject(id, new LazyHashMap<>()),
-					set -> set.getValue().put("1", "1")
-				),
-				new TestArguments<>(
-					MapRepository.class,
-					id -> {
-						final LazyHashMap<String, String> lazyHashMap = new LazyHashMap<>();
-						lazyHashMap.put("1", "1");
-						return new MapDaoObject(id, lazyHashMap);
-					},
-					set -> set.getValue().put("2", "2")
-				),
-				new TestArguments<>(
-					MapRepository.class,
-					id -> {
-						final LazyHashMap<String, String> lazyHashMap = new LazyHashMap<>();
-						lazyHashMap.put("1", "1");
-						lazyHashMap.put("2", "2");
-						return new MapDaoObject(id, lazyHashMap);
-					},
-					set -> set.getValue().put("3", "3")
 				)
 			)
 		).toArguments();
@@ -510,6 +434,82 @@ final class TypesData
 					CalendarRepository.class,
 					id -> new CalendarDaoObject(id, Calendar.getInstance()),
 					object -> object.getValue().add(Calendar.DAY_OF_MONTH, 1)
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> {
+						final LazyHashMap<String, String> lazyHashMap = new LazyHashMap<>();
+						lazyHashMap.put("1", "1");
+						return new MapDaoObject(id, lazyHashMap);
+					},
+					set -> set.getValue().put("2", "2")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> {
+						final LazyHashMap<String, String> lazyHashMap = new LazyHashMap<>();
+						lazyHashMap.put("1", "1");
+						lazyHashMap.put("2", "2");
+						return new MapDaoObject(id, lazyHashMap);
+					},
+					set -> set.getValue().put("3", "3")
+				),
+				new TestArguments<>(
+					SetRepository.class,
+					id -> new SetDaoObject(id, new LazyHashSet<>()),
+					set -> set.getValue().add("1")
+				),
+				new TestArguments<>(
+					SetRepository.class,
+					id ->
+					{
+						final LazyHashSet<String> set = new LazyHashSet<>();
+						set.add("1");
+						return new SetDaoObject(id, set);
+					},
+					set -> set.getValue().add("2")
+				),
+				new TestArguments<>(
+					SetRepository.class,
+					id ->
+					{
+						final LazyHashSet<String> set = new LazyHashSet<>();
+						set.add("1");
+						set.add("2");
+						return new SetDaoObject(id, set);
+					},
+					set -> set.getValue().add("3")
+				),
+				new TestArguments<>(
+					ListRepository.class,
+					id -> new ListDaoObject(id, new LazyArrayList<>()),
+					object -> object.getValue().add("1")
+				),
+				new TestArguments<>(
+					ListRepository.class,
+					id ->
+					{
+						final LazyArrayList<String> list = new LazyArrayList<>();
+						list.add("1");
+						return new ListDaoObject(id, list);
+					},
+					object -> object.getValue().add("2")
+				),
+				new TestArguments<>(
+					ListRepository.class,
+					id ->
+					{
+						final LazyArrayList<String> list = new LazyArrayList<>();
+						list.add("1");
+						list.add("2");
+						return new ListDaoObject(id, list);
+					},
+					object -> object.getValue().add("3")
+				),
+				new TestArguments<>(
+					MapRepository.class,
+					id -> new MapDaoObject(id, new LazyHashMap<>()),
+					set -> set.getValue().put("1", "1")
 				)
 			)
 		).toArguments();

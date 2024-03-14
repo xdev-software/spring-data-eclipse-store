@@ -17,6 +17,9 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
 import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDatastore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyList;
 import org.eclipse.serializer.reference.Lazy;
@@ -45,7 +48,7 @@ class LazyTest
 	{
 		final ObjectWithLazyList newList = new ObjectWithLazyList();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
-		final LazyArrayList lazyArrayList = new LazyArrayList();
+		final LazyArrayList<SimpleObject> lazyArrayList = new LazyArrayList<>();
 		lazyArrayList.add(objectToStore);
 		newList.setLazyList(lazyArrayList);
 		repository.save(newList);
@@ -62,9 +65,9 @@ class LazyTest
 	}
 	
 	@Test
-	void lazyStore(@Autowired final ObjectWithLazyRepository repository)
+	void lazyStore(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		repository.save(newLazy);
@@ -80,9 +83,43 @@ class LazyTest
 	}
 	
 	@Test
-	void lazyClearBeforeSave(@Autowired final ObjectWithLazyRepository repository)
+	void lazyStoreComplexObject(@Autowired final ObjectWithLazyRepository<ComplexLazyObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
+		final ComplexLazyObject objectToStore = new ComplexLazyObject(
+			SpringDataEclipseStoreLazy.build(new SimpleObject(TestData.DUMMY_STRING)),
+			new ArrayList<>(Arrays.asList(
+				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING))),
+				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING_ALTERNATIVE)))
+			))
+		);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, repository.findAll().size());
+				final Lazy<ComplexLazyObject> lazy = repository.findAll().get(0).getLazy();
+				Assertions.assertNotNull(lazy.get());
+				Assertions.assertEquals(objectToStore.getSimpleObject().get(), lazy.get().getSimpleObject().get());
+				Assertions.assertEquals(
+					objectToStore.getListOfLazyListOfString().size(),
+					lazy.get().getListOfLazyListOfString().size());
+				Assertions.assertEquals(
+					objectToStore.getListOfLazyListOfString().get(0).get(),
+					lazy.get().getListOfLazyListOfString().get(0).get());
+				Assertions.assertEquals(
+					objectToStore.getListOfLazyListOfString().get(1).get(),
+					lazy.get().getListOfLazyListOfString().get(1).get());
+			}
+		);
+	}
+	
+	@Test
+	void lazyClearBeforeSave()
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		Assertions.assertThrows(IllegalStateException.class, () -> newLazy.getLazy().clear());
@@ -90,18 +127,18 @@ class LazyTest
 	
 	@Test
 	@Disabled("This should work at some point. At least a warning should be displayed.")
-	void lazyUseEclipseStoreLazy(@Autowired final ObjectWithLazyRepository repository)
+	void lazyUseEclipseStoreLazy(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(Lazy.Reference(objectToStore));
 		Assertions.assertThrows(Exception.class, () -> repository.save(newLazy));
 	}
 	
 	@Test
-	void lazyClearAfterSave(@Autowired final ObjectWithLazyRepository repository)
+	void lazyClearAfterSave(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		repository.save(newLazy);
@@ -118,9 +155,9 @@ class LazyTest
 	}
 	
 	@Test
-	void lazyChangeAfterSave(@Autowired final ObjectWithLazyRepository repository)
+	void lazyChangeAfterSave(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		repository.save(newLazy);
@@ -140,9 +177,9 @@ class LazyTest
 	}
 	
 	@Test
-	void lazyChangeBeforeSave(@Autowired final ObjectWithLazyRepository repository)
+	void lazyChangeBeforeSave(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		
@@ -161,9 +198,9 @@ class LazyTest
 	}
 	
 	@Test
-	void lazyChangeAfterRestart(@Autowired final ObjectWithLazyRepository repository)
+	void lazyChangeAfterRestart(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
-		final ObjectWithLazy newLazy = new ObjectWithLazy();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		repository.save(newLazy);
@@ -171,7 +208,7 @@ class LazyTest
 		restartDatastore(this.configuration);
 		
 		Assertions.assertEquals(1, repository.findAll().size());
-		final ObjectWithLazy reloadedObjectWithLazy = repository.findAll().get(0);
+		final ObjectWithLazy<SimpleObject> reloadedObjectWithLazy = repository.findAll().get(0);
 		Assertions.assertEquals(objectToStore, reloadedObjectWithLazy.getLazy().get());
 		
 		final SimpleObject objectToStore2 = new SimpleObject(TestData.DUMMY_STRING_ALTERNATIVE);

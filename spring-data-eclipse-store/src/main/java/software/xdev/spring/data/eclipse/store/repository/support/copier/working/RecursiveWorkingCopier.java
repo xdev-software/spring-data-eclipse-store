@@ -330,7 +330,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			{
 				// This lazy should never be used again!
 				// It is though of as a temporary copy to merge back into the original-storage-data.
-				return (SpringDataEclipseStoreLazy<E>)SpringDataEclipseStoreLazy.buildOnlyForStorage(oldLazy.objectId());
+				return oldLazy.copy();
 			}
 	}
 	

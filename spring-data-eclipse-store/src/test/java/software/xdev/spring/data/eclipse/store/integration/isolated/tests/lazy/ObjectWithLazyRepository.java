@@ -18,6 +18,6 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 import org.springframework.data.repository.ListCrudRepository;
 
 
-public interface ObjectWithLazyRepository extends ListCrudRepository<ObjectWithLazy, Integer>
+public interface ObjectWithLazyRepository<T> extends ListCrudRepository<ObjectWithLazy<T>, Integer>
 {
 }
