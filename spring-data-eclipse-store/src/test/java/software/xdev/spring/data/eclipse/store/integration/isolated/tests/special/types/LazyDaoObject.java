@@ -39,7 +39,9 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 			return false;
 		}
 		final ComplexObject<Lazy<String>> that = (ComplexObject<Lazy<String>>)o;
-		return Objects.equals(this.getId(), that.getId()) && Objects.equals(
+		return Objects.equals(this.getId(), that.getId()) &&
+			(this.getValue() == null && that.getValue() == null) ||
+			Objects.equals(
 			this.getValue().get(),
 			that.getValue().get());
 	}

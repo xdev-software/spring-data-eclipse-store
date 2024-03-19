@@ -20,6 +20,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import org.eclipse.serializer.collections.lazy.LazyArrayList;
+import org.eclipse.serializer.collections.lazy.LazyHashMap;
+import org.eclipse.serializer.collections.lazy.LazyHashSet;
 import org.eclipse.serializer.reference.Lazy;
 
 
@@ -51,7 +54,10 @@ public interface SupportedChecker
 			Calendar.class,
 			WeakHashMap.class,
 			// Here EclipseStore has problems too: https://github.com/microstream-one/microstream/issues/204
-			EnumMap.class
+			EnumMap.class,
+			LazyHashMap.class,
+			LazyArrayList.class,
+			LazyHashSet.class
 		);
 		
 		@Override
