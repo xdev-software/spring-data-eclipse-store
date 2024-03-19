@@ -22,16 +22,29 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import software.xdev.spring.data.eclipse.store.jpa.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTest;
-import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestRepository;
+import software.xdev.spring.data.eclipse.store.importer.EclipseStoreDataImporterComponent;
+import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInEclipseStore;
+import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInEclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInJpa;
+import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInJpaRepository;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
+import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 
 
 @DefaultTestAnnotations
-public class IntegrationTest
+class IntegrationTest
 {
 	@Autowired
-	private PersonToTestRepository personToTestRepository;
+	private PersonToTestInEclipseStoreRepository personToTestInEclipseStoreRepository;
+	
+	@Autowired
+	private PersonToTestInJpaRepository personToTestInJpaRepository;
+	
+	@Autowired
+	private EclipseStoreDataImporterComponent eclipseStoreDataImporter;
+	
+	@Autowired
+	private EclipseStoreClientConfiguration configuration;
 	
 	/**
 	 * Super simple test if there are any start-up errors when running parallel to a JPA configuration
@@ -39,11 +52,40 @@ public class IntegrationTest
 	@Test
 	void testBasicSaveAndFindSingleRecords()
 	{
-		final PersonToTest customer = new PersonToTest("", "");
-		this.personToTestRepository.save(customer);
+		final PersonToTestInEclipseStore customer = new PersonToTestInEclipseStore("", "");
+		this.personToTestInEclipseStoreRepository.save(customer);
 		
-		final List<PersonToTest> customers = this.personToTestRepository.findAll();
+		final List<PersonToTestInEclipseStore> customers = this.personToTestInEclipseStoreRepository.findAll();
 		Assertions.assertEquals(1, customers.size());
 		Assertions.assertEquals(customer, customers.get(0));
+	}
+	
+	@Test
+	void testEclipseStoreImport()
+	{
+		final PersonToTestInJpa customer = new PersonToTestInJpa("1", "", "");
+		this.personToTestInJpaRepository.save(customer);
+		
+		final List<SimpleEclipseStoreRepository<?, ?>> simpleEclipseStoreRepositories =
+			this.eclipseStoreDataImporter.importData();
+		Assertions.assertEquals(1, simpleEclipseStoreRepositories.size());
+		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
+		Assertions.assertEquals(1, allEntities.size());
+		
+		this.configuration.getStorageInstance().stop();
+		Assertions.assertEquals(
+			1,
+			this.configuration.getStorageInstance().getEntityCount(PersonToTestInJpa.class),
+			"After restart the imported entities are not there anymore.");
+	}
+	
+	@Test
+	void testEclipseStoreEmptyImport()
+	{
+		final List<SimpleEclipseStoreRepository<?, ?>> simpleEclipseStoreRepositories =
+			this.eclipseStoreDataImporter.importData();
+		Assertions.assertEquals(1, simpleEclipseStoreRepositories.size());
+		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
+		Assertions.assertEquals(0, allEntities.size());
 	}
 }

@@ -19,7 +19,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import software.xdev.spring.data.eclipse.store.exceptions.MergeFailedException;
 import software.xdev.spring.data.eclipse.store.repository.IdSetterProvider;
 import software.xdev.spring.data.eclipse.store.repository.PersistableChecker;
+import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
@@ -51,11 +58,12 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final Class<T> domainClass,
 		final WorkingCopyRegistry registry,
 		final IdSetterProvider idSetterProvider,
-		final PersistableChecker persistableChecker)
+		final PersistableChecker persistableChecker,
+		final SupportedChecker supportedChecker)
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
-		this.objectCopier = new EclipseSerializerRegisteringCopier(registry);
+		this.objectCopier = new EclipseSerializerRegisteringCopier(registry, supportedChecker);
 		this.idSetterProvider = idSetterProvider;
 		this.persistableChecker = persistableChecker;
 	}
@@ -160,17 +168,24 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			// alreadyMergedTargets prevent endless loops
 			return;
 		}
-		alreadyMergedTargets.collectMergedTarget(targetObject);
-		
-		if(sourceObject instanceof String)
+		try
 		{
-			// no merge needed and no merge possible
-			return;
+			alreadyMergedTargets.collectMergedTarget(targetObject);
+			
+			if(sourceObject instanceof String)
+			{
+				// no merge needed and no merge possible
+				return;
+			}
+			AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
+				field ->
+					this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
+			);
 		}
-		AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
-			field ->
-				this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
-		);
+		catch(final Exception e)
+		{
+			throw new MergeFailedException(sourceObject, targetObject, e);
+		}
 	}
 	
 	private <E> void mergeValueOfField(
@@ -246,12 +261,23 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 								originalValueObjectOfSource,
 								!targetObjectIsPartOfJavaPackage);
 						}
-						// Merge after setting reference to avoid endless loops
-						this.mergeValues(
-							valueOfSourceObject,
-							originalValueObjectOfSource,
-							alreadyMergedTargets,
-							changedCollector);
+						
+						if(this.isSpecialCaseWhereOnlyAFullCopyWorks(valueOfSourceObject))
+						{
+							fam.writeValueOfField(
+								targetObject,
+								this.onlyCreateCopy(valueOfSourceObject, true),
+								!targetObjectIsPartOfJavaPackage);
+						}
+						else
+						{
+							// Merge after setting reference to avoid endless loops
+							this.mergeValues(
+								valueOfSourceObject,
+								originalValueObjectOfSource,
+								alreadyMergedTargets,
+								changedCollector);
+						}
 					}
 				}
 			}
@@ -260,6 +286,24 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			throw new MergeFailedException(sourceObject, targetObject, e);
 		}
+	}
+	
+	/**
+	 * Super special case for HashMap or similar java-classes which can't be merged nicely. Thus, we make a simple copy
+	 * of the whole object.
+	 */
+	private boolean isSpecialCaseWhereOnlyAFullCopyWorks(final Object valueOfSourceObject)
+	{
+		return
+			valueOfSourceObject != null
+				&& (
+				valueOfSourceObject.getClass().isAssignableFrom(HashMap.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(LinkedHashMap.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(Hashtable.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(TreeSet.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(TreeMap.class)
+					|| valueOfSourceObject.getClass().isAssignableFrom(IdentityHashMap.class)
+			);
 	}
 	
 	@SuppressWarnings("unchecked")

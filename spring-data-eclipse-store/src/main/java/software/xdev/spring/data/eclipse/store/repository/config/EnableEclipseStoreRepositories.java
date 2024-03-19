@@ -43,6 +43,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRe
 @Inherited
 @Import(EclipseStoreRepositoriesRegistrar.class)
 @ComponentScan({
+	"software.xdev.spring.data.eclipse.store.importer",
 	"software.xdev.spring.data.eclipse.store.repository",
 	"org.eclipse.store.integrations.spring.boot.types"})
 public @interface EnableEclipseStoreRepositories
@@ -79,6 +80,23 @@ public @interface EnableEclipseStoreRepositories
 	 * Specifies which types are not eligible for component scanning.
 	 */
 	Filter[] excludeFilters() default {};
+	
+	String CLIENT_CONFIGURATION_ANNOTATION_VALUE = "clientConfiguration";
+	
+	/**
+	 * @return the name of a {@link EclipseStoreClientConfiguration} to use.
+	 * {@link DefaultEclipseStoreClientConfiguration} is used if not defined.
+	 */
+	String clientConfiguration() default "defaultEclipseStoreClientConfiguration";
+	
+	String CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE = "clientConfigurationClass";
+	
+	/**
+	 * @return the class of a {@link EclipseStoreClientConfiguration} to use.
+	 * {@link DefaultEclipseStoreClientConfiguration} is used if not defined.
+	 */
+	Class<? extends EclipseStoreClientConfiguration> clientConfigurationClass()
+		default DefaultEclipseStoreClientConfiguration.class;
 	
 	/**
 	 * Returns the postfix to be used when looking up custom repository implementations. Defaults to {@literal Impl} .

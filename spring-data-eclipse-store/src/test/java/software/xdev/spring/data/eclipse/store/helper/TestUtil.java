@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.opentest4j.AssertionFailedError;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 public final class TestUtil
@@ -32,14 +32,14 @@ public final class TestUtil
 		return list;
 	}
 	
-	public static void restartDatastore(final EclipseStoreStorage storage)
+	public static void restartDatastore(final EclipseStoreClientConfiguration configuration)
 	{
-		storage.stop();
+		configuration.getStorageInstance().stop();
 		// Storage starts automatically again, if the repo is accessed
 	}
 	
 	public static void doBeforeAndAfterRestartOfDatastore(
-		final EclipseStoreStorage storage,
+		final EclipseStoreClientConfiguration configuration,
 		final Runnable thingToDoBeforeAndAfterRestart)
 	{
 		try
@@ -50,7 +50,7 @@ public final class TestUtil
 		{
 			throw new AssertionFailedError("Error before restart of storage", error);
 		}
-		restartDatastore(storage);
+		restartDatastore(configuration);
 		try
 		{
 			thingToDoBeforeAndAfterRestart.run();

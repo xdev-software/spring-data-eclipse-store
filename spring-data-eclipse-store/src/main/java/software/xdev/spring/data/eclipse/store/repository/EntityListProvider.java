@@ -21,4 +21,6 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 public interface EntityListProvider
 {
 	<T> IdentitySet<T> getEntityList(final Class<T> clazz);
+	
+	<T> long getEntityCount(final Class<T> clazz);
 }

@@ -6,13 +6,18 @@
 
 	<groupId>software.xdev</groupId>
 	<artifactId>spring-data-eclipse-store-root</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<organization>
 		<name>XDEV Software</name>
 		<url>https://xdev.software</url>
 	</organization>
+
+	<properties>
+		<javaVersion>17</javaVersion>
+		<maven.compiler.release>${javaVersion}</maven.compiler.release>
+	</properties>
 
 	<modules>
 		<module>spring-data-eclipse-store</module>

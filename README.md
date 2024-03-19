@@ -19,8 +19,9 @@ The library provides following features:
 
 * Enforces the
   **[Spring data repository concept](https://docs.spring.io/spring-data/jpa/reference/repositories/core-concepts.html)**
-  for EclipseStore by using [working copies](#working-copies)
-* **[Drop in compatible](#usage)** for your existing Spring application
+  for EclipseStore by
+  using [working copies](https://xdev-software.github.io/spring-data-eclipse-store/working-copies.html)
+* **[Drop in compatible](https://xdev-software.github.io/spring-data-eclipse-store/installation.html#drop-in-compatible)** for your existing Spring application
 * Utilizes **ultra-fast EclipseStore serializing and storing**
 * Enables your application to **select
   any [EclipseStore target](https://docs.eclipsestore.io/manual/storage/storage-targets/index.html)** (e.g.
@@ -37,42 +38,30 @@ GB of data are stored. ([IBM Cloud Pricing](https://cloud.ibm.com/estimator/esti
 AWS. ([AWS Pricing Calculator](https://calculator.aws/#/estimate?id=ab85cddf77f0d1aa0457111ed82785dfb836b1d8), as of
 08.01.2024)
 
-### Working copies
+## Installation & Usage
 
-If you use EclipseStore without our library, EclipseStore loads the data from the datastore directly into memory. You make your changes on these loaded Java objects and by calling ``store`` EclipseStore writes it directly from memory to the datastore.
+[**Installation
+guide** for the latest release](https://github.com/xdev-software/spring-data-eclipse-store/releases/latest#Installation)
 
-![Native behavior of EclipseStore](assets/WorkingCopy_1.svg)
+[**Detailed
+instructions** are in the documentation](https://xdev-software.github.io/spring-data-eclipse-store/installation.html)
 
-If you e.g. change the address of a person, the changed address is already in your data model, **even before storing** this person.
-This is very different from the behavior a Spring user expects.
+### Supported versions
 
-With *Spring-Data-Eclipse-Store* every time an object is loaded from the datastore, a working copy of that object (or rather the object tree) is created and returned to the user. Therefore, the user can make the changes on the working copy without any changes to the actual data model. The changes are only persisted after calling ``save`` on a repository.
-
-![Behavior of EclipseStore with Spring-Data-Eclipse-Store](assets/WorkingCopy_2.svg)
-
-## Installation
-[Installation guide for the latest release](https://github.com/xdev-software/spring-data-eclipse-store/releases/latest#Installation)
-
-### Prerequisites
-
-|              | Minimal Version |
-|--------------|-----------------|
-| Java         | ``17``          |
-| Spring Data  | ``3.2.2``       |
-| EclipseStore | ``1.1.0``       |
-
-### Usage
-
-After adding the library in your dependencies, using it is as easy as adding the ``@EnableEclipseStoreRepositories`` annotation to your ``@SpringBootApplication`` annotation.
+| Spring-Data-Eclipse-Store | Java   | Spring Data | EclipseStore |
+|---------------------------|--------|-------------|--------------|
+| ``<= 1.0.2``              | ``17`` | ``3.2.2``   | ``1.1.0``    |
+| ``1.0.3``                 | ``17`` | ``3.2.3``   | ``1.2.0``    |
 
 ## Demo
 
-To see how easy it is to implement EclipseStore in your Spring project, take a look at the three
-[demos](./spring-data-eclipse-store-demo):<br/>
-A [simple](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple), a
-more [complex demo](./spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
-and
-a [demo with coexisting JPA](./spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa).
+To see how easy it is to implement EclipseStore in your Spring project, take a look at
+the [demos](./spring-data-eclipse-store-demo):
+
+* [Simple demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple)
+* [Complex demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
+* [Demo with coexisting JPA](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa)
+* [Dual storage demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage)
 
 > [!NOTE]  
 > Since the library is using reflection to copy data, the following JVM-Arguments may have to be set:
@@ -82,7 +71,6 @@ a [demo with coexisting JPA](./spring-data-eclipse-store-jpa/src/main/java/softw
 > --add-opens=java.base/java.lang=ALL-UNNAMED
 > --add-opens=java.base/java.time=ALL-UNNAMED 
 > ```
-
 
 ## Support
 
