@@ -19,10 +19,12 @@ import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDat
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyList;
 import org.eclipse.serializer.reference.Lazy;
+import org.eclipse.serializer.reference.LazyReferenceManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -83,6 +85,107 @@ class LazyTest
 	}
 	
 	@Test
+	void lazyGetsCleared(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		restartDatastore(this.configuration);
+		
+		final List<ObjectWithLazy<SimpleObject>> loadedObjects = repository.findAll();
+		Assertions.assertEquals(1, loadedObjects.size());
+		Assertions.assertFalse(loadedObjects.get(0).getLazy().isLoaded());
+		Assertions.assertNotNull(loadedObjects.get(0).getLazy().get());
+		Assertions.assertTrue(loadedObjects.get(0).getLazy().isLoaded());
+		
+		LazyReferenceManager.get().clear();
+		Assertions.assertFalse(repository.findAll().get(0).getLazy().isLoaded());
+	}
+	
+	@Test
+	void lazyWorkingCopyIsCreated(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final SimpleObject storedObject = newLazy.getLazy().get();
+				final SimpleObject loadedObject = repository.findAll().get(0).getLazy().get();
+				Assertions.assertNotSame(storedObject, loadedObject);
+				Assertions.assertEquals(storedObject, loadedObject);
+			}
+		);
+	}
+	
+	@Test
+	void lazyDifferentWorkingCopiesAreCreated(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final ObjectWithLazy<SimpleObject> workingCopy1 = repository.findAll().get(0);
+				final ObjectWithLazy<SimpleObject> workingCopy2 = repository.findAll().get(0);
+				Assertions.assertNotSame(workingCopy1.getLazy(), workingCopy2.getLazy());
+				Assertions.assertNotSame(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
+				Assertions.assertEquals(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
+			}
+		);
+	}
+	
+	@Test
+	void lazyWorkingCopyChange(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		final SimpleObject changedObjectToStore = new SimpleObject(TestData.DUMMY_STRING_ALTERNATIVE);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(changedObjectToStore));
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertNotEquals(newLazy.getLazy().get(), repository.findAll().get(0).getLazy().get());
+			}
+		);
+	}
+	
+	@Test
+	void lazyWorkingCopyChangeAfterRestart(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		restartDatastore(this.configuration);
+		
+		final SimpleObject changedObjectToStore = new SimpleObject(TestData.DUMMY_STRING_ALTERNATIVE);
+		final ObjectWithLazy<SimpleObject> objectToChange = repository.findAll().get(0);
+		objectToChange.setLazy(SpringDataEclipseStoreLazy.build(changedObjectToStore));
+		
+		Assertions.assertNotEquals(objectToChange.getLazy().get(), repository.findAll().get(0).getLazy().get());
+		
+		repository.save(objectToChange);
+		
+		final ObjectWithLazy<SimpleObject> workingCopy1 = repository.findAll().get(0);
+		final ObjectWithLazy<SimpleObject> workingCopy2 = repository.findAll().get(0);
+		Assertions.assertEquals(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
+	}
+	
+	@Test
 	void lazyStoreComplexObject(@Autowired final ObjectWithLazyRepository<ComplexLazyObject> repository)
 	{
 		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
@@ -112,6 +215,55 @@ class LazyTest
 				Assertions.assertEquals(
 					objectToStore.getListOfLazyListOfString().get(1).get(),
 					lazy.get().getListOfLazyListOfString().get(1).get());
+			}
+		);
+	}
+	
+	@Test
+	void lazyChangeComplexObject(@Autowired final ObjectWithLazyRepository<ComplexLazyObject> repository)
+	{
+		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
+		final ComplexLazyObject objectToStore = new ComplexLazyObject(
+			SpringDataEclipseStoreLazy.build(new SimpleObject(TestData.DUMMY_STRING)),
+			new ArrayList<>(Arrays.asList(
+				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING))),
+				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING_ALTERNATIVE)))
+			))
+		);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		restartDatastore(this.configuration);
+		
+		final ObjectWithLazy<ComplexLazyObject> loadedObjectToChange = repository.findAll().get(0);
+		loadedObjectToChange
+			.getLazy()
+			.get()
+			.getListOfLazyListOfString()
+			.add(SpringDataEclipseStoreLazy.build(List.of(TestData.DUMMY_STRING_ALTERNATIVE)));
+		repository.save(loadedObjectToChange);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final ObjectWithLazy<ComplexLazyObject> loadedObject = repository.findAll().get(0);
+				Assertions.assertNotSame(loadedObjectToChange, loadedObject);
+				Assertions.assertNotSame(
+					loadedObjectToChange.getLazy().get(),
+					loadedObject.getLazy().get()
+				);
+				Assertions.assertEquals(
+					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().size(),
+					loadedObject.getLazy().get().getListOfLazyListOfString().size()
+				);
+				Assertions.assertEquals(
+					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().get(0).get().size(),
+					loadedObject.getLazy().get().getListOfLazyListOfString().get(0).get().size()
+				);
+				Assertions.assertEquals(
+					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().get(0).get().get(0),
+					loadedObject.getLazy().get().getListOfLazyListOfString().get(0).get().get(0)
+				);
 			}
 		);
 	}
@@ -152,6 +304,19 @@ class LazyTest
 				Assertions.assertEquals(objectToStore, lazy.get());
 			}
 		);
+	}
+	
+	@Test
+	void lazyClearAfterRestart(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		restartDatastore(this.configuration);
+		
+		Assertions.assertDoesNotThrow(() -> newLazy.getLazy().clear());
 	}
 	
 	@Test

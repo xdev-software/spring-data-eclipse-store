@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 public interface FieldAccessModifier<E> extends AutoCloseable
 {
-	static <T> FieldAccessModifier<T> makeFieldReadable(final Field field, final T sourceObject)
+	static <T> FieldAccessModifier<T> prepareForField(final Field field, final T sourceObject)
 	{
 		return new FieldAccessibleMaker<>(Objects.requireNonNull(field), Objects.requireNonNull(sourceObject));
 	}

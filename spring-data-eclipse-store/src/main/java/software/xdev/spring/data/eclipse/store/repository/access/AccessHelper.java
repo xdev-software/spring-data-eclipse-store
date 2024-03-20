@@ -99,7 +99,7 @@ public final class AccessHelper
 	 */
 	public static <T> Object readFieldVariable(final Field field, final T sourceObject)
 	{
-		try(final FieldAccessModifier<T> fieldAccessModifier = FieldAccessModifier.makeFieldReadable(
+		try(final FieldAccessModifier<T> fieldAccessModifier = FieldAccessModifier.prepareForField(
 			Objects.requireNonNull(field),
 			Objects.requireNonNull(sourceObject)))
 		{

@@ -15,11 +15,15 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.lazy;
 
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reference.Swizzling;
+
+import software.xdev.spring.data.eclipse.store.exceptions.LazyNotUnlinkableException;
+import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 
 
 /**
@@ -35,9 +39,21 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		return new Default<>(objectToWrapInLazy);
 	}
 	
-	SpringDataEclipseStoreLazy<T> copy();
+	SpringDataEclipseStoreLazy<T> copyOnlyWithReference();
+	
+	void unlink();
 	
 	long objectId();
+	
+	boolean isOriginalObject();
+	
+	interface Internals
+	{
+		static <T> SpringDataEclipseStoreLazy.Default<T> build(final Lazy<T> lazySubject)
+		{
+			return new Default<>(lazySubject);
+		}
+	}
 	
 	/**
 	 * This class is very complex and its various membervariables all have their reason to exist. This code is very
@@ -53,26 +69,42 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		private transient ObjectSwizzling loader;
 		private transient boolean isStored = false;
 		
-		private Default(final T wrappedObject)
+		private Default(final Lazy<T> lazySubject)
 		{
-			this.objectToBeWrapped = wrappedObject;
+			this.setWrappedLazy(lazySubject);
+		}
+		
+		private Default(final T objectToBeWrapped)
+		{
+			this.objectToBeWrapped = objectToBeWrapped;
 		}
 		
 		private Default(final long objectId, final ObjectSwizzling loader)
 		{
 			this.objectId = objectId;
 			this.loader = loader;
+			// This object is already stored in the real storage. So it can get cleared.
+			this.setStored();
 		}
 		
 		private Lazy<T> ensureLazy()
 		{
-			if(this.wrappedLazy == null)
+			if(this.wrappedLazy == null || !this.wrappedLazy.isLoaded())
 			{
-				Objects.requireNonNull(this.loader);
-				Objects.requireNonNull(this.objectId);
-				this.wrappedLazy = Lazy.Reference((T)this.loader.getObject(this.objectId));
+				this.wrappedLazy = this.createNewDefaultLazyWithClearableReference();
 			}
 			return this.wrappedLazy;
+		}
+		
+		private Lazy<T> createNewDefaultLazyWithClearableReference()
+		{
+			Objects.requireNonNull(this.loader);
+			Objects.requireNonNull(this.objectId);
+			return Lazy.New(
+				(T)this.loader.getObject(this.objectId),
+				Swizzling.nullId(),
+				this.loader
+			);
 		}
 		
 		@SuppressWarnings("all")
@@ -165,6 +197,8 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		void setWrappedLazy(final Lazy<T> wrappedLazy)
 		{
 			this.wrappedLazy = wrappedLazy;
+			// This object is already stored in the real storage. So it can get cleared.
+			this.setStored();
 		}
 		
 		public T getObjectToBeWrapped()
@@ -173,12 +207,43 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		}
 		
 		@Override
-		public SpringDataEclipseStoreLazy<T> copy()
+		public SpringDataEclipseStoreLazy<T> copyOnlyWithReference()
 		{
 			return new SpringDataEclipseStoreLazy.Default(
-				this.objectId,
+				this.objectId(),
 				this.loader
 			);
+		}
+		
+		// TODO is this necessary?
+		@Override
+		public void unlink()
+		{
+			try
+			{
+				if(this.wrappedLazy != null)
+				{
+					final Lazy.Default wrappedDefaultLazy = (Lazy.Default)this.wrappedLazy;
+					wrappedDefaultLazy.$unlink();
+					final Field objectIdField = Lazy.Default.class.getDeclaredField("objectId");
+					try(final FieldAccessModifier fam = FieldAccessModifier.prepareForField(
+						objectIdField,
+						wrappedDefaultLazy))
+					{
+						fam.writeValueOfField(wrappedDefaultLazy, Swizzling.nullId(), true);
+					}
+				}
+			}
+			catch(final Exception e)
+			{
+				throw new LazyNotUnlinkableException("Could not unlink lazy " + this.wrappedLazy, e);
+			}
+		}
+		
+		@Override
+		public boolean isOriginalObject()
+		{
+			return this.objectToBeWrapped != null;
 		}
 	}
 }

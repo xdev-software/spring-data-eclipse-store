@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,7 +153,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		// The object to merge back is not a working copy, but a originalObject.
 		// Therefore, we create a copy to persist this in the storage.
 		final E objectForDatastore = this.genericCopy(workingCopy, true);
-		// "Why merging values of an identical object?" you might ask.
+		// "Why merge values of an identical object?" you might ask.
 		// Well, because some sub-objects might already be in the datastore.
 		this.mergeValues(workingCopy, objectForDatastore, alreadyMergedTargets, changedCollector);
 		changedCollector.collectChangedObject(objectForDatastore);
@@ -217,7 +218,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				return;
 			}
 			
-			try(final FieldAccessModifier<E> fam = FieldAccessModifier.makeFieldReadable(
+			try(final FieldAccessModifier<E> fam = FieldAccessModifier.prepareForField(
 				field,
 				sourceObject))
 			{
@@ -262,6 +263,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 						final SpringDataEclipseStoreLazy<?> newLazy =
 							this.createNewLazy(
 								(SpringDataEclipseStoreLazy<?>)valueOfSourceObject,
+								(SpringDataEclipseStoreLazy<?>)valueOfTargetObject,
 								alreadyMergedTargets,
 								changedCollector);
 						fam.writeValueOfField(targetObject, newLazy, true);
@@ -313,25 +315,47 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 	
 	private <E> SpringDataEclipseStoreLazy<E> createNewLazy(
 		final SpringDataEclipseStoreLazy<E> oldLazy,
+		final SpringDataEclipseStoreLazy<?> newLazy,
 		final MergedTargetsCollector alreadyMergedTargets,
 		final ChangedObjectCollector changedCollector
 	)
 	{
-			if(oldLazy.isLoaded())
+		if(oldLazy.isLoaded())
+		{
+			if(oldLazy.isOriginalObject())
 			{
-				final E copyOfWrappedObject = this.getOrCreateObjectForDatastore(
-					oldLazy.get(),
-					true,
-					alreadyMergedTargets,
-					changedCollector);
-				return SpringDataEclipseStoreLazy.build(copyOfWrappedObject);
+				// This object is new and in this case it is merged into the storage.
+				if(!newLazy.isStored())
+				{
+					// The EclipseSerializerRegisteringCopier already creates the perfect lazy object.
+					// No change necessary.
+					return (SpringDataEclipseStoreLazy<E>)newLazy;
+				}
+				else
+				{
+					final Lazy<E> newLazyForBuilding = Lazy.Reference(oldLazy.get());
+					oldLazy.unlink();
+					newLazy.unlink();
+					// This object is already stored but the new version must get overwritten.
+					return SpringDataEclipseStoreLazy.Internals.build(newLazyForBuilding);
+				}
 			}
-			else
-			{
-				// This lazy should never be used again!
-				// It is though of as a temporary copy to merge back into the original-storage-data.
-				return oldLazy.copy();
-			}
+			final E copyOfWrappedObject = this.getOrCreateObjectForDatastore(
+				oldLazy.get(),
+				true,
+				alreadyMergedTargets,
+				changedCollector);
+			oldLazy.unlink();
+			newLazy.unlink();
+			return SpringDataEclipseStoreLazy.build(copyOfWrappedObject);
+		}
+		else
+		{
+			oldLazy.unlink();
+			// This lazy should never be used again!
+			// It is though of as a temporary copy to merge back into the original-storage-data.
+			return (SpringDataEclipseStoreLazy<E>)newLazy.copyOnlyWithReference();
+		}
 	}
 	
 	/**

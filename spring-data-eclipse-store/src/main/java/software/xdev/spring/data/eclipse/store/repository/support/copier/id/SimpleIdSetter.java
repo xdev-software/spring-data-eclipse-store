@@ -53,7 +53,7 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 	@Override
 	public void ensureId(final T objectToSetIdIn)
 	{
-		try(final FieldAccessModifier<T> fam = FieldAccessModifier.makeFieldReadable(
+		try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
 			this.idField,
 			objectToSetIdIn))
 		{

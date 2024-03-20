@@ -88,7 +88,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 	)
 	{
 		data.storeEntityHeader(Binary.referenceBinaryLength(2), this.typeId(), objectId);
-		if(instance.getObjectToBeWrapped() != null)
+		if(instance.isOriginalObject())
 		{
 			// Store unwrapped Object
 			final long newObjectId = handler.applyEager(instance.getObjectToBeWrapped());
@@ -139,6 +139,8 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		if(objectIdOfUnwrappedObject != 0)
 		{
 			instance.setWrappedLazy(Lazy.Reference((T)handler.lookupObject(objectIdOfUnwrappedObject)));
+			// Is already stored in the main storage.
+			instance.setStored();
 		}
 	}
 	
