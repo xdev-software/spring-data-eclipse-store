@@ -25,7 +25,7 @@
 
 		<mainClass>software.xdev.spring.data.eclipse.store.demo.complex.ComplexDemoApplication</mainClass>
 
-		<org.springframework.boot.version>3.2.3</org.springframework.boot.version>
+		<org.springframework.boot.version>3.2.4</org.springframework.boot.version>
 	</properties>
 
 	<dependencyManagement>
