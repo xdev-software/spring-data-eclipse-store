@@ -59,7 +59,7 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 		return serializerFoundation
 			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New())
 			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New())
-			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling))
+			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling, this))
 			.createPersistenceManager();
 	}
 	

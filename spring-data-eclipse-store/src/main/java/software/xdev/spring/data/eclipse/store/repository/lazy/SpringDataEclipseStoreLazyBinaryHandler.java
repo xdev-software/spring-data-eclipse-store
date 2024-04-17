@@ -29,6 +29,8 @@ import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reflect.XReflect;
 
+import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringObjectCopier;
+
 
 /**
  * This is a complicated one. First off: this handler should only be used for WorkingCopies (see
@@ -58,7 +60,8 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		XReflect.getDeclaredConstructor(
 			SpringDataEclipseStoreLazy.Default.class,
 			long.class,
-			ObjectSwizzling.class
+			ObjectSwizzling.class,
+			RegisteringObjectCopier.class
 		)
 	);
 	
@@ -66,8 +69,11 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 	public static final int OFFSET_LAZY = 0;
 	
 	private final ObjectSwizzling originalStoreLoader;
+	private final RegisteringObjectCopier copier;
 	
-	public SpringDataEclipseStoreLazyBinaryHandler(final ObjectSwizzling originalStoreLoader)
+	public SpringDataEclipseStoreLazyBinaryHandler(
+		final ObjectSwizzling originalStoreLoader,
+		final RegisteringObjectCopier copier)
 	{
 		super(
 			SpringDataEclipseStoreLazy.Default.genericType(),
@@ -77,6 +83,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 			)
 		);
 		this.originalStoreLoader = Objects.requireNonNull(originalStoreLoader);
+		this.copier = copier;
 	}
 	
 	@Override
@@ -112,7 +119,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		if(objectIdOfUnwrappedObject == 0)
 		{
 			return Lazy.register(
-				XReflect.invoke(CONSTRUCTOR_SURROGATE_LAZY, objectIdOfLazy, this.originalStoreLoader)
+				XReflect.invoke(CONSTRUCTOR_SURROGATE_LAZY, objectIdOfLazy, this.originalStoreLoader, this.copier)
 			);
 		}
 		return XMemory.instantiateBlank(SpringDataEclipseStoreLazy.Default.class);

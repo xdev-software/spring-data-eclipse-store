@@ -27,6 +27,9 @@ import software.xdev.spring.data.eclipse.store.exceptions.DifferentClassesExcept
 public class WorkingCopyRegistry
 {
 	private static final Logger LOG = LoggerFactory.getLogger(WorkingCopyRegistry.class);
+	/**
+	 * Map with Working Copies (key) with the corresponding original object (value).
+	 */
 	private Map<Object, Object> currentWorkingCopies = new IdentityHashMap<>();
 	
 	/**

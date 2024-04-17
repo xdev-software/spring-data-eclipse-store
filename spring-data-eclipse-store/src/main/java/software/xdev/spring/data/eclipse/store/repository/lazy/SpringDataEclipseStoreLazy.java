@@ -24,6 +24,7 @@ import org.eclipse.serializer.reference.Swizzling;
 
 import software.xdev.spring.data.eclipse.store.exceptions.LazyNotUnlinkableException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringObjectCopier;
 
 
 /**
@@ -67,6 +68,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		private Lazy<T> wrappedLazy;
 		private long objectId = Swizzling.notFoundId();
 		private transient ObjectSwizzling loader;
+		private transient RegisteringObjectCopier copier;
 		private transient boolean isStored = false;
 		
 		private Default(final Lazy<T> lazySubject)
@@ -79,10 +81,11 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 			this.objectToBeWrapped = objectToBeWrapped;
 		}
 		
-		private Default(final long objectId, final ObjectSwizzling loader)
+		private Default(final long objectId, final ObjectSwizzling loader, final RegisteringObjectCopier copier)
 		{
 			this.objectId = objectId;
 			this.loader = loader;
+			this.copier = copier;
 			// This object is already stored in the real storage. So it can get cleared.
 			this.setStored();
 		}
@@ -100,8 +103,9 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		{
 			Objects.requireNonNull(this.loader);
 			Objects.requireNonNull(this.objectId);
+			Objects.requireNonNull(this.copier);
 			return Lazy.New(
-				(T)this.loader.getObject(this.objectId),
+				(T)this.copier.copy(this.loader.getObject(this.objectId)),
 				Swizzling.nullId(),
 				this.loader
 			);
@@ -211,7 +215,8 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		{
 			return new SpringDataEclipseStoreLazy.Default(
 				this.objectId(),
-				this.loader
+				this.loader,
+				this.copier
 			);
 		}
 		
