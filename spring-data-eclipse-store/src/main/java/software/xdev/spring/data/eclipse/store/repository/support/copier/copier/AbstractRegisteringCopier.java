@@ -27,6 +27,7 @@ import org.eclipse.serializer.util.X;
 
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazyBinaryHandler;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
 
 /**
@@ -40,26 +41,29 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 	public AbstractRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
-		final ObjectSwizzling objectSwizzling)
+		final ObjectSwizzling objectSwizzling,
+		final WorkingCopier<?> copier)
 	{
 		this.actualCopier = new EclipseSerializerRegisteringCopier(
 			supportedChecker,
 			register,
 			this.createPersistenceManager(
 				this.createSerializerFoundation(),
-				objectSwizzling
+				objectSwizzling,
+				copier
 			)
 		);
 	}
 	
 	private PersistenceManager<Binary> createPersistenceManager(
 		final SerializerFoundation<?> serializerFoundation,
-		final ObjectSwizzling objectSwizzling)
+		final ObjectSwizzling objectSwizzling,
+		final WorkingCopier<?> copier)
 	{
 		return serializerFoundation
 			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New())
 			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New())
-			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling, this))
+			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling, copier))
 			.createPersistenceManager();
 	}
 	

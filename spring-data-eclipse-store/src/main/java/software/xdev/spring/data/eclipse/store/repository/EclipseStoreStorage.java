@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.types.Storer;
+import org.eclipse.serializer.reference.LazyReferenceManager;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.StorageManager;
@@ -273,6 +274,7 @@ public class EclipseStoreStorage
 			this.registry.reset();
 			this.entityClassToIdSetter.clear();
 			LOG.info("Stopped storage.");
+			LazyReferenceManager.get().stop();
 		}
 		else
 		{

@@ -19,6 +19,7 @@ import org.eclipse.serializer.reference.ObjectSwizzling;
 
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
 
 /**
@@ -30,12 +31,14 @@ public class RegisteringStorageToWorkingCopyCopier extends AbstractRegisteringCo
 	public RegisteringStorageToWorkingCopyCopier(
 		final WorkingCopyRegistry registry,
 		final SupportedChecker supportedChecker,
-		final ObjectSwizzling objectSwizzling)
+		final ObjectSwizzling objectSwizzling,
+		final WorkingCopier<?> copier)
 	{
 		super(
 			supportedChecker,
 			(workingCopy, objectToStore) -> registry.register(workingCopy, objectToStore),
-			objectSwizzling
+			objectSwizzling,
+			copier
 		);
 	}
 }

@@ -50,6 +50,8 @@ public interface WorkingCopier<T>
 	 */
 	WorkingCopierResult<T> mergeBack(T workingCopy);
 	
+	<E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry);
+	
 	/**
 	 * @return the original entity that corresponds to the given working copy object.
 	 */

@@ -70,9 +70,9 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		this.domainClass = domainClass;
 		this.registry = registry;
 		this.workingCopyToStorageCopier =
-			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling);
+			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling, this);
 		this.storageToWorkingCopyCopier =
-			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling);
+			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this);
 		this.idSetterProvider = idSetterProvider;
 		this.persistableChecker = persistableChecker;
 	}
@@ -182,12 +182,14 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			alreadyMergedTargets.collectMergedTarget(targetObject);
 			
-			if(sourceObject instanceof String)
+			if(sourceObject instanceof String || sourceObject instanceof SpringDataEclipseStoreLazy<?>)
 			{
 				// no merge needed and no merge possible
 				return;
 			}
-			AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
+			final Collection<Field> valuesToMerge =
+				AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values();
+			valuesToMerge.forEach(
 				field ->
 					this.mergeValueOfField(
 						sourceObject,
@@ -333,11 +335,17 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				}
 				else
 				{
-					final Lazy<E> newLazyForBuilding = Lazy.Reference(oldLazy.get());
+					// This object is already stored but the new version must get overwritten.
+					// The oldLazy Object can contain all kinds of objects (including more lazies)
+					final E copyOfWrappedObject = this.getOrCreateObjectForDatastore(
+						oldLazy.get(),
+						true,
+						alreadyMergedTargets,
+						changedCollector);
 					oldLazy.unlink();
 					newLazy.unlink();
-					// This object is already stored but the new version must get overwritten.
-					return SpringDataEclipseStoreLazy.Internals.build(newLazyForBuilding);
+					
+					return SpringDataEclipseStoreLazy.Internals.buildWithLazy(Lazy.Reference(copyOfWrappedObject));
 				}
 			}
 			final E copyOfWrappedObject = this.getOrCreateObjectForDatastore(
@@ -354,7 +362,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			oldLazy.unlink();
 			// This lazy should never be used again!
 			// It is though of as a temporary copy to merge back into the original-storage-data.
-			return (SpringDataEclipseStoreLazy<E>)newLazy.copyOnlyWithReference();
+			return (SpringDataEclipseStoreLazy<E>)newLazy.copyWithReference();
 		}
 	}
 	
@@ -396,7 +404,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		return newArray;
 	}
 	
-	private <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
+	@Override
+	public <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
 	{
 		if(invertRegistry)
 		{

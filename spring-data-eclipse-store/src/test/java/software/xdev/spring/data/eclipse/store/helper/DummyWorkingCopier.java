@@ -42,6 +42,12 @@ public class DummyWorkingCopier<T> implements WorkingCopier<T>
 	}
 	
 	@Override
+	public <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
+	{
+		return objectToCopy;
+	}
+	
+	@Override
 	public T getOriginal(final T workingCopy)
 	{
 		return workingCopy;

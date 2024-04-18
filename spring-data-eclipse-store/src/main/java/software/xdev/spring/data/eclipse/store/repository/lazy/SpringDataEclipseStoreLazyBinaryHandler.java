@@ -29,7 +29,7 @@ import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reflect.XReflect;
 
-import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringObjectCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
 
 /**
@@ -61,7 +61,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 			SpringDataEclipseStoreLazy.Default.class,
 			long.class,
 			ObjectSwizzling.class,
-			RegisteringObjectCopier.class
+			WorkingCopier.class
 		)
 	);
 	
@@ -69,11 +69,11 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 	public static final int OFFSET_LAZY = 0;
 	
 	private final ObjectSwizzling originalStoreLoader;
-	private final RegisteringObjectCopier copier;
+	private final WorkingCopier<?> copier;
 	
 	public SpringDataEclipseStoreLazyBinaryHandler(
 		final ObjectSwizzling originalStoreLoader,
-		final RegisteringObjectCopier copier)
+		final WorkingCopier<?> copier)
 	{
 		super(
 			SpringDataEclipseStoreLazy.Default.genericType(),
