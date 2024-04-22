@@ -76,7 +76,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		final WorkingCopier<?> copier)
 	{
 		super(
-			SpringDataEclipseStoreLazy.Default.genericType(),
+			(Class)SpringDataEclipseStoreLazy.Default.class,
 			CustomFields(
 				CustomField(Object.class, "lazySubject"),
 				CustomField(Object.class, "unwrappedSubject")

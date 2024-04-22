@@ -1,0 +1,40 @@
+= Lazy References
+
+Lazy Loading is an essential part of EclipseStore.
+The basic mechanism is best explained in the https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/index.html[EclipseStore-Docs]. +
+In essence java objects which are wrapped in a *Lazy-Reference are not loaded with the startup of the EclipseStore-Storage but only if ``get()`` is called* on them.
+
+Lazy References are essential for big data sets that can't get loaded into memory.
+Since {product-name} operates with xref:working-copies.adoc[working copies] using the EclipseStore-Lazy-References is not possible.
+All Lazy References would be resolved and loaded into memory anyway.
+
+That's why we implemented ``SpringDataEclipseStoreLazy``. +
+The usage is the same as with the EclipseStore-Lazies, but they are handled very differently.
+
+Simply wrap any kind of java object in the SpringDataEclipseStoreLazy-Wrapper and the wrapped object has a lazy loading behaviour.
+
+CAUTION: Lazy-References are not only loaded when needed, but also https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/clearing-lazy-references.html#automatically[*cleared when they are no longer needed*]!
+
+Example: ``SpringDataEclipseStoreLazy.build(new HashMap<String, Pet>())``
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/owner/Owner.java[Example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.owner;
+//...
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
+
+public class Owner extends Person
+{
+	private String address;
+
+	private Lazy<List<Pet>> pets = SpringDataEclipseStoreLazy.build(new ArrayList<>());
+	//...
+----
+
+== Internas
+
+SpringDataEclipseStoreLazies work as a proxy for the EclipseStore-Lazies.
+As far as EclipseStore is concerned, a SpringDataEclipseStoreLazy-Object is a normal Java object that contains a Lazy-Reference.
+
+But when {product-name} creates the working copy, *the SpringDataEclipseStoreLazy-Reference is not resolved* but instead only a reference to the original Lazy-Object in EclipseStore is loaded.
+As soon as ``get()`` is called on the SpringDataEclipseStoreLazy, a *new working copy of the lazy object* is created.

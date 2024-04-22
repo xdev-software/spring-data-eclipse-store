@@ -32,6 +32,8 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
  * {@link Lazy}-Wrapper!</b> Because SDES is making working copies of the stored data, the {@link Lazy} does not work as
  * expected. Instead, use this Wrapper. It brings the same functionality as the native {@link Lazy}-Wrapper but works
  * with working copies.
+ *
+ * @param <T> the type of the lazily referenced element
  */
 public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 {
@@ -57,11 +59,12 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 	}
 	
 	/**
-	 * This class is very complex and its various membervariables all have their reason to exist. This code is very
+	 * This class is very complex and its various member variables all have their reason to exist. This code is very
 	 * difficult to read due to its the functionality explained in the {@link SpringDataEclipseStoreLazyBinaryHandler}.
 	 *
-	 * @param <T>
+	 * @param <T> the type of the lazily referenced element
 	 */
+	@SuppressWarnings({"java:S2065", "checkstyle:FinalClass"})
 	class Default<T> implements SpringDataEclipseStoreLazy<T>
 	{
 		private T objectToBeWrapped;
@@ -69,7 +72,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		private long objectId = Swizzling.notFoundId();
 		private transient ObjectSwizzling loader;
 		private transient WorkingCopier<T> copier;
-		private transient boolean isStored = false;
+		private transient boolean isStored;
 		
 		private Default(final Lazy<T> lazySubject)
 		{
@@ -99,10 +102,10 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 			return this.wrappedLazy;
 		}
 		
+		@SuppressWarnings("unchecked")
 		private Lazy<T> createNewDefaultLazyWithClearableReference()
 		{
 			Objects.requireNonNull(this.loader);
-			Objects.requireNonNull(this.objectId);
 			Objects.requireNonNull(this.copier);
 			
 			final T originalInstance = (T)this.loader.getObject(this.objectId);
@@ -113,13 +116,6 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 				Swizzling.nullId(),
 				this.loader
 			);
-		}
-		
-		@SuppressWarnings("all")
-		public static final Class<SpringDataEclipseStoreLazy.Default<?>> genericType()
-		{
-			// no idea how to get ".class" to work otherwise in conjunction with generics.
-			return (Class)SpringDataEclipseStoreLazy.Default.class;
 		}
 		
 		@Override
@@ -195,9 +191,9 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		@Override
 		public long objectId()
 		{
-			if(this.wrappedLazy != null && this.wrappedLazy instanceof Lazy.Default<T>)
+			if(this.wrappedLazy != null && this.wrappedLazy instanceof final Lazy.Default<T> wrappedTypedLazy)
 			{
-				return ((Lazy.Default<T>)this.wrappedLazy).objectId();
+				return wrappedTypedLazy.objectId();
 			}
 			return this.objectId;
 		}
@@ -217,7 +213,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		@Override
 		public SpringDataEclipseStoreLazy<T> copyWithReference()
 		{
-			final SpringDataEclipseStoreLazy.Default newLazy = new SpringDataEclipseStoreLazy.Default(
+			final SpringDataEclipseStoreLazy.Default<T> newLazy = new SpringDataEclipseStoreLazy.Default<>(
 				this.objectId(),
 				this.loader,
 				this.copier
@@ -226,7 +222,6 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 			return newLazy;
 		}
 		
-		// TODO is this necessary?
 		@Override
 		public void unlink()
 		{
@@ -234,10 +229,10 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 			{
 				if(this.wrappedLazy != null)
 				{
-					final Lazy.Default wrappedDefaultLazy = (Lazy.Default)this.wrappedLazy;
+					final Lazy.Default<T> wrappedDefaultLazy = (Lazy.Default<T>)this.wrappedLazy;
 					wrappedDefaultLazy.$unlink();
 					final Field objectIdField = Lazy.Default.class.getDeclaredField("objectId");
-					try(final FieldAccessModifier fam = FieldAccessModifier.prepareForField(
+					try(final FieldAccessModifier<Lazy.Default<T>> fam = FieldAccessModifier.prepareForField(
 						objectIdField,
 						wrappedDefaultLazy))
 					{
