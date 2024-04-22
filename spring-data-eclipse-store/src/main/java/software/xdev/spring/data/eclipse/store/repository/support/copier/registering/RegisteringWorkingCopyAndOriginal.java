@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.registering;
 
-public interface RegisteringObjectCopier extends AutoCloseable
+@FunctionalInterface
+public interface RegisteringWorkingCopyAndOriginal
 {
-	<T> T copy(T t);
+	boolean register(final Object workingCopy, final Object objectToStore);
 }

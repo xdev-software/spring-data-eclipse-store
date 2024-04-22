@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package software.xdev.spring.data.eclipse.store.exceptions;
 
+/**
+ * Is used when a {@link software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy} is not able
+ * to get unlinked from the object tree.
+ * <p>
+ * This exception should not be created by the user, but only within the Spring-Data-Eclipse-Store-Library.
+ * </p>
+ */
 public class LazyNotUnlinkableException extends RuntimeException
 {
 	public LazyNotUnlinkableException(final String message, final Throwable e)

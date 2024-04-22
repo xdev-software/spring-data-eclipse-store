@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -318,7 +318,8 @@ class LazyTest
 		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
-		Assertions.assertThrows(IllegalStateException.class, () -> newLazy.getLazy().clear());
+		final Lazy<SimpleObject> lazy = newLazy.getLazy();
+		Assertions.assertThrows(IllegalStateException.class, () -> lazy.clear());
 	}
 	
 	@Test

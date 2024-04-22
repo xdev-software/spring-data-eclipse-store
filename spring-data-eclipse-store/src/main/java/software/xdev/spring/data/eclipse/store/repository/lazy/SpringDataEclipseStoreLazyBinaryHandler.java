@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 
 /**
  * This is a complicated one. First off: this handler should only be used for WorkingCopies (see
- * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.copier.EclipseSerializerRegisteringCopier})!
+ * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.registering.EclipseSerializerRegisteringCopier})!
  * <p>
  *     First case:<br/>
  *     The user creates a {@link SpringDataEclipseStoreLazy} and puts a object in it.
@@ -45,7 +45,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
  *     Second case:<br/>
  *     The actual lazy object gets loaded from the actual storage. In this case the {@link ObjectSwizzling} is
  *     important! It's the actual {@link ObjectSwizzling} from the storage (not from the
- * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.copier.EclipseSerializerRegisteringCopier}).
+ * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.registering.EclipseSerializerRegisteringCopier}).
  *     This means, the {@link SpringDataEclipseStoreLazy} holds the objectId of the original lazy in the original
  *     storage.
  *     Therefore if {@link SpringDataEclipseStoreLazy#get()} is called a new working copy of the lazy from the
@@ -65,8 +65,8 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		)
 	);
 	
-	public static final int OFFSET_UNWRAPPED_OBJECT = 8;
-	public static final int OFFSET_LAZY = 0;
+	private static final int OFFSET_UNWRAPPED_OBJECT = 8;
+	private static final int OFFSET_LAZY = 0;
 	
 	private final ObjectSwizzling originalStoreLoader;
 	private final WorkingCopier<?> copier;
@@ -76,6 +76,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		final WorkingCopier<?> copier)
 	{
 		super(
+			// Cast is necessary for the compiler
 			(Class)SpringDataEclipseStoreLazy.Default.class,
 			CustomFields(
 				CustomField(Object.class, "lazySubject"),
@@ -83,7 +84,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 			)
 		);
 		this.originalStoreLoader = Objects.requireNonNull(originalStoreLoader);
-		this.copier = copier;
+		this.copier = Objects.requireNonNull(copier);
 	}
 	
 	@Override
@@ -98,8 +99,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 		if(instance.isOriginalObject())
 		{
 			// Store unwrapped Object
-			final long newObjectId = handler.applyEager(instance.getObjectToBeWrapped());
-			data.store_long(OFFSET_UNWRAPPED_OBJECT, newObjectId);
+			data.store_long(OFFSET_UNWRAPPED_OBJECT, handler.applyEager(instance.getObjectToBeWrapped()));
 		}
 		else
 		{

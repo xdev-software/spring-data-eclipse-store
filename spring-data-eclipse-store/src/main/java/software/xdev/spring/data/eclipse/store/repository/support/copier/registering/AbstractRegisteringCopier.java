@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.registering;
 
 import org.eclipse.serializer.Serializer;
 import org.eclipse.serializer.SerializerFoundation;
@@ -38,7 +38,7 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 {
 	private final EclipseSerializerRegisteringCopier actualCopier;
 	
-	public AbstractRegisteringCopier(
+	protected AbstractRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
 		final ObjectSwizzling objectSwizzling,
@@ -67,6 +67,7 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 			.createPersistenceManager();
 	}
 	
+	@SuppressWarnings("java:S1452")
 	protected SerializerFoundation<?> createSerializerFoundation()
 	{
 		final Reference<Binary> buffer = X.Reference(null);

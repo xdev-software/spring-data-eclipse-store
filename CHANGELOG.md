@@ -2,6 +2,7 @@
 
 * Added possibility to use multiple storages
 * Added Lazy support
+* Updated EclipseStore to version 1.3.1
 
 # 1.0.3
 

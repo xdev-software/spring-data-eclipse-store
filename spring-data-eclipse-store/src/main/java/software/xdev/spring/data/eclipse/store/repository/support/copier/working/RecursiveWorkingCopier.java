@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringObjectCopier;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringStorageToWorkingCopyCopier;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.copier.RegisteringWorkingCopyToStorageCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringObjectCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringStorageToWorkingCopyCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringWorkingCopyToStorageCopier;
 
 
 /**
@@ -274,37 +274,14 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 					{
 						// "Simple" object
 						// get original value object
-						final Object originalValueObjectOfSource =
-							this.getOrCreateObjectForDatastore(
-								valueOfSourceObject,
-								false,
-								alreadyMergedTargets,
-								changedCollector);
-						if(valueOfTargetObject != originalValueObjectOfSource)
-						{
-							// If the reference is new, it must be set
-							fam.writeValueOfField(
-								targetObject,
-								originalValueObjectOfSource,
-								!targetObjectIsPartOfJavaPackage);
-						}
-						
-						if(this.isSpecialCaseWhereOnlyAFullCopyWorks(valueOfSourceObject))
-						{
-							fam.writeValueOfField(
-								targetObject,
-								this.onlyCreateCopy(valueOfSourceObject, true),
-								!targetObjectIsPartOfJavaPackage);
-						}
-						else
-						{
-							// Merge after setting reference to avoid endless loops
-							this.mergeValues(
-								valueOfSourceObject,
-								originalValueObjectOfSource,
-								alreadyMergedTargets,
-								changedCollector);
-						}
+						this.mergeSimpleObjectValue(
+							targetObject,
+							alreadyMergedTargets,
+							changedCollector,
+							valueOfSourceObject,
+							valueOfTargetObject,
+							fam,
+							targetObjectIsPartOfJavaPackage);
 					}
 				}
 			}
@@ -312,6 +289,48 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		catch(final Exception e)
 		{
 			throw new MergeFailedException(sourceObject, targetObject, e);
+		}
+	}
+	
+	private <E> void mergeSimpleObjectValue(
+		final E targetObject,
+		final MergedTargetsCollector alreadyMergedTargets,
+		final ChangedObjectCollector changedCollector,
+		final Object valueOfSourceObject,
+		final Object valueOfTargetObject,
+		final FieldAccessModifier<E> fam,
+		final boolean targetObjectIsPartOfJavaPackage) throws IllegalAccessException
+	{
+		final Object originalValueObjectOfSource =
+			this.getOrCreateObjectForDatastore(
+				valueOfSourceObject,
+				false,
+				alreadyMergedTargets,
+				changedCollector);
+		if(valueOfTargetObject != originalValueObjectOfSource)
+		{
+			// If the reference is new, it must be set
+			fam.writeValueOfField(
+				targetObject,
+				originalValueObjectOfSource,
+				!targetObjectIsPartOfJavaPackage);
+		}
+		
+		if(this.isSpecialCaseWhereOnlyAFullCopyWorks(valueOfSourceObject))
+		{
+			fam.writeValueOfField(
+				targetObject,
+				this.onlyCreateCopy(valueOfSourceObject, true),
+				!targetObjectIsPartOfJavaPackage);
+		}
+		else
+		{
+			// Merge after setting reference to avoid endless loops
+			this.mergeValues(
+				valueOfSourceObject,
+				originalValueObjectOfSource,
+				alreadyMergedTargets,
+				changedCollector);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.copier;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.registering;
 
 import org.eclipse.serializer.reference.ObjectSwizzling;
 
@@ -23,12 +23,13 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 
 
 /**
- * This class registers storage instances and copy them for working copies. Utilizes
+ * This class registers working copy instances and copy them for the storage. Utilizes
  * {@link EclipseSerializerRegisteringCopier}.
  */
-public class RegisteringStorageToWorkingCopyCopier extends AbstractRegisteringCopier
+public class RegisteringWorkingCopyToStorageCopier extends AbstractRegisteringCopier
 {
-	public RegisteringStorageToWorkingCopyCopier(
+	
+	public RegisteringWorkingCopyToStorageCopier(
 		final WorkingCopyRegistry registry,
 		final SupportedChecker supportedChecker,
 		final ObjectSwizzling objectSwizzling,
@@ -36,7 +37,7 @@ public class RegisteringStorageToWorkingCopyCopier extends AbstractRegisteringCo
 	{
 		super(
 			supportedChecker,
-			(workingCopy, objectToStore) -> registry.register(workingCopy, objectToStore),
+			registry::invertRegister,
 			objectSwizzling,
 			copier
 		);

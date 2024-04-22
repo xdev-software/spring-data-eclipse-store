@@ -5,8 +5,8 @@ The basic mechanism is best explained in the https://docs.eclipsestore.io/manual
 In essence java objects which are wrapped in a *Lazy-Reference are not loaded with the startup of the EclipseStore-Storage but only if ``get()`` is called* on them.
 
 Lazy References are essential for big data sets that can't get loaded into memory.
-Since {product-name} operates with xref:working-copies.adoc[working copies] using the EclipseStore-Lazy-References is not possible.
-All Lazy References would be resolved and loaded into memory anyway.
+Since {product-name} operates with xref:working-copies.adoc[working copies] using the EclipseStore-Lazy-References is not possible. +
+If you are using the EclipseStore-Lazy-References, all references would be resolved and loaded into memory as soon as a working copy is created, because the ``get()``-Method is called to create a full working copy.
 
 That's why we implemented ``SpringDataEclipseStoreLazy``. +
 The usage is the same as with the EclipseStore-Lazies, but they are handled very differently.

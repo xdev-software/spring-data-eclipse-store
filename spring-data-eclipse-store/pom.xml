@@ -200,6 +200,7 @@
 				<configuration>
 					<properties>
 						<email>${project.organization.url}</email>
+						<year>2024</year>
 					</properties>
 					<licenseSets>
 						<licenseSet>
