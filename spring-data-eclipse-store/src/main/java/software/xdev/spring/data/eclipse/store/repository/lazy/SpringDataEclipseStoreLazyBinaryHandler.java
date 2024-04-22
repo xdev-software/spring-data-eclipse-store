@@ -34,18 +34,20 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 
 /**
  * This is a complicated one. First off: this handler should only be used for WorkingCopies (see
- * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.registering.EclipseSerializerRegisteringCopier})!
+ * {@link
+ * software.xdev.spring.data.eclipse.store.repository.support.copier.registering.EclipseSerializerRegisteringCopier})!
  * <p>
  *     First case:<br/>
  *     The user creates a {@link SpringDataEclipseStoreLazy} and puts a object in it.
  *     This object is stored as with a default {@link BinaryTypeHandler}. But when it gets loaded,
  *     it <b>does not</b> load as the stored object, but it gets wrapped in a {@link Lazy#Reference(Object)}.
- * </p>
+ * </p> 
  * <p>
  *     Second case:<br/>
  *     The actual lazy object gets loaded from the actual storage. In this case the {@link ObjectSwizzling} is
  *     important! It's the actual {@link ObjectSwizzling} from the storage (not from the
- * {@link software.xdev.spring.data.eclipse.store.repository.support.copier.registering.EclipseSerializerRegisteringCopier}).
+ * {@link
+ * software.xdev.spring.data.eclipse.store.repository.support.copier.registering.EclipseSerializerRegisteringCopier}).
  *     This means, the {@link SpringDataEclipseStoreLazy} holds the objectId of the original lazy in the original
  *     storage.
  *     Therefore if {@link SpringDataEclipseStoreLazy#get()} is called a new working copy of the lazy from the
