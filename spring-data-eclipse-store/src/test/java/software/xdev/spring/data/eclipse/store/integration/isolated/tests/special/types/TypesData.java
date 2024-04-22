@@ -55,6 +55,10 @@ import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipse
 
 final class TypesData
 {
+	private TypesData()
+	{
+	}
+	
 	public record ListOfTestArguments(List<TestArguments<?>> testArguments)
 	{
 		public Stream<Arguments> toArguments()

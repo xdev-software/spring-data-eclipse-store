@@ -28,6 +28,12 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 	}
 	
 	@Override
+	public int hashCode()
+	{
+		return super.hashCode();
+	}
+	
+	@Override
 	public boolean equals(final Object o)
 	{
 		if(this == o)
@@ -39,9 +45,9 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 			return false;
 		}
 		final ComplexObject<Lazy<String>> that = (ComplexObject<Lazy<String>>)o;
-		return Objects.equals(this.getId(), that.getId()) &&
-			(this.getValue() == null && that.getValue() == null) ||
-			Objects.equals(
+		return Objects.equals(this.getId(), that.getId())
+			&& (this.getValue() == null && that.getValue() == null)
+			|| Objects.equals(
 			this.getValue().get(),
 			that.getValue().get());
 	}
