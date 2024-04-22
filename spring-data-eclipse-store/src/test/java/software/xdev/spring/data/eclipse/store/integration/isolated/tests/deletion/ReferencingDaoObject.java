@@ -15,6 +15,22 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.deletion;
 
-public record ReferencingDaoObject(ReferencedDaoObject value)
+public class ReferencingDaoObject
 {
+	private ReferencedDaoObject value;
+	
+	public ReferencingDaoObject(final ReferencedDaoObject value)
+	{
+		this.value = value;
+	}
+	
+	public ReferencedDaoObject getValue()
+	{
+		return this.value;
+	}
+	
+	public void setValue(final ReferencedDaoObject value)
+	{
+		this.value = value;
+	}
 }

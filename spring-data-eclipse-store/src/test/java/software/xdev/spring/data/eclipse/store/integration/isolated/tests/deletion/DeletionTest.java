@@ -39,7 +39,7 @@ class DeletionTest
 	private DeletionTestConfiguration configuration;
 	
 	@Test
-	void simpleStoreAndRead(
+	void deleteReferencedObject(
 		@Autowired final ReferencedRepository referencedRepository,
 		@Autowired final ReferencingRepository referencingRepository)
 	{
@@ -59,7 +59,28 @@ class DeletionTest
 				final List<ReferencingDaoObject> referencingDaoObjects =
 					TestUtil.iterableToList(referencingRepository.findAll());
 				Assertions.assertEquals(1, referencingDaoObjects.size());
-				Assertions.assertNotNull(referencingDaoObjects.get(0).value());
+				Assertions.assertNotNull(referencingDaoObjects.get(0).getValue());
+			}
+		);
+	}
+	
+	@Test
+	void restoreDeletedReferencedObject(
+		@Autowired final ReferencedRepository referencedRepository,
+		@Autowired final ReferencingRepository referencingRepository)
+	{
+		final ReferencedDaoObject referencedObject = new ReferencedDaoObject("someValue");
+		final ReferencingDaoObject referencingDaoObject = new ReferencingDaoObject(referencedObject);
+		
+		referencingRepository.save(referencingDaoObject);
+		referencedRepository.delete(referencedObject);
+		referencingRepository.save(referencingDaoObject);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, TestUtil.iterableToList(referencingRepository.findAll()).size());
+				Assertions.assertEquals(1, TestUtil.iterableToList(referencedRepository.findAll()).size());
 			}
 		);
 	}
