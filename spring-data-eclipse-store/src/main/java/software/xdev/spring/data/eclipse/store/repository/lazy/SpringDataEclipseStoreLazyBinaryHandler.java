@@ -41,7 +41,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
  *     The user creates a {@link SpringDataEclipseStoreLazy} and puts a object in it.
  *     This object is stored as with a default {@link BinaryTypeHandler}. But when it gets loaded,
  *     it <b>does not</b> load as the stored object, but it gets wrapped in a {@link Lazy#Reference(Object)}.
- * </p> 
+ * </p>
  * <p>
  *     Second case:<br/>
  *     The actual lazy object gets loaded from the actual storage. In this case the {@link ObjectSwizzling} is
