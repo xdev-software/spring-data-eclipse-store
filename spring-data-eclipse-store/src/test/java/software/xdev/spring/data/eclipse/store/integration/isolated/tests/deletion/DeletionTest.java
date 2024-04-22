@@ -40,8 +40,8 @@ class DeletionTest
 	
 	@Test
 	void simpleStoreAndRead(
-		final ReferencedRepository referencedRepository,
-		final ReferencingRepository referencingRepository)
+		@Autowired final ReferencedRepository referencedRepository,
+		@Autowired final ReferencingRepository referencingRepository)
 	{
 		final ReferencedDaoObject referencedObject = new ReferencedDaoObject("someValue");
 		final ReferencingDaoObject referencingDaoObject = new ReferencingDaoObject(referencedObject);
