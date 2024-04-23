@@ -9,8 +9,6 @@
 	<version>1.0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<inceptionYear>2023</inceptionYear>
-
 	<organization>
 		<name>XDEV Software</name>
 		<url>https://xdev.software</url>
