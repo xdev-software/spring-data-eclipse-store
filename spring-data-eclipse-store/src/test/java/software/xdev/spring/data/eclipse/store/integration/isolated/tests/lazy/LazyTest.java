@@ -338,7 +338,15 @@ class LazyTest
 		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		
+		Assertions.assertTrue(newLazy.getLazy().isLoaded());
+		Assertions.assertFalse(newLazy.getLazy().isStored());
+		
 		repository.save(newLazy);
+		
+		Assertions.assertTrue(newLazy.getLazy().isLoaded());
+		Assertions.assertTrue(newLazy.getLazy().isStored());
+		
 		newLazy.getLazy().clear();
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
@@ -346,7 +354,30 @@ class LazyTest
 			() -> {
 				Assertions.assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
+				Assertions.assertFalse(lazy.isLoaded());
 				Assertions.assertEquals(objectToStore, lazy.get());
+				Assertions.assertTrue(lazy.isLoaded());
+			}
+		);
+	}
+	
+	@Test
+	void lazyClearThroughLazyManagerAfterSave(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
+	{
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		LazyReferenceManager.get().cleanUp();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, repository.findAll().size());
+				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
+				Assertions.assertFalse(lazy.isLoaded());
+				Assertions.assertEquals(objectToStore, lazy.get());
+				Assertions.assertTrue(lazy.isLoaded());
 			}
 		);
 	}
