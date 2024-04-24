@@ -169,7 +169,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 			{
 				return false;
 			}
-			return this.ensureLazy().isLoaded();
+			return this.wrappedLazy.isLoaded();
 		}
 		
 		@Override
