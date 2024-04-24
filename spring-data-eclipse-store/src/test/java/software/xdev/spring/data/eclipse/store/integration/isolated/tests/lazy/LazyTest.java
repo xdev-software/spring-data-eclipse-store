@@ -362,6 +362,21 @@ class LazyTest
 	}
 	
 	@Test
+	void lazyClearThroughLazyManagerBeforeSave()
+	{
+		LazyReferenceManager.get().stop();
+		this.configuration.getStorageInstance().start();
+		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
+		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		Assertions.assertTrue(newLazy.getLazy().isLoaded());
+		Assertions.assertFalse(newLazy.getLazy().isStored());
+		LazyReferenceManager.get().cleanUp();
+		Assertions.assertTrue(newLazy.getLazy().isLoaded());
+		Assertions.assertFalse(newLazy.getLazy().isStored());
+	}
+	
+	@Test
 	void lazyClearThroughLazyManagerAfterSave(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
 		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
