@@ -15,13 +15,10 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
-import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProvider;
-import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProviderImpl;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
+import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
@@ -44,12 +41,18 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 @Configuration(proxyBeanMethods = false)
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
-	@Autowired
-	@Qualifier("eclipseStoreProperties")
-	private EclipseStoreProperties defaultEclipseStoreProperties;
+	private final EclipseStoreProperties defaultEclipseStoreProperties;
+	private final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
 	
 	@Autowired
-	private EclipseStoreProviderImpl defaultEclipseStoreProvider;
+	protected EclipseStoreClientConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+	{
+		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
+		this.defaultEclipseStoreProperties.setAutoStart(false);
+		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
+	}
 	
 	private EclipseStoreStorage storageInstance;
 	
@@ -58,7 +61,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		return this.defaultEclipseStoreProperties;
 	}
 	
-	public EclipseStoreProvider getStoreProvider()
+	public EmbeddedStorageFoundationFactory getStoreProvider()
 	{
 		return this.defaultEclipseStoreProvider;
 	}
@@ -73,7 +76,6 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		return this.getStoreProvider().createStorageFoundation(this.getStoreConfiguration());
 	}
 	
-	@Bean
 	public EclipseStoreStorage getStorageInstance()
 	{
 		if(this.storageInstance == null)

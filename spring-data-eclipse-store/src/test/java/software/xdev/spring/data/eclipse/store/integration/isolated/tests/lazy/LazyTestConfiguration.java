@@ -15,6 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
+import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
+import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
@@ -25,4 +28,12 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 @EnableEclipseStoreRepositories(clientConfigurationClass = LazyTestConfiguration.class)
 public class LazyTestConfiguration extends TestConfiguration
 {
+	
+	@Autowired
+	protected LazyTestConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+	{
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+	}
 }

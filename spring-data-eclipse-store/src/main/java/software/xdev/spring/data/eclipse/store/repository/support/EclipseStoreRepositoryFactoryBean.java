@@ -28,9 +28,7 @@ import org.springframework.stereotype.Component;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
-@ComponentScan({
-	"software.xdev.spring.data.eclipse.store.repository",
-	"org.eclipse.store.integrations.spring.boot.types"})
+@ComponentScan({"software.xdev.spring.data.eclipse.store.repository"})
 @Component
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
