@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.serializer.reference.Lazy;
+import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +39,11 @@ import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.object.EclipseSerializerRegisteringCopier;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.object.RegisteringObjectCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringObjectCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringStorageToWorkingCopyCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringWorkingCopyToStorageCopier;
 
 
 /**
@@ -48,7 +52,8 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.object.
 public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(RecursiveWorkingCopier.class);
-	private final RegisteringObjectCopier objectCopier;
+	private final RegisteringObjectCopier workingCopyToStorageCopier;
+	private final RegisteringObjectCopier storageToWorkingCopyCopier;
 	private final WorkingCopyRegistry registry;
 	private final IdSetterProvider idSetterProvider;
 	private final Class<T> domainClass;
@@ -59,11 +64,15 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final WorkingCopyRegistry registry,
 		final IdSetterProvider idSetterProvider,
 		final PersistableChecker persistableChecker,
-		final SupportedChecker supportedChecker)
+		final SupportedChecker supportedChecker,
+		final ObjectSwizzling objectSwizzling)
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
-		this.objectCopier = new EclipseSerializerRegisteringCopier(registry, supportedChecker);
+		this.workingCopyToStorageCopier =
+			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling, this);
+		this.storageToWorkingCopyCopier =
+			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this);
 		this.idSetterProvider = idSetterProvider;
 		this.persistableChecker = persistableChecker;
 	}
@@ -144,7 +153,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		// The object to merge back is not a working copy, but a originalObject.
 		// Therefore, we create a copy to persist this in the storage.
 		final E objectForDatastore = this.genericCopy(workingCopy, true);
-		// "Why merging values of an identical object?" you might ask.
+		// "Why merge values of an identical object?" you might ask.
 		// Well, because some sub-objects might already be in the datastore.
 		this.mergeValues(workingCopy, objectForDatastore, alreadyMergedTargets, changedCollector);
 		changedCollector.collectChangedObject(objectForDatastore);
@@ -161,7 +170,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final E sourceObject,
 		final E targetObject,
 		final MergedTargetsCollector alreadyMergedTargets,
-		final ChangedObjectCollector changedCollector)
+		final ChangedObjectCollector changedCollector
+	)
 	{
 		if(sourceObject == targetObject || alreadyMergedTargets.isAlreadyMerged(targetObject) || targetObject == null)
 		{
@@ -172,14 +182,21 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			alreadyMergedTargets.collectMergedTarget(targetObject);
 			
-			if(sourceObject instanceof String)
+			if(sourceObject instanceof String || sourceObject instanceof SpringDataEclipseStoreLazy<?>)
 			{
 				// no merge needed and no merge possible
 				return;
 			}
-			AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values().forEach(
+			final Collection<Field> valuesToMerge =
+				AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values();
+			valuesToMerge.forEach(
 				field ->
-					this.mergeValueOfField(sourceObject, targetObject, field, alreadyMergedTargets, changedCollector)
+					this.mergeValueOfField(
+						sourceObject,
+						targetObject,
+						field,
+						alreadyMergedTargets,
+						changedCollector)
 			);
 		}
 		catch(final Exception e)
@@ -203,7 +220,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				return;
 			}
 			
-			try(final FieldAccessModifier<E> fam = FieldAccessModifier.makeFieldReadable(
+			try(final FieldAccessModifier<E> fam = FieldAccessModifier.prepareForField(
 				field,
 				sourceObject))
 			{
@@ -243,41 +260,28 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 						);
 						fam.writeValueOfField(targetObject, newArray, !targetObjectIsPartOfJavaPackage);
 					}
+					else if(DataTypeUtil.isSpringDataEclipseStoreLazy(valueOfSourceObject))
+					{
+						final SpringDataEclipseStoreLazy<?> newLazy =
+							this.createNewLazy(
+								(SpringDataEclipseStoreLazy<?>)valueOfSourceObject,
+								(SpringDataEclipseStoreLazy<?>)valueOfTargetObject,
+								alreadyMergedTargets,
+								changedCollector);
+						fam.writeValueOfField(targetObject, newLazy, true);
+					}
 					else
 					{
 						// "Simple" object
 						// get original value object
-						final Object originalValueObjectOfSource =
-							this.getOrCreateObjectForDatastore(
-								valueOfSourceObject,
-								false,
-								alreadyMergedTargets,
-								changedCollector);
-						if(valueOfTargetObject != originalValueObjectOfSource)
-						{
-							// If the reference is new, it must be set
-							fam.writeValueOfField(
-								targetObject,
-								originalValueObjectOfSource,
-								!targetObjectIsPartOfJavaPackage);
-						}
-						
-						if(this.isSpecialCaseWhereOnlyAFullCopyWorks(valueOfSourceObject))
-						{
-							fam.writeValueOfField(
-								targetObject,
-								this.onlyCreateCopy(valueOfSourceObject, true),
-								!targetObjectIsPartOfJavaPackage);
-						}
-						else
-						{
-							// Merge after setting reference to avoid endless loops
-							this.mergeValues(
-								valueOfSourceObject,
-								originalValueObjectOfSource,
-								alreadyMergedTargets,
-								changedCollector);
-						}
+						this.mergeSimpleObjectValue(
+							targetObject,
+							alreadyMergedTargets,
+							changedCollector,
+							valueOfSourceObject,
+							valueOfTargetObject,
+							fam,
+							targetObjectIsPartOfJavaPackage);
 					}
 				}
 			}
@@ -285,6 +289,99 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		catch(final Exception e)
 		{
 			throw new MergeFailedException(sourceObject, targetObject, e);
+		}
+	}
+	
+	private <E> void mergeSimpleObjectValue(
+		final E targetObject,
+		final MergedTargetsCollector alreadyMergedTargets,
+		final ChangedObjectCollector changedCollector,
+		final Object valueOfSourceObject,
+		final Object valueOfTargetObject,
+		final FieldAccessModifier<E> fam,
+		final boolean targetObjectIsPartOfJavaPackage) throws IllegalAccessException
+	{
+		final Object originalValueObjectOfSource =
+			this.getOrCreateObjectForDatastore(
+				valueOfSourceObject,
+				false,
+				alreadyMergedTargets,
+				changedCollector);
+		if(valueOfTargetObject != originalValueObjectOfSource)
+		{
+			// If the reference is new, it must be set
+			fam.writeValueOfField(
+				targetObject,
+				originalValueObjectOfSource,
+				!targetObjectIsPartOfJavaPackage);
+		}
+		
+		if(this.isSpecialCaseWhereOnlyAFullCopyWorks(valueOfSourceObject))
+		{
+			fam.writeValueOfField(
+				targetObject,
+				this.onlyCreateCopy(valueOfSourceObject, true),
+				!targetObjectIsPartOfJavaPackage);
+		}
+		else
+		{
+			// Merge after setting reference to avoid endless loops
+			this.mergeValues(
+				valueOfSourceObject,
+				originalValueObjectOfSource,
+				alreadyMergedTargets,
+				changedCollector);
+		}
+	}
+	
+	private <E> SpringDataEclipseStoreLazy<E> createNewLazy(
+		final SpringDataEclipseStoreLazy<E> oldLazy,
+		final SpringDataEclipseStoreLazy<?> newLazy,
+		final MergedTargetsCollector alreadyMergedTargets,
+		final ChangedObjectCollector changedCollector
+	)
+	{
+		if(oldLazy.isLoaded())
+		{
+			if(oldLazy.isOriginalObject())
+			{
+				// This object is new and in this case it is merged into the storage.
+				if(!newLazy.isStored())
+				{
+					// The EclipseSerializerRegisteringCopier already creates the perfect lazy object.
+					// No change necessary.
+					return (SpringDataEclipseStoreLazy<E>)newLazy;
+				}
+				else
+				{
+					// This object is already stored but the new version must get overwritten.
+					// The oldLazy Object can contain all kinds of objects (including more lazies)
+					final E copyOfWrappedObject = this.getOrCreateObjectForDatastore(
+						oldLazy.get(),
+						true,
+						alreadyMergedTargets,
+						changedCollector);
+					oldLazy.unlink();
+					newLazy.unlink();
+					
+					return SpringDataEclipseStoreLazy.Internals.buildWithLazy(Lazy.Reference(copyOfWrappedObject));
+				}
+			}
+			final E copyOfWrappedObject = this.getOrCreateObjectForDatastore(
+				oldLazy.get(),
+				true,
+				alreadyMergedTargets,
+				changedCollector);
+			oldLazy.unlink();
+			newLazy.unlink();
+			return SpringDataEclipseStoreLazy.build(copyOfWrappedObject);
+		}
+		else
+		{
+			oldLazy.unlink();
+			// This lazy should never be used again!
+			// It is though of as a temporary copy to merge back into the original-storage-data.
+			return (SpringDataEclipseStoreLazy<E>)newLazy.copyWithReference();
 		}
 	}
 	
@@ -326,9 +423,14 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		return newArray;
 	}
 	
-	private <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
+	@Override
+	public <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
 	{
-		return this.objectCopier.copy(objectToCopy, invertRegistry);
+		if(invertRegistry)
+		{
+			return this.workingCopyToStorageCopier.copy(objectToCopy);
+		}
+		return this.storageToWorkingCopyCopier.copy(objectToCopy);
 	}
 	
 	@Override

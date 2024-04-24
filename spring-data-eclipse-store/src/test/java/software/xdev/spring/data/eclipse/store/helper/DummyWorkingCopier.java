@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,12 @@ public class DummyWorkingCopier<T> implements WorkingCopier<T>
 	public WorkingCopierResult<T> mergeBack(final T workingCopy)
 	{
 		return null;
+	}
+	
+	@Override
+	public <E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry)
+	{
+		return objectToCopy;
 	}
 	
 	@Override

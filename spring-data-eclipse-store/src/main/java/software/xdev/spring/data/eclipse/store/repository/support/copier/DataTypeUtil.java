@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import jakarta.annotation.Nonnull;
+
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
 public final class DataTypeUtil
@@ -43,6 +45,11 @@ public final class DataTypeUtil
 	public static boolean isObjectArray(final Object obj)
 	{
 		return obj instanceof Object[];
+	}
+	
+	public static boolean isSpringDataEclipseStoreLazy(final Object obj)
+	{
+		return obj instanceof SpringDataEclipseStoreLazy<?>;
 	}
 	
 	public static boolean isPrimitiveArray(final Object obj)

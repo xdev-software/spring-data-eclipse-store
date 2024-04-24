@@ -2,5 +2,6 @@
 * xref:installation.adoc[Installation]
 * xref:configuration.adoc[Configuration]
 * xref:working-copies.adoc[Working Copies]
+* xref:lazies.adoc[Lazy References]
 * xref:migration.adoc[Migration]
 * xref:known-issues.adoc[Known issues]

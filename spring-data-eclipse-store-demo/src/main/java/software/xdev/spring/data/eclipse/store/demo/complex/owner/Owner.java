@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.serializer.reference.Lazy;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 import software.xdev.spring.data.eclipse.store.demo.complex.model.Person;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
 public class Owner extends Person
@@ -33,7 +35,7 @@ public class Owner extends Person
 	
 	private String telephone;
 	
-	private final List<Pet> pets = new ArrayList<>();
+	private Lazy<List<Pet>> pets = SpringDataEclipseStoreLazy.build(new ArrayList<>());
 	
 	public String getAddress()
 	{
@@ -52,7 +54,12 @@ public class Owner extends Person
 	
 	public List<Pet> getPets()
 	{
-		return this.pets;
+		return this.pets.get();
+	}
+	
+	public void setPets(final List<Pet> pets)
+	{
+		this.pets = SpringDataEclipseStoreLazy.build(pets);
 	}
 	
 	public void addPet(final Pet pet)
