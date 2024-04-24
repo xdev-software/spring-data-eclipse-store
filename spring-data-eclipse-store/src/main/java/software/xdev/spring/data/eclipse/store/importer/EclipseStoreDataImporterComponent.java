@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class EclipseStoreDataImporterComponent
 	 *
 	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
 	 */
+	@SuppressWarnings("java:S1452")
 	public List<SimpleEclipseStoreRepository<?, ?>> importData()
 	{
 		final Map<String, EntityManagerFactory> beansOfEms =

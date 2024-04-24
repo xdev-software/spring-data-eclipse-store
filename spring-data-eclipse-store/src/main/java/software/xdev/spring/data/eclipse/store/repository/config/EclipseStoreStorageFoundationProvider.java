@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +24,6 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
  */
 public interface EclipseStoreStorageFoundationProvider
 {
+	@SuppressWarnings("java:S1452")
 	EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation();
 }

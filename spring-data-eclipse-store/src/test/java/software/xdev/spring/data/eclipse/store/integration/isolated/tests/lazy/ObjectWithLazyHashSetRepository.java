@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.object;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
-import org.eclipse.serializer.ObjectCopier;
+import org.springframework.data.repository.ListCrudRepository;
 
 
-public interface RegisteringObjectCopier extends ObjectCopier
+public interface ObjectWithLazyHashSetRepository extends ListCrudRepository<ObjectWithLazyHashSet, Integer>
 {
-	<T> T copy(T t, boolean invertRegistering);
 }

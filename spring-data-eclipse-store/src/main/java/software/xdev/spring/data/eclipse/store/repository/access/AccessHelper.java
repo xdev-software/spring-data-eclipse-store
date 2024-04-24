@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public final class AccessHelper
 	 */
 	public static <T> Object readFieldVariable(final Field field, final T sourceObject)
 	{
-		try(final FieldAccessModifier<T> fieldAccessModifier = FieldAccessModifier.makeFieldReadable(
+		try(final FieldAccessModifier<T> fieldAccessModifier = FieldAccessModifier.prepareForField(
 			Objects.requireNonNull(field),
 			Objects.requireNonNull(sourceObject)))
 		{

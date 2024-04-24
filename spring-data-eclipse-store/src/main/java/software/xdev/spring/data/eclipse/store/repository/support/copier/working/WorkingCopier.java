@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,8 @@ public interface WorkingCopier<T>
 	 * @return all the changed objects that must get stored
 	 */
 	WorkingCopierResult<T> mergeBack(T workingCopy);
+	
+	<E> E onlyCreateCopy(final E objectToCopy, final boolean invertRegistry);
 	
 	/**
 	 * @return the original entity that corresponds to the given working copy object.

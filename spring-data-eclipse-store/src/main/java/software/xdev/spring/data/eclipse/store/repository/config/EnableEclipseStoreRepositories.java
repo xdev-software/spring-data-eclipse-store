@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRe
 @ComponentScan({
 	"software.xdev.spring.data.eclipse.store.importer",
 	"software.xdev.spring.data.eclipse.store.repository",
-	"org.eclipse.store.integrations.spring.boot.types"})
+	"org.eclipse.store.integrations.spring.boot.types",
+	"org.eclipse.store.integrations.spring.boot.types.converter"})
 public @interface EnableEclipseStoreRepositories
 {
 	

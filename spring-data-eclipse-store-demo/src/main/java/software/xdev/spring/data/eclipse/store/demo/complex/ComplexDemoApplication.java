@@ -103,6 +103,17 @@ public class ComplexDemoApplication implements CommandLineRunner
 					);
 				}
 			);
+		
+		LOG.info("----Owner-Lazy Pet loading----");
+		this.ownerRepository.findAll().forEach(
+			o -> o.getPets().forEach(
+				pet -> LOG.info(String.format(
+					"Pet %s has owner %s %s",
+					pet.getName(),
+					o.getFirstName(),
+					o.getLastName()))
+			)
+		);
 	}
 	
 	private static Visit createVisit()

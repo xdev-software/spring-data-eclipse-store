@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 	@Override
 	public void ensureId(final T objectToSetIdIn)
 	{
-		try(final FieldAccessModifier<T> fam = FieldAccessModifier.makeFieldReadable(
+		try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
 			this.idField,
 			objectToSetIdIn))
 		{

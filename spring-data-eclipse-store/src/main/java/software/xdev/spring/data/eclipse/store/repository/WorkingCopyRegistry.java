@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ import software.xdev.spring.data.eclipse.store.exceptions.DifferentClassesExcept
 public class WorkingCopyRegistry
 {
 	private static final Logger LOG = LoggerFactory.getLogger(WorkingCopyRegistry.class);
+	/**
+	 * Map with Working Copies (key) with the corresponding original object (value).
+	 */
 	private Map<Object, Object> currentWorkingCopies = new IdentityHashMap<>();
 	
 	/**

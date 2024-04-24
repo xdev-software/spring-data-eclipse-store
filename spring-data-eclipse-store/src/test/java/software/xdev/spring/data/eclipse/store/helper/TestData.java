@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ public final class TestData
 	public static final String FIRST_NAME = "Mick";
 	public static final String LAST_NAME_ALTERNATIVE = "Nicks";
 	public static final String FIRST_NAME_ALTERNATIVE = "Stevie";
+	
+	public static final String DUMMY_STRING = "-- skldfoöüä+#+!(/%&/%($§\"=)()nxjkß?  _:.. ,-.;";
+	public static final String DUMMY_STRING_ALTERNATIVE = " abc ";
 	
 	private TestData()
 	{

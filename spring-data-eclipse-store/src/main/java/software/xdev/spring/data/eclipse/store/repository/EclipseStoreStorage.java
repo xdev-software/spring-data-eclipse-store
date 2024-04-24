@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.types.Storer;
+import org.eclipse.serializer.reference.LazyReferenceManager;
+import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.Rep
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
 public class EclipseStoreStorage
-	implements EntityListProvider, IdSetterProvider, PersistableChecker
+	implements EntityListProvider, IdSetterProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, String> entityClassToRepositoryName = new HashMap<>();
@@ -272,6 +274,7 @@ public class EclipseStoreStorage
 			this.registry.reset();
 			this.entityClassToIdSetter.clear();
 			LOG.info("Stopped storage.");
+			LazyReferenceManager.get().stop();
 		}
 		else
 		{
@@ -310,5 +313,12 @@ public class EclipseStoreStorage
 	{
 		this.ensureEntitiesInRoot();
 		return this.persistenceChecker.isPersistable(clazz);
+	}
+	
+	@Override
+	public Object getObject(final long objectId)
+	{
+		this.ensureEntitiesInRoot();
+		return this.storageManager.getObject(objectId);
 	}
 }

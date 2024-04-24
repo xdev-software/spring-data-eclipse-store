@@ -15,6 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.demo.complex.owner;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
@@ -27,6 +29,8 @@ public interface OwnerRepository extends Repository<Owner, Integer>
 	void save(Owner owner);
 	
 	Page<Owner> findAll(Pageable pageable);
+	
+	List<Owner> findAll();
 	
 	void deleteAll();
 }
