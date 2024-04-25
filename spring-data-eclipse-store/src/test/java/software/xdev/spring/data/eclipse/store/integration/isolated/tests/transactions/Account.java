@@ -17,21 +17,19 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.trans
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
 public class Account
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
 	private BigDecimal balance;
 	
-	public Account(final BigDecimal balance)
+	public Account(final int id, final BigDecimal balance)
 	{
+		this.id = id;
 		this.balance = balance;
 	}
 	

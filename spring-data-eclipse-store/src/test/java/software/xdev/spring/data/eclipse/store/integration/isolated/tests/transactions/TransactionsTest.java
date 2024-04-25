@@ -19,10 +19,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
@@ -33,59 +35,84 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 class TransactionsTest
 {
 	private final TransactionsTestConfiguration configuration;
-	// single TransactionTemplate shared amongst all methods in this instance
-	private final TransactionTemplate transactionTemplate;
+	private final AccountRepository repository;
+	private Account account1;
+	private Account account2;
 	
 	@Autowired
-	public TransactionsTest(
-		final TransactionsTestConfiguration configuration,
-		final PlatformTransactionManager transactionManager)
+	public TransactionsTest(final TransactionsTestConfiguration configuration, final AccountRepository repository)
 	{
 		this.configuration = configuration;
-		this.transactionTemplate = new TransactionTemplate(transactionManager);
+		this.repository = repository;
+	}
+	
+	@BeforeEach
+	void initData()
+	{
+		this.account1 = new Account(1, BigDecimal.TEN);
+		this.account2 = new Account(2, BigDecimal.ZERO);
+		this.repository.saveAll(List.of(this.account1, this.account2));
 	}
 	
 	@Test
-	void accountTransaction_Working(final AccountRepository repository)
+	void accountTransaction_Working(final PlatformTransactionManager transactionManager)
 	{
-		final Account account1 = new Account(BigDecimal.TEN);
-		final Account account2 = new Account(BigDecimal.ZERO);
-		repository.saveAll(List.of(account1, account2));
-		
-		this.transactionTemplate.execute(
+		new TransactionTemplate(transactionManager).execute(
 			status ->
 			{
-				account1.setBalance(account1.getBalance().subtract(BigDecimal.ONE));
-				repository.save(account1);
+				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+				this.repository.save(this.account1);
 				
-				account2.setBalance(account2.getBalance().subtract(BigDecimal.ONE));
-				repository.save(account2);
+				this.account2.setBalance(this.account2.getBalance().subtract(BigDecimal.ONE));
+				this.repository.save(this.account2);
 				return null;
 			}
 		);
 		
-		Assertions.assertEquals(BigDecimal.valueOf(9.0), repository.findById(account1.getId()).get().getBalance());
-		Assertions.assertEquals(BigDecimal.ONE, repository.findById(account2.getId()).get().getBalance());
+		Assertions.assertEquals(
+			BigDecimal.valueOf(9.0),
+			this.repository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(BigDecimal.ONE, this.repository.findById(this.account2.getId()).get().getBalance());
 	}
 	
 	@Test
-	void accountTransaction_UnexpectedError(final AccountRepository repository)
+	void accountTransaction_UnexpectedError(final PlatformTransactionManager transactionManager)
 	{
-		final Account account1 = new Account(BigDecimal.TEN);
-		final Account account2 = new Account(BigDecimal.ZERO);
-		repository.saveAll(List.of(account1, account2));
-		
-		this.transactionTemplate.execute(
+		new TransactionTemplate(transactionManager).execute(
 			status ->
 			{
-				account1.setBalance(account1.getBalance().subtract(BigDecimal.ONE));
-				repository.save(account1);
+				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+				this.repository.save(this.account1);
 				
 				throw new RuntimeException("Unexpected error");
 			}
 		);
 		
-		Assertions.assertEquals(BigDecimal.TEN, repository.findById(account1.getId()).get().getBalance());
-		Assertions.assertEquals(BigDecimal.ZERO, repository.findById(account2.getId()).get().getBalance());
+		Assertions.assertEquals(BigDecimal.TEN, this.repository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(BigDecimal.ZERO, this.repository.findById(this.account2.getId()).get().getBalance());
+	}
+	
+	@Test
+	void accountTransaction_UnexpectedError_Annotation()
+	{
+		try
+		{
+			this.makeSingleChangeAndThenThrowException();
+			Assertions.fail("Somehow no exception was raised!");
+		}
+		catch(final RuntimeException e)
+		{
+		}
+		Assertions.assertEquals(BigDecimal.TEN, this.repository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(BigDecimal.ZERO, this.repository.findById(this.account2.getId()).get().getBalance());
+	}
+	
+	@Transactional
+	void makeSingleChangeAndThenThrowException()
+	{
+		this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+		this.repository.save(this.account1);
+		
+		throw new RuntimeException("Unexpected error");
 	}
 }
