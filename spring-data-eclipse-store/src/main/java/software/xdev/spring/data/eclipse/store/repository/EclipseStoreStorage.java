@@ -40,16 +40,16 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSe
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.RepositorySynchronizer;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
+
 public class EclipseStoreStorage
 	implements EntityListProvider, IdSetterProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, String> entityClassToRepositoryName = new HashMap<>();
 	private final Map<Class<?>, IdSetter<?>> entityClassToIdSetter = new HashMap<>();
+	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
-	private final EclipseStoreStorageFoundationProvider foundationProvider;
-	
 	private StorageManager storageManager;
 	private Root root;
 	

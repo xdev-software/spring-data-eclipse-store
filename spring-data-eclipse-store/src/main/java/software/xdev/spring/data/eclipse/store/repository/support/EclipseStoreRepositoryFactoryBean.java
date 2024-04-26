@@ -38,7 +38,9 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 {
 	private EclipseStoreClientConfiguration configuration;
 	
-	public EclipseStoreRepositoryFactoryBean(final Class<? extends T> repositoryInterface)
+	public EclipseStoreRepositoryFactoryBean(
+		final Class<? extends T> repositoryInterface
+	)
 	{
 		super(repositoryInterface);
 	}
@@ -52,6 +54,8 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	@Nonnull
 	protected RepositoryFactorySupport createRepositoryFactory()
 	{
-		return new EclipseStoreRepositoryFactory(this.configuration.getStorageInstance());
+		return new EclipseStoreRepositoryFactory(
+			this.configuration.getStorageInstance()
+		);
 	}
 }

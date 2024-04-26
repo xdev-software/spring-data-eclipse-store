@@ -27,9 +27,11 @@ import jakarta.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
@@ -45,6 +47,7 @@ import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQu
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
 public class SimpleEclipseStoreRepository<T, ID>
@@ -59,6 +62,8 @@ public class SimpleEclipseStoreRepository<T, ID>
 	private final EclipseStoreStorage storage;
 	private final Class<T> domainClass;
 	private final WorkingCopier<T> copier;
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 	private Field idField;
 	
 	public SimpleEclipseStoreRepository(
@@ -91,6 +96,11 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@SuppressWarnings("unchecked")
 	public synchronized <S extends T> List<S> saveBulk(final Collection<S> entities)
 	{
+		if(this.transactionManager instanceof final EclipseStoreTransactionManager estm)
+		{
+			estm
+				.getResourceFactory();
+		}
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Saving {} entities...", entities.size());

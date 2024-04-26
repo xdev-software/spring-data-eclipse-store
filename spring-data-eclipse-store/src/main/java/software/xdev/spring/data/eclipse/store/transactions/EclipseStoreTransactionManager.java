@@ -16,15 +16,12 @@
 package software.xdev.spring.data.eclipse.store.transactions;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.ResourceTransactionManager;
 
-
-@Component
 public class EclipseStoreTransactionManager extends AbstractPlatformTransactionManager
 	implements ResourceTransactionManager, InitializingBean
 {

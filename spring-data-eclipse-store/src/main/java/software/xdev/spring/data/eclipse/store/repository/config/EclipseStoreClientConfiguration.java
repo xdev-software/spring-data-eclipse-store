@@ -19,12 +19,18 @@ import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProvider;
 import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProviderImpl;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
 /**
@@ -71,6 +77,16 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
 		return this.getStoreProvider().createStorageFoundation(this.getStoreConfiguration());
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean(TransactionManager.class)
+	public PlatformTransactionManager transactionManager(
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
+	{
+		final EclipseStoreTransactionManager transactionManager = new EclipseStoreTransactionManager();
+		transactionManagerCustomizers.ifAvailable((customizers) -> customizers.customize((TransactionManager)transactionManager));
+		return transactionManager;
 	}
 	
 	@Bean
