@@ -34,15 +34,22 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 class TransactionsTest
 {
 	private final TransactionsTestConfiguration configuration;
-	private final AccountRepository repository;
+	private final AccountRepository accountRepository;
+	private final CounterRepository counterRepository;
 	private Account account1;
 	private Account account2;
+	private Counter counter1;
+	private Counter counter2;
 	
 	@Autowired
-	public TransactionsTest(final TransactionsTestConfiguration configuration, final AccountRepository repository)
+	public TransactionsTest(
+		final TransactionsTestConfiguration configuration,
+		final AccountRepository accountRepository,
+		final CounterRepository counterRepository)
 	{
 		this.configuration = configuration;
-		this.repository = repository;
+		this.accountRepository = accountRepository;
+		this.counterRepository = counterRepository;
 	}
 	
 	@BeforeEach
@@ -50,7 +57,11 @@ class TransactionsTest
 	{
 		this.account1 = new Account(1, BigDecimal.TEN);
 		this.account2 = new Account(2, BigDecimal.ZERO);
-		this.repository.saveAll(List.of(this.account1, this.account2));
+		this.accountRepository.saveAll(List.of(this.account1, this.account2));
+		
+		this.counter1 = new Counter(1, 10);
+		this.counter2 = new Counter(2, 0);
+		this.counterRepository.saveAll(List.of(this.counter1, this.counter2));
 	}
 	
 	@Test
@@ -60,18 +71,116 @@ class TransactionsTest
 			status ->
 			{
 				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
-				this.repository.save(this.account1);
+				this.accountRepository.save(this.account1);
 				
 				this.account2.setBalance(this.account2.getBalance().add(BigDecimal.ONE));
-				this.repository.save(this.account2);
+				this.accountRepository.save(this.account2);
 				return null;
 			}
 		);
 		
 		Assertions.assertEquals(
 			BigDecimal.valueOf(9),
-			this.repository.findById(this.account1.getId()).get().getBalance());
-		Assertions.assertEquals(BigDecimal.ONE, this.repository.findById(this.account2.getId()).get().getBalance());
+			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(
+			BigDecimal.ONE,
+			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+	}
+	
+	@Test
+	void accountTransaction_ChangeAfterSave(@Autowired final PlatformTransactionManager transactionManager)
+	{
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+				this.accountRepository.save(this.account1);
+				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+				return null;
+			}
+		);
+		
+		Assertions.assertEquals(
+			BigDecimal.valueOf(9),
+			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+	}
+	
+	@Test
+	void accountAndCounterTransaction_Sequential(@Autowired final PlatformTransactionManager transactionManager)
+	{
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+				this.accountRepository.save(this.account1);
+				
+				this.account2.setBalance(this.account2.getBalance().add(BigDecimal.ONE));
+				this.accountRepository.save(this.account2);
+				return null;
+			}
+		);
+		
+		Assertions.assertEquals(
+			BigDecimal.valueOf(9),
+			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(
+			BigDecimal.ONE,
+			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+		
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				this.counter1.setCount(this.counter1.getCount() - 1);
+				this.counterRepository.save(this.counter1);
+				
+				this.counter2.setCount(this.counter2.getCount() + 1);
+				this.counterRepository.save(this.counter2);
+				return null;
+			}
+		);
+		
+		Assertions.assertEquals(
+			9,
+			this.counterRepository.findById(this.counter1.getId()).get().getCount());
+		Assertions.assertEquals(
+			1,
+			this.counterRepository.findById(this.counter2.getId()).get().getCount());
+	}
+	
+	@Test
+	void accountAndCounterTransaction_SameTransaction(@Autowired final PlatformTransactionManager transactionManager)
+	{
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
+				this.accountRepository.save(this.account1);
+				
+				this.account2.setBalance(this.account2.getBalance().add(BigDecimal.ONE));
+				this.accountRepository.save(this.account2);
+				
+				this.counter1.setCount(this.counter1.getCount() - 1);
+				this.counterRepository.save(this.counter1);
+				
+				this.counter2.setCount(this.counter2.getCount() + 1);
+				this.counterRepository.save(this.counter2);
+				
+				return null;
+			}
+		);
+		
+		Assertions.assertEquals(
+			BigDecimal.valueOf(9),
+			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(
+			BigDecimal.ONE,
+			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+		Assertions.assertEquals(
+			9,
+			this.counterRepository.findById(this.counter1.getId()).get().getCount());
+		Assertions.assertEquals(
+			1,
+			this.counterRepository.findById(this.counter2.getId()).get().getCount());
 	}
 	
 	@Test
@@ -82,14 +191,18 @@ class TransactionsTest
 				status ->
 				{
 					this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
-					this.repository.save(this.account1);
+					this.accountRepository.save(this.account1);
 					
 					throw new RuntimeException("Unexpected error");
 				}
 			));
 		
-		Assertions.assertEquals(BigDecimal.TEN, this.repository.findById(this.account1.getId()).get().getBalance());
-		Assertions.assertEquals(BigDecimal.ZERO, this.repository.findById(this.account2.getId()).get().getBalance());
+		Assertions.assertEquals(
+			BigDecimal.TEN,
+			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+		Assertions.assertEquals(
+			BigDecimal.ZERO,
+			this.accountRepository.findById(this.account2.getId()).get().getBalance());
 	}
 	
 	/**
@@ -102,9 +215,9 @@ class TransactionsTest
 			status ->
 			{
 				final Account account3 = new Account(3, BigDecimal.valueOf(100.0));
-				this.repository.save(account3);
+				this.accountRepository.save(account3);
 				
-				Assertions.assertFalse(this.repository.findById(account3.getId()).isPresent());
+				Assertions.assertFalse(this.accountRepository.findById(account3.getId()).isPresent());
 				return null;
 			}
 		);
