@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		for(final T entity : this.storage.getEntityList(this.domainClass))
 		{
-			try(final FieldAccessModifier<T> fam = FieldAccessModifier.makeFieldReadable(this.getIdField(), entity))
+			try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(this.getIdField(), entity))
 			{
 				if(id.equals(fam.getValueOfField(entity)))
 				{
@@ -173,7 +173,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		for(final T entity : this.storage.getEntityList(this.domainClass))
 		{
-			try(final FieldAccessModifier<T> fam = FieldAccessModifier.makeFieldReadable(this.getIdField(), entity))
+			try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(this.getIdField(), entity))
 			{
 				if(id.equals(fam.getValueOfField(entity)))
 				{
@@ -204,7 +204,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 		final List<T> foundEntities = new ArrayList<>();
 		for(final T entity : this.storage.getEntityList(this.domainClass))
 		{
-			try(final FieldAccessModifier<T> fam = FieldAccessModifier.makeFieldReadable(this.getIdField(), entity))
+			try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(this.getIdField(), entity))
 			{
 				for(final ID id : ids)
 				{

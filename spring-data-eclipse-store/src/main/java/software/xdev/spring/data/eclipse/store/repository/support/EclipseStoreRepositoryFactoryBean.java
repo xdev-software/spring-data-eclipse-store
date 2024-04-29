@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.springframework.data.repository.core.support.RepositoryFactoryBeanSup
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.stereotype.Component;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @ComponentScan({
@@ -35,20 +35,22 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {
-	private final EclipseStoreStorage storage;
+	private EclipseStoreClientConfiguration configuration;
 	
-	public EclipseStoreRepositoryFactoryBean(
-		final Class<? extends T> repositoryInterface,
-		final EclipseStoreStorage storage)
+	public EclipseStoreRepositoryFactoryBean(final Class<? extends T> repositoryInterface)
 	{
 		super(repositoryInterface);
-		this.storage = storage;
+	}
+	
+	public void setConfiguration(final EclipseStoreClientConfiguration configuration)
+	{
+		this.configuration = configuration;
 	}
 	
 	@Override
 	@Nonnull
 	protected RepositoryFactorySupport createRepositoryFactory()
 	{
-		return new EclipseStoreRepositoryFactory(this.storage);
+		return new EclipseStoreRepositoryFactory(this.configuration.getStorageInstance());
 	}
 }

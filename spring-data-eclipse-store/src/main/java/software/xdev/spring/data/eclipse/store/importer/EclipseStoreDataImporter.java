@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 
@@ -41,11 +42,11 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 public class EclipseStoreDataImporter
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreDataImporter.class);
-	private final EclipseStoreStorage eclipseStoreStorage;
+	private final EclipseStoreClientConfiguration configuration;
 	
-	public EclipseStoreDataImporter(final EclipseStoreStorage eclipseStoreStorage)
+	public EclipseStoreDataImporter(final EclipseStoreClientConfiguration configuration)
 	{
-		this.eclipseStoreStorage = eclipseStoreStorage;
+		this.configuration = configuration;
 	}
 	
 	/**
@@ -196,15 +197,19 @@ public class EclipseStoreDataImporter
 	
 	private <T> SimpleEclipseStoreRepository<T, ?> createEclipseStoreRepo(final Class<T> domainClass)
 	{
+		final EclipseStoreStorage storageInstance = this.configuration.getStorageInstance();
 		return new SimpleEclipseStoreRepository<>(
-			this.eclipseStoreStorage,
+			storageInstance,
 			new RecursiveWorkingCopier<>(
 				domainClass,
-				this.eclipseStoreStorage.getRegistry(),
-				this.eclipseStoreStorage,
-				this.eclipseStoreStorage,
-				new SupportedChecker.Implementation()),
-			domainClass);
+				storageInstance.getRegistry(),
+				storageInstance,
+				storageInstance,
+				new SupportedChecker.Implementation(),
+				storageInstance
+			),
+			domainClass
+		);
 	}
 	
 	private record EntityManagerFactoryRepositoryListPair(

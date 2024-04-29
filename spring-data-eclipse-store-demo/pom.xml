@@ -9,8 +9,6 @@
 	<version>1.0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<inceptionYear>2023</inceptionYear>
-
 	<organization>
 		<name>XDEV Software</name>
 		<url>https://xdev.software</url>
@@ -68,7 +66,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.13.0</version>
 				<configuration>
 					<release>${maven.compiler.release}</release>
 					<compilerArgs>
@@ -103,7 +101,7 @@
 							<dependency>
 								<groupId>com.puppycrawl.tools</groupId>
 								<artifactId>checkstyle</artifactId>
-								<version>10.14.0</version>
+								<version>10.16.0</version>
 							</dependency>
 						</dependencies>
 						<configuration>

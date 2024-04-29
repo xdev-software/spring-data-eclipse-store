@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,20 +26,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.IsolatedTestAnnotations;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
 @IsolatedTestAnnotations
-@TestPropertySource(
-	properties =
-		"org.eclipse.store.storage-directory=./target/isolated-tests-storage"
-)
+@ContextConfiguration(classes = {SpecialTypesTestConfiguration.class})
 class TypesTest
 {
 	public static final String TYPES_DATA_SOURCE =
@@ -50,7 +46,7 @@ class TypesTest
 			+ ".TypesData#generateNotWorkingData";
 	
 	@Autowired
-	private EclipseStoreStorage storage;
+	private SpecialTypesTestConfiguration configuration;
 	
 	@ParameterizedTest
 	@MethodSource(TYPES_DATA_SOURCE)
@@ -65,7 +61,7 @@ class TypesTest
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
@@ -113,7 +109,7 @@ class TypesTest
 		repository.save(storedObject.get());
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, storedObject.get())
 		);
 	}
@@ -134,7 +130,7 @@ class TypesTest
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}
@@ -153,7 +149,7 @@ class TypesTest
 		repository.save(objectToStore);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.storage,
+			this.configuration,
 			() -> this.dynamicAssertEquals(1, repository, objectToStore)
 		);
 	}

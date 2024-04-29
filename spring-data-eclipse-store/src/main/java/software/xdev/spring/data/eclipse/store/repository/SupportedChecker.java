@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 XDEV Software (https://xdev.software)
+ * Copyright © 2024 XDEV Software (https://xdev.software)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import org.eclipse.serializer.collections.lazy.LazyArrayList;
+import org.eclipse.serializer.collections.lazy.LazyHashMap;
+import org.eclipse.serializer.collections.lazy.LazyHashSet;
 import org.eclipse.serializer.reference.Lazy;
 
 
@@ -41,29 +44,26 @@ public interface SupportedChecker
 	 * <p>
 	 * Some classes are not supported, because Eclipse Store doesn't support them.
 	 * </p>
-	 * <p>
-	 * {@link Lazy} is not supported, because a lot of hidden stuff must be done to keep Lazy-References really Lazy
-	 * when creating a working copy.
-	 * </p>
 	 */
 	boolean isSupported(Class<?> clazz);
 	
 	class Implementation implements SupportedChecker
 	{
 		private static final List<Class<?>> UNSUPPORTED_DATA_TYPES = List.of(
-			// Is difficult to handle when creating working copies
-			Lazy.class,
 			// Here EclipseStore has problems: https://github.com/microstream-one/microstream/issues/173
 			Calendar.class,
 			WeakHashMap.class,
 			// Here EclipseStore has problems too: https://github.com/microstream-one/microstream/issues/204
-			EnumMap.class
+			EnumMap.class,
+			LazyHashMap.class,
+			LazyArrayList.class,
+			LazyHashSet.class
 		);
 		
 		@Override
 		public boolean isSupported(final Class<?> clazz)
 		{
-			return !UNSUPPORTED_DATA_TYPES.stream().anyMatch(
+			return UNSUPPORTED_DATA_TYPES.stream().noneMatch(
 				unsupportedClazz -> unsupportedClazz.isAssignableFrom(clazz)
 			);
 		}

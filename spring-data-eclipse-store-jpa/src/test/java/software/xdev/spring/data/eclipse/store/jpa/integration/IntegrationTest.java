@@ -27,7 +27,7 @@ import software.xdev.spring.data.eclipse.store.jpa.integration.repository.Person
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInJpa;
 import software.xdev.spring.data.eclipse.store.jpa.integration.repository.PersonToTestInJpaRepository;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 
 
@@ -44,7 +44,7 @@ class IntegrationTest
 	private EclipseStoreDataImporterComponent eclipseStoreDataImporter;
 	
 	@Autowired
-	private EclipseStoreStorage eclipseStoreStorage;
+	private EclipseStoreClientConfiguration configuration;
 	
 	/**
 	 * Super simple test if there are any start-up errors when running parallel to a JPA configuration
@@ -72,10 +72,10 @@ class IntegrationTest
 		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
 		Assertions.assertEquals(1, allEntities.size());
 		
-		this.eclipseStoreStorage.stop();
+		this.configuration.getStorageInstance().stop();
 		Assertions.assertEquals(
 			1,
-			this.eclipseStoreStorage.getEntityCount(PersonToTestInJpa.class),
+			this.configuration.getStorageInstance().getEntityCount(PersonToTestInJpa.class),
 			"After restart the imported entities are not there anymore.");
 	}
 	
