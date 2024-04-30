@@ -15,6 +15,11 @@
  */
 package software.xdev.spring.data.eclipse.store.transactions;
 
-public class EclipseStoreTransactionObject
+public class EclipseStoreNoTransactionObject implements EclipseStoreTransaction
 {
+	@Override
+	public void addAction(final EclipseStoreTransactionAction action)
+	{
+		action.execute();
+	}
 }

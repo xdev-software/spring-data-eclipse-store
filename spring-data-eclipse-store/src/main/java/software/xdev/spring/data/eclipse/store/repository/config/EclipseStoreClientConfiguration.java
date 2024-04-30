@@ -82,9 +82,11 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Bean
 	@ConditionalOnMissingBean(TransactionManager.class)
 	public PlatformTransactionManager transactionManager(
-		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers,
+		final EclipseStoreStorage storage)
 	{
-		final EclipseStoreTransactionManager transactionManager = new EclipseStoreTransactionManager();
+		final EclipseStoreTransactionManager transactionManager =
+			new EclipseStoreTransactionManager(storage);
 		transactionManagerCustomizers.ifAvailable((customizers) -> customizers.customize((TransactionManager)transactionManager));
 		return transactionManager;
 	}

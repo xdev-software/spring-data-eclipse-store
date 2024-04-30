@@ -20,11 +20,21 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
-import org.springframework.transaction.support.ResourceTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.Assert;
+
+import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+
 
 public class EclipseStoreTransactionManager extends AbstractPlatformTransactionManager
-	implements ResourceTransactionManager, InitializingBean
+	implements InitializingBean
 {
+	private final EclipseStoreStorage storage;
+	
+	public EclipseStoreTransactionManager(final EclipseStoreStorage storage)
+	{
+		this.storage = storage;
+	}
 	
 	@Override
 	public void afterPropertiesSet() throws Exception
@@ -35,30 +45,47 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 	@Override
 	protected Object doGetTransaction() throws TransactionException
 	{
-		return new EclipseStoreTransactionObject();
+		final EclipseStoreExistingTransactionObject transactionObject =
+			(EclipseStoreExistingTransactionObject)TransactionSynchronizationManager.getResource(this.storage);
+		return transactionObject == null ? new EclipseStoreExistingTransactionObject() : transactionObject;
 	}
 	
 	@Override
 	protected void doBegin(final Object transaction, final TransactionDefinition definition) throws TransactionException
 	{
-		System.out.println(transaction);
+		final EclipseStoreExistingTransactionObject transactionObject =
+			this.extractEclipseStoreTransaction(transaction);
+		transactionObject.startTransaction();
+		TransactionSynchronizationManager.bindResource(this.storage, transactionObject);
 	}
 	
 	@Override
 	protected void doCommit(final DefaultTransactionStatus status) throws TransactionException
 	{
-		System.out.println(status);
+		this.extractEclipseStoreTransaction(status.getTransaction()).commitTransaction();
 	}
 	
 	@Override
 	protected void doRollback(final DefaultTransactionStatus status) throws TransactionException
 	{
-		System.out.println(status);
+		this.extractEclipseStoreTransaction(status.getTransaction()).rollbackTransaction();
 	}
 	
 	@Override
-	public Object getResourceFactory()
+	protected void doCleanupAfterCompletion(final Object transaction)
 	{
-		return null;
+		TransactionSynchronizationManager.unbindResource(this.storage);
+	}
+	
+	private EclipseStoreExistingTransactionObject extractEclipseStoreTransaction(final Object transaction)
+	{
+		Assert.isInstanceOf(
+			EclipseStoreExistingTransactionObject.class, transaction,
+			() -> String.format(
+				"Expected to find a %s but it turned out to be %s.",
+				EclipseStoreExistingTransactionObject.class,
+				transaction.getClass()));
+		
+		return (EclipseStoreExistingTransactionObject)transaction;
 	}
 }
