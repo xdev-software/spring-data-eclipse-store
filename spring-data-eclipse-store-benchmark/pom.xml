@@ -4,7 +4,7 @@
 
     <groupId>com.xdev-software</groupId>
     <artifactId>spring-data-eclipse-store-benchmark</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <inceptionYear>2023</inceptionYear>
@@ -96,7 +96,7 @@
                             <dependency>
                                 <groupId>com.puppycrawl.tools</groupId>
                                 <artifactId>checkstyle</artifactId>
-                                <version>10.15.0</version>
+                                <version>10.16.0</version>
                             </dependency>
                         </dependencies>
                         <configuration>

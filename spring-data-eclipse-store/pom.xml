@@ -6,7 +6,7 @@
 
 	<groupId>software.xdev</groupId>
 	<artifactId>spring-data-eclipse-store</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>spring-data-eclipse-store</name>
@@ -353,7 +353,7 @@
 							<dependency>
 								<groupId>com.puppycrawl.tools</groupId>
 								<artifactId>checkstyle</artifactId>
-								<version>10.15.0</version>
+								<version>10.16.0</version>
 							</dependency>
 						</dependencies>
 						<configuration>
