@@ -20,8 +20,11 @@ import static org.eclipse.store.storage.embedded.types.EmbeddedStorage.Foundatio
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
+import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.Storage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -36,6 +39,14 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
 public class TestConfiguration extends EclipseStoreClientConfiguration
 {
 	private final String storageDirectory = StorageDirectoryNameProvider.getNewStorageDirectoryPath();
+	
+	@Autowired
+	protected TestConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+	{
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+	}
 	
 	@Override
 	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()

@@ -30,8 +30,8 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
 
 @ComponentScan({
 	"software.xdev.spring.data.eclipse.store.repository",
-	"software.xdev.spring.data.eclipse.store.transactions",
-	"org.eclipse.store.integrations.spring.boot.types"})
+	"software.xdev.spring.data.eclipse.store.transactions"
+	})
 @Component
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
