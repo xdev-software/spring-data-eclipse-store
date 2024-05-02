@@ -25,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@EnableEclipseStoreRepositories(clientConfigurationClass = KeywordsTestConfiguration.class)
+@EnableEclipseStoreRepositories
 public class KeywordsTestConfiguration extends TestConfiguration
 {
 	@Autowired

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
@@ -46,6 +47,7 @@ import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransact
  * </p>
  */
 @Configuration(proxyBeanMethods = false)
+@ComponentScan("org.eclipse.store.integrations.spring.boot.types")
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
 	private final EclipseStoreProperties defaultEclipseStoreProperties;
@@ -86,19 +88,16 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Bean
 	@ConditionalOnMissingBean(TransactionManager.class)
 	public PlatformTransactionManager transactionManager(
-		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers,
-		final EclipseStoreStorage storage)
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
 	{
 		final EclipseStoreTransactionManager transactionManager =
-			new EclipseStoreTransactionManager(storage);
+			new EclipseStoreTransactionManager(this.getStorageInstance());
 		transactionManagerCustomizers.ifAvailable((customizers) -> customizers.customize((TransactionManager)transactionManager));
 		return transactionManager;
 	}
 	
-	@Bean
 	public EclipseStoreStorage getStorageInstance()
 	{
-		// hier muss was gemacht werden.
 		if(this.storageInstance == null)
 		{
 			this.storageInstance = new EclipseStoreStorage(this);

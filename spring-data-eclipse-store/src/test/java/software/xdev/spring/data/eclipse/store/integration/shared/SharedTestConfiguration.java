@@ -25,9 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@EnableEclipseStoreRepositories(
-	value = "software.xdev.spring.data.eclipse.store.integration.shared",
-	clientConfigurationClass = SharedTestConfiguration.class)
+@EnableEclipseStoreRepositories
 public class SharedTestConfiguration extends TestConfiguration
 {
 	@Autowired

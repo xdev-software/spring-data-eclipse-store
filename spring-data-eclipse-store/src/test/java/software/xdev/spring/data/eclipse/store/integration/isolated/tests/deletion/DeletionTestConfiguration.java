@@ -25,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@EnableEclipseStoreRepositories(clientConfigurationClass = DeletionTestConfiguration.class)
+@EnableEclipseStoreRepositories
 public class DeletionTestConfiguration extends TestConfiguration
 {
 	

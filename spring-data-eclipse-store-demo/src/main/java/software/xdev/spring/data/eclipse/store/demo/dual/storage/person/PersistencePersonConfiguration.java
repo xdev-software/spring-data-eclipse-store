@@ -19,9 +19,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
  * {@link software.xdev.spring.data.eclipse.store.demo.dual.storage.invoice.PersistenceInvoiceConfiguration}
  */
 @Configuration
-@EnableEclipseStoreRepositories(
-	basePackages = "software.xdev.spring.data.eclipse.store.demo.dual.storage.person"
-)
+@EnableEclipseStoreRepositories
 public class PersistencePersonConfiguration extends EclipseStoreClientConfiguration
 {
 	private final EmbeddedStorageFoundationFactory foundation;

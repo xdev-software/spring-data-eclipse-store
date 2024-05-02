@@ -19,8 +19,6 @@ import java.util.Optional;
 
 import jakarta.annotation.Nonnull;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -44,17 +42,11 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
  */
 public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 {
-	private BeanFactory beanFactory;
+	private final EclipseStoreStorage storage;
 	
-	public EclipseStoreRepositoryFactory()
+	public EclipseStoreRepositoryFactory(final EclipseStoreStorage storage)
 	{
-	}
-	
-	@Override
-	public void setBeanFactory(final BeanFactory beanFactory) throws BeansException
-	{
-		super.setBeanFactory(beanFactory);
-		this.beanFactory = beanFactory;
+		this.storage = storage;
 	}
 	
 	@Override
@@ -70,23 +62,18 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 		@Nullable final QueryLookupStrategy.Key key,
 		@Nonnull final QueryMethodEvaluationContextProvider evaluationContextProvider)
 	{
-		return Optional.of(new EclipseStoreQueryLookupStrategy(this.getEclipseStoreStorage(), this::createWorkingCopier));
+		return Optional.of(new EclipseStoreQueryLookupStrategy(this.storage, this::createWorkingCopier));
 	}
 	
-	private EclipseStoreStorage getEclipseStoreStorage()
-	{
-		return this.beanFactory.getBean(EclipseStoreStorage.class);
-	}
 	
 	@Override
 	@Nonnull
 	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
 	{
-		final EclipseStoreStorage eclipseStoreStorage = this.getEclipseStoreStorage();
 		return this.getTargetRepositoryViaReflection(
 			metadata,
-			eclipseStoreStorage,
-			this.createWorkingCopier(metadata.getDomainType(), eclipseStoreStorage),
+			this.storage,
+			this.createWorkingCopier(metadata.getDomainType(), this.storage),
 			metadata.getDomainType()
 		);
 	}

@@ -25,10 +25,9 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@EnableEclipseStoreRepositories(clientConfigurationClass = SpecialTypesTestConfiguration.class)
+@EnableEclipseStoreRepositories
 public class SpecialTypesTestConfiguration extends TestConfiguration
 {
-	
 	@Autowired
 	protected SpecialTypesTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,

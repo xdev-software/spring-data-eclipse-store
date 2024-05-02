@@ -25,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@EnableEclipseStoreRepositories(clientConfigurationClass = LazyTestConfiguration.class)
+@EnableEclipseStoreRepositories
 public class LazyTestConfiguration extends TestConfiguration
 {
 	

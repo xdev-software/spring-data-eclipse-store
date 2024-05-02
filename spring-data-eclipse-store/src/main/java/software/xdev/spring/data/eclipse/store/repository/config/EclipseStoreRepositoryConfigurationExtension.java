@@ -22,7 +22,10 @@ import java.util.List;
 
 import jakarta.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
@@ -42,6 +45,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRe
  */
 public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConfigurationExtensionSupport
 {
+	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreRepositoryConfigurationExtension.class);
 	@Override
 	@Nonnull
 	public String getModuleName()
@@ -66,10 +70,31 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 		return EclipseStoreRepositoryFactoryBean.class.getName();
 	}
 	
+	/**
+	 * This is surely not the perfect way to get the correct configuration of that context, but it works with multiple
+	 * configurations, with no configuration and with a single configuration.
+	 */
 	@Override
 	public void postProcess(final BeanDefinitionBuilder builder, final AnnotationRepositoryConfigurationSource config)
 	{
-	
+		if(config.getSource() instanceof final AnnotationMetadata classMetadata)
+		{
+			try
+			{
+				final Class<?> possibleConfigurationClass = Class.forName(classMetadata.getClassName());
+				if(EclipseStoreClientConfiguration.class.isAssignableFrom(possibleConfigurationClass))
+				{
+					builder.addPropertyValue("configurationClass", possibleConfigurationClass);
+				}
+			}
+			catch(final ClassNotFoundException e)
+			{
+				LOG.warn(
+					"Could not use {} as configuration.",
+					classMetadata.getClassName()
+				);
+			}
+		}
 	}
 	
 	@Override

@@ -18,7 +18,6 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 
 
@@ -28,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
  * he created a different {@link EclipseStoreClientConfiguration}.
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnMissingBean(EclipseStoreClientConfiguration.class)
 public class DefaultEclipseStoreClientConfiguration extends EclipseStoreClientConfiguration
 {
 	@Autowired
