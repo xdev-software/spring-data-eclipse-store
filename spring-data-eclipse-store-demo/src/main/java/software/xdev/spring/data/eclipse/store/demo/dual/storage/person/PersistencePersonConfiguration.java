@@ -20,8 +20,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
  */
 @Configuration
 @EnableEclipseStoreRepositories(
-	value = "software.xdev.spring.data.eclipse.store.demo.dual.storage.person",
-	clientConfigurationClass = PersistencePersonConfiguration.class
+	basePackages = "software.xdev.spring.data.eclipse.store.demo.dual.storage.person"
 )
 public class PersistencePersonConfiguration extends EclipseStoreClientConfiguration
 {

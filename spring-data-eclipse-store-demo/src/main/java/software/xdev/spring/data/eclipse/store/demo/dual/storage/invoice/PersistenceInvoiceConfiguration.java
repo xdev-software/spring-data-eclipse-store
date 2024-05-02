@@ -21,8 +21,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
  */
 @Configuration
 @EnableEclipseStoreRepositories(
-	value = "software.xdev.spring.data.eclipse.store.demo.dual.storage.invoice",
-	clientConfiguration = "persistenceInvoiceConfiguration"
+	basePackages = "software.xdev.spring.data.eclipse.store.demo.dual.storage.invoice"
 )
 public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfiguration
 {

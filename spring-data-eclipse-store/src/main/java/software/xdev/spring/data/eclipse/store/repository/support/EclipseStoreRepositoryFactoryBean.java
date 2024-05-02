@@ -25,37 +25,32 @@ import org.springframework.data.repository.core.support.RepositoryFactoryBeanSup
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.stereotype.Component;
 
-import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
+import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
 @ComponentScan({
 	"software.xdev.spring.data.eclipse.store.repository",
 	"software.xdev.spring.data.eclipse.store.transactions"
-	})
+})
 @Component
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {
-	private EclipseStoreClientConfiguration configuration;
+	private final EclipseStoreStorage storage;
 	
 	public EclipseStoreRepositoryFactoryBean(
-		final Class<? extends T> repositoryInterface
+		final Class<? extends T> repositoryInterface,
+		final EclipseStoreStorage storage
 	)
 	{
 		super(repositoryInterface);
-	}
-	
-	public void setConfiguration(final EclipseStoreClientConfiguration configuration)
-	{
-		this.configuration = configuration;
+		this.storage = storage;
 	}
 	
 	@Override
 	@Nonnull
 	protected RepositoryFactorySupport createRepositoryFactory()
 	{
-		return new EclipseStoreRepositoryFactory(
-			this.configuration.getStorageInstance()
-		);
+		return new EclipseStoreRepositoryFactory();
 	}
 }
