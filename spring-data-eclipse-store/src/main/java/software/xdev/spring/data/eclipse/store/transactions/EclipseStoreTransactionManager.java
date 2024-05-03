@@ -15,7 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.transactions;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
@@ -23,30 +22,16 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
-
 
 public class EclipseStoreTransactionManager extends AbstractPlatformTransactionManager
-	implements InitializingBean
 {
-	private final EclipseStoreStorage storage;
-	
-	public EclipseStoreTransactionManager(final EclipseStoreStorage storage)
-	{
-		this.storage = storage;
-	}
-	
-	@Override
-	public void afterPropertiesSet() throws Exception
-	{
-		System.out.println("trest");
-	}
+	private static final String TRANSACTION_MANAGER = "ATransactionManagerForThisThread";
 	
 	@Override
 	protected Object doGetTransaction() throws TransactionException
 	{
 		final EclipseStoreExistingTransactionObject transactionObject =
-			(EclipseStoreExistingTransactionObject)TransactionSynchronizationManager.getResource(this.storage);
+			(EclipseStoreExistingTransactionObject)TransactionSynchronizationManager.getResource(TRANSACTION_MANAGER);
 		return transactionObject == null ? new EclipseStoreExistingTransactionObject() : transactionObject;
 	}
 	
@@ -56,7 +41,7 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 		final EclipseStoreExistingTransactionObject transactionObject =
 			this.extractEclipseStoreTransaction(transaction);
 		transactionObject.startTransaction();
-		TransactionSynchronizationManager.bindResource(this.storage, transactionObject);
+		TransactionSynchronizationManager.bindResource(TRANSACTION_MANAGER, transactionObject);
 	}
 	
 	@Override
@@ -74,7 +59,7 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 	@Override
 	protected void doCleanupAfterCompletion(final Object transaction)
 	{
-		TransactionSynchronizationManager.unbindResource(this.storage);
+		TransactionSynchronizationManager.unbindResource(TRANSACTION_MANAGER);
 	}
 	
 	private EclipseStoreExistingTransactionObject extractEclipseStoreTransaction(final Object transaction)
@@ -87,5 +72,12 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 				transaction.getClass()));
 		
 		return (EclipseStoreExistingTransactionObject)transaction;
+	}
+	
+	public EclipseStoreTransaction getTransaction()
+	{
+		final EclipseStoreTransaction transactionObject =
+			(EclipseStoreTransaction)TransactionSynchronizationManager.getResource(TRANSACTION_MANAGER);
+		return transactionObject == null ? new EclipseStoreNoTransactionObject() : transactionObject;
 	}
 }

@@ -54,6 +54,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	private final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
 	
 	private EclipseStoreStorage storageInstance;
+	private EclipseStoreTransactionManager transactionManager;
 	
 	@Autowired
 	protected EclipseStoreClientConfiguration(
@@ -85,17 +86,6 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		return this.getStoreProvider().createStorageFoundation(this.getEclipseStoreProperties());
 	}
 	
-	@Bean
-	@ConditionalOnMissingBean(TransactionManager.class)
-	public PlatformTransactionManager transactionManager(
-		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
-	{
-		final EclipseStoreTransactionManager transactionManager =
-			new EclipseStoreTransactionManager(this.getStorageInstance());
-		transactionManagerCustomizers.ifAvailable((customizers) -> customizers.customize((TransactionManager)transactionManager));
-		return transactionManager;
-	}
-	
 	public EclipseStoreStorage getStorageInstance()
 	{
 		if(this.storageInstance == null)
@@ -103,5 +93,24 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 			this.storageInstance = new EclipseStoreStorage(this);
 		}
 		return this.storageInstance;
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean(TransactionManager.class)
+	public PlatformTransactionManager transactionManager(
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
+	{
+		final EclipseStoreTransactionManager transactionManager = this.getTransactionManagerInstance();
+		transactionManagerCustomizers.ifAvailable((customizers) -> customizers.customize((TransactionManager)transactionManager));
+		return transactionManager;
+	}
+	
+	public EclipseStoreTransactionManager getTransactionManagerInstance()
+	{
+		if(this.transactionManager == null)
+		{
+			this.transactionManager = new EclipseStoreTransactionManager();
+		}
+		return this.transactionManager;
 	}
 }

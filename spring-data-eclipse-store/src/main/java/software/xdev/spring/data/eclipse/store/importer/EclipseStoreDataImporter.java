@@ -34,6 +34,7 @@ import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
 /**
@@ -208,7 +209,8 @@ public class EclipseStoreDataImporter
 				new SupportedChecker.Implementation(),
 				storageInstance
 			),
-			domainClass
+			domainClass,
+			new EclipseStoreTransactionManager()
 		);
 	}
 	

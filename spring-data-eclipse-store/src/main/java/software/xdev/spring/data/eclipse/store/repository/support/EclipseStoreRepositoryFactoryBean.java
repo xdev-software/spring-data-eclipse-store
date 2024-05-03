@@ -16,6 +16,7 @@
 package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import jakarta.annotation.Nonnull;
 
@@ -45,8 +46,9 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreRepositoryFactoryBean.class);
-	private Class<?> configurationClass;
+	private EclipseStoreClientConfiguration configuration;
 	private BeanFactory beanFactory;
+	private Class<?> configurationClass;
 	
 	public EclipseStoreRepositoryFactoryBean(
 		final Class<? extends T> repositoryInterface)
@@ -75,7 +77,20 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	@Nonnull
 	protected RepositoryFactorySupport createRepositoryFactory()
 	{
-		return new EclipseStoreRepositoryFactory(this.getConfiguration().getStorageInstance());
+		final EclipseStoreClientConfiguration ensuredConfiguration = this.ensureConfiguration();
+		return new EclipseStoreRepositoryFactory(
+			ensuredConfiguration.getStorageInstance(),
+			ensuredConfiguration.getTransactionManagerInstance()
+		);
+	}
+	
+	private EclipseStoreClientConfiguration ensureConfiguration()
+	{
+		if(this.configuration == null)
+		{
+			this.configuration = this.createConfiguration();
+		}
+		return this.configuration;
 	}
 	
 	/**
@@ -87,8 +102,10 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	 * is set, the {@link DefaultEclipseStoreClientConfiguration} is used.
 	 * </p>
 	 */
-	private EclipseStoreClientConfiguration getConfiguration()
+	private EclipseStoreClientConfiguration createConfiguration()
 	{
+		Objects.requireNonNull(this.configurationClass);
+		Objects.requireNonNull(this.beanFactory);
 		try
 		{
 			if(this.configurationClass != null

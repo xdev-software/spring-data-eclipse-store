@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
@@ -46,8 +45,8 @@ import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQu
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
-import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreNoTransactionObject;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransaction;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
 public class SimpleEclipseStoreRepository<T, ID>
@@ -62,17 +61,20 @@ public class SimpleEclipseStoreRepository<T, ID>
 	private final EclipseStoreStorage storage;
 	private final Class<T> domainClass;
 	private final WorkingCopier<T> copier;
+	private final EclipseStoreTransactionManager transactionManager;
 	private Field idField;
 	
 	public SimpleEclipseStoreRepository(
 		final EclipseStoreStorage storage,
 		final WorkingCopier<T> copier,
-		final Class<T> domainClass)
+		final Class<T> domainClass,
+		final EclipseStoreTransactionManager transactionManager)
 	{
 		this.storage = storage;
 		this.domainClass = domainClass;
 		this.storage.registerEntity(domainClass);
 		this.copier = copier;
+		this.transactionManager = transactionManager;
 	}
 	
 	public Field getIdField()
@@ -91,17 +93,10 @@ public class SimpleEclipseStoreRepository<T, ID>
 		return this.idField;
 	}
 	
-	public EclipseStoreTransaction getTransaction(final EclipseStoreStorage storage)
-	{
-		final EclipseStoreTransaction transactionObject =
-			(EclipseStoreTransaction)TransactionSynchronizationManager.getResource(storage);
-		return transactionObject == null ? new EclipseStoreNoTransactionObject() : transactionObject;
-	}
-	
 	@SuppressWarnings("unchecked")
 	public synchronized <S extends T> List<S> saveBulk(final Collection<S> entities)
 	{
-		final EclipseStoreTransaction transaction = this.getTransaction(this.storage);
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Saving {} entities...", entities.size());
