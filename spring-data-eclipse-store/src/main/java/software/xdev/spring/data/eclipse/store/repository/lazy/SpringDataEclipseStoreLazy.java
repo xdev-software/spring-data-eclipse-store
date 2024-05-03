@@ -141,6 +141,12 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 			{
 				throw new IllegalStateException("Cannot clear an unstored lazy reference.");
 			}
+			return this.forceClear();
+		}
+		
+		@Override
+		public T forceClear()
+		{
 			// Make sure to save the correct objectId.
 			this.objectId = this.objectId();
 			this.wrappedLazy = null;
