@@ -87,6 +87,12 @@ class TransactionsTest
 			this.accountRepository.findById(this.account2.getId()).get().getBalance());
 	}
 	
+	/**
+	 * This is actually correct (if you look at Spring Data JPA for comparison). The second change is also persisted
+	 * and
+	 * not only the first one. This seems counterintuitive, but is just like with the rest of Spring Data
+	 * Implementations.
+	 */
 	@Test
 	void accountTransaction_ChangeAfterSave(@Autowired final PlatformTransactionManager transactionManager)
 	{
@@ -101,7 +107,7 @@ class TransactionsTest
 		);
 		
 		Assertions.assertEquals(
-			BigDecimal.valueOf(9),
+			BigDecimal.valueOf(8),
 			this.accountRepository.findById(this.account1.getId()).get().getBalance());
 	}
 	

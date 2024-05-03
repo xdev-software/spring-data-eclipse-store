@@ -97,6 +97,12 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public synchronized <S extends T> List<S> saveBulk(final Collection<S> entities)
 	{
 		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() -> this.uncachedStore(entities));
+		return (List<S>)entities;
+	}
+	
+	private synchronized <S extends T> void uncachedStore(final Collection<S> entities)
+	{
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Saving {} entities...", entities.size());
@@ -123,7 +129,6 @@ public class SimpleEclipseStoreRepository<T, ID>
 			LOG.debug("Collected {} non-entities to store.", nonEntitiesToStore.size());
 		}
 		this.storage.store(nonEntitiesToStore, this.domainClass, entitiesToStore);
-		return (List<S>)entities;
 	}
 	
 	@Override
@@ -246,8 +251,12 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public void delete(@Nonnull final T entity)
 	{
-		this.storage.delete(this.domainClass, this.copier.getOriginal(entity));
-		this.copier.deregister(entity);
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() ->
+		{
+			this.storage.delete(this.domainClass, this.copier.getOriginal(entity));
+			this.copier.deregister(entity);
+		});
 	}
 	
 	@Override
@@ -271,7 +280,8 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public void deleteAll()
 	{
-		this.storage.deleteAll(this.domainClass);
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() -> this.storage.deleteAll(this.domainClass));
 	}
 	
 	@Override
