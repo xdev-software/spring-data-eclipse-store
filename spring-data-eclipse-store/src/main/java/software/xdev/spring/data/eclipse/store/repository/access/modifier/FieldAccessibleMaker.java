@@ -37,16 +37,15 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(FieldAccessibleMaker.class);
 	private final Field field;
-	private final boolean wasAccessible;
 	private final boolean isFinal;
 	
 	FieldAccessibleMaker(final Field field, final E sourceObject)
 	{
 		this.field = field;
-		this.wasAccessible = field.canAccess(Objects.requireNonNull(sourceObject));
+		final boolean wasAccessible = field.canAccess(Objects.requireNonNull(sourceObject));
 		final int fieldModifiers = field.getModifiers();
 		this.isFinal = Modifier.isFinal(fieldModifiers);
-		if(!this.wasAccessible)
+		if(!wasAccessible)
 		{
 			if(LOG.isTraceEnabled())
 			{
@@ -89,17 +88,7 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 	@Override
 	public void close()
 	{
-		if(!this.wasAccessible)
-		{
-			if(LOG.isTraceEnabled())
-			{
-				LOG.trace(
-					"Make field {}#{} inaccessible.",
-					this.field.getDeclaringClass().getSimpleName(),
-					this.field.getName());
-			}
-			
-			this.field.setAccessible(false);
-		}
+		// This used to make the field optionally inaccessible again,
+		// but was removed due to concurrency issues.
 	}
 }
