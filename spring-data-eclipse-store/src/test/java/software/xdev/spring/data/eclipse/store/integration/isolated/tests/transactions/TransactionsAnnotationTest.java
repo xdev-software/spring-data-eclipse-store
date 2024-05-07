@@ -33,15 +33,11 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 @Transactional
 class TransactionsAnnotationTest
 {
-	private final TransactionsTestConfiguration configuration;
 	private final AccountRepository repository;
 	
 	@Autowired
-	public TransactionsAnnotationTest(
-		final TransactionsTestConfiguration configuration,
-		final AccountRepository repository)
+	public TransactionsAnnotationTest(final AccountRepository repository)
 	{
-		this.configuration = configuration;
 		this.repository = repository;
 	}
 	

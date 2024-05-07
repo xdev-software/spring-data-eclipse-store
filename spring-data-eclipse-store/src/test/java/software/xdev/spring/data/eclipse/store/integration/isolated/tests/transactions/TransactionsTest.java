@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
@@ -33,7 +34,6 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 @ContextConfiguration(classes = {TransactionsTestConfiguration.class})
 class TransactionsTest
 {
-	private final TransactionsTestConfiguration configuration;
 	private final AccountRepository accountRepository;
 	private final CounterRepository counterRepository;
 	private Account account1;
@@ -43,11 +43,9 @@ class TransactionsTest
 	
 	@Autowired
 	public TransactionsTest(
-		final TransactionsTestConfiguration configuration,
 		final AccountRepository accountRepository,
 		final CounterRepository counterRepository)
 	{
-		this.configuration = configuration;
 		this.accountRepository = accountRepository;
 		this.counterRepository = counterRepository;
 	}
@@ -151,6 +149,25 @@ class TransactionsTest
 		Assertions.assertEquals(
 			1,
 			this.counterRepository.findById(this.counter2.getId()).get().getCount());
+	}
+	
+	/**
+	 * Other implementations of Spring Data can do this, but we can't for now.
+	 */
+	@Test
+	void doubleTransaction(@Autowired final PlatformTransactionManager transactionManager)
+	{
+		new TransactionTemplate(transactionManager).execute(
+			status1 ->
+			{
+				final TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+				Assertions.assertThrows(
+					TransactionSystemException.class,
+					() -> transactionTemplate.execute(status2 -> null)
+				);
+				return null;
+			}
+		);
 	}
 	
 	@Test
