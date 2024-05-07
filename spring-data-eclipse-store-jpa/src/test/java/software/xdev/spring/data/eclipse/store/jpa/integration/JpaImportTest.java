@@ -32,16 +32,13 @@ import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseS
 
 
 @DefaultTestAnnotations
-class IntegrationTest
+class JpaImportTest
 {
 	@Autowired
 	private PersonToTestInEclipseStoreRepository personToTestInEclipseStoreRepository;
 	
 	@Autowired
 	private PersonToTestInJpaRepository personToTestInJpaRepository;
-	
-	@Autowired
-	private EclipseStoreDataImporterComponent eclipseStoreDataImporter;
 	
 	@Autowired
 	private EclipseStoreClientConfiguration configuration;
@@ -61,13 +58,13 @@ class IntegrationTest
 	}
 	
 	@Test
-	void testEclipseStoreImport()
+	void testEclipseStoreImport(@Autowired final EclipseStoreDataImporterComponent eclipseStoreDataImporter)
 	{
-		final PersonToTestInJpa customer = new PersonToTestInJpa("1", "", "");
-		this.personToTestInJpaRepository.save(customer);
+		final PersonToTestInJpa customer = new PersonToTestInJpa("", "");
+		this.personToTestInJpaRepository.saveAndFlush(customer);
 		
 		final List<SimpleEclipseStoreRepository<?, ?>> simpleEclipseStoreRepositories =
-			this.eclipseStoreDataImporter.importData();
+			eclipseStoreDataImporter.importData();
 		Assertions.assertEquals(1, simpleEclipseStoreRepositories.size());
 		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
 		Assertions.assertEquals(1, allEntities.size());
@@ -80,10 +77,10 @@ class IntegrationTest
 	}
 	
 	@Test
-	void testEclipseStoreEmptyImport()
+	void testEclipseStoreEmptyImport(@Autowired final EclipseStoreDataImporterComponent eclipseStoreDataImporter)
 	{
 		final List<SimpleEclipseStoreRepository<?, ?>> simpleEclipseStoreRepositories =
-			this.eclipseStoreDataImporter.importData();
+			eclipseStoreDataImporter.importData();
 		Assertions.assertEquals(1, simpleEclipseStoreRepositories.size());
 		final List<?> allEntities = simpleEclipseStoreRepositories.get(0).findAll();
 		Assertions.assertEquals(0, allEntities.size());

@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.importer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -80,7 +81,6 @@ public class EclipseStoreDataImporter
 	 * </p>
 	 *
 	 * @param entityManagerFactories which are searched for entities
-	 *
 	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
 	 */
 	@SuppressWarnings("java:S1452")
@@ -102,7 +102,6 @@ public class EclipseStoreDataImporter
 	 * </p>
 	 *
 	 * @param entityManagerFactories which are searched for entities
-	 *
 	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
 	 */
 	@SuppressWarnings({"java:S1452", "java:S6204"})
@@ -113,71 +112,114 @@ public class EclipseStoreDataImporter
 		LOG.info("Start importing data from JPA Repositories to EclipseStore...");
 		
 		// First create all repositories to register them in the EclipseStoreStorage
-		final List<EntityManagerFactoryRepositoryListPair> allRepositories =
+		final List<EntityManagerSupplierRepositoryListPair> allRepositories =
 			entityManagerFactories
+				.map(this::createEclipseStoreRepositoriesFromEntityManagerFactory)
+				.toList();
+		LOG.info("Found {} repositories to export data from.", allRepositories.size());
+		
+		return this.importData(allRepositories);
+	}
+	
+	/**
+	 * Imports entities from all given {@link EntityManager}s that are available into the EclipseStore storage.
+	 * <p>
+	 * This should be done only once. Otherwise entities may be imported multiple times.
+	 * </p>
+	 * <p>
+	 * After importing all the entities, the existing repositories should be converted to
+	 * {@link software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository}.
+	 * </p>
+	 *
+	 * @param entityManagers which are searched for entities
+	 * @return all the newly created {@link SimpleEclipseStoreRepository} for the specific entities.
+	 */
+	@SuppressWarnings({"java:S1452", "java:S6204"})
+	public List<SimpleEclipseStoreRepository<?, ?>> importData(
+		final EntityManager... entityManagers
+	)
+	{
+		LOG.info("Start importing data from JPA Repositories to EclipseStore...");
+		
+		// First create all repositories to register them in the EclipseStoreStorage
+		final List<EntityManagerSupplierRepositoryListPair> allRepositories =
+			Arrays.stream(entityManagers)
 				.map(this::createEclipseStoreRepositoriesFromEntityManager)
 				.toList();
 		LOG.info("Found {} repositories to export data from.", allRepositories.size());
 		
-		// Now copy the data
+		return this.importData(allRepositories);
+	}
+	
+	private List<SimpleEclipseStoreRepository<?, ?>> importData(
+		final List<EntityManagerSupplierRepositoryListPair> allRepositories
+	)
+	{
 		allRepositories.forEach(
-			entityManagerFactoryRepositoryListPair ->
-				entityManagerFactoryRepositoryListPair
+			entityManagerSupplierRepositoryListPair ->
+				entityManagerSupplierRepositoryListPair
 					.classRepositoryPairs
 					.forEach(
 						classRepositoryPair ->
-							this.copyData(entityManagerFactoryRepositoryListPair, classRepositoryPair)
+							this.copyData(entityManagerSupplierRepositoryListPair, classRepositoryPair)
 					)
 		);
 		LOG.info("Done importing data from JPA Repositories to EclipseStore.");
 		
 		return allRepositories
 			.stream()
-			.map(EntityManagerFactoryRepositoryListPair::classRepositoryPairs)
+			.map(EntityManagerSupplierRepositoryListPair::classRepositoryPairs)
 			.flatMap(List::stream)
 			.map(ClassRepositoryPair::repository)
 			.collect(Collectors.toList());
 	}
 	
 	private <T> void copyData(
-		final EntityManagerFactoryRepositoryListPair entityManagerFactoryRepositoryListPair,
+		final EntityManagerSupplierRepositoryListPair entityManagerSupplierRepositoryListPair,
 		final ClassRepositoryPair<T> classRepositoryPair)
+	{
+		try(final EntityManager entityManager = entityManagerSupplierRepositoryListPair.entityManagerSupplier().get())
+		{
+			this.copyData(entityManager, classRepositoryPair);
+		}
+	}
+	
+	private <T> void copyData(
+		final EntityManager entityManager,
+		final ClassRepositoryPair<T> classRepositoryPair
+	)
 	{
 		final String className = classRepositoryPair.domainClass.getName();
 		
 		LOG.info("Loading entities of {}...", className);
-		try(final EntityManager entityManager =
-			entityManagerFactoryRepositoryListPair.entityManagerFactory.createEntityManager())
-		{
-			final List<T> existingEntitiesToExport =
-				entityManager
-					.createQuery(
-						"SELECT c FROM " + className + " c",
-						classRepositoryPair.domainClass
-					)
-					.getResultList();
-			
-			LOG.info(
-				"Loaded {} entities of type {} to export.",
-				existingEntitiesToExport.size(),
-				className
-			);
-			
-			LOG.info(
-				"Saving {} entities of type {} to the EclipseStore Repository...",
-				existingEntitiesToExport.size(),
-				className
-			);
-			classRepositoryPair.repository.saveAll(existingEntitiesToExport);
-			LOG.info(
-				"Done saving entities of type {}. The EclipseStore now holds {} entities of that type.",
-				className,
-				classRepositoryPair.repository.count()
-			);
-		}
+		final List<T> existingEntitiesToExport =
+			entityManager
+				.createQuery(
+					"SELECT c FROM " + className + " c",
+					classRepositoryPair.domainClass
+				)
+				.getResultList();
+		
+		LOG.info(
+			"Loaded {} entities of type {} to export.",
+			existingEntitiesToExport.size(),
+			className
+		);
+		
+		LOG.info(
+			"Saving {} entities of type {} to the EclipseStore Repository...",
+			existingEntitiesToExport.size(),
+			className
+		);
+		classRepositoryPair.repository.saveAll(existingEntitiesToExport);
+		LOG.info(
+			"Done saving entities of type {}. The EclipseStore now holds {} entities of that type.",
+			className,
+			classRepositoryPair.repository.count()
+		);
 	}
 	
-	private EntityManagerFactoryRepositoryListPair createEclipseStoreRepositoriesFromEntityManager(
+	private EntityManagerSupplierRepositoryListPair createEclipseStoreRepositoriesFromEntityManagerFactory(
 		final EntityManagerFactory entityManagerFactory)
 	{
 		final List<ClassRepositoryPair<?>> repositoryList = new ArrayList<>();
@@ -185,7 +227,20 @@ public class EclipseStoreDataImporter
 			entityType -> this.createRepositoryForType(entityType, repositoryList)
 		);
 		
-		return new EntityManagerFactoryRepositoryListPair(entityManagerFactory, repositoryList);
+		return new EntityManagerSupplierRepositoryListPair(
+			() -> entityManagerFactory.createEntityManager(),
+			repositoryList);
+	}
+	
+	private EntityManagerSupplierRepositoryListPair createEclipseStoreRepositoriesFromEntityManager(
+		final EntityManager entityManager)
+	{
+		final List<ClassRepositoryPair<?>> repositoryList = new ArrayList<>();
+		entityManager.getMetamodel().getEntities().forEach(
+			entityType -> this.createRepositoryForType(entityType, repositoryList)
+		);
+		
+		return new EntityManagerSupplierRepositoryListPair(()->entityManager, repositoryList);
 	}
 	
 	private <T> void createRepositoryForType(
@@ -214,8 +269,8 @@ public class EclipseStoreDataImporter
 		);
 	}
 	
-	private record EntityManagerFactoryRepositoryListPair(
-		EntityManagerFactory entityManagerFactory,
+	private record EntityManagerSupplierRepositoryListPair(
+		Supplier<EntityManager> entityManagerSupplier,
 		List<ClassRepositoryPair<?>> classRepositoryPairs
 	)
 	{

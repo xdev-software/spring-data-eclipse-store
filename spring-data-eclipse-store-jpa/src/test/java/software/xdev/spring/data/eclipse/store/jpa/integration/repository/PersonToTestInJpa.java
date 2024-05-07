@@ -3,6 +3,8 @@ package software.xdev.spring.data.eclipse.store.jpa.integration.repository;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
@@ -10,14 +12,14 @@ import jakarta.persistence.Id;
 public class PersonToTestInJpa
 {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 	
 	private String firstName;
 	private String lastName;
 	
-	public PersonToTestInJpa(final String id, final String firstName, final String lastName)
+	public PersonToTestInJpa(final String firstName, final String lastName)
 	{
-		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
