@@ -123,4 +123,72 @@ class TransactionsConcurrencyTest
 		assertEquals(testAccounts.size(), accounts.size());
 		accounts.forEach(account -> Assertions.assertEquals(BigDecimal.valueOf(9), account.getBalance()));
 	}
+	
+	/**
+	 * Here it is enough if all the executions are running through. The final balance of the account varies with
+	 * different CPUs.
+	 */
+	@Test
+	void testSaveConcurrently_ChangesOnSameAccount(
+		@Autowired final PlatformTransactionManager transactionManager)
+		throws InterruptedException
+	{
+		final Account account = new Account(1, BigDecimal.ZERO);
+		this.accountRepository.save(account);
+		
+		final ExecutorService service = Executors.newFixedThreadPool(10);
+		final CountDownLatch latch = new CountDownLatch(100);
+		IntStream.range(0, 100).forEach(
+			i ->
+				service.execute(() ->
+					{
+						new TransactionTemplate(transactionManager).execute(
+							status ->
+							{
+								final Account loadedAccount = this.accountRepository.findById(1).get();
+								loadedAccount.setBalance(loadedAccount.getBalance().add(BigDecimal.ONE));
+								this.accountRepository.save(loadedAccount);
+								return null;
+							});
+						latch.countDown();
+					}
+				)
+		);
+		
+		assertTrue(latch.await(5, TimeUnit.SECONDS));
+	}
+	
+	@Test
+	void testSaveConcurrently_ChangesOnSameAccount_MassRollback(
+		@Autowired final PlatformTransactionManager transactionManager)
+		throws InterruptedException
+	{
+		final Account account = new Account(1, BigDecimal.ZERO);
+		this.accountRepository.save(account);
+		
+		final ExecutorService service = Executors.newFixedThreadPool(10);
+		final CountDownLatch latch = new CountDownLatch(100);
+		IntStream.range(0, 100).forEach(
+			i ->
+				service.execute(() ->
+					{
+						Assertions.assertThrows(
+							RuntimeException.class, () ->
+								new TransactionTemplate(transactionManager).execute(
+									status ->
+									{
+										final Account loadedAccount = this.accountRepository.findById(1).get();
+										loadedAccount.setBalance(loadedAccount.getBalance().add(BigDecimal.ONE));
+										this.accountRepository.save(loadedAccount);
+										throw new RuntimeException("Random exception");
+									})
+						);
+						latch.countDown();
+					}
+				)
+		);
+		
+		assertTrue(latch.await(5, TimeUnit.SECONDS));
+		Assertions.assertEquals(BigDecimal.ZERO, this.accountRepository.findById(1).get().getBalance());
+	}
 }

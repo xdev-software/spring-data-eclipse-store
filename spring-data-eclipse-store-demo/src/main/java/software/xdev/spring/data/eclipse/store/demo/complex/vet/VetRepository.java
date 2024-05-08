@@ -15,17 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.demo.complex.vet;
 
-import java.util.Collection;
-
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 
-public interface VetRepository extends Repository<Vet, Integer>
+public interface VetRepository extends CrudRepository<Vet, Integer>
 {
-	Collection<Vet> findAll();
-	
-	void deleteAll();
-	
-	@SuppressWarnings("UnusedReturnValue")
-	Vet save(final Vet entity);
 }
