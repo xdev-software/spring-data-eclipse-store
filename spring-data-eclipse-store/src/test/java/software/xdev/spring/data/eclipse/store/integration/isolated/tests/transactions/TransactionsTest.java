@@ -27,6 +27,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
 
@@ -244,5 +245,21 @@ class TransactionsTest
 				return null;
 			}
 		);
+	}
+	
+	/**
+	 * Opposite test to {@link TransactionsAnnotationTest#accountTransaction_UnexpectedError_Annotation()}.
+	 */
+	@Test
+	void accountNoTransaction_UnexpectedError()
+	{
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			final Account account1 = new Account(1, BigDecimal.TEN);
+			final Account account2 = new Account(2, BigDecimal.ZERO);
+			this.accountRepository.saveAll(List.of(account1, account2));
+			
+			throw new RuntimeException("Unexpected error");
+		});
+		Assertions.assertEquals(4, TestUtil.iterableToList(this.accountRepository.findAll()).size());
 	}
 }

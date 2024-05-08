@@ -109,7 +109,9 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 		try
 		{
 			if(this.configurationClass != null
-				&& this.beanFactory.getBean(this.configurationClass) instanceof final EclipseStoreClientConfiguration eclipseStoreConfiguration)
+				&& this.beanFactory.getBean(this.configurationClass)
+				instanceof final EclipseStoreClientConfiguration eclipseStoreConfiguration
+			)
 			{
 				return eclipseStoreConfiguration;
 			}

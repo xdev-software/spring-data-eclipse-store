@@ -44,17 +44,13 @@ class TransactionsAnnotationTest
 	@Test
 	void accountTransaction_UnexpectedError_Annotation()
 	{
-		try
-		{
+		Assertions.assertThrows(RuntimeException.class, () -> {
 			final Account account1 = new Account(1, BigDecimal.TEN);
 			final Account account2 = new Account(2, BigDecimal.ZERO);
 			this.repository.saveAll(List.of(account1, account2));
 			
 			throw new RuntimeException("Unexpected error");
-		}
-		catch(final RuntimeException e)
-		{
-		}
+		});
 		Assertions.assertEquals(0, TestUtil.iterableToList(this.repository.findAll()).size());
 	}
 }

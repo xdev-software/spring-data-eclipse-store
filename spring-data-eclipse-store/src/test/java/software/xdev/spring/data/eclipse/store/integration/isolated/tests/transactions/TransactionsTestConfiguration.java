@@ -42,7 +42,9 @@ public class TransactionsTestConfiguration extends TestConfiguration
 	
 	@Bean
 	@Override
-	public PlatformTransactionManager transactionManager(final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
+	public PlatformTransactionManager transactionManager(
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers
+	)
 	{
 		return super.transactionManager(transactionManagerCustomizers);
 	}

@@ -31,7 +31,9 @@ public class ComplexConfiguration extends EclipseStoreClientConfiguration
 	 */
 	@Bean
 	@Override
-	public PlatformTransactionManager transactionManager(final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
+	public PlatformTransactionManager transactionManager(
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers
+	)
 	{
 		return super.transactionManager(transactionManagerCustomizers);
 	}

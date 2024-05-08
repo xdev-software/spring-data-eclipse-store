@@ -50,7 +50,9 @@ class TransactionsConcurrencyTest
 	}
 	
 	@Test
-	void testSaveConcurrently_PreviouslyNonExistingAccounts(@Autowired final PlatformTransactionManager transactionManager)
+	void testSaveConcurrently_PreviouslyNonExistingAccounts(
+		@Autowired final PlatformTransactionManager transactionManager
+	)
 		throws InterruptedException
 	{
 		final List<Account> testAccounts =
