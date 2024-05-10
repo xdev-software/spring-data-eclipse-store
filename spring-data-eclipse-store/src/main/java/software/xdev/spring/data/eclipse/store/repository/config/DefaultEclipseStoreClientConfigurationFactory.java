@@ -17,21 +17,20 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 
-/**
- * Provides the Default implementation of an {@link EclipseStoreClientConfiguration}. The class can't be final because
- * of the {@link Configuration}-Annotation. It's mostly used to check if the user wants the default implementation or if
- * he created a different {@link EclipseStoreClientConfiguration}.
- */
-@Configuration(proxyBeanMethods = false)
-public class DefaultEclipseStoreClientConfiguration extends EclipseStoreClientConfiguration
+@Component
+public class DefaultEclipseStoreClientConfigurationFactory
 {
-	protected DefaultEclipseStoreClientConfiguration(
+	@Bean
+	@ConditionalOnMissingBean(EclipseStoreClientConfiguration.class)
+	public DefaultEclipseStoreClientConfiguration getDefaultConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+		return new DefaultEclipseStoreClientConfiguration(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
 	}
 }

@@ -104,7 +104,6 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	 */
 	private EclipseStoreClientConfiguration createConfiguration()
 	{
-		Objects.requireNonNull(this.configurationClass);
 		Objects.requireNonNull(this.beanFactory);
 		try
 		{
