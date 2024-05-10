@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  * of the {@link Configuration}-Annotation. It's mostly used to check if the user wants the default implementation or if
  * he created a different {@link EclipseStoreClientConfiguration}.
  */
-@Configuration(proxyBeanMethods = false)
 public class DefaultEclipseStoreClientConfiguration extends EclipseStoreClientConfiguration
 {
 	protected DefaultEclipseStoreClientConfiguration(
