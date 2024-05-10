@@ -15,6 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.deletion;
 
+import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
+import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
@@ -22,7 +25,15 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@EnableEclipseStoreRepositories(clientConfigurationClass = DeletionTestConfiguration.class)
+@EnableEclipseStoreRepositories
 public class DeletionTestConfiguration extends TestConfiguration
 {
+	
+	@Autowired
+	protected DeletionTestConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+	{
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+	}
 }

@@ -23,9 +23,10 @@ Also see the https://github.com/xdev-software/spring-data-eclipse-store/releases
 
 After adding the library in your dependencies, using it is as easy as adding the ``@EnableEclipseStoreRepositories`` annotation to your ``@SpringBootApplication`` annotation.
 
-[NOTE]
-====
-Since the library is using reflection to copy data, the following JVM-Arguments may have to be set.
+=== Merge behavior
+
+To merge data of the xref:working-copies.adoc[working copy] into the original object graph, the library is using reflection.
+Therefore, the following *JVM-Arguments* may have to be set:
 
 [source,title="JVM Arguments"]
 ----
@@ -34,6 +35,11 @@ Since the library is using reflection to copy data, the following JVM-Arguments 
 --add-opens=java.base/java.lang=ALL-UNNAMED
 --add-opens=java.base/java.time=ALL-UNNAMED
 ----
+
+[NOTE]
+====
+To access ``private`` variables, the library uses reflection and sets the access level to ``public`` (see https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/access/modifier/FieldAccessibleMaker.java[FieldAccessibleMaker]).
+For performance reasons, *this change stays permanent* during runtime.
 ====
 
 == Demo
