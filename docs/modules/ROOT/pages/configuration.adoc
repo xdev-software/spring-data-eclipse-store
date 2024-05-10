@@ -15,7 +15,7 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.Storage;
 ...
 @Configuration
-@EnableEclipseStoreRepositories(clientConfigurationClass = DemoConfiguration.class)
+@EnableEclipseStoreRepositories
 public class DemoConfiguration extends EclipseStoreClientConfiguration
 {
     @Override

@@ -1,0 +1,62 @@
+= Transactions
+
+[quote,https://docs.spring.io/spring-framework/reference/data-access/transaction.html[spring - Transaction Management]]
+
+____
+Comprehensive transaction support is among the *most compelling reasons* to use the Spring Framework.
+____
+
+That's why we implemented *Spring Transactions*.
+
+Just like Spring JPA you can use https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html[declarative] or https://docs.spring.io/spring-framework/reference/data-access/transaction/programmatic.html[programmatic] transaction management.
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/VetService.java[Declarative example from complex demo]"]
+----
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+//...
+@Service
+@Transactional
+public class VetService
+{
+    //...
+	public void saveNewEntries()
+	{
+		final Vet vet = this.createVet();
+		this.vetRepository.save(vet);
+	}
+	//...
+----
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/OwnerService.java[Programmatic example from complex demo]"]
+----
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+//...
+@Service
+public class OwnerService
+{
+    private final PlatformTransactionManager transactionManager;
+
+    @Autowired
+    public OwnerService(
+        final OwnerRepository ownerRepository,
+        final PlatformTransactionManager transactionManager)
+    {
+        this.ownerRepository = ownerRepository;
+        this.transactionManager = transactionManager;
+    }
+    //...
+    public void deleteAll()
+    {
+        new TransactionTemplate(this.transactionManager).execute(
+            status ->
+            {
+                this.ownerRepository.deleteAll();
+                return null;
+            });
+    }
+    //...
+----
+
+CAUTION: If you are using transaction, you need to define a ``Bean`` for ``PlatformTransactionManager``! This is easiest achieved by extending the ``EclipseStoreClientConfiguration``. See https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/ComplexConfiguration.java[the complex demo].

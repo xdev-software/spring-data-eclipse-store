@@ -15,16 +15,19 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
-import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProvider;
-import org.eclipse.store.integrations.spring.boot.types.EclipseStoreProviderImpl;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
+import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
 /**
@@ -42,38 +45,48 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
  * </p>
  */
 @Configuration(proxyBeanMethods = false)
+@ComponentScan({
+	"org.eclipse.store.integrations.spring.boot.types",
+	"software.xdev.spring.data.eclipse.store.importer"
+})
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
-	@Autowired
-	@Qualifier("eclipseStoreProperties")
-	private EclipseStoreProperties defaultEclipseStoreProperties;
-	
-	@Autowired
-	private EclipseStoreProviderImpl defaultEclipseStoreProvider;
+	private final EclipseStoreProperties defaultEclipseStoreProperties;
+	private final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
 	
 	private EclipseStoreStorage storageInstance;
+	private EclipseStoreTransactionManager transactionManager;
 	
-	public EclipseStoreProperties getStoreConfiguration()
+	@Autowired
+	protected EclipseStoreClientConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+	{
+		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
+		this.defaultEclipseStoreProperties.setAutoStart(false);
+		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
+	}
+	
+	public EclipseStoreProperties getEclipseStoreProperties()
 	{
 		return this.defaultEclipseStoreProperties;
 	}
 	
-	public EclipseStoreProvider getStoreProvider()
+	public EmbeddedStorageFoundationFactory getStoreProvider()
 	{
 		return this.defaultEclipseStoreProvider;
 	}
 	
 	/**
 	 * Creates a {@link EmbeddedStorageFoundation} out of the two other provided functions {@link #getStoreProvider()}
-	 * and {@link #getStoreConfiguration()}.
+	 * and {@link #getEclipseStoreProperties()}.
 	 */
 	@Override
 	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
-		return this.getStoreProvider().createStorageFoundation(this.getStoreConfiguration());
+		return this.getStoreProvider().createStorageFoundation(this.getEclipseStoreProperties());
 	}
 	
-	@Bean
 	public EclipseStoreStorage getStorageInstance()
 	{
 		if(this.storageInstance == null)
@@ -81,5 +94,23 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 			this.storageInstance = new EclipseStoreStorage(this);
 		}
 		return this.storageInstance;
+	}
+	
+	public PlatformTransactionManager transactionManager(
+		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
+	{
+		final EclipseStoreTransactionManager transactionManager = this.getTransactionManagerInstance();
+		transactionManagerCustomizers.ifAvailable((customizers) ->
+			customizers.customize((TransactionManager)transactionManager));
+		return transactionManager;
+	}
+	
+	public EclipseStoreTransactionManager getTransactionManagerInstance()
+	{
+		if(this.transactionManager == null)
+		{
+			this.transactionManager = new EclipseStoreTransactionManager();
+		}
+		return this.transactionManager;
 	}
 }

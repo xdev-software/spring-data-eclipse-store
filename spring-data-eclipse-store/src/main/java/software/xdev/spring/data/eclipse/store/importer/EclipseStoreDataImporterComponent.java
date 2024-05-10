@@ -21,6 +21,7 @@ import java.util.Map;
 import jakarta.persistence.EntityManagerFactory;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
@@ -31,6 +32,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseS
  * Imports entities from {@link EntityManagerFactory}s into the EclipseStore storage.
  */
 @Component
+@Lazy
 public class EclipseStoreDataImporterComponent
 {
 	private final EclipseStoreDataImporter importer;

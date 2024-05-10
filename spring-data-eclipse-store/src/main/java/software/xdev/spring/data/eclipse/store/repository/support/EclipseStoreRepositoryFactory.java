@@ -30,6 +30,7 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
@@ -43,10 +44,14 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 {
 	private final EclipseStoreStorage storage;
+	private final PlatformTransactionManager transactionManager;
 	
-	public EclipseStoreRepositoryFactory(final EclipseStoreStorage storage)
+	public EclipseStoreRepositoryFactory(
+		final EclipseStoreStorage storage,
+		final PlatformTransactionManager transactionManager)
 	{
 		this.storage = storage;
+		this.transactionManager = transactionManager;
 	}
 	
 	@Override
@@ -65,18 +70,6 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 		return Optional.of(new EclipseStoreQueryLookupStrategy(this.storage, this::createWorkingCopier));
 	}
 	
-	@Override
-	@Nonnull
-	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
-	{
-		return this.getTargetRepositoryViaReflection(
-			metadata,
-			this.storage,
-			this.createWorkingCopier(metadata.getDomainType(), this.storage),
-			metadata.getDomainType()
-		);
-	}
-	
 	private <T> WorkingCopier<T> createWorkingCopier(
 		final Class<T> domainType,
 		final EclipseStoreStorage storage)
@@ -88,6 +81,19 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage,
 			new SupportedChecker.Implementation(),
 			storage
+		);
+	}
+	
+	@Override
+	@Nonnull
+	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
+	{
+		return this.getTargetRepositoryViaReflection(
+			metadata,
+			this.storage,
+			this.createWorkingCopier(metadata.getDomainType(), this.storage),
+			metadata.getDomainType(),
+			this.transactionManager
 		);
 	}
 	

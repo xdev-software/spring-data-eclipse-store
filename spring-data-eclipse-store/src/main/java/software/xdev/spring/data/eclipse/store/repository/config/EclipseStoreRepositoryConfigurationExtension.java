@@ -15,9 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
-import static software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories.CLIENT_CONFIGURATION_ANNOTATION_VALUE;
-import static software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories.CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE;
-
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,12 +22,14 @@ import java.util.List;
 
 import jakarta.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
-import org.springframework.util.ClassUtils;
+import org.springframework.data.repository.core.RepositoryMetadata;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCustomRepository;
@@ -46,6 +45,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRe
  */
 public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConfigurationExtensionSupport
 {
+	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreRepositoryConfigurationExtension.class);
 	@Override
 	@Nonnull
 	public String getModuleName()
@@ -71,22 +71,30 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	}
 	
 	/**
-	 * This method puts the {@link EclipseStoreRepositoryFactoryBean#configuration} in the created
-	 * {@link EclipseStoreRepositoryFactoryBean}. This is important to link
-	 * {@link EnableEclipseStoreRepositories#clientConfiguration()} with the actual
-	 * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage}.
+	 * This is surely not the perfect way to get the correct configuration of that context, but it works with multiple
+	 * configurations, with no configuration and with a single configuration.
 	 */
 	@Override
 	public void postProcess(final BeanDefinitionBuilder builder, final AnnotationRepositoryConfigurationSource config)
 	{
-		final AnnotationAttributes attributes = config.getAttributes();
-		final Class<?> configurationClass = attributes.getClass(CLIENT_CONFIGURATION_CLASS_ANNOTATION_VALUE);
-		String configurationString = attributes.getString(CLIENT_CONFIGURATION_ANNOTATION_VALUE);
-		if(!configurationClass.equals(DefaultEclipseStoreClientConfiguration.class))
+		if(config.getSource() instanceof final AnnotationMetadata classMetadata)
 		{
-			configurationString = ClassUtils.getShortNameAsProperty(configurationClass);
+			try
+			{
+				final Class<?> possibleConfigurationClass = Class.forName(classMetadata.getClassName());
+				if(EclipseStoreClientConfiguration.class.isAssignableFrom(possibleConfigurationClass))
+				{
+					builder.addPropertyValue("configurationClass", possibleConfigurationClass);
+				}
+			}
+			catch(final ClassNotFoundException e)
+			{
+				LOG.warn(
+					"Could not use {} as configuration.",
+					classMetadata.getClassName()
+				);
+			}
 		}
-		builder.addPropertyReference("configuration", configurationString);
 	}
 	
 	@Override
@@ -115,5 +123,11 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 			EclipseStoreCrudRepository.class,
 			EclipseStoreListCrudRepository.class
 		);
+	}
+	
+	@Override
+	protected boolean useRepositoryConfiguration(final RepositoryMetadata metadata)
+	{
+		return super.useRepositoryConfiguration(metadata);
 	}
 }
