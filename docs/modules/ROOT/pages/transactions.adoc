@@ -1,6 +1,6 @@
 = Transactions
 
-[quote,https://docs.spring.io/spring-framework/reference/data-access/transaction.html[spring - Transaction Management]]
+[quote, 'https://docs.spring.io/spring-framework/reference/data-access/transaction.html[Spring - Transaction Management]']
 
 ____
 Comprehensive transaction support is among the *most compelling reasons* to use the Spring Framework.
