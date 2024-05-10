@@ -17,12 +17,13 @@ package software.xdev.spring.data.eclipse.store.jpa.integration;
 
 import java.nio.file.Path;
 
+import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
+import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -33,31 +34,35 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 
 @Configuration
-@ComponentScan("software.xdev.spring.data.eclipse.store.importer")
 @EnableEclipseStoreRepositories
 @SpringBootConfiguration
 @EnableAutoConfiguration
-public class TestConfiguration implements DisposableBean
+public class TestConfiguration extends EclipseStoreClientConfiguration implements DisposableBean
 {
-	@Autowired
-	EclipseStoreClientConfiguration configuration;
-	
 	@Value("${org.eclipse.store.storage-directory}")
 	private String storageDirectory;
+	
+	@Autowired
+	protected TestConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+	{
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+	}
 	
 	@EventListener
 	public void handleContextRefresh(final ContextRefreshedEvent event)
 	{
 		// Init with empty root object
-		this.configuration.getStorageInstance().clearData();
+		this.getStorageInstance().clearData();
 	}
 	
 	@Override
 	public void destroy() throws Exception
 	{
 		// End with empty root object
-		this.configuration.getStorageInstance().clearData();
-		this.configuration.getStorageInstance().stop();
+		this.getStorageInstance().clearData();
+		this.getStorageInstance().stop();
 		FileSystemUtils.deleteRecursively(Path.of(this.storageDirectory));
 	}
 }

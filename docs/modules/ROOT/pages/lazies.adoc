@@ -31,7 +31,7 @@ public class Owner extends Person
 	//...
 ----
 
-== Internas
+== Internals
 
 SpringDataEclipseStoreLazies work as a proxy for the EclipseStore-Lazies.
 As far as EclipseStore is concerned, a SpringDataEclipseStoreLazy-Object is a normal Java object that contains a Lazy-Reference.

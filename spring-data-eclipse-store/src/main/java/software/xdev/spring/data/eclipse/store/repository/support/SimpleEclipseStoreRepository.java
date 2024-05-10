@@ -45,6 +45,8 @@ import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQu
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransaction;
+import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
 public class SimpleEclipseStoreRepository<T, ID>
@@ -59,17 +61,20 @@ public class SimpleEclipseStoreRepository<T, ID>
 	private final EclipseStoreStorage storage;
 	private final Class<T> domainClass;
 	private final WorkingCopier<T> copier;
+	private final EclipseStoreTransactionManager transactionManager;
 	private Field idField;
 	
 	public SimpleEclipseStoreRepository(
 		final EclipseStoreStorage storage,
 		final WorkingCopier<T> copier,
-		final Class<T> domainClass)
+		final Class<T> domainClass,
+		final EclipseStoreTransactionManager transactionManager)
 	{
 		this.storage = storage;
 		this.domainClass = domainClass;
 		this.storage.registerEntity(domainClass);
 		this.copier = copier;
+		this.transactionManager = transactionManager;
 	}
 	
 	public Field getIdField()
@@ -90,6 +95,13 @@ public class SimpleEclipseStoreRepository<T, ID>
 	
 	@SuppressWarnings("unchecked")
 	public synchronized <S extends T> List<S> saveBulk(final Collection<S> entities)
+	{
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() -> this.uncachedStore(entities));
+		return (List<S>)entities;
+	}
+	
+	private synchronized <S extends T> void uncachedStore(final Collection<S> entities)
 	{
 		if(LOG.isDebugEnabled())
 		{
@@ -117,7 +129,6 @@ public class SimpleEclipseStoreRepository<T, ID>
 			LOG.debug("Collected {} non-entities to store.", nonEntitiesToStore.size());
 		}
 		this.storage.store(nonEntitiesToStore, this.domainClass, entitiesToStore);
-		return (List<S>)entitiesToStore;
 	}
 	
 	@Override
@@ -240,8 +251,12 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public void delete(@Nonnull final T entity)
 	{
-		this.storage.delete(this.domainClass, this.copier.getOriginal(entity));
-		this.copier.deregister(entity);
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() ->
+		{
+			this.storage.delete(this.domainClass, this.copier.getOriginal(entity));
+			this.copier.deregister(entity);
+		});
 	}
 	
 	@Override
@@ -265,7 +280,8 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public void deleteAll()
 	{
-		this.storage.deleteAll(this.domainClass);
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() -> this.storage.deleteAll(this.domainClass));
 	}
 	
 	@Override

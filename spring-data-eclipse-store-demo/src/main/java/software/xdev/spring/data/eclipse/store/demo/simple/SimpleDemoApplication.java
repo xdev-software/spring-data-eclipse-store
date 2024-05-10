@@ -34,7 +34,10 @@ public class SimpleDemoApplication implements CommandLineRunner
 	private final CustomerRepository customerRepository;
 	private final PetRepository petRepository;
 	
-	public SimpleDemoApplication(final CustomerRepository customerRepository, final PetRepository petRepository)
+	public SimpleDemoApplication(
+		final CustomerRepository customerRepository,
+		final PetRepository petRepository
+	)
 	{
 		this.customerRepository = customerRepository;
 		this.petRepository = petRepository;
