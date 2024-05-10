@@ -1,3 +1,11 @@
+# 1.0.6
+
+* Fixed problem with missing configuration
+
+# 1.0.5
+
+* Added support for transactions
+
 # 1.0.4
 
 * Added possibility to use multiple storages

@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
@@ -45,8 +44,7 @@ public class SimpleDemoApplication implements CommandLineRunner
 	
 	public static void main(final String[] args)
 	{
-		final ConfigurableApplicationContext run = SpringApplication.run(SimpleDemoApplication.class, args);
-		run.close();
+		SpringApplication.run(SimpleDemoApplication.class, args);
 	}
 	
 	@Override

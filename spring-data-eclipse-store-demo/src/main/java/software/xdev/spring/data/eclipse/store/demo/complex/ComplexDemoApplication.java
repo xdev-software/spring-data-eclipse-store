@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 
 @SpringBootApplication
@@ -41,8 +40,7 @@ public class ComplexDemoApplication implements CommandLineRunner
 	
 	public static void main(final String[] args)
 	{
-		final ConfigurableApplicationContext run = SpringApplication.run(ComplexDemoApplication.class, args);
-		run.close();
+		SpringApplication.run(ComplexDemoApplication.class, args);
 	}
 	
 	@Override
