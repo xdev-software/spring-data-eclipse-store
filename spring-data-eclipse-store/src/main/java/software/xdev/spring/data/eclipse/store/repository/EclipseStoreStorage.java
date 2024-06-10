@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -48,7 +49,7 @@ public class EclipseStoreStorage
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, String> entityClassToRepositoryName = new HashMap<>();
-	private final Map<Class<?>, IdSetter<?>> entityClassToIdSetter = new HashMap<>();
+	private final Map<Class<?>, IdSetter<?>> entityClassToIdSetter = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
@@ -81,21 +82,24 @@ public class EclipseStoreStorage
 		{
 			synchronized(this)
 			{
-				LOG.info("Starting storage...");
-				this.root = new Root();
-				final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
-					this.foundationProvider.createEmbeddedStorageFoundation();
-				embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
-				embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
-				this.storageManager = embeddedStorageFoundation.start(this.root);
-				this.persistenceChecker = new RelayedPersistenceChecker(embeddedStorageFoundation);
-				this.initRoot();
-				final Integer entitySum =
-					this.root.getEntityLists().values().stream().map(IdentitySet::size).reduce(0, Integer::sum);
-				LOG.info(
-					"Storage started with {} entity lists and {} entities.",
-					this.root.getEntityLists().size(),
-					entitySum);
+				if(this.storageManager == null)
+				{
+					LOG.info("Starting storage...");
+					this.root = new Root();
+					final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
+						this.foundationProvider.createEmbeddedStorageFoundation();
+					embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
+					embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
+					this.storageManager = embeddedStorageFoundation.start(this.root);
+					this.persistenceChecker = new RelayedPersistenceChecker(embeddedStorageFoundation);
+					this.initRoot();
+					final Integer entitySum =
+						this.root.getEntityLists().values().stream().map(IdentitySet::size).reduce(0, Integer::sum);
+					LOG.info(
+						"Storage started with {} entity lists and {} entities.",
+						this.root.getEntityLists().size(),
+						entitySum);
+				}
 			}
 		}
 	}
@@ -341,20 +345,21 @@ public class EclipseStoreStorage
 		this.ensureEntitiesInRoot();
 		return (IdSetter<T>)this.entityClassToIdSetter.computeIfAbsent(
 			domainClass,
-			clazz ->
-				this.readWriteLock.write(
-					() ->
-					{
-						final String entityName = this.getEntityName(domainClass);
-						final Consumer<Object> idSetter = id ->
-						{
-							this.root.getLastIds().put(entityName, id);
-							this.storageManager.store(this.root.getLastIds());
-						};
-						final Supplier<Object> idGetter = () -> this.root.getLastIds().get(entityName);
-						return IdSetter.createIdSetter(domainClass, idSetter, idGetter);
-					}
-				)
+			clazz -> {
+				final String entityName = this.getEntityName(domainClass);
+				final Consumer<Object> idSetter =
+					id ->
+						this.readWriteLock.write(
+							() ->
+							{
+								this.root.getLastIds().put(entityName, id);
+								this.storageManager.store(this.root.getLastIds());
+							}
+						);
+				final Supplier<Object> idGetter =
+					() -> this.readWriteLock.read(() -> this.root.getLastIds().get(entityName));
+				return IdSetter.createIdSetter(domainClass, idSetter, idGetter);
+			}
 		);
 	}
 	
