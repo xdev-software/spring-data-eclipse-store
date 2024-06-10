@@ -6,7 +6,7 @@
 
 	<groupId>software.xdev</groupId>
 	<artifactId>spring-data-eclipse-store-demo</artifactId>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<organization>
