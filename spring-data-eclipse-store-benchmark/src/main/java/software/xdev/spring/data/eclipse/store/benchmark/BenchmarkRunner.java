@@ -27,6 +27,10 @@ public final class BenchmarkRunner
 			.measurementTime(TimeValue.seconds(1))
 			.measurementIterations(10)
 			.timeUnit(TimeUnit.MILLISECONDS)
+			// Example for executing a single method:
+			// .include(
+			// 	"software.xdev.spring.data.eclipse.store.benchmark.benchmarks.simple.customer"
+			// 		+ ".StoringSimpleCustomerBenchmark.save1000CustomerInSaveAll")
 			.build();
 		
 		new Runner(opt).run();
