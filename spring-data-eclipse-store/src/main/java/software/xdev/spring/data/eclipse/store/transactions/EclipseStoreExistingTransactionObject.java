@@ -24,7 +24,7 @@ public class EclipseStoreExistingTransactionObject implements EclipseStoreTransa
 {
 	private ArrayList<EclipseStoreTransactionAction> actions;
 	
-	public void startTransaction()
+	public synchronized void startTransaction()
 	{
 		if(this.actions != null)
 		{
@@ -34,12 +34,12 @@ public class EclipseStoreExistingTransactionObject implements EclipseStoreTransa
 		this.actions = new ArrayList<>();
 	}
 	
-	public void rollbackTransaction()
+	public synchronized void rollbackTransaction()
 	{
 		this.actions = null;
 	}
 	
-	public void commitTransaction()
+	public synchronized void commitTransaction()
 	{
 		if(this.actions == null)
 		{
@@ -51,7 +51,7 @@ public class EclipseStoreExistingTransactionObject implements EclipseStoreTransa
 	}
 	
 	@Override
-	public void addAction(final EclipseStoreTransactionAction action)
+	public synchronized void addAction(final EclipseStoreTransactionAction action)
 	{
 		if(action == null)
 		{
