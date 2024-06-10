@@ -42,7 +42,7 @@ class TransactionsAnnotationTest
 	}
 	
 	@Test
-	void accountTransaction_UnexpectedError_Annotation()
+	void accountTransactionUnexpectedErrorAnnotation()
 	{
 		Assertions.assertThrows(RuntimeException.class, () -> {
 			final Account account1 = new Account(1, BigDecimal.TEN);
