@@ -17,12 +17,32 @@ package software.xdev.spring.data.eclipse.store.benchmark.benchmarks.simple.cust
 
 public class Customer
 {
-	private final String firstName;
-	private final String lastName;
+	private String firstName;
+	private String lastName;
 	
 	public Customer(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+	
+	public String getFirstName()
+	{
+		return this.firstName;
+	}
+	
+	public void setFirstName(final String firstName)
+	{
+		this.firstName = firstName;
+	}
+	
+	public String getLastName()
+	{
+		return this.lastName;
+	}
+	
+	public void setLastName(final String lastName)
+	{
 		this.lastName = lastName;
 	}
 	
