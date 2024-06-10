@@ -56,7 +56,7 @@ class TransactionsConcurrencyTest
 		throws InterruptedException
 	{
 		final List<Account> testAccounts =
-			IntStream.range(1, 100).mapToObj((i) -> new Account(i, BigDecimal.TEN)).toList();
+			IntStream.range(1, 1000).mapToObj((i) -> new Account(i, BigDecimal.TEN)).toList();
 		
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 		final CountDownLatch latch = new CountDownLatch(testAccounts.size());
