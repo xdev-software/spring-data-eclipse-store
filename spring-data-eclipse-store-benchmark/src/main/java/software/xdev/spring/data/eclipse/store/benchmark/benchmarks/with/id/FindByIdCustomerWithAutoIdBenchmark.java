@@ -1,4 +1,4 @@
-package software.xdev.spring.data.eclipse.store.benchmark.benchmarks.simple.customer;
+package software.xdev.spring.data.eclipse.store.benchmark.benchmarks.with.id;
 
 import java.util.stream.IntStream;
 
@@ -11,7 +11,7 @@ import software.xdev.spring.data.eclipse.store.benchmark.SpringState;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
-public class LoadingSimpleCustomerBenchmark
+public class FindByIdCustomerWithAutoIdBenchmark
 {
 	public abstract static class ExistingCustomerSpringState extends SpringState
 	{
@@ -27,30 +27,15 @@ public class LoadingSimpleCustomerBenchmark
 		public void doSetupData()
 		{
 			this.getBean(EclipseStoreClientConfiguration.class).getStorageInstance().clearData();
-			this.getBean(CustomerRepository.class).saveAll(
+			this.getBean(CustomerWithAutoIdRepository.class).saveAll(
 				IntStream.range(0, this.entityCount).mapToObj(
-					i -> new Customer("Test" + i, "Test" + i)
+					i -> new CustomerWithAutoId("Test" + i, "Test" + i)
 				).toList()
 			);
 			this.getBean(EclipseStoreClientConfiguration.class).getStorageInstance().stop();
 		}
 	}
 	
-	
-	public static class SimpleSingleCustomerSpringState extends ExistingCustomerSpringState
-	{
-		public SimpleSingleCustomerSpringState()
-		{
-			super(1);
-		}
-	}
-	
-	@Benchmark
-	public void loadSingleCustomer(final SimpleSingleCustomerSpringState state, final Blackhole blackhole)
-	{
-		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
-		blackhole.consume(customerRepository.findAll());
-	}
 	
 	public static class Simple100CustomerSpringState extends ExistingCustomerSpringState
 	{
@@ -61,10 +46,10 @@ public class LoadingSimpleCustomerBenchmark
 	}
 	
 	@Benchmark
-	public void load100Customers(final Simple100CustomerSpringState state, final Blackhole blackhole)
+	public void find10LastCustomersOf100(final Simple100CustomerSpringState state, final Blackhole blackhole)
 	{
-		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
-		blackhole.consume(customerRepository.findAll());
+		final CustomerWithAutoIdRepository customerRepository = state.getBean(CustomerWithAutoIdRepository.class);
+		blackhole.consume(customerRepository.findAllById(IntStream.range(89, 100).boxed().toList()));
 	}
 	
 	public static class Simple1000CustomerSpringState extends ExistingCustomerSpringState
@@ -76,10 +61,10 @@ public class LoadingSimpleCustomerBenchmark
 	}
 	
 	@Benchmark
-	public void load1000Customers(final Simple1000CustomerSpringState state, final Blackhole blackhole)
+	public void find100LastCustomersOf1000(final Simple1000CustomerSpringState state, final Blackhole blackhole)
 	{
-		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
-		blackhole.consume(customerRepository.findAll());
+		final CustomerWithAutoIdRepository customerRepository = state.getBean(CustomerWithAutoIdRepository.class);
+		blackhole.consume(customerRepository.findAllById(IntStream.range(899, 1000).boxed().toList()));
 	}
 	
 	public static class Simple10000CustomerSpringState extends ExistingCustomerSpringState
@@ -92,9 +77,9 @@ public class LoadingSimpleCustomerBenchmark
 	}
 	
 	@Benchmark
-	public void load10000Customers(final Simple10000CustomerSpringState state, final Blackhole blackhole)
+	public void find1000LastCustomersOf10000(final Simple10000CustomerSpringState state, final Blackhole blackhole)
 	{
-		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
-		blackhole.consume(customerRepository.findAll());
+		final CustomerWithAutoIdRepository customerRepository = state.getBean(CustomerWithAutoIdRepository.class);
+		blackhole.consume(customerRepository.findAllById(IntStream.range(8999, 10000).boxed().toList()));
 	}
 }
