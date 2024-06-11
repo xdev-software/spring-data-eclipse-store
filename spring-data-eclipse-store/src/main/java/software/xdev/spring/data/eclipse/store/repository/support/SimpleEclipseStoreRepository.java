@@ -21,15 +21,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
@@ -39,6 +42,7 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreQueryByExampleExecutor;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQueryExecutor;
@@ -55,7 +59,8 @@ public class SimpleEclipseStoreRepository<T, ID>
 	EclipseStorePagingAndSortingRepositoryRepository<T, ID>,
 	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
 	EclipseStoreCrudRepository<T, ID>,
-	EclipseStoreListCrudRepository<T, ID>
+	EclipseStoreListCrudRepository<T, ID>,
+	EclipseStoreQueryByExampleExecutor<T>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleEclipseStoreRepository.class);
 	private final EclipseStoreStorage storage;
@@ -342,5 +347,56 @@ public class SimpleEclipseStoreRepository<T, ID>
 					new Object[]{pageable});
 			}
 		);
+	}
+	
+	@Override
+	public <S extends T> Optional<S> findOne(final Example<S> example)
+	{
+		// TODO
+		return Optional.empty();
+	}
+	
+	@Override
+	public <S extends T> Iterable<S> findAll(final Example<S> example)
+	{
+		// TODO
+		return null;
+	}
+	
+	@Override
+	public <S extends T> Iterable<S> findAll(final Example<S> example, final Sort sort)
+	{
+		// TODO
+		return null;
+	}
+	
+	@Override
+	public <S extends T> Page<S> findAll(final Example<S> example, final Pageable pageable)
+	{
+		// TODO
+		return null;
+	}
+	
+	@Override
+	public <S extends T> long count(final Example<S> example)
+	{
+		// TODO
+		return 0;
+	}
+	
+	@Override
+	public <S extends T> boolean exists(final Example<S> example)
+	{
+		// TODO
+		return false;
+	}
+	
+	@Override
+	public <S extends T, R> R findBy(
+		final Example<S> example,
+		final Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction)
+	{
+		// TODO
+		return null;
 	}
 }

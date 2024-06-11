@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.interfaces;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.query.by.example;
 
-import org.springframework.data.repository.NoRepositoryBean;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-@NoRepositoryBean
-public interface EclipseStoreRepository<T, ID>
-	extends
-	EclipseStoreListCrudRepository<T, ID>,
-	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
-	EclipseStoreQueryByExampleExecutor<T>
+public interface UserRepository extends EclipseStoreRepository<User, Integer>
 {
 }
