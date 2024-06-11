@@ -231,34 +231,39 @@ public class SimpleEclipseStoreRepository<T, ID>
 	
 	@Override
 	@Nonnull
-	public List<T> findAllById(@Nonnull final Iterable<ID> ids)
+	public List<T> findAllById(@Nonnull final Iterable<ID> idsToFind)
 	{
 		return this.storage.getReadWriteLock().read(
-			() -> {
-				final List<T> foundEntities = new ArrayList<>();
-				for(final T entity : this.storage.getEntityList(this.domainClass))
-				{
-					try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
-						this.getIdField(),
-						entity))
+			() -> this.storage
+				.getEntityList(this.domainClass)
+				.stream()
+				.filter(
+					entity ->
 					{
-						for(final ID id : ids)
+						try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
+							this.getIdField(),
+							entity))
 						{
-							if(id.equals(fam.getValueOfField(entity)))
+							final Object idOfEntity = fam.getValueOfField(entity);
+							for(final ID idToFind : idsToFind)
 							{
-								foundEntities.add(this.copier.copy(entity));
+								if(idToFind.equals(idOfEntity))
+								{
+									return true;
+								}
 							}
 						}
+						catch(final Exception e)
+						{
+							throw new FieldAccessReflectionException(String.format(
+								FieldAccessReflectionException.COULD_NOT_READ_FIELD,
+								this.getIdField().getName()), e);
+						}
+						return false;
 					}
-					catch(final Exception e)
-					{
-						throw new FieldAccessReflectionException(String.format(
-							FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-							this.getIdField().getName()), e);
-					}
-				}
-				return foundEntities;
-			}
+				)
+				.map(entity -> this.copier.copy(entity))
+				.toList()
 		);
 	}
 	
