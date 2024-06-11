@@ -38,7 +38,7 @@ public class WorkingCopyRegistry
 	 * @return {@code true} if original object <b>not</b> already registered.
 	 */
 	@SuppressWarnings("UnusedReturnValue")
-	public synchronized <T> boolean invertRegister(final T workingCopy, final T objectToStore)
+	public <T> boolean invertRegister(final T workingCopy, final T objectToStore)
 	{
 		return this.registerInternal(objectToStore, workingCopy);
 	}
@@ -49,7 +49,7 @@ public class WorkingCopyRegistry
 	 * @return {@code true} if working copy is <b>not</b> already registered.
 	 */
 	@SuppressWarnings("UnusedReturnValue")
-	public synchronized <T> boolean register(final T workingCopyToRegister, final T orginalObject)
+	public <T> boolean register(final T workingCopyToRegister, final T orginalObject)
 	{
 		return this.registerInternal(workingCopyToRegister, orginalObject);
 	}

@@ -17,6 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.support.copier.regist
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.binary.types.BinaryStorer;
@@ -38,32 +39,29 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTyp
 public class EclipseSerializerRegisteringCopier implements AutoCloseable
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseSerializerRegisteringCopier.class);
-	private PersistenceManager<Binary> persistenceManager;
+	private final ThreadLocal<PersistenceManager<Binary>> persistenceManagers;
 	private final SupportedChecker supportedChecker;
 	private final RegisteringWorkingCopyAndOriginal register;
 	
 	public EclipseSerializerRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
-		final PersistenceManager<Binary> persistenceManager)
+		final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier)
 	{
 		this.supportedChecker = supportedChecker;
 		this.register = register;
-		this.persistenceManager = persistenceManager;
+		this.persistenceManagers = ThreadLocal.withInitial(persistenceManagerSupplier);
 	}
 
 	
 	@Override
-	public synchronized void close()
+	public void close()
 	{
-		if(this.persistenceManager != null)
-		{
-			this.persistenceManager.objectRegistry().clearAll();
-			this.persistenceManager.close();
-			this.persistenceManager = null;
-		}
+		this.persistenceManagers.get().objectRegistry().clearAll();
+		this.persistenceManagers.get().close();
+		this.persistenceManagers.remove();
 	}
-	
+
 	/**
 	 * Here lies a lot of knowledge about EclipseStore internals.
 	 * <p>
@@ -78,12 +76,13 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 	 * EclipseStore-ObjectId.
 	 * </p>
 	 */
-	public synchronized <T> T copy(final T source)
+	public <T> T copy(final T source)
 	{
-		this.persistenceManager.objectRegistry().truncateAll();
-		final BinaryStorer.Default storer = (BinaryStorer.Default)this.persistenceManager.createStorer();
+		final PersistenceManager<Binary> persistenceManager = this.persistenceManagers.get();
+		persistenceManager.objectRegistry().truncateAll();
+		final BinaryStorer.Default storer = (BinaryStorer.Default)persistenceManager.createStorer();
 		// Loader erstellen
-		final PersistenceLoader loader = this.persistenceManager.createLoader();
+		final PersistenceLoader loader = persistenceManager.createLoader();
 		
 		storer.store(source);
 		
