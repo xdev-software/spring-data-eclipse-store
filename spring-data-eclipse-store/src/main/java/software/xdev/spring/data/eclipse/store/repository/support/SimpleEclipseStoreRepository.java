@@ -111,7 +111,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 				}
 				final List<WorkingCopierResult<T>> results =
 					this.checkEntityForNull(entities)
-						.stream()
+						.parallelStream()
 						.map(this.copier::mergeBack)
 						.toList();
 				final Set<Object> nonEntitiesToStore =
@@ -170,62 +170,48 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public Optional<T> findById(@Nonnull final ID id)
 	{
 		return this.storage.getReadWriteLock().read(
-			() -> {
-				for(final T entity : this.storage.getEntityList(this.domainClass))
-				{
-					try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
-						this.getIdField(),
-						entity))
+			() -> this.storage
+				.getEntityList(this.domainClass)
+				.parallelStream()
+				.filter(
+					entity ->
 					{
-						if(id.equals(fam.getValueOfField(entity)))
+						try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
+							this.getIdField(),
+							entity))
 						{
-							return Optional.of(this.copier.copy(entity));
+							if(id.equals(fam.getValueOfField(entity)))
+							{
+								return true;
+							}
 						}
+						catch(final Exception e)
+						{
+							throw new FieldAccessReflectionException(String.format(
+								FieldAccessReflectionException.COULD_NOT_READ_FIELD,
+								this.getIdField().getName()), e);
+						}
+						return false;
 					}
-					catch(final Exception e)
-					{
-						throw new FieldAccessReflectionException(String.format(
-							FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-							this.getIdField().getName()), e);
-					}
-				}
-				return Optional.empty();
-			}
+				)
+				.findAny()
+				.map(foundEntity -> this.copier.copy(foundEntity))
 		);
 	}
 	
 	@Override
 	public boolean existsById(@Nonnull final ID id)
 	{
-		return this.storage.getReadWriteLock().read(
-			() -> {
-				for(final T entity : this.storage.getEntityList(this.domainClass))
-				{
-					try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
-						this.getIdField(),
-						entity))
-					{
-						if(id.equals(fam.getValueOfField(entity)))
-						{
-							return true;
-						}
-					}
-					catch(final Exception e)
-					{
-						throw new FieldAccessReflectionException(String.format(
-							FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-							this.getIdField().getName()), e);
-					}
-				}
-				return false;
-			}
-		);
+		return this.findById(id).isPresent();
 	}
 	
 	@Override
 	@Nonnull
 	public List<T> findAll()
 	{
+		// Must get copied as one list to keep same references objects the same.
+		// (Example: If o1 and o2 (both part of the entity list) are referencing o3,
+		// o3 should be the same no matter from where it is referenced.
 		return this.copier.copy(this.storage.getEntityList(this.domainClass)).stream().toList();
 	}
 	
@@ -234,9 +220,13 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public List<T> findAllById(@Nonnull final Iterable<ID> idsToFind)
 	{
 		return this.storage.getReadWriteLock().read(
-			() -> this.storage
+			// Must get copied as one list to keep same references objects the same.
+			// (Example: If o1 and o2 (both part of the entity list) are referencing o3,
+			// o3 should be the same no matter from where it is referenced.
+			() -> this.copier.copy(
+				this.storage
 				.getEntityList(this.domainClass)
-				.stream()
+					.parallelStream()
 				.filter(
 					entity ->
 					{
@@ -262,8 +252,8 @@ public class SimpleEclipseStoreRepository<T, ID>
 						return false;
 					}
 				)
-				.map(entity -> this.copier.copy(entity))
 				.toList()
+			)
 		);
 	}
 	
