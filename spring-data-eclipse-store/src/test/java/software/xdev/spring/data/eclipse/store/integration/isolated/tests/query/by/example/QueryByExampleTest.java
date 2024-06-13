@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -111,6 +113,87 @@ class QueryByExampleTest
 					);
 				Assertions.assertEquals(1, foundUsers.size());
 				Assertions.assertEquals(this.user1, foundUsers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherPaging()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME.substring(2), BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("balance", ExampleMatcher.GenericPropertyMatchers.exact());
+				
+				final Page<User> foundUsers =
+					this.userRepository.findAll(
+						Example.of(probe, matcher),
+						Pageable.ofSize(1)
+					);
+				Assertions.assertEquals(2, foundUsers.getTotalPages());
+				Assertions.assertEquals(1, foundUsers.getContent().size());
+				
+				final Page<User> nextFoundUsers =
+					this.userRepository.findAll(
+						Example.of(probe, matcher),
+						foundUsers.nextPageable()
+					);
+				Assertions.assertEquals(1, nextFoundUsers.getContent().size());
+				
+				Assertions.assertNotEquals(foundUsers.getContent().get(0), nextFoundUsers.getContent().get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherSorting()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME.substring(2), BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("balance", ExampleMatcher.GenericPropertyMatchers.exact());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher),
+							Sort.by("name")
+						)
+					);
+				Assertions.assertEquals(2, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
+				Assertions.assertEquals(this.user2, foundUsers.get(1));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherSortingInverted()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME.substring(2), BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("balance", ExampleMatcher.GenericPropertyMatchers.exact());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher),
+							Sort.by("name").descending()
+						)
+					);
+				Assertions.assertEquals(2, foundUsers.size());
+				Assertions.assertEquals(this.user2, foundUsers.get(0));
+				Assertions.assertEquals(this.user1, foundUsers.get(1));
 			}
 		);
 	}
@@ -248,7 +331,8 @@ class QueryByExampleTest
 						)
 					);
 				Assertions.assertEquals(2, foundUsers.size());
-				Assertions.assertEquals(this.user1, foundUsers.get(0));
+				Assertions.assertEquals(this.user1.getBalance(), foundUsers.get(0).getBalance());
+				Assertions.assertEquals(this.user1.getBalance(), foundUsers.get(1).getBalance());
 			}
 		);
 	}
