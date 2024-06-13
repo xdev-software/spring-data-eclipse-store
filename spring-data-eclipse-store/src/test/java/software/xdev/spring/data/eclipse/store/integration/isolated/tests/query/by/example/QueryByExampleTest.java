@@ -222,7 +222,7 @@ class QueryByExampleTest
 	}
 	
 	@Test
-	void exampleMatcheExactBalanceAndExactName()
+	void exampleMatcherExactBalanceAndExactName()
 	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,

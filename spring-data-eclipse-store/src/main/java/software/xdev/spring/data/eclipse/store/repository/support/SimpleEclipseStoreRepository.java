@@ -44,6 +44,7 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreQueryByExampleExecutor;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.query.by.example.EclipseStoreFetchableFluentQuery;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.CriteriaByExample;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.CountQueryExecutor;
@@ -433,7 +434,16 @@ public class SimpleEclipseStoreRepository<T, ID>
 		final Example<S> example,
 		final Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction)
 	{
-		// TODO
-		return null;
+		final EclipseStoreFetchableFluentQuery<T, S> query = new EclipseStoreFetchableFluentQuery<>(
+			this.copier,
+			example,
+			this.domainClass,
+			this.storage,
+			null
+		);
+		
+		return this.storage.getReadWriteLock().read(
+			() -> queryFunction.apply(query)
+		);
 	}
 }

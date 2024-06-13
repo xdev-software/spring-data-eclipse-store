@@ -25,11 +25,15 @@ import java.util.regex.Pattern;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.query.ReflectedField;
 
 
+/**
+ * Creates a criteria from {@link Example}s. Needed to implement {@link QueryByExampleExecutor}.
+ */
 public class CriteriaByExample<T, S extends T> implements Criteria<T>
 {
 	private final Predicate<T> predicate;
