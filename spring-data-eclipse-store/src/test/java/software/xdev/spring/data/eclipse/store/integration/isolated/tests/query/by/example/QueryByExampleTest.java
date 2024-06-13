@@ -17,6 +17,7 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.query
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -92,7 +93,53 @@ class QueryByExampleTest
 	}
 	
 	@Test
-	void exampleMatcher()
+	void exampleMatcherEndsWithName()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME.substring(2), BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.endsWith());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
+					);
+				Assertions.assertEquals(1, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherStartsWithName()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME.substring(0, 1), BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.startsWith());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
+					);
+				Assertions.assertEquals(1, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcheExactBalanceAndExactName()
 	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
@@ -100,18 +147,108 @@ class QueryByExampleTest
 				final User probe = new User(1, TestData.FIRST_NAME, BigDecimal.TEN);
 				
 				final ExampleMatcher matcher = ExampleMatcher.matching()
-					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.endsWith())
-					.withMatcher("balance", );
+					.withMatcher("balance", ExampleMatcher.GenericPropertyMatchers.exact())
+					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.exact());
 				
-				final Optional<User> foundUser =
-					this.userRepository.findBy(
-						Example.of(
-							probe,
-							
-							)
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
 					);
-				Assertions.assertTrue(foundUser.isPresent());
-				Assertions.assertEquals(this.user1, foundUser.get());
+				Assertions.assertEquals(1, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherExactName()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME, BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.exact());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
+					);
+				Assertions.assertEquals(1, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherExactNameWrongName()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, "UselessData", BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.exact());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
+					);
+				Assertions.assertTrue(foundUsers.isEmpty());
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherExactIgnoreCase()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, TestData.FIRST_NAME.toLowerCase(Locale.getDefault()), BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.ignoreCase());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
+					);
+				Assertions.assertEquals(1, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void exampleMatcherExactBalance()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final User probe = new User(1, "", BigDecimal.TEN);
+				
+				final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withMatcher("balance", ExampleMatcher.GenericPropertyMatchers.exact());
+				
+				final List<User> foundUsers =
+					TestUtil.iterableToList(
+						this.userRepository.findAll(
+							Example.of(probe, matcher)
+						)
+					);
+				Assertions.assertEquals(2, foundUsers.size());
+				Assertions.assertEquals(this.user1, foundUsers.get(0));
 			}
 		);
 	}

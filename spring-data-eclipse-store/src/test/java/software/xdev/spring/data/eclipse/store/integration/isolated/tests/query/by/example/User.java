@@ -16,6 +16,7 @@
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.query.by.example;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import jakarta.persistence.Id;
 
@@ -64,5 +65,28 @@ public class User
 	public void setName(final String name)
 	{
 		this.name = name;
+	}
+	
+	@Override
+	public boolean equals(final Object o)
+	{
+		if(this == o)
+		{
+			return true;
+		}
+		if(o == null || this.getClass() != o.getClass())
+		{
+			return false;
+		}
+		final User user = (User)o;
+		return this.id == user.id && Objects.equals(this.name, user.name) && Objects.equals(
+			this.balance,
+			user.balance);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(this.id, this.name, this.balance);
 	}
 }
