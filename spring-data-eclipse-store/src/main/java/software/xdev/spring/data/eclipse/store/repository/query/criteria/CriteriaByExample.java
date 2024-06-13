@@ -103,9 +103,9 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 			final Optional<Object> transformedValue =
 				specifier.getPropertyValueTransformer().apply(Optional.ofNullable(value));
 			
-			final ExampleMatcher.StringMatcher setOrDefaultMatcher = specifier.getStringMatcher() == null ?
-				example.getMatcher().getDefaultStringMatcher() :
-				specifier.getStringMatcher();
+			final ExampleMatcher.StringMatcher setOrDefaultMatcher = specifier.getStringMatcher() == null
+				? example.getMatcher().getDefaultStringMatcher()
+				: specifier.getStringMatcher();
 			
 			switch(setOrDefaultMatcher)
 			{
@@ -159,8 +159,11 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 						)
 						.matcher(valueAsString.get()).find();
 				}
+				default ->
+				{
+					return false;
+				}
 			}
-			return true;
 		};
 	}
 	
