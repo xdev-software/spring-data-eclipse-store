@@ -76,31 +76,25 @@ public class EclipseStoreStorage
 		return this.registry;
 	}
 	
-	private void ensureEntitiesInRoot()
+	private synchronized void ensureEntitiesInRoot()
 	{
 		if(this.storageManager == null)
 		{
-			synchronized(this)
-			{
-				if(this.storageManager == null)
-				{
-					LOG.info("Starting storage...");
-					this.root = new Root();
-					final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
-						this.foundationProvider.createEmbeddedStorageFoundation();
-					embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
-					embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
-					this.storageManager = embeddedStorageFoundation.start(this.root);
-					this.persistenceChecker = new RelayedPersistenceChecker(embeddedStorageFoundation);
-					this.initRoot();
-					final Integer entitySum =
-						this.root.getEntityLists().values().stream().map(IdentitySet::size).reduce(0, Integer::sum);
-					LOG.info(
-						"Storage started with {} entity lists and {} entities.",
-						this.root.getEntityLists().size(),
-						entitySum);
-				}
-			}
+			LOG.info("Starting storage...");
+			this.root = new Root();
+			final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
+				this.foundationProvider.createEmbeddedStorageFoundation();
+			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
+			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
+			this.storageManager = embeddedStorageFoundation.start(this.root);
+			this.persistenceChecker = new RelayedPersistenceChecker(embeddedStorageFoundation);
+			this.initRoot();
+			final Integer entitySum =
+				this.root.getEntityLists().values().stream().map(IdentitySet::size).reduce(0, Integer::sum);
+			LOG.info(
+				"Storage started with {} entity lists and {} entities.",
+				this.root.getEntityLists().size(),
+				entitySum);
 		}
 	}
 	
@@ -315,7 +309,7 @@ public class EclipseStoreStorage
 	/**
 	 * Stops the storage.
 	 */
-	public void stop()
+	public synchronized void stop()
 	{
 		this.readWriteLock.write(
 			() ->
