@@ -1,3 +1,9 @@
+# 1.0.7
+
+* QueryByExample now possible
+* Performance optimizations
+* It's now possible to use multiple repositories with the same class/entity
+
 # 1.0.6
 
 * Fixed problem with missing configuration

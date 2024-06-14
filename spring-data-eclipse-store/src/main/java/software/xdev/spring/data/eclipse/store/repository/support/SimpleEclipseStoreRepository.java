@@ -21,15 +21,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
@@ -39,10 +42,16 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreQueryByExampleExecutor;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.query.by.example.EclipseStoreFetchableFluentQuery;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
+import software.xdev.spring.data.eclipse.store.repository.query.criteria.CriteriaByExample;
+import software.xdev.spring.data.eclipse.store.repository.query.executors.CountQueryExecutor;
+import software.xdev.spring.data.eclipse.store.repository.query.executors.ExistsQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
+import software.xdev.spring.data.eclipse.store.repository.query.executors.SingleOptionalQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransaction;
@@ -55,7 +64,8 @@ public class SimpleEclipseStoreRepository<T, ID>
 	EclipseStorePagingAndSortingRepositoryRepository<T, ID>,
 	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
 	EclipseStoreCrudRepository<T, ID>,
-	EclipseStoreListCrudRepository<T, ID>
+	EclipseStoreListCrudRepository<T, ID>,
+	EclipseStoreQueryByExampleExecutor<T>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleEclipseStoreRepository.class);
 	private final EclipseStoreStorage storage;
@@ -72,7 +82,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		this.storage = storage;
 		this.domainClass = domainClass;
-		this.storage.registerEntity(domainClass);
+		this.storage.registerEntity(domainClass, this);
 		this.copier = copier;
 		this.transactionManager = transactionManager;
 	}
@@ -94,48 +104,53 @@ public class SimpleEclipseStoreRepository<T, ID>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public synchronized <S extends T> List<S> saveBulk(final Collection<S> entities)
+	public <S extends T> List<S> saveBulk(final Collection<S> entities)
 	{
 		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
 		transaction.addAction(() -> this.uncachedStore(entities));
 		return (List<S>)entities;
 	}
 	
-	private synchronized <S extends T> void uncachedStore(final Collection<S> entities)
+	private <S extends T> void uncachedStore(final Collection<S> entities)
 	{
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Saving {} entities...", entities.size());
-		}
-		final List<WorkingCopierResult<T>> results =
-			this.checkEntityForNull(entities)
-				.stream()
-				.map(this.copier::mergeBack)
-				.toList();
-		final Set<Object> nonEntitiesToStore =
-			results
-				.stream()
-				.map(WorkingCopierResult::nonEntitiesToStore)
-				.flatMap(Collection::stream)
-				.collect(Collectors.toUnmodifiableSet());
-		final List<T> entitiesToStore =
-			results
-				.stream()
-				.map(WorkingCopierResult::originalEntities)
-				.flatMap(Collection::stream)
-				.toList();
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Collected {} non-entities to store.", nonEntitiesToStore.size());
-		}
-		this.storage.store(nonEntitiesToStore, this.domainClass, entitiesToStore);
+		this.storage.getReadWriteLock().write(
+			() -> {
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Saving {} entities...", entities.size());
+				}
+				final List<WorkingCopierResult<T>> results =
+					this.checkEntityForNull(entities)
+						.parallelStream()
+						.map(this.copier::mergeBack)
+						.toList();
+				final Set<Object> nonEntitiesToStore =
+					results
+						.stream()
+						.map(WorkingCopierResult::nonEntitiesToStore)
+						.flatMap(Collection::stream)
+						.collect(Collectors.toUnmodifiableSet());
+				final List<T> entitiesToStore =
+					results
+						.stream()
+						.map(WorkingCopierResult::originalEntities)
+						.flatMap(Collection::stream)
+						.toList();
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Collected {} non-entities to store.", nonEntitiesToStore.size());
+				}
+				this.storage.store(nonEntitiesToStore, this.domainClass, entitiesToStore);
+			}
+		);
 	}
 	
 	@Override
 	@Nonnull
-	public synchronized <S extends T> S save(@Nonnull final S entity)
+	public <S extends T> S save(@Nonnull final S entity)
 	{
-		return this.saveBulk(List.of(this.checkEntityForNull(entity))).get(0);
+		return this.storage.getReadWriteLock()
+			.write(() -> this.saveBulk(List.of(this.checkEntityForNull(entity))).get(0));
 	}
 	
 	private <S> S checkEntityForNull(final S entity)
@@ -151,88 +166,105 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Nonnull
 	public <S extends T> List<S> saveAll(@Nonnull final Iterable<S> entities)
 	{
-		final List<S> list = new ArrayList<>();
-		this.checkEntityForNull(entities).forEach(list::add);
-		return this.saveBulk(list);
+		return this.storage.getReadWriteLock().write(
+			() -> {
+				final List<S> list = new ArrayList<>();
+				this.checkEntityForNull(entities).forEach(list::add);
+				return this.saveBulk(list);
+			}
+		);
 	}
 	
 	@Override
 	@Nonnull
 	public Optional<T> findById(@Nonnull final ID id)
 	{
-		for(final T entity : this.storage.getEntityList(this.domainClass))
-		{
-			try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(this.getIdField(), entity))
-			{
-				if(id.equals(fam.getValueOfField(entity)))
-				{
-					return Optional.of(this.copier.copy(entity));
-				}
-			}
-			catch(final Exception e)
-			{
-				throw new FieldAccessReflectionException(String.format(
-					FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-					this.getIdField().getName()), e);
-			}
-		}
-		return Optional.empty();
+		return this.storage.getReadWriteLock().read(
+			() -> this.storage
+				.getEntityList(this.domainClass)
+				.parallelStream()
+				.filter(
+					entity ->
+					{
+						try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
+							this.getIdField(),
+							entity))
+						{
+							if(id.equals(fam.getValueOfField(entity)))
+							{
+								return true;
+							}
+						}
+						catch(final Exception e)
+						{
+							throw new FieldAccessReflectionException(String.format(
+								FieldAccessReflectionException.COULD_NOT_READ_FIELD,
+								this.getIdField().getName()), e);
+						}
+						return false;
+					}
+				)
+				.findAny()
+				.map(foundEntity -> this.copier.copy(foundEntity))
+		);
 	}
 	
 	@Override
 	public boolean existsById(@Nonnull final ID id)
 	{
-		for(final T entity : this.storage.getEntityList(this.domainClass))
-		{
-			try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(this.getIdField(), entity))
-			{
-				if(id.equals(fam.getValueOfField(entity)))
-				{
-					return true;
-				}
-			}
-			catch(final Exception e)
-			{
-				throw new FieldAccessReflectionException(String.format(
-					FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-					this.getIdField().getName()), e);
-			}
-		}
-		return false;
+		return this.findById(id).isPresent();
 	}
 	
 	@Override
 	@Nonnull
 	public List<T> findAll()
 	{
+		// Must get copied as one list to keep same references objects the same.
+		// (Example: If o1 and o2 (both part of the entity list) are referencing o3,
+		// o3 should be the same no matter from where it is referenced.
 		return this.copier.copy(this.storage.getEntityList(this.domainClass)).stream().toList();
 	}
 	
 	@Override
 	@Nonnull
-	public List<T> findAllById(@Nonnull final Iterable<ID> ids)
+	public List<T> findAllById(@Nonnull final Iterable<ID> idsToFind)
 	{
-		final List<T> foundEntities = new ArrayList<>();
-		for(final T entity : this.storage.getEntityList(this.domainClass))
-		{
-			try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(this.getIdField(), entity))
-			{
-				for(final ID id : ids)
-				{
-					if(id.equals(fam.getValueOfField(entity)))
-					{
-						foundEntities.add(this.copier.copy(entity));
-					}
-				}
-			}
-			catch(final Exception e)
-			{
-				throw new FieldAccessReflectionException(String.format(
-					FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-					this.getIdField().getName()), e);
-			}
-		}
-		return foundEntities;
+		return this.storage.getReadWriteLock().read(
+			// Must get copied as one list to keep same references objects the same.
+			// (Example: If o1 and o2 (both part of the entity list) are referencing o3,
+			// o3 should be the same no matter from where it is referenced.
+			() -> this.copier.copy(
+				this.storage
+					.getEntityList(this.domainClass)
+					.parallelStream()
+					.filter(
+						entity ->
+						{
+							try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
+								this.getIdField(),
+								entity))
+							{
+								final Object idOfEntity = fam.getValueOfField(entity);
+								for(final ID idToFind : idsToFind)
+								{
+									if(idToFind.equals(idOfEntity))
+									{
+										return true;
+									}
+								}
+							}
+							catch(final Exception e)
+							{
+								throw new FieldAccessReflectionException(String.format(
+									FieldAccessReflectionException.COULD_NOT_READ_FIELD,
+									this.getIdField().getName()), e);
+							}
+							return false;
+						}
+					)
+					.toList()
+			)
+		);
 	}
 	
 	@Override
@@ -244,8 +276,12 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public void deleteById(@Nonnull final ID id)
 	{
-		final Optional<T> byId = this.findById(id);
-		byId.ifPresent(this::delete);
+		this.storage.getReadWriteLock().write(
+			() -> {
+				final Optional<T> byId = this.findById(id);
+				byId.ifPresent(this::delete);
+			}
+		);
 	}
 	
 	@Override
@@ -253,28 +289,41 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
 		transaction.addAction(() ->
-		{
-			this.storage.delete(this.domainClass, this.copier.getOriginal(entity));
-			this.copier.deregister(entity);
-		});
+			this.storage.getReadWriteLock().write(
+				() -> {
+					this.storage.delete(this.domainClass, this.copier.getOriginal(entity));
+					this.copier.deregister(entity);
+				}
+			)
+		);
 	}
 	
 	@Override
 	public void deleteAllById(final Iterable<? extends ID> ids)
 	{
-		for(final ID id : ids)
-		{
-			this.deleteById(id);
-		}
+		this.storage.getReadWriteLock().write(
+			() ->
+			{
+				for(final ID id : ids)
+				{
+					this.deleteById(id);
+				}
+			}
+		);
 	}
 	
 	@Override
 	public void deleteAll(final Iterable<? extends T> entities)
 	{
-		for(final T entity : entities)
-		{
-			this.delete(entity);
-		}
+		this.storage.getReadWriteLock().write(
+			() ->
+			{
+				for(final T entity : entities)
+				{
+					this.delete(entity);
+				}
+			}
+		);
 	}
 	
 	@Override
@@ -289,7 +338,13 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public List<T> findAll(@Nonnull final Sort sort)
 	{
 		final ListQueryExecutor<T> query = new ListQueryExecutor<>(this.copier, Criteria.createNoCriteria());
-		return query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), new Object[]{sort});
+		return this.storage.getReadWriteLock().read(
+			() ->
+				query.execute(
+					this.domainClass,
+					this.storage.getEntityList(this.domainClass),
+					new Object[]{sort})
+		);
 	}
 	
 	@Override
@@ -298,9 +353,97 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		final PageableQueryExecutor<T> pageableQuery =
 			new PageableQueryExecutor<>(this.copier, Criteria.createNoCriteria(), null);
-		return pageableQuery.execute(
+		return this.storage.getReadWriteLock().read(
+			() ->
+				pageableQuery.execute(
+					this.domainClass,
+					this.storage.getEntityList(this.domainClass),
+					new Object[]{pageable})
+		);
+	}
+	
+	@Override
+	public <S extends T> Optional<S> findOne(final Example<S> example)
+	{
+		final SingleOptionalQueryExecutor<T> query =
+			new SingleOptionalQueryExecutor<>(this.copier, new CriteriaByExample<>((Example<T>)example), null);
+		return this.storage.getReadWriteLock().read(
+			() ->
+				(Optional<S>)query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+		);
+	}
+	
+	@Override
+	public <S extends T> Iterable<S> findAll(final Example<S> example)
+	{
+		final ListQueryExecutor<T> query =
+			new ListQueryExecutor<>(this.copier, new CriteriaByExample<>(example));
+		return this.storage.getReadWriteLock().read(
+			() -> (Iterable<S>)query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+		);
+	}
+	
+	@Override
+	public <S extends T> Iterable<S> findAll(final Example<S> example, final Sort sort)
+	{
+		final ListQueryExecutor<T> query =
+			new ListQueryExecutor<>(this.copier, new CriteriaByExample<>(example));
+		return this.storage.getReadWriteLock().read(
+			() ->
+				(Iterable<S>)query.execute(
+					this.domainClass,
+					this.storage.getEntityList(this.domainClass),
+					new Object[]{sort})
+		);
+	}
+	
+	@Override
+	public <S extends T> Page<S> findAll(final Example<S> example, final Pageable pageable)
+	{
+		final PageableQueryExecutor<T> pageableQuery =
+			new PageableQueryExecutor<>(this.copier, new CriteriaByExample<>(example), null);
+		return this.storage.getReadWriteLock().read(
+			() ->
+				(Page<S>)pageableQuery.execute(
+					this.domainClass,
+					this.storage.getEntityList(this.domainClass),
+					new Object[]{pageable})
+		);
+	}
+	
+	@Override
+	public <S extends T> long count(final Example<S> example)
+	{
+		final CountQueryExecutor<T> query = new CountQueryExecutor<>(new CriteriaByExample<>(example));
+		return this.storage.getReadWriteLock().read(
+			() -> query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+		);
+	}
+	
+	@Override
+	public <S extends T> boolean exists(final Example<S> example)
+	{
+		final ExistsQueryExecutor<T> query = new ExistsQueryExecutor<>(new CriteriaByExample<>(example));
+		return this.storage.getReadWriteLock().read(
+			() -> query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+		);
+	}
+	
+	@Override
+	public <S extends T, R> R findBy(
+		final Example<S> example,
+		final Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction)
+	{
+		final EclipseStoreFetchableFluentQuery<T, S> query = new EclipseStoreFetchableFluentQuery<>(
+			this.copier,
+			example,
 			this.domainClass,
-			this.storage.getEntityList(this.domainClass),
-			new Object[]{pageable});
+			this.storage,
+			null
+		);
+		
+		return this.storage.getReadWriteLock().read(
+			() -> queryFunction.apply(query)
+		);
 	}
 }

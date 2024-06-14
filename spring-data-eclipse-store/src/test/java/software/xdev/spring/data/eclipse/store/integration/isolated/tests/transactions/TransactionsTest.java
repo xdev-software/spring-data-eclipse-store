@@ -64,7 +64,7 @@ class TransactionsTest
 	}
 	
 	@Test
-	void accountTransaction_Working(@Autowired final PlatformTransactionManager transactionManager)
+	void accountTransactionWorking(@Autowired final PlatformTransactionManager transactionManager)
 	{
 		new TransactionTemplate(transactionManager).execute(
 			status ->
@@ -93,7 +93,7 @@ class TransactionsTest
 	 * Implementations.
 	 */
 	@Test
-	void accountTransaction_ChangeAfterSave(@Autowired final PlatformTransactionManager transactionManager)
+	void accountTransactionChangeAfterSave(@Autowired final PlatformTransactionManager transactionManager)
 	{
 		new TransactionTemplate(transactionManager).execute(
 			status ->
@@ -111,7 +111,7 @@ class TransactionsTest
 	}
 	
 	@Test
-	void accountAndCounterTransaction_Sequential(@Autowired final PlatformTransactionManager transactionManager)
+	void accountAndCounterTransactionSequential(@Autowired final PlatformTransactionManager transactionManager)
 	{
 		new TransactionTemplate(transactionManager).execute(
 			status ->
@@ -172,7 +172,7 @@ class TransactionsTest
 	}
 	
 	@Test
-	void accountAndCounterTransaction_SameTransaction(@Autowired final PlatformTransactionManager transactionManager)
+	void accountAndCounterTransactionSameTransaction(@Autowired final PlatformTransactionManager transactionManager)
 	{
 		new TransactionTemplate(transactionManager).execute(
 			status ->
@@ -208,7 +208,7 @@ class TransactionsTest
 	}
 	
 	@Test
-	void accountTransaction_UnexpectedError(@Autowired final PlatformTransactionManager transactionManager)
+	void accountTransactionUnexpectedError(@Autowired final PlatformTransactionManager transactionManager)
 	{
 		Assertions.assertThrows(RuntimeException.class, () ->
 			new TransactionTemplate(transactionManager).execute(
@@ -248,10 +248,10 @@ class TransactionsTest
 	}
 	
 	/**
-	 * Opposite test to {@link TransactionsAnnotationTest#accountTransaction_UnexpectedError_Annotation()}.
+	 * Opposite test to {@link TransactionsAnnotationTest#accountTransactionUnexpectedErrorAnnotation()}.
 	 */
 	@Test
-	void accountNoTransaction_UnexpectedError()
+	void accountNoTransactionUnexpectedError()
 	{
 		Assertions.assertThrows(RuntimeException.class, () -> {
 			final Account account1 = new Account(1, BigDecimal.TEN);

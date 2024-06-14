@@ -18,6 +18,6 @@ package software.xdev.spring.data.eclipse.store.benchmark.benchmarks.with.id;
 import org.springframework.data.repository.CrudRepository;
 
 
-public interface CustomerWithAutoIdRepository extends CrudRepository<CustomerWithAutoId, String>
+public interface CustomerWithAutoIdRepository extends CrudRepository<CustomerWithAutoId, Integer>
 {
 }

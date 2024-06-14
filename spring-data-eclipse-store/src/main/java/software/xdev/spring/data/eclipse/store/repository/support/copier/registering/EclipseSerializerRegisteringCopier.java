@@ -17,6 +17,9 @@ package software.xdev.spring.data.eclipse.store.repository.support.copier.regist
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.binary.types.BinaryStorer;
@@ -38,30 +41,48 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTyp
 public class EclipseSerializerRegisteringCopier implements AutoCloseable
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseSerializerRegisteringCopier.class);
-	private PersistenceManager<Binary> persistenceManager;
+	private final Queue<PersistenceManager<Binary>> persistenceManagers;
+	private final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier;
 	private final SupportedChecker supportedChecker;
 	private final RegisteringWorkingCopyAndOriginal register;
 	
 	public EclipseSerializerRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
-		final PersistenceManager<Binary> persistenceManager)
+		final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier)
 	{
 		this.supportedChecker = supportedChecker;
 		this.register = register;
-		this.persistenceManager = persistenceManager;
+		this.persistenceManagerSupplier = persistenceManagerSupplier;
+		this.persistenceManagers = new ConcurrentLinkedQueue<>();
 	}
-
+	
+	private PersistenceManager<Binary> ensurePersistenceManager()
+	{
+		final PersistenceManager<Binary> readyToUsePersistenceManager = this.persistenceManagers.poll();
+		if(readyToUsePersistenceManager == null)
+		{
+			return this.persistenceManagerSupplier.get();
+		}
+		return readyToUsePersistenceManager;
+	}
+	
+	private void returnPersistenceManagerForFutureUses(final PersistenceManager<Binary> usedPersistenceManager)
+	{
+		this.persistenceManagers.add(usedPersistenceManager);
+	}
 	
 	@Override
-	public synchronized void close()
+	public void close()
 	{
-		if(this.persistenceManager != null)
+		PersistenceManager<Binary> usedPersistenceManager = this.persistenceManagers.poll();
+		do
 		{
-			this.persistenceManager.objectRegistry().clearAll();
-			this.persistenceManager.close();
-			this.persistenceManager = null;
+			usedPersistenceManager.objectRegistry().clearAll();
+			usedPersistenceManager.close();
+			usedPersistenceManager = this.persistenceManagers.poll();
 		}
+		while(usedPersistenceManager != null);
 	}
 	
 	/**
@@ -78,12 +99,25 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 	 * EclipseStore-ObjectId.
 	 * </p>
 	 */
-	public synchronized <T> T copy(final T source)
+	public <T> T copy(final T source)
 	{
-		this.persistenceManager.objectRegistry().truncateAll();
-		final BinaryStorer.Default storer = (BinaryStorer.Default)this.persistenceManager.createStorer();
+		final PersistenceManager<Binary> persistenceManager = this.ensurePersistenceManager();
+		try
+		{
+			return this.copy(source, persistenceManager);
+		}
+		finally
+		{
+			this.returnPersistenceManagerForFutureUses(persistenceManager);
+		}
+	}
+	
+	private <T> T copy(final T source, final PersistenceManager<Binary> persistenceManager)
+	{
+		persistenceManager.objectRegistry().truncateAll();
+		final BinaryStorer.Default storer = (BinaryStorer.Default)persistenceManager.createStorer();
 		// Loader erstellen
-		final PersistenceLoader loader = this.persistenceManager.createLoader();
+		final PersistenceLoader loader = persistenceManager.createLoader();
 		
 		storer.store(source);
 		

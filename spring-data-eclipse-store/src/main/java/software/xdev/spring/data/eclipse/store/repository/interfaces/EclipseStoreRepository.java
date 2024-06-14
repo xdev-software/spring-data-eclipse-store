@@ -22,6 +22,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 public interface EclipseStoreRepository<T, ID>
 	extends
 	EclipseStoreListCrudRepository<T, ID>,
-	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>
+	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
+	EclipseStoreQueryByExampleExecutor<T>
 {
 }

@@ -50,13 +50,13 @@ class TransactionsConcurrencyTest
 	}
 	
 	@Test
-	void testSaveConcurrently_PreviouslyNonExistingAccounts(
+	void testSaveConcurrentlyPreviouslyNonExistingAccounts(
 		@Autowired final PlatformTransactionManager transactionManager
 	)
 		throws InterruptedException
 	{
 		final List<Account> testAccounts =
-			IntStream.range(1, 100).mapToObj((i) -> new Account(i, BigDecimal.TEN)).toList();
+			IntStream.range(1, 1000).mapToObj((i) -> new Account(i, BigDecimal.TEN)).toList();
 		
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 		final CountDownLatch latch = new CountDownLatch(testAccounts.size());
@@ -87,7 +87,7 @@ class TransactionsConcurrencyTest
 	}
 	
 	@Test
-	void testSaveConcurrently_PreviouslyExistingAccounts(
+	void testSaveConcurrentlyPreviouslyExistingAccounts(
 		@Autowired final PlatformTransactionManager transactionManager)
 		throws InterruptedException
 	{
@@ -131,7 +131,7 @@ class TransactionsConcurrencyTest
 	 * different CPUs.
 	 */
 	@Test
-	void testSaveConcurrently_ChangesOnSameAccount(
+	void testSaveConcurrentlyChangesOnSameAccount(
 		@Autowired final PlatformTransactionManager transactionManager)
 		throws InterruptedException
 	{
@@ -161,7 +161,7 @@ class TransactionsConcurrencyTest
 	}
 	
 	@Test
-	void testSaveConcurrently_ChangesOnSameAccount_MassRollback(
+	void testSaveConcurrentlyChangesOnSameAccountMassRollback(
 		@Autowired final PlatformTransactionManager transactionManager)
 		throws InterruptedException
 	{

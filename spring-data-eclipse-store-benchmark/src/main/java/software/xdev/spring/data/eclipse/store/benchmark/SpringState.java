@@ -13,7 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.FileSystemUtils;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 @State(Scope.Thread)
@@ -34,13 +34,13 @@ public class SpringState
 	@Setup(Level.Invocation)
 	public void doSetupData()
 	{
-		this.context.getBean(EclipseStoreStorage.class).clearData();
+		this.context.getBean(EclipseStoreClientConfiguration.class).getStorageInstance().clearData();
 	}
 	
 	@TearDown(Level.Invocation)
 	public void doTearDownData()
 	{
-		this.context.getBean(EclipseStoreStorage.class).clearData();
+		this.context.getBean(EclipseStoreClientConfiguration.class).getStorageInstance().clearData();
 	}
 	
 	@TearDown(Level.Trial)

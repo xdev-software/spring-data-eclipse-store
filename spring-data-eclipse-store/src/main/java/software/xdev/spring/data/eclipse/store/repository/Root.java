@@ -40,6 +40,30 @@ public class Root
 		return this.entityLists;
 	}
 	
+	public <T> IdentitySet<T> getEntityList(final Class<T> entityClass)
+	{
+		return (IdentitySet<T>)this.entityLists.get(this.getEntityName(entityClass));
+	}
+	
+	public <T> void createNewEntityList(final Class<T> entityClass)
+	{
+		this.entityLists.put(this.getEntityName(entityClass), new IdentitySet<>());
+	}
+	
+	private <T> String getEntityName(final Class<T> classToRegister)
+	{
+		return classToRegister.getName();
+	}
+	
+	public Object getLastId(final Class<?> entityClass)
+	{
+		return this.getLastIds().get(this.getEntityName(entityClass));
+	}
+	
+	public void setLastId(final Class<?> entityClass, final Object lastId)
+	{
+		this.getLastIds().put(this.getEntityName(entityClass), lastId);
+	}
 	public Map<String, Object> getLastIds()
 	{
 		return this.lastIds;

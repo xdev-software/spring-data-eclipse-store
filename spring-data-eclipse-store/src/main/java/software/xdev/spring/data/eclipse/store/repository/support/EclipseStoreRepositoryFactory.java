@@ -88,6 +88,13 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	@Nonnull
 	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
 	{
+		final SimpleEclipseStoreRepository<?, ?> existingRepository =
+			this.storage.getRepository(metadata.getDomainType());
+		if(existingRepository != null)
+		{
+			return existingRepository;
+		}
+		
 		return this.getTargetRepositoryViaReflection(
 			metadata,
 			this.storage,

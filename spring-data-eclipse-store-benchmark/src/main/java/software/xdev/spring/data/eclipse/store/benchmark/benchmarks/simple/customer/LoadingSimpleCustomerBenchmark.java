@@ -8,7 +8,7 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.infra.Blackhole;
 
 import software.xdev.spring.data.eclipse.store.benchmark.SpringState;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
 public class LoadingSimpleCustomerBenchmark
@@ -26,26 +26,22 @@ public class LoadingSimpleCustomerBenchmark
 		@Setup(Level.Invocation)
 		public void doSetupData()
 		{
-			this.getBean(EclipseStoreStorage.class).clearData();
+			this.getBean(EclipseStoreClientConfiguration.class).getStorageInstance().clearData();
 			this.getBean(CustomerRepository.class).saveAll(
 				IntStream.range(0, this.entityCount).mapToObj(
 					i -> new Customer("Test" + i, "Test" + i)
 				).toList()
 			);
-			this.getBean(EclipseStoreStorage.class).stop();
+			this.getBean(EclipseStoreClientConfiguration.class).getStorageInstance().stop();
 		}
 	}
 	
 	
-	public static class SimpleSingleCustomerSpringState extends SpringState
+	public static class SimpleSingleCustomerSpringState extends ExistingCustomerSpringState
 	{
-		@Override
-		@Setup(Level.Invocation)
-		public void doSetupData()
+		public SimpleSingleCustomerSpringState()
 		{
-			this.getBean(EclipseStoreStorage.class).clearData();
-			this.getBean(CustomerRepository.class).save(new Customer("Test", "Test"));
-			this.getBean(EclipseStoreStorage.class).stop();
+			super(1);
 		}
 	}
 	
@@ -96,7 +92,6 @@ public class LoadingSimpleCustomerBenchmark
 	}
 	
 	@Benchmark
-	// Disabled because this is not working right now.
 	public void load10000Customers(final Simple10000CustomerSpringState state, final Blackhole blackhole)
 	{
 		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);

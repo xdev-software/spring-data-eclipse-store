@@ -20,8 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
@@ -36,6 +35,9 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreStorageFoundationProvider;
+import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
+import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReentrantJavaReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.RepositorySynchronizer;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
@@ -45,8 +47,8 @@ public class EclipseStoreStorage
 	implements EntityListProvider, IdSetterProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
-	private final Map<Class<?>, String> entityClassToRepositoryName = new HashMap<>();
-	private final Map<Class<?>, IdSetter<?>> entityClassToIdSetter = new HashMap<>();
+	private final Map<Class<?>, SimpleEclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
+	private final Map<Class<?>, IdSetter<?>> idSetters = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
@@ -54,6 +56,7 @@ public class EclipseStoreStorage
 	private Root root;
 	
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
+	private final ReadWriteLock readWriteLock = new ReentrantJavaReadWriteLock();
 	private RepositorySynchronizer repositorySynchronizer;
 	
 	public EclipseStoreStorage(final EclipseStoreClientConfiguration storeConfiguration)
@@ -61,7 +64,7 @@ public class EclipseStoreStorage
 		this.foundationProvider = storeConfiguration;
 	}
 	
-	private synchronized StorageManager getInstanceOfStorageManager()
+	private StorageManager getInstanceOfStorageManager()
 	{
 		this.ensureEntitiesInRoot();
 		return this.storageManager;
@@ -94,6 +97,11 @@ public class EclipseStoreStorage
 		}
 	}
 	
+	public <T> SimpleEclipseStoreRepository<T, ?> getRepository(final Class<T> entityClass)
+	{
+		return (SimpleEclipseStoreRepository<T, ?>)this.entityClassToRepository.get(entityClass);
+	}
+	
 	private void initRoot()
 	{
 		if(LOG.isDebugEnabled())
@@ -101,13 +109,13 @@ public class EclipseStoreStorage
 			LOG.debug("Initializing entity lists...");
 		}
 		this.repositorySynchronizer =
-			new SimpleRepositorySynchronizer(this.entityClassToRepositoryName, this.root);
+			new SimpleRepositorySynchronizer(this.root);
 		boolean entityListMustGetStored = false;
-		for(final String entityName : this.entityClassToRepositoryName.values())
+		for(final Class<?> entityClass : this.entityClassToRepository.keySet())
 		{
-			if(!this.root.getEntityLists().containsKey(entityName))
+			if(this.root.getEntityList(entityClass) == null)
 			{
-				this.root.getEntityLists().put(entityName, new IdentitySet<>());
+				this.root.createNewEntityList(entityClass);
 				entityListMustGetStored = true;
 			}
 		}
@@ -115,21 +123,23 @@ public class EclipseStoreStorage
 		{
 			this.storageManager.store(this.root.getEntityLists());
 		}
-		this.entitySetCollector = new EntitySetCollector(this.root.getEntityLists(), this.entityClassToRepositoryName);
+		this.entitySetCollector =
+			new EntitySetCollector(this.root::getEntityList, this.entityClassToRepository.keySet());
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Done initializing entity lists.");
 		}
 	}
 	
-	public synchronized <T> void registerEntity(final Class<T> classToRegister)
+	public synchronized <T> void registerEntity(
+		final Class<T> classToRegister,
+		final SimpleEclipseStoreRepository<T, ?> repository)
 	{
-		final String entityName = this.getEntityName(classToRegister);
-		if(this.entityClassToRepositoryName.containsKey(classToRegister))
+		if(this.entityClassToRepository.containsKey(classToRegister))
 		{
-			throw new AlreadyRegisteredException(entityName);
+			throw new AlreadyRegisteredException(classToRegister.getSimpleName());
 		}
-		this.entityClassToRepositoryName.put(classToRegister, entityName);
+		this.entityClassToRepository.put(classToRegister, repository);
 		
 		// If the storage is running and a new entity is registered, we need to stop the storage to restart
 		// again with the registered entity.
@@ -139,48 +149,55 @@ public class EclipseStoreStorage
 		}
 	}
 	
-	private <T> String getEntityName(final Class<T> classToRegister)
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> IdentitySet<T> getEntityList(final Class<T> clazz)
 	{
-		return classToRegister.getName();
+		this.ensureEntitiesInRoot();
+		return this.readWriteLock.read(
+			() -> this.root.getEntityList(clazz)
+		);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized <T> IdentitySet<T> getEntityList(final Class<T> clazz)
+	public <T> long getEntityCount(final Class<T> clazz)
 	{
 		this.ensureEntitiesInRoot();
-		return (IdentitySet<T>)this.root.getEntityLists().get(this.getEntityName(clazz));
+		return this.readWriteLock.read(
+			() ->
+			{
+				final IdentitySet<T> entityList = this.root.getEntityList(clazz);
+				return entityList == null ? 0 : entityList.size();
+			}
+		);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public synchronized <T> long getEntityCount(final Class<T> clazz)
-	{
-		this.ensureEntitiesInRoot();
-		final IdentitySet<T> entityList = (IdentitySet<T>)this.root.getEntityLists().get(this.getEntityName(clazz));
-		return entityList == null ? 0 : entityList.size();
-	}
-	
-	public synchronized <T> void store(
+	public <T> void store(
 		final Collection<Object> nonEntitiesToStore,
 		final Class<T> clazz,
 		final Iterable<T> entitiesToStore)
 	{
 		this.ensureEntitiesInRoot();
-		final Collection<Object> entitiesAndPossiblyNonEntitiesToStore =
-			this.collectRootEntitiesToStore(clazz, entitiesToStore);
-		entitiesAndPossiblyNonEntitiesToStore.addAll(nonEntitiesToStore);
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Collected {} objects store in total.", entitiesAndPossiblyNonEntitiesToStore.size());
-		}
-		final Storer storer = this.storageManager.createLazyStorer();
-		storer.storeAll(entitiesAndPossiblyNonEntitiesToStore);
-		storer.commit();
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Done storing {} entities...", entitiesAndPossiblyNonEntitiesToStore.size());
-		}
+		this.readWriteLock.write(
+			() ->
+			{
+				final Collection<Object> entitiesAndPossiblyNonEntitiesToStore =
+					this.collectRootEntitiesToStore(clazz, entitiesToStore);
+				entitiesAndPossiblyNonEntitiesToStore.addAll(nonEntitiesToStore);
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Collected {} objects store in total.", entitiesAndPossiblyNonEntitiesToStore.size());
+				}
+				final Storer storer = this.storageManager.createLazyStorer();
+				storer.storeAll(entitiesAndPossiblyNonEntitiesToStore);
+				storer.commit();
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Done storing {} entities...", entitiesAndPossiblyNonEntitiesToStore.size());
+				}
+			}
+		);
 	}
 	
 	/**
@@ -212,60 +229,75 @@ public class EclipseStoreStorage
 		return objectsToStore;
 	}
 	
-	public synchronized <T> void delete(final Class<T> clazz, final T objectToRemove)
+	public <T> void delete(final Class<T> clazz, final T objectToRemove)
 	{
 		this.ensureEntitiesInRoot();
-		final List<IdentitySet<Object>> entityLists =
-			this.entitySetCollector.getRelatedIdentitySets(clazz);
-		entityLists.forEach(entityList ->
-		{
-			entityList.remove(objectToRemove);
-			this.storageManager.store(entityList.getInternalMap());
-		});
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Deleted single entity of class {}.", clazz.getSimpleName());
-		}
+		this.readWriteLock.write(
+			() ->
+			{
+				final List<IdentitySet<Object>> entityLists =
+					this.entitySetCollector.getRelatedIdentitySets(clazz);
+				entityLists.forEach(entityList ->
+				{
+					entityList.remove(objectToRemove);
+					this.storageManager.store(entityList.getInternalMap());
+				});
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Deleted single entity of class {}.", clazz.getSimpleName());
+				}
+			}
+		);
 	}
 	
-	public synchronized <T> void deleteAll(final Class<T> clazz)
+	public <T> void deleteAll(final Class<T> clazz)
 	{
 		this.ensureEntitiesInRoot();
-		final IdentitySet<?> entities = this.root.getEntityLists().get(this.getEntityName(clazz));
-		final int oldSize = entities.size();
-		final List<?> entitiesToRemove = entities.stream().toList();
-		final List<IdentitySet<Object>> entityLists =
-			this.entitySetCollector.getRelatedIdentitySets(clazz);
-		entityLists.forEach(entityList ->
-		{
-			entityList.removeAll(entitiesToRemove);
-			this.storageManager.store(entityList.getInternalMap());
-		});
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Deleted {} entities of class {}.", oldSize, clazz.getSimpleName());
-		}
+		this.readWriteLock.write(
+			() ->
+			{
+				final IdentitySet<T> entities = this.root.getEntityList(clazz);
+				final int oldSize = entities.size();
+				final List<T> entitiesToRemove = entities.stream().toList();
+				final List<IdentitySet<Object>> entityLists =
+					this.entitySetCollector.getRelatedIdentitySets(clazz);
+				entityLists.forEach(entityList ->
+				{
+					entityList.removeAll(entitiesToRemove);
+					this.storageManager.store(entityList.getInternalMap());
+				});
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Deleted {} entities of class {}.", oldSize, clazz.getSimpleName());
+				}
+			}
+		);
 	}
 	
-	public synchronized void clearData()
+	public void clearData()
 	{
 		this.ensureEntitiesInRoot();
-		this.root = new Root();
-		final StorageManager instanceOfstorageManager = this.getInstanceOfStorageManager();
-		this.initRoot();
-		
-		instanceOfstorageManager.setRoot(this.root);
-		instanceOfstorageManager.storeRoot();
-		if(LOG.isDebugEnabled())
-		{
-			LOG.debug("Cleared all entities.");
-		}
+		this.readWriteLock.write(
+			() ->
+			{
+				this.root = new Root();
+				final StorageManager instanceOfstorageManager = this.getInstanceOfStorageManager();
+				this.initRoot();
+				
+				instanceOfstorageManager.setRoot(this.root);
+				instanceOfstorageManager.storeRoot();
+				if(LOG.isDebugEnabled())
+				{
+					LOG.debug("Cleared all entities.");
+				}
+			}
+		);
 	}
 	
 	/**
 	 * Starts the storage.
 	 */
-	public synchronized void start()
+	public void start()
 	{
 		this.ensureEntitiesInRoot();
 	}
@@ -275,20 +307,25 @@ public class EclipseStoreStorage
 	 */
 	public synchronized void stop()
 	{
-		LOG.info("Stopping storage...");
-		if(this.storageManager != null)
-		{
-			this.storageManager.shutdown();
-			this.storageManager = null;
-			this.root = null;
-			this.registry.reset();
-			this.entityClassToIdSetter.clear();
-			LOG.info("Stopped storage.");
-		}
-		else
-		{
-			LOG.info("No storage is running. Nothing to stop.");
-		}
+		this.readWriteLock.write(
+			() ->
+			{
+				LOG.info("Stopping storage...");
+				if(this.storageManager != null)
+				{
+					this.storageManager.shutdown();
+					this.storageManager = null;
+					this.root = null;
+					this.registry.reset();
+					this.idSetters.clear();
+					LOG.info("Stopped storage.");
+				}
+				else
+				{
+					LOG.info("No storage is running. Nothing to stop.");
+				}
+			}
+		);
 	}
 	
 	@Override
@@ -296,23 +333,29 @@ public class EclipseStoreStorage
 	public <T> IdSetter<T> ensureIdSetter(final Class<T> domainClass)
 	{
 		this.ensureEntitiesInRoot();
-		return (IdSetter<T>)this.entityClassToIdSetter.computeIfAbsent(
+		return (IdSetter<T>)this.idSetters.computeIfAbsent(
 			domainClass,
 			clazz ->
+				IdSetter.createIdSetter(
+					clazz,
+					id -> this.setLastId(clazz, id),
+					() -> this.getLastId(clazz)
+				)
+		);
+	}
+	
+	public Object getLastId(final Class<?> entityClass)
+	{
+		return this.readWriteLock.read(() -> this.root.getLastId(entityClass));
+	}
+	
+	public void setLastId(final Class<?> entityClass, final Object lastId)
+	{
+		this.readWriteLock.write(
+			() ->
 			{
-				final String entityName = this.getEntityName(domainClass);
-				final Consumer<Object> idSetter = id ->
-				{
-					this.ensureEntitiesInRoot();
-					this.root.getLastIds().put(entityName, id);
-					this.storageManager.store(this.root.getLastIds());
-				};
-				final Supplier<Object> idGetter = () ->
-				{
-					this.ensureEntitiesInRoot();
-					return this.root.getLastIds().get(entityName);
-				};
-				return IdSetter.createIdSetter(domainClass, idSetter, idGetter);
+				this.root.setLastId(entityClass, lastId);
+				this.storageManager.store(this.root.getLastIds());
 			}
 		);
 	}
@@ -329,5 +372,10 @@ public class EclipseStoreStorage
 	{
 		this.ensureEntitiesInRoot();
 		return this.storageManager.getObject(objectId);
+	}
+	
+	public ReadWriteLock getReadWriteLock()
+	{
+		return this.readWriteLock;
 	}
 }

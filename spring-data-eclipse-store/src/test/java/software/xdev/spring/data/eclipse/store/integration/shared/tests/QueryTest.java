@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -125,6 +126,29 @@ class QueryTest
 				Assertions.assertEquals(1, customersPage2.size());
 				
 				Assertions.assertNotEquals(customersPage1.get(0), customersPage2.get(0));
+			}
+		);
+	}
+	
+	@Test
+	void testPageableFindAllTwoPagesWithNextPageable()
+	{
+		final Customer customer1 = new Customer(TestData.FIRST_NAME, TestData.LAST_NAME);
+		this.customerRepository.save(customer1);
+		final Customer customer2 = new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		this.customerRepository.save(customer2);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final Page<Customer> customersPage1 = this.customerRepository.findAll(PageRequest.of(0, 1));
+				Assertions.assertEquals(1, customersPage1.getContent().size());
+				
+				final List<Customer> customersPage2 =
+					TestUtil.iterableToList(this.customerRepository.findAll(customersPage1.nextPageable()));
+				Assertions.assertEquals(1, customersPage2.size());
+				
+				Assertions.assertNotEquals(customersPage1.getContent().get(0), customersPage2.get(0));
 			}
 		);
 	}

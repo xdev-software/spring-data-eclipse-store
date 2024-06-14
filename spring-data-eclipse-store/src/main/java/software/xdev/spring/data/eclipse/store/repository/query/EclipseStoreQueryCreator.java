@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
@@ -28,10 +31,6 @@ import org.springframework.data.util.Streamable;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.util.ObjectUtils;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.AbstractCriteriaNode;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.CriteriaSingleNode;
@@ -249,16 +248,6 @@ public class EclipseStoreQueryCreator<T> extends AbstractQueryCreator<QueryExecu
 	private ReflectedField<T, ?> getDeclaredField(final Part part)
 	{
 		final String fieldName = part.getProperty().getSegment();
-		try
-		{
-			return new ReflectedField<>(AccessHelper.getInheritedPrivateField(this.domainClass, fieldName));
-		}
-		catch(final NoSuchFieldException e)
-		{
-			throw new FieldAccessReflectionException(String.format(
-				"Field %s in class %s was not found!",
-				fieldName,
-				this.domainClass.getSimpleName()), e);
-		}
+		return ReflectedField.createReflectedField(this.domainClass, fieldName);
 	}
 }

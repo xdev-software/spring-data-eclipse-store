@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,32 +34,32 @@ public class EntitySetCollector
 	private final Map<Class<?>, List<IdentitySet<? super Object>>> childClassToParentSets = new HashMap<>();
 	
 	public EntitySetCollector(
-		final Map<String, IdentitySet<Object>> entityLists,
-		final Map<Class<?>, String> entityClassToRepositoryName)
+		final Function<Class<?>, IdentitySet<?>> entityLists,
+		final Set<Class<?>> entityClasses)
 	{
-		this.buildParentClassList(entityLists, entityClassToRepositoryName);
+		this.buildParentClassList(entityLists, entityClasses);
 	}
 	
 	private void buildParentClassList(
-		final Map<String, IdentitySet<Object>> entityLists,
-		final Map<Class<?>, String> entityClassToRepositoryName
+		final Function<Class<?>, IdentitySet<?>> entityLists,
+		final Set<Class<?>> entityClasses
 	)
 	{
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Initializing parent class list...");
 		}
-		for(final Map.Entry<Class<?>, String> possibleParentEntry : entityClassToRepositoryName.entrySet())
+		for(final Class<?> possibleParentEntry : entityClasses)
 		{
-			for(final Map.Entry<Class<?>, String> possibleChildEntry : entityClassToRepositoryName.entrySet())
+			for(final Class<?> possibleChildEntry : entityClasses)
 			{
 				this.childClassToParentSets.putIfAbsent(
-					possibleChildEntry.getKey(), new ArrayList<>()
+					possibleChildEntry, new ArrayList<>()
 				);
-				if(possibleParentEntry.getKey().isAssignableFrom(possibleChildEntry.getKey()))
+				if(possibleParentEntry.isAssignableFrom(possibleChildEntry))
 				{
-					this.childClassToParentSets.get(possibleChildEntry.getKey())
-						.add(entityLists.get(entityClassToRepositoryName.get(possibleParentEntry.getKey())));
+					this.childClassToParentSets.get(possibleChildEntry)
+						.add((IdentitySet<? super Object>)entityLists.apply(possibleParentEntry));
 				}
 			}
 		}

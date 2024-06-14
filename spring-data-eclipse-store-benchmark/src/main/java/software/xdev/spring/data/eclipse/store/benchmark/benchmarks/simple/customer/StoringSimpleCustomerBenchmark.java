@@ -54,6 +54,12 @@ public class StoringSimpleCustomerBenchmark
 	}
 	
 	@Benchmark
+	public void save10000CustomerInForEachParallel(final SpringState state)
+	{
+		this.saveCustomerInForEachParallel(state, 10_000);
+	}
+	
+	@Benchmark
 	public void save100000CustomerInSaveAll(final SpringState state)
 	{
 		this.saveCustomerInSaveAll(state, 100_000);
@@ -63,6 +69,14 @@ public class StoringSimpleCustomerBenchmark
 	{
 		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
 		IntStream.range(0, entityCount).forEach(
+			i -> customerRepository.save(new Customer("Test" + i, "Test" + i))
+		);
+	}
+	
+	private void saveCustomerInForEachParallel(final SpringState state, final int entityCount)
+	{
+		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
+		IntStream.range(0, entityCount).parallel().forEach(
 			i -> customerRepository.save(new Customer("Test" + i, "Test" + i))
 		);
 	}

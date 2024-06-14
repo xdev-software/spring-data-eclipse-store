@@ -47,6 +47,7 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 		this.actualCopier = new EclipseSerializerRegisteringCopier(
 			supportedChecker,
 			register,
+			() ->
 			this.createPersistenceManager(
 				this.createSerializerFoundation(),
 				objectSwizzling,
@@ -84,13 +85,13 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 	}
 	
 	@Override
-	public synchronized <T> T copy(final T source)
+	public <T> T copy(final T source)
 	{
 		return this.actualCopier.copy(source);
 	}
 	
 	@Override
-	public synchronized void close()
+	public void close()
 	{
 		this.actualCopier.close();
 	}

@@ -78,4 +78,41 @@ class StressTest
 			}
 		);
 	}
+	
+	@ParameterizedTest
+	@ValueSource(ints = {100, 1_000, 5_000, 10_000, 50_000, 100_000})
+	void testSaveBulkAndChangeCustomers(final int customerCount)
+	{
+		this.repository.saveAll(
+			IntStream.range(0, customerCount).mapToObj(
+				i -> new Customer("Test" + i, "Test" + i)
+			).toList()
+		);
+		TestUtil.restartDatastore(this.configuration);
+		
+		final List<Customer> customers = TestUtil.iterableToList(this.repository.findAll());
+		customers.forEach(
+			customer ->
+			{
+				customer.setFirstName("Another" + customer.getFirstName());
+				customer.setLastName("Another" + customer.getLastName());
+			});
+		
+		this.repository.saveAll(customers);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<Customer> loadedCustomers = TestUtil.iterableToList(this.repository.findAll());
+				Assertions.assertEquals(customerCount, loadedCustomers.size());
+				loadedCustomers.forEach(
+					customer ->
+					{
+						Assertions.assertTrue(customer.getFirstName().startsWith("AnotherTest"));
+						Assertions.assertTrue(customer.getLastName().startsWith("AnotherTest"));
+					}
+				);
+			}
+		);
+	}
 }

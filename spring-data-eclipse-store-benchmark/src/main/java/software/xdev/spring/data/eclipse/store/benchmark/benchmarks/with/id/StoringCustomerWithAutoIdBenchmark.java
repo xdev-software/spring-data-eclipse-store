@@ -50,6 +50,16 @@ public class StoringCustomerWithAutoIdBenchmark
 	}
 	
 	@Benchmark
+	public void save1000CustomerInForEachParallel(final SpringState state)
+	{
+		final CustomerWithAutoIdRepository customerRepository =
+			state.getBean(CustomerWithAutoIdRepository.class);
+		IntStream.range(0, 1000).parallel().forEach(
+			i -> customerRepository.save(new CustomerWithAutoId("Test" + i, "Test" + i))
+		);
+	}
+	
+	@Benchmark
 	public void save1000CustomerInSaveAll(final SpringState state)
 	{
 		final CustomerWithAutoIdRepository customerRepository =

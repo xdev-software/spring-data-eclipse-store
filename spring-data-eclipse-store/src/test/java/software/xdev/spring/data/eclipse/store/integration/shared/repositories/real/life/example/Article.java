@@ -22,9 +22,9 @@ import java.util.List;
 
 public class Article
 {
-	private final String name;
-	private final ArticleGroup group;
-	private final List<Warehouse> warehouses;
+	private String name;
+	private ArticleGroup group;
+	private List<Warehouse> warehouses;
 	
 	public Article(final String name, final ArticleGroup group, final List<Warehouse> warehouses)
 	{
@@ -52,5 +52,20 @@ public class Article
 	public List<Warehouse> getWarehouses()
 	{
 		return this.warehouses;
+	}
+	
+	public void setName(final String name)
+	{
+		this.name = name;
+	}
+	
+	public void setGroup(final ArticleGroup group)
+	{
+		this.group = group;
+	}
+	
+	public void setWarehouses(final List<Warehouse> warehouses)
+	{
+		this.warehouses = warehouses;
 	}
 }
