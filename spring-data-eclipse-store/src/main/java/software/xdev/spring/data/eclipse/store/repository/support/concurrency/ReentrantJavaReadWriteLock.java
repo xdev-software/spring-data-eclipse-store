@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
  */
 public class ReentrantJavaReadWriteLock implements ReadWriteLock
 {
-	private transient volatile ReentrantReadWriteLock mutex;
+	private final transient ReentrantReadWriteLock mutex = new ReentrantReadWriteLock();
 	
 	public ReentrantJavaReadWriteLock()
 	{
@@ -37,23 +37,7 @@ public class ReentrantJavaReadWriteLock implements ReadWriteLock
 	
 	private ReentrantReadWriteLock mutex()
 	{
-		/*
-		 * Double-checked locking to reduce the overhead of acquiring a lock
-		 * by testing the locking criterion.
-		 * The field (this.mutex) has to be volatile.
-		 */
-		ReentrantReadWriteLock mutex = this.mutex;
-		if(mutex == null)
-		{
-			synchronized(this)
-			{
-				if((mutex = this.mutex) == null)
-				{
-					mutex = this.mutex = new ReentrantReadWriteLock();
-				}
-			}
-		}
-		return mutex;
+		return this.mutex;
 	}
 	
 	/**
