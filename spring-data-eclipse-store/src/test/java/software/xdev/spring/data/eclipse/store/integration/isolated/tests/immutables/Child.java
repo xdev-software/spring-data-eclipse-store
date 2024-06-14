@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.immutables;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.immutables;
 
-import java.util.List;
 import java.util.Objects;
 
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Child;
 
-
-public class CustomerWithFinalChild
+public class Child
 {
-	private final String firstName;
-	private final String lastName;
+	private String firstName;
+	private String lastName;
 	
-	private final Child child;
-	
-	public CustomerWithFinalChild(final String firstName, final String lastName)
+	public Child(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.child = new Child(firstName + "child", lastName + "child");
 	}
 	
 	public String getFirstName()
@@ -40,21 +34,26 @@ public class CustomerWithFinalChild
 		return this.firstName;
 	}
 	
+	public void setFirstName(final String firstName)
+	{
+		this.firstName = firstName;
+	}
+	
 	public String getLastName()
 	{
 		return this.lastName;
 	}
 	
-	public Child getChild()
+	public void setLastName(final String lastName)
 	{
-		return this.child;
+		this.lastName = lastName;
 	}
 	
 	@Override
 	public String toString()
 	{
 		return String.format(
-			"Customer[firstName='%s', lastName='%s']",
+			"Child[firstName='%s', lastName='%s']",
 			this.firstName, this.lastName);
 	}
 	
@@ -69,7 +68,7 @@ public class CustomerWithFinalChild
 		{
 			return false;
 		}
-		final CustomerWithFinalChild customer = (CustomerWithFinalChild)o;
+		final Child customer = (Child)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -79,13 +78,5 @@ public class CustomerWithFinalChild
 	public int hashCode()
 	{
 		return Objects.hash(this.firstName, this.lastName);
-	}
-	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithFinalChild getCustomerWithFirstName(
-		final List<CustomerWithFinalChild> customers,
-		final String firstName)
-	{
-		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();
 	}
 }

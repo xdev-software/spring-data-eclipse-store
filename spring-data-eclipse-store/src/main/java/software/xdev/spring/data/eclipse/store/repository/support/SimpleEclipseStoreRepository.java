@@ -82,7 +82,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		this.storage = storage;
 		this.domainClass = domainClass;
-		this.storage.registerEntity(domainClass);
+		this.storage.registerEntity(domainClass, this);
 		this.copier = copier;
 		this.transactionManager = transactionManager;
 	}

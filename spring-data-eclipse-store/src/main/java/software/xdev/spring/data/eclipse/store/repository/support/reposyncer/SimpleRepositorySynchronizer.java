@@ -18,7 +18,6 @@ package software.xdev.spring.data.eclipse.store.repository.support.reposyncer;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.eclipse.serializer.util.traversing.ObjectGraphTraverser;
 import org.slf4j.Logger;
@@ -31,16 +30,12 @@ import software.xdev.spring.data.eclipse.store.repository.Root;
 public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleRepositorySynchronizer.class);
-	private final Map<Class<?>, String> entityWithRepositoryNamesAndClasses;
 	private final Root root;
 	private final HashSet<IdentitySet<Object>> listsToStore;
 	private final ObjectGraphTraverser buildObjectGraphTraverser;
 	
-	public SimpleRepositorySynchronizer(
-		final Map<Class<?>, String> entityWithRepositoryNamesAndClasses,
-		final Root root)
+	public SimpleRepositorySynchronizer(final Root root)
 	{
-		this.entityWithRepositoryNamesAndClasses = entityWithRepositoryNamesAndClasses;
 		this.root = root;
 		this.listsToStore = new HashSet<>();
 		
@@ -54,13 +49,11 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 					{
 						return;
 					}
-					final Class<?> objectInGraphClass = objectInGraph.getClass();
-					final String objectInGraphClassname =
-						this.entityWithRepositoryNamesAndClasses.get(objectInGraphClass);
-					if(objectInGraphClassname != null)
+					final Class<Object> objectInGraphClass = (Class<Object>)objectInGraph.getClass();
+					final IdentitySet<Object> entityListForCurrentObject = this.root.getEntityList(objectInGraphClass);
+					if(entityListForCurrentObject != null)
 					{
-						final IdentitySet<Object> entityListForCurrentObject =
-							this.root.getEntityLists().get(objectInGraphClassname);
+						
 						if(!entityListForCurrentObject.contains(objectInGraph))
 						{
 							entityListForCurrentObject.add(objectInGraph);
