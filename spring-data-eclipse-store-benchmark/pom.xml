@@ -4,7 +4,7 @@
 
     <groupId>com.xdev-software</groupId>
     <artifactId>spring-data-eclipse-store-benchmark</artifactId>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.7</version>
     <packaging>jar</packaging>
 
     <inceptionYear>2023</inceptionYear>
