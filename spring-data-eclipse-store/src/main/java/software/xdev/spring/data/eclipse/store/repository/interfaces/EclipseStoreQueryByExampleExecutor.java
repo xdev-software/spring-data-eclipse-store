@@ -16,13 +16,10 @@
 package software.xdev.spring.data.eclipse.store.repository.interfaces;
 
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 
 @NoRepositoryBean
-public interface EclipseStoreRepository<T, ID>
-	extends
-	EclipseStoreListCrudRepository<T, ID>,
-	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
-	EclipseStoreQueryByExampleExecutor<T>
+public interface EclipseStoreQueryByExampleExecutor<T> extends QueryByExampleExecutor<T>
 {
 }

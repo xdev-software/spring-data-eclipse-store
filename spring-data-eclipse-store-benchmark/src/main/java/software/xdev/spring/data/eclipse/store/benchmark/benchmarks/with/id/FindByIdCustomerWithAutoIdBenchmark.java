@@ -11,6 +11,7 @@ import software.xdev.spring.data.eclipse.store.benchmark.SpringState;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
+@SuppressWarnings("checkstyle:MagicNumber")
 public class FindByIdCustomerWithAutoIdBenchmark
 {
 	public abstract static class ExistingCustomerSpringState extends SpringState

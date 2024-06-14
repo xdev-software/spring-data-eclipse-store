@@ -18,12 +18,13 @@ package software.xdev.spring.data.eclipse.store.repository.query.executors;
 import java.util.Collection;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import jakarta.annotation.Nullable;
 import software.xdev.spring.data.eclipse.store.exceptions.NoPageableObjectFoundException;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
@@ -37,10 +38,12 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 public class PageableQueryExecutor<T> implements QueryExecutor<T>
 {
 	private final PageableSortableCollectionQuerier<T> querier;
+	private final CountQueryExecutor<T> countQueryExecutor;
 	
 	public PageableQueryExecutor(final WorkingCopier<T> copier, final Criteria<T> criteria, final Sort sort)
 	{
 		this.querier = new PageableSortableCollectionQuerier<>(copier, criteria, sort);
+		this.countQueryExecutor = new CountQueryExecutor<>(criteria);
 	}
 	
 	/**
@@ -61,7 +64,8 @@ public class PageableQueryExecutor<T> implements QueryExecutor<T>
 		{
 			if(values[values.length - 1] instanceof final Pageable pageable)
 			{
-				return new PageImpl<>(this.querier.getEntities(entities, pageable, clazz));
+				final Long total = this.countQueryExecutor.execute(clazz, entities, null);
+				return new PageImpl<>(this.querier.getEntities(entities, pageable, clazz), pageable, total);
 			}
 			if(values[values.length - 1] instanceof final Sort sort)
 			{

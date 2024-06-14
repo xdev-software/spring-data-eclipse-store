@@ -19,6 +19,8 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 
 import jakarta.annotation.Nonnull;
+
+import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 
 
@@ -36,6 +38,21 @@ public class ReflectedField<T, E>
 	public ReflectedField(final Field field)
 	{
 		this.field = Objects.requireNonNull(field);
+	}
+	
+	public static <T, E> ReflectedField<T, E> createReflectedField(final Class<T> domainClass, final String fieldName)
+	{
+		try
+		{
+			return new ReflectedField<>(AccessHelper.getInheritedPrivateField(domainClass, fieldName));
+		}
+		catch(final NoSuchFieldException e)
+		{
+			throw new FieldAccessReflectionException(String.format(
+				"Field %s in class %s was not found!",
+				fieldName,
+				domainClass.getSimpleName()), e);
+		}
 	}
 	
 	/**
