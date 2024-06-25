@@ -82,6 +82,9 @@
 							<rulesets>
 								<ruleset>.config/pmd/ruleset.xml</ruleset>
 							</rulesets>
+							<excludes>
+								<exclude>**/benchmark/**/jmh_generated/**</exclude>
+							</excludes>
 						</configuration>
 						<dependencies>
 							<dependency>
