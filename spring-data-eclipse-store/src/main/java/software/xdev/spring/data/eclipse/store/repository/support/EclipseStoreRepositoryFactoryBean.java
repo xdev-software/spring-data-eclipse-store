@@ -67,7 +67,7 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	}
 	
 	@Override
-	public void setBeanFactory(final BeanFactory beanFactory) throws BeansException
+	public void setBeanFactory(final BeanFactory beanFactory)
 	{
 		super.setBeanFactory(beanFactory);
 		this.beanFactory = beanFactory;
