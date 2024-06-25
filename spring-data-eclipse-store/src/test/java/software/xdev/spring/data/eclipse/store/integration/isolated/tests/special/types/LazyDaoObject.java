@@ -28,6 +28,12 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 	}
 	
 	@Override
+	public int hashCode()
+	{
+		return this.getValue().hashCode();
+	}
+	
+	@Override
 	public boolean equals(final Object o)
 	{
 		if(this == o)
