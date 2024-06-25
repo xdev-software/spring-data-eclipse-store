@@ -16,7 +16,6 @@
 package software.xdev.spring.data.eclipse.store.transactions;
 
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -28,7 +27,7 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 	private static final String TRANSACTION_MANAGER = "ATransactionManagerForThisThread";
 	
 	@Override
-	protected Object doGetTransaction() throws TransactionException
+	protected Object doGetTransaction()
 	{
 		final EclipseStoreExistingTransactionObject transactionObject =
 			(EclipseStoreExistingTransactionObject)TransactionSynchronizationManager.getResource(TRANSACTION_MANAGER);
@@ -36,7 +35,7 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 	}
 	
 	@Override
-	protected void doBegin(final Object transaction, final TransactionDefinition definition) throws TransactionException
+	protected void doBegin(final Object transaction, final TransactionDefinition definition)
 	{
 		final EclipseStoreExistingTransactionObject transactionObject =
 			this.extractEclipseStoreTransaction(transaction);
@@ -45,13 +44,13 @@ public class EclipseStoreTransactionManager extends AbstractPlatformTransactionM
 	}
 	
 	@Override
-	protected void doCommit(final DefaultTransactionStatus status) throws TransactionException
+	protected void doCommit(final DefaultTransactionStatus status)
 	{
 		this.extractEclipseStoreTransaction(status.getTransaction()).commitTransaction();
 	}
 	
 	@Override
-	protected void doRollback(final DefaultTransactionStatus status) throws TransactionException
+	protected void doRollback(final DefaultTransactionStatus status)
 	{
 		this.extractEclipseStoreTransaction(status.getTransaction()).rollbackTransaction();
 	}

@@ -65,7 +65,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 	 * @param <T> the type of the lazily referenced element
 	 */
 	@SuppressWarnings({"java:S2065", "checkstyle:FinalClass"})
-	class Default<T> implements SpringDataEclipseStoreLazy<T>
+	final class Default<T> implements SpringDataEclipseStoreLazy<T>
 	{
 		private T objectToBeWrapped;
 		private Lazy<T> wrappedLazy;

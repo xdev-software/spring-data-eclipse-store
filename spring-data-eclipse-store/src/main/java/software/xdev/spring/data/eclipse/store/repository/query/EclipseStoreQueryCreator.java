@@ -118,6 +118,7 @@ public class EclipseStoreQueryCreator<T> extends AbstractQueryCreator<QueryExecu
 		return QueryExecutorCreator.createQuery(this.typeInformation, this.copier, criteria, sort);
 	}
 	
+	@SuppressWarnings("PMD.CyclomaticComplexity")
 	private AbstractCriteriaNode<T> from(
 		final Part part,
 		final AbstractCriteriaNode<T> criteria,

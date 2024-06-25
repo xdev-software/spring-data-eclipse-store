@@ -48,9 +48,10 @@ public final class EntitySorter
 				}
 				catch(final NoSuchFieldException e)
 				{
-					throw new NotComparableException(String.format(
-						"Could not sort entities by property %s",
-						order.getProperty()));
+					throw new NotComparableException(
+						"Could not sort entities by property %s".formatted(order.getProperty()),
+						e
+					);
 				}
 			}
 		}

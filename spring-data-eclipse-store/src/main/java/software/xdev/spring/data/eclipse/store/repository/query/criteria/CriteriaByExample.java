@@ -107,64 +107,77 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 				? example.getMatcher().getDefaultStringMatcher()
 				: specifier.getStringMatcher();
 			
-			switch(setOrDefaultMatcher)
+			return this.createPredicateForStringMatcher(
+				specifier,
+				setOrDefaultMatcher,
+				transformedExampledValue,
+				transformedValue);
+		};
+	}
+	
+	private boolean createPredicateForStringMatcher(
+		final ExampleMatcher.PropertySpecifier specifier,
+		final ExampleMatcher.StringMatcher setOrDefaultMatcher,
+		final Optional<Object> transformedExampledValue,
+		final Optional<Object> transformedValue)
+	{
+		switch(setOrDefaultMatcher)
+		{
+			case DEFAULT, EXACT ->
 			{
-				case DEFAULT, EXACT ->
+				if(transformedExampledValue.get() instanceof String)
 				{
-					if(transformedExampledValue.get() instanceof String)
-					{
-						return this.valueToString(transformedValue, specifier).equals(this.valueToString(
-							transformedExampledValue,
-							specifier));
-					}
-					return transformedExampledValue.equals(transformedValue);
+					return this.valueToString(transformedValue, specifier).equals(this.valueToString(
+						transformedExampledValue,
+						specifier));
 				}
-				case STARTING ->
-				{
-					final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-					if(valueAsString.isEmpty())
-					{
-						return false;
-					}
-					return valueAsString.get()
-						.startsWith(this.valueToString(transformedExampledValue, specifier).get());
-				}
-				case ENDING ->
-				{
-					final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-					if(valueAsString.isEmpty())
-					{
-						return false;
-					}
-					return valueAsString.get().endsWith(this.valueToString(transformedExampledValue, specifier).get());
-				}
-				case CONTAINING ->
-				{
-					final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-					if(valueAsString.isEmpty())
-					{
-						return false;
-					}
-					return valueAsString.get().contains(this.valueToString(transformedExampledValue, specifier).get());
-				}
-				case REGEX ->
-				{
-					final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-					if(valueAsString.isEmpty())
-					{
-						return false;
-					}
-					return Pattern.compile(
-							this.valueToString(transformedExampledValue, specifier).get()
-						)
-						.matcher(valueAsString.get()).find();
-				}
-				default ->
+				return transformedExampledValue.equals(transformedValue);
+			}
+			case STARTING ->
+			{
+				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
+				if(valueAsString.isEmpty())
 				{
 					return false;
 				}
+				return valueAsString.get()
+					.startsWith(this.valueToString(transformedExampledValue, specifier).get());
 			}
-		};
+			case ENDING ->
+			{
+				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
+				if(valueAsString.isEmpty())
+				{
+					return false;
+				}
+				return valueAsString.get().endsWith(this.valueToString(transformedExampledValue, specifier).get());
+			}
+			case CONTAINING ->
+			{
+				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
+				if(valueAsString.isEmpty())
+				{
+					return false;
+				}
+				return valueAsString.get().contains(this.valueToString(transformedExampledValue, specifier).get());
+			}
+			case REGEX ->
+			{
+				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
+				if(valueAsString.isEmpty())
+				{
+					return false;
+				}
+				return Pattern.compile(
+						this.valueToString(transformedExampledValue, specifier).get()
+					)
+					.matcher(valueAsString.get()).find();
+			}
+			default ->
+			{
+				return false;
+			}
+		}
 	}
 	
 	private Optional<String> valueToString(

@@ -46,9 +46,10 @@ public final class GenericObjectComparer
 				return comparingResult;
 			}
 		}
-		throw new NotComparableException(String.format(
-			"Type %s is not comparable. Sorting is not available for that type.",
-			o1.getClass().getSimpleName()));
+		throw new NotComparableException(
+			"Type %s is not comparable. Sorting is not available for that type.".formatted(o1.getClass()
+				.getSimpleName())
+		);
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})
