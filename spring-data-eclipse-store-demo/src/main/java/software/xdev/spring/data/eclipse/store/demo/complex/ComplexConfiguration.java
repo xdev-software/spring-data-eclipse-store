@@ -27,7 +27,8 @@ public class ComplexConfiguration extends EclipseStoreClientConfiguration
 	}
 	
 	/**
-	 * Overriding {@link #transactionManager(ObjectProvider)} only to add the {@link Bean}-Annotation.
+	 * Overriding {@link EclipseStoreClientConfiguration#transactionManager(ObjectProvider)}
+	 * only to add the {@link Bean}-Annotation.
 	 */
 	@Bean
 	@Override
