@@ -1,0 +1,51 @@
+name: Antora Documentation Build
+
+on:
+  workflow_dispatch:
+
+env:
+  ACTIONS_STEP_DEBUG : true
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read  # Read permission for repository contents
+  pages: write    # Write permission for GitHub Pages
+  id-token: write  # Write permission for ID token
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Antora and the Antora Lunr Extension
+        run: npm i antora @antora/lunr-extension
+
+      - name: Generate Site
+        run: npx antora docs/antora-playbook.yml
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: site
+          path: docs/site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: site

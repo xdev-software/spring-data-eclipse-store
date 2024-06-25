@@ -61,6 +61,12 @@ hs_err_pid*
 .flattened-pom.xml
 .tern-project
 
+# EclipseStore
+storage
+storage-person
+storage-invoice
+storage-jpa
+
 # == IntelliJ ==
 *.iml
 *.ipr

@@ -1,0 +1,30 @@
+= Configuration
+
+== EclipseStore Spring-Boot Configuration
+
+The simplest way to configure your storage is by using the key/value pairs in a configuration file as described in the https://docs.eclipsestore.io/manual/misc/integrations/spring-boot.html[EclipseStore documentation].
+
+== Detailed Configuration
+
+If you need more control or want to configure your storage in code, we provide a simple Configuration class which can be used as follows:
+
+[source,java,title="Demo configuration"]
+----
+import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
+import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.eclipse.store.storage.types.Storage;
+...
+@Configuration
+@EnableEclipseStoreRepositories
+public class DemoConfiguration extends EclipseStoreClientConfiguration
+{
+    @Override
+    public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
+    {
+            return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of("demo-storage"))));
+    }
+}
+----
+The method ``createEmbeddedStorageFoundation`` could return a much more complicated ``EmbeddedStorageFoundation`` as described here in the https://docs.eclipsestore.io/manual/storage/configuration/index.html[EclipseStore documentation about configuration and foundations].
+
+This also enables you to use multiple EclipseStore-Storages in one project. See the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage[Dual storages demo].
