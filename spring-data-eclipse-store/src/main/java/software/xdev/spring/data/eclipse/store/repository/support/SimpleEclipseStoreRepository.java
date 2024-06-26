@@ -15,7 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,10 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
-import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
-import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
@@ -52,6 +48,7 @@ import software.xdev.spring.data.eclipse.store.repository.query.executors.Exists
 import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.SingleOptionalQueryExecutor;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransaction;
@@ -72,35 +69,22 @@ public class SimpleEclipseStoreRepository<T, ID>
 	private final Class<T> domainClass;
 	private final WorkingCopier<T> copier;
 	private final EclipseStoreTransactionManager transactionManager;
-	private Field idField;
+	private final IdManager<T, ID> idManager;
 	
 	public SimpleEclipseStoreRepository(
 		final EclipseStoreStorage storage,
 		final WorkingCopier<T> copier,
 		final Class<T> domainClass,
-		final EclipseStoreTransactionManager transactionManager)
+		final EclipseStoreTransactionManager transactionManager,
+		final IdManager<T, ID> idManager
+	)
 	{
 		this.storage = storage;
 		this.domainClass = domainClass;
+		this.idManager = idManager;
 		this.storage.registerEntity(domainClass, this);
 		this.copier = copier;
 		this.transactionManager = transactionManager;
-	}
-	
-	public Field getIdField()
-	{
-		if(this.idField == null)
-		{
-			final Optional<Field> foundIdField = IdFieldFinder.findIdField(this.domainClass);
-			if(foundIdField.isEmpty())
-			{
-				throw new NoIdFieldFoundException(String.format(
-					"Could not find id field in class %s",
-					this.domainClass.getSimpleName()));
-			}
-			this.idField = foundIdField.get();
-		}
-		return this.idField;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -180,31 +164,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public Optional<T> findById(@Nonnull final ID id)
 	{
 		return this.storage.getReadWriteLock().read(
-			() -> this.storage
-				.getEntityList(this.domainClass)
-				.parallelStream()
-				.filter(
-					entity ->
-					{
-						try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
-							this.getIdField(),
-							entity))
-						{
-							if(id.equals(fam.getValueOfField(entity)))
-							{
-								return true;
-							}
-						}
-						catch(final Exception e)
-						{
-							throw new FieldAccessReflectionException(String.format(
-								FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-								this.getIdField().getName()), e);
-						}
-						return false;
-					}
-				)
-				.findAny()
+			() -> this.idManager.findById(id)
 				.map(foundEntity -> this.copier.copy(foundEntity))
 		);
 	}
@@ -212,7 +172,9 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public boolean existsById(@Nonnull final ID id)
 	{
-		return this.findById(id).isPresent();
+		return this.storage.getReadWriteLock().read(
+			() -> this.idManager.findById(id).isPresent()
+		);
 	}
 	
 	@Override
@@ -233,37 +195,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 			// Must get copied as one list to keep same references objects the same.
 			// (Example: If o1 and o2 (both part of the entity list) are referencing o3,
 			// o3 should be the same no matter from where it is referenced.
-			() -> this.copier.copy(
-				this.storage
-					.getEntityList(this.domainClass)
-					.parallelStream()
-					.filter(
-						entity ->
-						{
-							try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
-								this.getIdField(),
-								entity))
-							{
-								final Object idOfEntity = fam.getValueOfField(entity);
-								for(final ID idToFind : idsToFind)
-								{
-									if(idToFind.equals(idOfEntity))
-									{
-										return true;
-									}
-								}
-							}
-							catch(final Exception e)
-							{
-								throw new FieldAccessReflectionException(String.format(
-									FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-									this.getIdField().getName()), e);
-							}
-							return false;
-						}
-					)
-					.toList()
-			)
+			() -> this.copier.copy(this.idManager.findAllById(idsToFind))
 		);
 	}
 	
@@ -276,11 +208,18 @@ public class SimpleEclipseStoreRepository<T, ID>
 	@Override
 	public void deleteById(@Nonnull final ID id)
 	{
-		this.storage.getReadWriteLock().write(
-			() -> {
-				final Optional<T> byId = this.findById(id);
-				byId.ifPresent(this::delete);
-			}
+		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
+		transaction.addAction(() ->
+			this.storage.getReadWriteLock().write(
+				() -> {
+					this
+						.idManager
+						.findById(id)
+						.ifPresent(
+							foundEntity -> this.storage.delete(this.domainClass, foundEntity)
+						);
+				}
+			)
 		);
 	}
 	

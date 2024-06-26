@@ -80,7 +80,8 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage,
 			storage,
 			new SupportedChecker.Implementation(),
-			storage
+			storage,
+			storage.ensureIdManager(domainType)
 		);
 	}
 	
@@ -100,7 +101,8 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			this.storage,
 			this.createWorkingCopier(metadata.getDomainType(), this.storage),
 			metadata.getDomainType(),
-			this.transactionManager
+			this.transactionManager,
+			this.storage.ensureIdManager(metadata.getDomainType())
 		);
 	}
 	

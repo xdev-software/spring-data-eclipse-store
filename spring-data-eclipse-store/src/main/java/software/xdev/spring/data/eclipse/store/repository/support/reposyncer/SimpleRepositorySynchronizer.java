@@ -53,7 +53,6 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 					final IdentitySet<Object> entityListForCurrentObject = this.root.getEntityList(objectInGraphClass);
 					if(entityListForCurrentObject != null)
 					{
-						
 						if(!entityListForCurrentObject.contains(objectInGraph))
 						{
 							entityListForCurrentObject.add(objectInGraph);

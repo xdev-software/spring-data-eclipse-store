@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -41,6 +42,7 @@ import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.id.EntityGetterById;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringObjectCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringStorageToWorkingCopyCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringWorkingCopyToStorageCopier;
@@ -58,6 +60,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 	private final IdSetterProvider idSetterProvider;
 	private final Class<T> domainClass;
 	private final PersistableChecker persistableChecker;
+	private final EntityGetterById<T, ? super Object> entityGetterById;
 	
 	public RecursiveWorkingCopier(
 		final Class<T> domainClass,
@@ -65,7 +68,9 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final IdSetterProvider idSetterProvider,
 		final PersistableChecker persistableChecker,
 		final SupportedChecker supportedChecker,
-		final ObjectSwizzling objectSwizzling)
+		final ObjectSwizzling objectSwizzling,
+		final EntityGetterById<T, ? super Object> entityGetterById
+	)
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
@@ -75,6 +80,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this);
 		this.idSetterProvider = idSetterProvider;
 		this.persistableChecker = persistableChecker;
+		this.entityGetterById = entityGetterById;
 	}
 	
 	@Override
@@ -138,7 +144,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		{
 			return null;
 		}
-		this.idSetterProvider.ensureIdSetter((Class<E>)workingCopy.getClass()).ensureId(workingCopy);
+		final Object usedId =
+			this.idSetterProvider.ensureIdSetter((Class<E>)workingCopy.getClass()).ensureId(workingCopy);
 		final E originalObject = this.registry.getOriginalObjectFromWorkingCopy(workingCopy);
 		if(originalObject != null)
 		{
@@ -148,6 +155,22 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			}
 			changedCollector.collectChangedObject(originalObject);
 			return originalObject;
+		}
+		
+		if(usedId != null)
+		{
+			// If an id is used, we need to check if an entity with this id already exists and perhaps merge into
+			// that object.
+			final Optional<T> existingEntity = this.entityGetterById.findById(usedId);
+			if(existingEntity.isPresent())
+			{
+				if(mergeValues)
+				{
+					this.mergeValues(workingCopy, existingEntity.get(), alreadyMergedTargets, changedCollector);
+				}
+				changedCollector.collectChangedObject(existingEntity.get());
+				return (E)existingEntity.get();
+			}
 		}
 		
 		// The object to merge back is not a working copy, but a originalObject.

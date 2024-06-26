@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
 
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
+import java.util.Optional;
 
 
-public interface IdSetterProvider
+public interface EntityGetterById<T, ID>
 {
-	<T, ID> IdSetter<T, ID> ensureIdSetter(final Class<T> domainClass);
+	Optional<T> findById(ID id);
 }

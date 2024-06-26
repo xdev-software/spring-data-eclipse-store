@@ -15,11 +15,11 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
 
-public class NotSettingIdSetter<T> implements IdSetter<T>
+public class NotSettingIdSetter<T> implements IdSetter<T, Void>
 {
 	@Override
-	public void ensureId(final T objectToSetIdIn)
+	public Void ensureId(final T objectToSetIdIn)
 	{
-		// Don't need to do anything
+		return null;
 	}
 }
