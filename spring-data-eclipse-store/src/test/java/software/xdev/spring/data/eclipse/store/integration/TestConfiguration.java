@@ -55,7 +55,7 @@ public class TestConfiguration extends EclipseStoreClientConfiguration
 	}
 	
 	@EventListener
-	public void handleContextRefresh(final ContextRefreshedEvent event)
+	public void handleContextRefresh(final ContextRefreshedEvent event) throws IOException
 	{
 		// Init with empty root object
 		this.getStorageInstance().clearData();

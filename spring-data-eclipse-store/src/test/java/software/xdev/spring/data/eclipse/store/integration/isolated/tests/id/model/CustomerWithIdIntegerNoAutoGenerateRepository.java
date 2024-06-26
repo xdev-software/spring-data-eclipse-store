@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
 import org.springframework.data.repository.CrudRepository;
 
 
-public interface CustomerWithPurchaseRepository extends CrudRepository<CustomerWithPurchase, Integer>
+public interface CustomerWithIdIntegerNoAutoGenerateRepository
+	extends CrudRepository<CustomerWithIdIntegerNoAutoGenerate, Integer>
 {
 }

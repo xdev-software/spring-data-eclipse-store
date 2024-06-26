@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.tests;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id;
 
 import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDatastore;
 
@@ -23,33 +23,39 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdInt;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdIntRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdInteger;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdIntegerNoAutoGenerate;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdIntegerNoAutoGenerateRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdIntegerRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdLong;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdLongRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdString;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithIdStringRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithPurchase;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.CustomerWithPurchaseRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.id.Purchase;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdInt;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdIntRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdInteger;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdIntegerNoAutoGenerate;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdIntegerNoAutoGenerateRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdIntegerRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdLong;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdLongRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdString;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdStringRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithPurchase;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithPurchaseRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.Purchase;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-@DefaultTestAnnotations
+@IsolatedTestAnnotations
+@ContextConfiguration(classes = {IdTestConfiguration.class})
 class IdTest
 {
+	private final IdTestConfiguration configuration;
+	
 	@Autowired
-	private SharedTestConfiguration configuration;
+	public IdTest(final IdTestConfiguration configuration)
+	{
+		this.configuration = configuration;
+	}
 	
 	@Test
 	void testCreateSingleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
@@ -90,7 +96,8 @@ class IdTest
 	
 	@Test
 	void testCreateSingleWithAutoIdIntegerWorkingCopyIdSet(
-		@Autowired final CustomerWithIdIntegerRepository customerRepository)
+		@Autowired final CustomerWithIdIntegerRepository customerRepository
+	)
 	{
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
 		Assertions.assertNull(customer1.getId());
@@ -120,7 +127,8 @@ class IdTest
 	
 	@Test
 	void testCreateMultipleWithAutoIdIntegerSingleFinds(
-		@Autowired final CustomerWithIdIntegerRepository customerRepository)
+		@Autowired final CustomerWithIdIntegerRepository customerRepository
+	)
 	{
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -274,7 +282,8 @@ class IdTest
 	
 	@Test
 	void testSaveSingleWithAutoIdInteger(
-		@Autowired final CustomerWithIdIntegerRepository customerRepository)
+		@Autowired final CustomerWithIdIntegerRepository customerRepository
+	)
 	{
 		final CustomerWithIdInteger customer1 =
 			new CustomerWithIdInteger();

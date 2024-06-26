@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,20 +23,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-public class CustomerWithIdInt
+public class CustomerWithIdInteger
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	private Integer id;
 	
 	private String firstName;
 	private String lastName;
 	
-	public CustomerWithIdInt()
+	public CustomerWithIdInteger()
 	{
 	}
 	
-	public CustomerWithIdInt(final String firstName, final String lastName)
+	public CustomerWithIdInteger(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -76,7 +76,7 @@ public class CustomerWithIdInt
 		{
 			return false;
 		}
-		final CustomerWithIdInt customer = (CustomerWithIdInt)o;
+		final CustomerWithIdInteger customer = (CustomerWithIdInteger)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -89,8 +89,8 @@ public class CustomerWithIdInt
 	}
 	
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithIdInt getCustomerWithFirstName(
-		final List<CustomerWithIdInt> customers,
+	public static CustomerWithIdInteger getCustomerWithFirstName(
+		final List<CustomerWithIdInteger> customers,
 		final String firstName)
 	{
 		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();
