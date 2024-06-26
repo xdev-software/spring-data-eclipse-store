@@ -16,8 +16,10 @@
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.serializer.reference.Lazy;
+import org.eclipse.serializer.reference.Referencing;
 
 
 public class LazyDaoObject extends ComplexObject<Lazy<String>>
@@ -30,16 +32,11 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 	@Override
 	public int hashCode()
 	{
-		int result = 17;
-		if(this.getId() != null)
-		{
-			result = 31 * result + this.getId().hashCode();
-		}
-		if(this.getValue() != null)
-		{
-			result = 31 * result + this.getValue().hashCode();
-		}
-		return result;
+		return Objects.hash(
+			this.getId(),
+			Optional.ofNullable(this.getValue())
+				.map(Referencing::get)
+				.orElse(null));
 	}
 	
 	@Override
@@ -56,8 +53,6 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 		final ComplexObject<Lazy<String>> that = (ComplexObject<Lazy<String>>)o;
 		return Objects.equals(this.getId(), that.getId())
 			&& (this.getValue() == null && that.getValue() == null)
-			|| Objects.equals(
-			this.getValue().get(),
-			that.getValue().get());
+			|| Objects.equals(this.getValue().get(), that.getValue().get());
 	}
 }
