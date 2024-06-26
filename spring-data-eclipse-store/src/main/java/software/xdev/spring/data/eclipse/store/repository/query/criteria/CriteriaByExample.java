@@ -19,7 +19,9 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -110,88 +112,57 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 			return this.createPredicateForStringMatcher(
 				specifier,
 				setOrDefaultMatcher,
-				transformedExampledValue,
-				transformedValue);
+				transformedExampledValue.get(),
+				transformedValue.orElse(null));
 		};
 	}
 	
 	private boolean createPredicateForStringMatcher(
 		final ExampleMatcher.PropertySpecifier specifier,
 		final ExampleMatcher.StringMatcher setOrDefaultMatcher,
-		final Optional<Object> transformedExampledValue,
-		final Optional<Object> transformedValue)
+		final Object transformedExampledValue, // Never null
+		final Object transformedValue) // Nullable
 	{
-		switch(setOrDefaultMatcher)
+		// Check exact matches
+		if(ExampleMatcher.StringMatcher.DEFAULT.equals(setOrDefaultMatcher)
+			|| ExampleMatcher.StringMatcher.EXACT.equals(setOrDefaultMatcher))
 		{
-			case DEFAULT, EXACT ->
+			if(transformedExampledValue instanceof String)
 			{
-				if(transformedExampledValue.get() instanceof String)
-				{
-					return this.valueToString(transformedValue, specifier).equals(this.valueToString(
-						transformedExampledValue,
-						specifier));
-				}
-				return transformedExampledValue.equals(transformedValue);
+				return Objects.equals(
+					this.valueToString(transformedExampledValue, specifier),
+					this.valueToString(transformedValue, specifier));
 			}
-			case STARTING ->
-			{
-				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-				if(valueAsString.isEmpty())
-				{
-					return false;
-				}
-				return valueAsString.get()
-					.startsWith(this.valueToString(transformedExampledValue, specifier).get());
-			}
-			case ENDING ->
-			{
-				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-				if(valueAsString.isEmpty())
-				{
-					return false;
-				}
-				return valueAsString.get().endsWith(this.valueToString(transformedExampledValue, specifier).get());
-			}
-			case CONTAINING ->
-			{
-				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-				if(valueAsString.isEmpty())
-				{
-					return false;
-				}
-				return valueAsString.get().contains(this.valueToString(transformedExampledValue, specifier).get());
-			}
-			case REGEX ->
-			{
-				final Optional<String> valueAsString = this.valueToString(transformedValue, specifier);
-				if(valueAsString.isEmpty())
-				{
-					return false;
-				}
-				return Pattern.compile(
-						this.valueToString(transformedExampledValue, specifier).get()
-					)
-					.matcher(valueAsString.get()).find();
-			}
-			default ->
-			{
-				return false;
-			}
+			return Objects.equals(transformedExampledValue, transformedValue);
 		}
+		
+		// Check comparisons
+		final BiPredicate<String, String> compareFunc = switch(setOrDefaultMatcher)
+		{
+			case STARTING -> String::startsWith;
+			case ENDING -> String::endsWith;
+			case CONTAINING -> String::contains;
+			case REGEX -> (v, example) -> Pattern.compile(example).matcher(v).find();
+			default -> null;
+		};
+		
+		return compareFunc != null
+			&& Optional.ofNullable(this.valueToString(transformedValue, specifier))
+			.map(v -> compareFunc.test(v, this.valueToString(transformedExampledValue, specifier)))
+			.orElse(false);
 	}
 	
-	private Optional<String> valueToString(
-		final Optional<Object> value,
+	private String valueToString(
+		final Object value,
 		final ExampleMatcher.PropertySpecifier specifier)
 	{
-		if(value.isEmpty())
+		if(value == null)
 		{
-			return Optional.empty();
+			return null;
 		}
-		if(specifier != null && Boolean.TRUE.equals(specifier.getIgnoreCase()))
-		{
-			return Optional.of(value.get().toString().toLowerCase(Locale.ROOT));
-		}
-		return Optional.of(value.get().toString());
+		
+		return (specifier != null && Boolean.TRUE.equals(specifier.getIgnoreCase()))
+			? value.toString().toLowerCase(Locale.ROOT)
+			: value.toString();
 	}
 }
