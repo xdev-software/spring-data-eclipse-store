@@ -8,8 +8,7 @@ import software.xdev.spring.data.eclipse.store.benchmark.SpringState;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
-@SuppressWarnings("checkstyle:MagicNumber")
-public class StoringAndChangingSimpleCustomerBenchmark
+public class StoringAndChangingSimpleCustomerBenchmark extends AbstractStoringSimpleCustomerBenchmark
 {
 	@Benchmark
 	public void saveSingleCustomer(final SpringState state)
@@ -29,43 +28,8 @@ public class StoringAndChangingSimpleCustomerBenchmark
 			});
 	}
 	
-	@Benchmark
-	public void save100CustomerInForEach(final SpringState state)
-	{
-		this.saveCustomerInForEach(state, 100);
-	}
-	
-	@Benchmark
-	public void save100CustomerInSaveAll(final SpringState state)
-	{
-		this.saveCustomerInSaveAll(state, 100);
-	}
-	
-	@Benchmark
-	public void save1000CustomerInSaveAll(final SpringState state)
-	{
-		this.saveCustomerInSaveAll(state, 1_000);
-	}
-	
-	@Benchmark
-	public void save10000CustomerInSaveAll(final SpringState state)
-	{
-		this.saveCustomerInSaveAll(state, 10_000);
-	}
-	
-	@Benchmark
-	public void save1000CustomerInForEach(final SpringState state)
-	{
-		this.saveCustomerInForEach(state, 1_000);
-	}
-	
-	@Benchmark
-	public void save100000CustomerInSaveAll(final SpringState state)
-	{
-		this.saveCustomerInSaveAll(state, 100_000);
-	}
-	
-	private void saveCustomerInForEach(final SpringState state, final int entityCount)
+	@Override
+	protected void saveCustomerInForEach(final SpringState state, final int entityCount)
 	{
 		final CustomerRepository customerRepository1 = state.getBean(CustomerRepository.class);
 		IntStream.range(0, entityCount).forEach(
@@ -84,7 +48,8 @@ public class StoringAndChangingSimpleCustomerBenchmark
 			});
 	}
 	
-	private void saveCustomerInSaveAll(final SpringState state, final int entityCount)
+	@Override
+	protected void saveCustomerInSaveAll(final SpringState state, final int entityCount)
 	{
 		final CustomerRepository customerRepository = state.getBean(CustomerRepository.class);
 		customerRepository.saveAll(

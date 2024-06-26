@@ -40,15 +40,18 @@ import software.xdev.spring.data.eclipse.store.integration.shared.repositories.r
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @DefaultTestAnnotations
-public class RealLifeTests
+class RealLifeTests
 {
-	public static final String STATIONERY = "Stationery";
-	public static final String BUILDING_MATERIAL = "Building Material";
-	public static final String PEN = "Pen";
-	public static final String BRICK = "Brick";
-	public static final int PEN_AMOUNT = 5;
-	public static final int BRICK_AMOUNT = 2;
-	public static final String WAREHOUSE_WEIDEN = "Weiden";
+	static final String STATIONERY = "Stationery";
+	static final String BUILDING_MATERIAL = "Building Material";
+	static final String PEN = "Pen";
+	static final String BRICK = "Brick";
+	static final int PEN_AMOUNT = 5;
+	static final int BRICK_AMOUNT = 2;
+	static final String WAREHOUSE_WEIDEN = "Weiden";
+	static final String SHOE_ARTICLE_NAME = "Shoe";
+	static final String SHOES_ARTICLE_GROUP = "Shoes";
+	
 	@Autowired
 	InvoiceRepository invoiceRepository;
 	@Autowired
@@ -108,33 +111,19 @@ public class RealLifeTests
 	@Test
 	void testReplacePositionWithNewArticleThroughInvoiceRepository()
 	{
-		final String shoeArticleName = "Shoe";
 		this.buildDefaultModelAndSaveIt();
 		final Invoice invoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
 		final List<Position> positions = invoice.getPositions();
 		positions.remove(1);
 		
-		final ArticleGroup shoesGroup = new ArticleGroup("Shoes");
-		final Article shoe =
-			new Article(shoeArticleName, shoesGroup, positions.get(0).getArticle().getWarehouses().get(0));
-		positions.add(new Position(shoe, 4));
+		createAndAddShoeToPosition(positions);
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
 				final Invoice loadedInvoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
-				final Optional<Position>
-					positionOfShoe = getPositionWithArticleWithName(loadedInvoice.getPositions(), shoeArticleName);
-				final Optional<Position> positionWithAmount4 =
-					loadedInvoice.getPositions().stream().filter(position -> position.getAmount() == 4).findFirst();
-				Assertions.assertEquals(2, loadedInvoice.getPositions().size());
-				Assertions.assertTrue(positionWithAmount4.isPresent());
-				Assertions.assertTrue(positionOfShoe.isPresent());
-				Assertions.assertEquals("Shoes", positionOfShoe.get().getArticle().getGroup().getName());
-				Assertions.assertSame(
-					loadedInvoice.getPositions().get(0).getArticle().getWarehouses().get(0),
-					loadedInvoice.getPositions().get(1).getArticle().getWarehouses().get(0));
+				this.validatePositions(loadedInvoice.getPositions(), 2);
 			}
 		);
 	}
@@ -142,32 +131,18 @@ public class RealLifeTests
 	@Test
 	void testAddNewArticleWithSameWarehouse()
 	{
-		final String shoeArticleName = "Shoe";
 		this.buildDefaultModelAndSaveIt();
 		final Invoice invoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
 		final List<Position> positions = invoice.getPositions();
 		
-		final ArticleGroup shoesGroup = new ArticleGroup("Shoes");
-		final Article shoe =
-			new Article(shoeArticleName, shoesGroup, positions.get(0).getArticle().getWarehouses().get(0));
-		positions.add(new Position(shoe, 4));
+		createAndAddShoeToPosition(positions);
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
 				final Invoice loadedInvoice = TestUtil.iterableToList(this.invoiceRepository.findAll()).get(0);
-				final Optional<Position>
-					positionOfShoe = getPositionWithArticleWithName(loadedInvoice.getPositions(), shoeArticleName);
-				final Optional<Position> positionWithAmount4 =
-					loadedInvoice.getPositions().stream().filter(position -> position.getAmount() == 4).findFirst();
-				Assertions.assertEquals(3, loadedInvoice.getPositions().size());
-				Assertions.assertTrue(positionWithAmount4.isPresent());
-				Assertions.assertTrue(positionOfShoe.isPresent());
-				Assertions.assertEquals("Shoes", positionOfShoe.get().getArticle().getGroup().getName());
-				Assertions.assertSame(
-					loadedInvoice.getPositions().get(0).getArticle().getWarehouses().get(0),
-					loadedInvoice.getPositions().get(1).getArticle().getWarehouses().get(0));
+				this.validatePositions(loadedInvoice.getPositions(), 3);
 				Assertions.assertSame(
 					loadedInvoice.getPositions().get(1).getArticle().getWarehouses().get(0),
 					loadedInvoice.getPositions().get(2).getArticle().getWarehouses().get(0));
@@ -178,30 +153,51 @@ public class RealLifeTests
 	@Test
 	void testReplacePositionWithNewArticleThroughPositionRepository()
 	{
-		final String shoeArticleName = "Shoe";
 		this.buildDefaultModelAndSaveIt();
 		List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
 		this.positionRepository.delete(positions.get(1));
 		positions = TestUtil.iterableToList(this.positionRepository.findAll());
 		
-		final ArticleGroup shoesGroup = new ArticleGroup("Shoes");
-		final Article shoe =
-			new Article(shoeArticleName, shoesGroup, positions.get(0).getArticle().getWarehouses().get(0));
-		positions.add(new Position(shoe, 4));
+		createAndAddShoeToPosition(positions);
 		this.positionRepository.saveAll(positions);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
 				final List<Position> loadedPositions = TestUtil.iterableToList(this.positionRepository.findAll());
-				final Optional<Position>
-					positionOfShoe = getPositionWithArticleWithName(loadedPositions, shoeArticleName);
-				final Optional<Position> positionWithAmount4 =
-					loadedPositions.stream().filter(position -> position.getAmount() == 4).findFirst();
-				Assertions.assertEquals(2, loadedPositions.size());
-				Assertions.assertTrue(positionWithAmount4.isPresent());
-				Assertions.assertTrue(positionOfShoe.isPresent());
-				Assertions.assertEquals("Shoes", positionOfShoe.get().getArticle().getGroup().getName());
+				this.validatePositions(loadedPositions, 2);
+			}
+		);
+	}
+	
+	private void validatePositions(final List<Position> positions, final int expectedSize)
+	{
+		final Optional<Position>
+			positionOfShoe = getPositionWithArticleWithName(positions, SHOE_ARTICLE_NAME);
+		final Optional<Position> positionWithAmount4 =
+			positions.stream().filter(position -> position.getAmount() == 4).findFirst();
+		Assertions.assertEquals(expectedSize, positions.size());
+		Assertions.assertTrue(positionWithAmount4.isPresent());
+		Assertions.assertTrue(positionOfShoe.isPresent());
+		Assertions.assertEquals(SHOES_ARTICLE_GROUP, positionOfShoe.get().getArticle().getGroup().getName());
+		Assertions.assertSame(
+			positions.get(0).getArticle().getWarehouses().get(0),
+			positions.get(1).getArticle().getWarehouses().get(0));
+	}
+	
+	@Test
+	void testReplacePositionWithNewArticleAndUseImmutableList()
+	{
+		this.buildDefaultModelAndSaveIt();
+		
+		final List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
+		createAndAddShoeToPosition(positions);
+		this.positionRepository.saveAll(positions);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<Position> loadedPositions = TestUtil.iterableToList(this.positionRepository.findAll());
 				Assertions.assertSame(
 					loadedPositions.get(0).getArticle().getWarehouses().get(0),
 					loadedPositions.get(1).getArticle().getWarehouses().get(0));
@@ -209,28 +205,12 @@ public class RealLifeTests
 		);
 	}
 	
-	@Test
-	void testReplacePositionWithNewArticleAndUseImmutableList()
+	private static void createAndAddShoeToPosition(final List<Position> positions)
 	{
-		final String shoeArticleName = "Shoe";
-		this.buildDefaultModelAndSaveIt();
-		
-		final List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
-		final ArticleGroup shoesGroup = new ArticleGroup("Shoes");
+		final ArticleGroup shoesGroup = new ArticleGroup(SHOES_ARTICLE_GROUP);
 		final Article shoe =
-			new Article(shoeArticleName, shoesGroup, List.of(positions.get(0).getArticle().getWarehouses().get(0)));
+			new Article(SHOE_ARTICLE_NAME, shoesGroup, List.of(positions.get(0).getArticle().getWarehouses().get(0)));
 		positions.add(new Position(shoe, 4));
-		this.positionRepository.saveAll(positions);
-		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final List<Position> loadedPositions = TestUtil.iterableToList(this.positionRepository.findAll());
-				Assertions.assertSame(
-					loadedPositions.get(0).getArticle().getWarehouses().get(0),
-					loadedPositions.get(1).getArticle().getWarehouses().get(0));
-			}
-		);
 	}
 	
 	@Test

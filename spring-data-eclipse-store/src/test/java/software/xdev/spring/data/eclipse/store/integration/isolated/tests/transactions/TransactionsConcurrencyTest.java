@@ -28,6 +28,8 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -49,14 +51,18 @@ class TransactionsConcurrencyTest
 		this.accountRepository = accountRepository;
 	}
 	
-	@Test
-	void testSaveConcurrentlyPreviouslyNonExistingAccounts(
-		@Autowired final PlatformTransactionManager transactionManager
-	)
-		throws InterruptedException
+	@ParameterizedTest
+	@ValueSource(booleans = {false, true})
+	void saveConcurrently(
+		final boolean previouslyExisting,
+		@Autowired final PlatformTransactionManager transactionManager) throws InterruptedException
 	{
 		final List<Account> testAccounts =
-			IntStream.range(1, 1000).mapToObj((i) -> new Account(i, BigDecimal.TEN)).toList();
+			IntStream.range(1, 1000).mapToObj(i -> new Account(i, BigDecimal.TEN)).toList();
+		if(previouslyExisting)
+		{
+			this.accountRepository.saveAll(testAccounts);
+		}
 		
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 		final CountDownLatch latch = new CountDownLatch(testAccounts.size());
@@ -64,46 +70,12 @@ class TransactionsConcurrencyTest
 			account ->
 				service.execute(() ->
 					{
-						new TransactionTemplate(transactionManager).execute(
-							status ->
-							{
-								account.setBalance(account.getBalance().subtract(BigDecimal.ONE));
-								this.accountRepository.save(account);
-								return null;
-							});
-						Assertions.assertEquals(
-							BigDecimal.valueOf(9),
-							this.accountRepository.findById(account.getId()).get().getBalance());
-						latch.countDown();
-					}
-				)
-		);
-		
-		assertTrue(latch.await(5, TimeUnit.SECONDS));
-		
-		final List<Account> accounts = TestUtil.iterableToList(this.accountRepository.findAll());
-		assertEquals(testAccounts.size(), accounts.size());
-		accounts.forEach(account -> Assertions.assertEquals(BigDecimal.valueOf(9), account.getBalance()));
-	}
-	
-	@Test
-	void testSaveConcurrentlyPreviouslyExistingAccounts(
-		@Autowired final PlatformTransactionManager transactionManager)
-		throws InterruptedException
-	{
-		final List<Account> testAccounts =
-			IntStream.range(1, 100).mapToObj((i) -> new Account(i, BigDecimal.TEN)).toList();
-		this.accountRepository.saveAll(testAccounts);
-		
-		final ExecutorService service = Executors.newFixedThreadPool(10);
-		final CountDownLatch latch = new CountDownLatch(testAccounts.size());
-		testAccounts.forEach(
-			account ->
-				service.execute(() ->
-					{
-						Assertions.assertEquals(
-							BigDecimal.TEN,
-							this.accountRepository.findById(account.getId()).get().getBalance());
+						if(previouslyExisting)
+						{
+							Assertions.assertEquals(
+								BigDecimal.TEN,
+								this.accountRepository.findById(account.getId()).get().getBalance());
+						}
 						new TransactionTemplate(transactionManager).execute(
 							status ->
 							{
