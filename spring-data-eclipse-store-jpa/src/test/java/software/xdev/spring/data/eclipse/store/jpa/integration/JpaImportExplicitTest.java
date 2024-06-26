@@ -49,7 +49,7 @@ class JpaImportExplicitTest
 	private EclipseStoreClientConfiguration configuration;
 	
 	@Test
-	void testEclipseStoreImport_ExplicitNoComponent()
+	void testEclipseStoreImportExplicitNoComponent()
 	{
 		final PersonToTestInJpa customer = new PersonToTestInJpa("", "");
 		this.personToTestInJpaRepository.save(customer);

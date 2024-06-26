@@ -20,6 +20,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
@@ -96,12 +98,6 @@ public class WorkingCopyTests
 		Assertions.assertNotSame(customers1.get(0), customers2.get(0));
 	}
 	
-	//@formatter:off
-	/**
-	 * □-□
-	 * □-┘
-	 **/
-	//@formatter:on
 	@Test
 	void testStoreGraphWithCircularRelation()
 	{
@@ -136,14 +132,9 @@ public class WorkingCopyTests
 		);
 	}
 	
-	//@formatter:off
-	/**
-	 * □-□
-	 * □-┘
-	 **/
-	//@formatter:on
-	@Test
-	void testStoreGraphWithCircularRelationWithDoubleSave()
+	@ParameterizedTest
+	@ValueSource(booleans = {false, true})
+	void storeGraphWithCircularRelationWithMultiSave(final boolean saveChildNode)
 	{
 		final Node childNode = new Node(CHILD_NAME_1);
 		final Node parentNode1 = new Node(PARENT_NAME_1, List.of(childNode));
@@ -152,6 +143,10 @@ public class WorkingCopyTests
 		
 		this.nodeRepository.save(parentNode1);
 		this.nodeRepository.save(parentNode2);
+		if(saveChildNode)
+		{
+			this.nodeRepository.save(childNode);
+		}
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
@@ -175,52 +170,6 @@ public class WorkingCopyTests
 		);
 	}
 	
-	//@formatter:off
-	/**
-	 * □-□
-	 * □-┘
-	 **/
-	//@formatter:on
-	@Test
-	void testStoreGraphWithCircularRelationWithTrippleSave()
-	{
-		final Node childNode = new Node(CHILD_NAME_1);
-		final Node parentNode1 = new Node(PARENT_NAME_1, List.of(childNode));
-		final Node parentNode2 = new Node(PARENT_NAME_2);
-		childNode.getChildren().add(parentNode2);
-		
-		this.nodeRepository.save(parentNode1);
-		this.nodeRepository.save(parentNode2);
-		this.nodeRepository.save(childNode);
-		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final List<Node> loadedNodes = TestUtil.iterableToList(this.nodeRepository.findAll());
-				Assertions.assertEquals(3, loadedNodes.size());
-				
-				final Node loadedChildNode =
-					loadedNodes.stream().filter(node -> node.getName().equals(CHILD_NAME_1)).findFirst().get();
-				Assertions.assertEquals(CHILD_NAME_1, loadedChildNode.getName());
-				final Node loadedParentNode1 =
-					loadedNodes.stream().filter(node -> node.getName().equals(PARENT_NAME_1)).findFirst().get();
-				Assertions.assertEquals(PARENT_NAME_1, loadedParentNode1.getName());
-				final Node loadedParentNode2 =
-					loadedNodes.stream().filter(node -> node.getName().equals(PARENT_NAME_2)).findFirst().get();
-				Assertions.assertEquals(PARENT_NAME_2, loadedParentNode2.getName());
-				
-				Assertions.assertSame(loadedParentNode1.getChildren().get(0), loadedChildNode);
-				Assertions.assertSame(loadedChildNode.getChildren().get(0), loadedParentNode2);
-			}
-		);
-	}
-	
-	//@formatter:off
-	/**
-	 * □-□
-	 * □-┘
-	 **/
-	//@formatter:on
 	@Test
 	void testModifyGraph()
 	{

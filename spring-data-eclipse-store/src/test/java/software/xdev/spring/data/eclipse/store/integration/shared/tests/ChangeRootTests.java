@@ -29,7 +29,7 @@ import software.xdev.spring.data.eclipse.store.integration.shared.repositories.N
 
 
 @DefaultTestAnnotations
-public class ChangeRootTests
+class ChangeRootTests
 {
 	public static final String CHILD_1 = "child1";
 	public static final String CHILD_2 = "child2";
@@ -37,9 +37,9 @@ public class ChangeRootTests
 	public static final String PARENT_2 = "parent2";
 	
 	@Autowired
-	private NodeRepository repository;
+	NodeRepository repository;
 	@Autowired
-	private SharedTestConfiguration configuration;
+	SharedTestConfiguration configuration;
 	
 	//@formatter:off
 	/**
@@ -54,16 +54,7 @@ public class ChangeRootTests
 		final Node parentNode = new Node(PARENT_1, List.of(childNode1, childNode2));
 		this.repository.save(parentNode);
 		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final List<Node> nodes = TestUtil.iterableToList(this.repository.findAll());
-				Assertions.assertEquals(3, nodes.size());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, PARENT_1).isPresent());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, CHILD_1).isPresent());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, CHILD_2).isPresent());
-			}
-		);
+		this.validate(PARENT_1, CHILD_1, CHILD_2);
 	}
 	
 	//@formatter:off
@@ -81,16 +72,7 @@ public class ChangeRootTests
 		childNode1.getChildren().add(parentNode2);
 		this.repository.save(parentNode1);
 		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final List<Node> nodes = TestUtil.iterableToList(this.repository.findAll());
-				Assertions.assertEquals(3, nodes.size());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, PARENT_1).isPresent());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, CHILD_1).isPresent());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, PARENT_2).isPresent());
-			}
-		);
+		this.validate(PARENT_1, CHILD_1, PARENT_2);
 	}
 	
 	//@formatter:off
@@ -109,14 +91,21 @@ public class ChangeRootTests
 		childNode2.getChildren().add(parentNode);
 		this.repository.save(parentNode);
 		
+		this.validate(PARENT_1, CHILD_1, CHILD_2);
+	}
+	
+	private void validate(final String... presentNodes)
+	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
 				final List<Node> nodes = TestUtil.iterableToList(this.repository.findAll());
-				Assertions.assertEquals(3, nodes.size());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, PARENT_1).isPresent());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, CHILD_1).isPresent());
-				Assertions.assertTrue(Node.getNodeWithName(nodes, CHILD_2).isPresent());
+				Assertions.assertEquals(presentNodes.length, nodes.size());
+				
+				for(final String expectedNodeName : presentNodes)
+				{
+					Assertions.assertTrue(Node.getNodeWithName(nodes, expectedNodeName).isPresent());
+				}
 			}
 		);
 	}
