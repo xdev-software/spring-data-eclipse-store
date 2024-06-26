@@ -27,12 +27,19 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 		super(id, value);
 	}
 	
-	@SuppressWarnings("PMD.UselessOverridingMethod")
 	@Override
 	public int hashCode()
 	{
-		// TODO: Why is hashCode different than equals?
-		return super.hashCode();
+		int result = 17;
+		if(this.getId() != null)
+		{
+			result = 31 * result + this.getId().hashCode();
+		}
+		if(this.getValue() != null)
+		{
+			result = 31 * result + this.getValue().hashCode();
+		}
+		return result;
 	}
 	
 	@Override
