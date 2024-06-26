@@ -84,6 +84,9 @@
 							</rulesets>
 							<excludes>
 								<exclude>**/benchmark/**/jmh_generated/**</exclude>
+								<!-- Dynamic types for tests -->
+								<exclude>**/shared/**/Customer*</exclude>
+								<exclude>**/shared/**/Child*</exclude>
 							</excludes>
 						</configuration>
 						<dependencies>
