@@ -113,24 +113,7 @@ class TransactionsTest
 	@Test
 	void accountAndCounterTransactionSequential(@Autowired final PlatformTransactionManager transactionManager)
 	{
-		new TransactionTemplate(transactionManager).execute(
-			status ->
-			{
-				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
-				this.accountRepository.save(this.account1);
-				
-				this.account2.setBalance(this.account2.getBalance().add(BigDecimal.ONE));
-				this.accountRepository.save(this.account2);
-				return null;
-			}
-		);
-		
-		Assertions.assertEquals(
-			BigDecimal.valueOf(9),
-			this.accountRepository.findById(this.account1.getId()).get().getBalance());
-		Assertions.assertEquals(
-			BigDecimal.ONE,
-			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+		this.accountTransactionWorking(transactionManager);
 		
 		new TransactionTemplate(transactionManager).execute(
 			status ->

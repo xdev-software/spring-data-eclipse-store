@@ -51,13 +51,11 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 					}
 					final Class<Object> objectInGraphClass = (Class<Object>)objectInGraph.getClass();
 					final IdentitySet<Object> entityListForCurrentObject = this.root.getEntityList(objectInGraphClass);
-					if(entityListForCurrentObject != null)
+					if(entityListForCurrentObject != null
+						&& !entityListForCurrentObject.contains(objectInGraph))
 					{
-						if(!entityListForCurrentObject.contains(objectInGraph))
-						{
-							entityListForCurrentObject.add(objectInGraph);
-							this.listsToStore.add(entityListForCurrentObject);
-						}
+						entityListForCurrentObject.add(objectInGraph);
+						this.listsToStore.add(entityListForCurrentObject);
 					}
 				}
 			).buildObjectGraphTraverser();

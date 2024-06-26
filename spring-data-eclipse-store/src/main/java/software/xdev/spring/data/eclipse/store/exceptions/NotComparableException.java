@@ -21,4 +21,9 @@ public class NotComparableException extends RuntimeException
 	{
 		super(message);
 	}
+	
+	public NotComparableException(final String message, final Throwable cause)
+	{
+		super(message, cause);
+	}
 }

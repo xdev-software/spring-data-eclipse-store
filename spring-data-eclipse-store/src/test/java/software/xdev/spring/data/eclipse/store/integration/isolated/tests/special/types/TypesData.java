@@ -53,6 +53,7 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
+@SuppressWarnings("PMD.UseArrayListInsteadOfVector") // Vector is required for tests
 final class TypesData
 {
 	private TypesData()
