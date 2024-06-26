@@ -421,4 +421,101 @@ class IdTest
 			}
 		);
 	}
+	
+	@Test
+	void testReplaceWithId(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(existingCustomer);
+		
+		final CustomerWithIdIntegerNoAutoGenerate newCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME_ALTERNATIVE,
+				TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.save(newCustomer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(1, loadedCustomer.size());
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
+				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
+			}
+		);
+	}
+	
+	@Test
+	void testReplaceWithAutoId(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	{
+		final CustomerWithIdInteger existingCustomer =
+			new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(existingCustomer);
+		final Integer existingId = customerRepository.findAll().iterator().next().getId();
+		
+		final CustomerWithIdInteger newCustomer = new CustomerWithIdInteger(existingId,
+			TestData.FIRST_NAME_ALTERNATIVE,
+			TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.save(newCustomer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdInteger> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(1, loadedCustomer.size());
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
+				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
+			}
+		);
+	}
+	
+	@Test
+	void testReplaceWithIdSaveAll(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdIntegerNoAutoGenerate newCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME_ALTERNATIVE,
+				TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.saveAll(List.of(existingCustomer, newCustomer));
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(1, loadedCustomer.size());
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
+				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
+			}
+		);
+	}
+	
+	@Test
+	void testAddTwoWithId(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(existingCustomer);
+		
+		final CustomerWithIdIntegerNoAutoGenerate newCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(2, TestData.FIRST_NAME_ALTERNATIVE,
+				TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.save(newCustomer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(2, loadedCustomer.size());
+			}
+		);
+	}
 }

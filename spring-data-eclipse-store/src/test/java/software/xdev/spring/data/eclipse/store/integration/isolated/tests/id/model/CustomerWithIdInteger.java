@@ -42,6 +42,13 @@ public class CustomerWithIdInteger
 		this.lastName = lastName;
 	}
 	
+	public CustomerWithIdInteger(final Integer id, final String firstName, final String lastName)
+	{
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+	
 	public String getFirstName()
 	{
 		return this.firstName;
