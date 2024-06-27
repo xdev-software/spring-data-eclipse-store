@@ -61,7 +61,7 @@ public class SimpleDemoApplication implements CommandLineRunner
 		this.customerRepository.findAll().forEach(c -> LOG.info(c.toString()));
 		
 		// save a pet
-		this.petRepository.save(new Pet("Peter", 2));
+		this.petRepository.save(new Pet("1", "Peter", 2));
 		
 		// fetch all pets
 		LOG.info("Pets found with findAll():");

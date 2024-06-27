@@ -1,11 +1,15 @@
 package software.xdev.spring.data.eclipse.store.demo.simple;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
 import org.springframework.data.annotation.Id;
 
 
 public class Customer
 {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String id;
 	
 	private final String firstName;

@@ -15,8 +15,9 @@ public class Pet
 	{
 	}
 	
-	public Pet(final String name, final Integer age)
+	public Pet(final String id, final String name, final Integer age)
 	{
+		this.id = id;
 		this.name = name;
 		this.age = age;
 	}
