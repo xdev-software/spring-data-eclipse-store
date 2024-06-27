@@ -51,7 +51,8 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.registe
 /**
  * Creates copies and puts them back. Recognizes already persisted Objects and checks them for changes as well.
  */
-public class RecursiveWorkingCopier<T, ID> implements WorkingCopier<T>
+@SuppressWarnings("PMD.GodClass")
+public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(RecursiveWorkingCopier.class);
 	private final RegisteringObjectCopier workingCopyToStorageCopier;
@@ -148,12 +149,13 @@ public class RecursiveWorkingCopier<T, ID> implements WorkingCopier<T>
 		final E originalObject = this.registry.getOriginalObjectFromWorkingCopy(workingCopy);
 		if(originalObject != null)
 		{
-			if(mergeValues)
-			{
-				this.mergeValues(workingCopy, originalObject, alreadyMergedTargets, changedCollector);
-			}
-			changedCollector.collectChangedObject(originalObject);
-			return originalObject;
+			return this.mergeValueIfNeeded(
+				workingCopy,
+				mergeValues,
+				alreadyMergedTargets,
+				changedCollector,
+				originalObject
+			);
 		}
 		
 		final Object id = idManager.getId(workingCopy);
@@ -164,12 +166,13 @@ public class RecursiveWorkingCopier<T, ID> implements WorkingCopier<T>
 			final Optional<E> existingEntity = idManager.findById(id);
 			if(existingEntity.isPresent())
 			{
-				if(mergeValues)
-				{
-					this.mergeValues(workingCopy, existingEntity.get(), alreadyMergedTargets, changedCollector);
-				}
-				changedCollector.collectChangedObject(existingEntity.get());
-				return existingEntity.get();
+				return this.mergeValueIfNeeded(
+					workingCopy,
+					mergeValues,
+					alreadyMergedTargets,
+					changedCollector,
+					existingEntity.get()
+				);
 			}
 		}
 		
@@ -181,6 +184,21 @@ public class RecursiveWorkingCopier<T, ID> implements WorkingCopier<T>
 		this.mergeValues(workingCopy, objectForDatastore, alreadyMergedTargets, changedCollector);
 		changedCollector.collectChangedObject(objectForDatastore);
 		return objectForDatastore;
+	}
+	
+	private <E> E mergeValueIfNeeded(
+		final E workingCopy,
+		final boolean mergeValues,
+		final MergedTargetsCollector alreadyMergedTargets,
+		final ChangedObjectCollector changedCollector,
+		final E existingEntity)
+	{
+		if(mergeValues)
+		{
+			this.mergeValues(workingCopy, existingEntity, alreadyMergedTargets, changedCollector);
+		}
+		changedCollector.collectChangedObject(existingEntity);
+		return existingEntity;
 	}
 	
 	@Override
