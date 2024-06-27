@@ -34,6 +34,7 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
@@ -254,6 +255,7 @@ public class EclipseStoreDataImporter
 	private <T> SimpleEclipseStoreRepository<T, ?> createEclipseStoreRepo(final Class<T> domainClass)
 	{
 		final EclipseStoreStorage storageInstance = this.configuration.getStorageInstance();
+		final IdManager<T, Object> idManager = storageInstance.ensureIdManager(domainClass);
 		return new SimpleEclipseStoreRepository<>(
 			storageInstance,
 			new RecursiveWorkingCopier<>(
@@ -265,7 +267,8 @@ public class EclipseStoreDataImporter
 				storageInstance
 			),
 			domainClass,
-			new EclipseStoreTransactionManager()
+			new EclipseStoreTransactionManager(),
+			idManager
 		);
 	}
 	

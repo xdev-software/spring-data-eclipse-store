@@ -100,7 +100,8 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			this.storage,
 			this.createWorkingCopier(metadata.getDomainType(), this.storage),
 			metadata.getDomainType(),
-			this.transactionManager
+			this.transactionManager,
+			this.storage.ensureIdManager(metadata.getDomainType())
 		);
 	}
 	

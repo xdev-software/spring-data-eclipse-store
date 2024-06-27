@@ -188,16 +188,8 @@ class LazyTest
 	@Test
 	void lazyStoreComplexObject(@Autowired final ObjectWithLazyRepository<ComplexLazyObject> repository)
 	{
-		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
-		final ComplexLazyObject objectToStore = new ComplexLazyObject(
-			SpringDataEclipseStoreLazy.build(new SimpleObject(TestData.DUMMY_STRING)),
-			new ArrayList<>(Arrays.asList(
-				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING))),
-				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING_ALTERNATIVE)))
-			))
-		);
-		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
-		repository.save(newLazy);
+		final ComplexLazyObject objectToStore =
+			prepareLazyComplexObject(repository);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
@@ -222,16 +214,7 @@ class LazyTest
 	@Test
 	void lazyChangeComplexObject(@Autowired final ObjectWithLazyRepository<ComplexLazyObject> repository)
 	{
-		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
-		final ComplexLazyObject objectToStore = new ComplexLazyObject(
-			SpringDataEclipseStoreLazy.build(new SimpleObject(TestData.DUMMY_STRING)),
-			new ArrayList<>(Arrays.asList(
-				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING))),
-				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING_ALTERNATIVE)))
-			))
-		);
-		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
-		repository.save(newLazy);
+		prepareLazyComplexObject(repository);
 		
 		restartDatastore(this.configuration);
 		
@@ -243,50 +226,43 @@ class LazyTest
 			.add(SpringDataEclipseStoreLazy.build(List.of(TestData.DUMMY_STRING_ALTERNATIVE)));
 		repository.save(loadedObjectToChange);
 		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final ObjectWithLazy<ComplexLazyObject> loadedObject = repository.findAll().get(0);
-				Assertions.assertNotSame(loadedObjectToChange, loadedObject);
-				Assertions.assertNotSame(
-					loadedObjectToChange.getLazy().get(),
-					loadedObject.getLazy().get()
-				);
-				Assertions.assertEquals(
-					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().size(),
-					loadedObject.getLazy().get().getListOfLazyListOfString().size()
-				);
-				Assertions.assertEquals(
-					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().get(0).get().size(),
-					loadedObject.getLazy().get().getListOfLazyListOfString().get(0).get().size()
-				);
-				Assertions.assertEquals(
-					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().get(0).get().get(0),
-					loadedObject.getLazy().get().getListOfLazyListOfString().get(0).get().get(0)
-				);
-			}
-		);
+		this.validateLazyComplexObject(repository, loadedObjectToChange);
 	}
 	
 	@Test
 	void lazyReloadAndRestoreComplexObject(@Autowired final ObjectWithLazyRepository<ComplexLazyObject> repository)
 	{
-		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
-		final ComplexLazyObject objectToStore = new ComplexLazyObject(
-			SpringDataEclipseStoreLazy.build(new SimpleObject(TestData.DUMMY_STRING)),
-			new ArrayList<>(Arrays.asList(
-				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING))),
-				SpringDataEclipseStoreLazy.build(new ArrayList<>(Arrays.asList(TestData.DUMMY_STRING_ALTERNATIVE)))
-			))
-		);
-		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
-		repository.save(newLazy);
+		prepareLazyComplexObject(repository);
 		
 		restartDatastore(this.configuration);
 		
 		final ObjectWithLazy<ComplexLazyObject> loadedObjectToChange = repository.findAll().get(0);
 		repository.save(loadedObjectToChange);
 		
+		this.validateLazyComplexObject(repository, loadedObjectToChange);
+	}
+	
+	private static ComplexLazyObject prepareLazyComplexObject(
+		final ObjectWithLazyRepository<ComplexLazyObject> repository)
+	{
+		final ObjectWithLazy<ComplexLazyObject> newLazy = new ObjectWithLazy<>();
+		final ComplexLazyObject objectToStore = new ComplexLazyObject(
+			SpringDataEclipseStoreLazy.build(new SimpleObject(TestData.DUMMY_STRING)),
+			new ArrayList<>(Arrays.asList(
+				SpringDataEclipseStoreLazy.build(new ArrayList<>(List.of(TestData.DUMMY_STRING))),
+				SpringDataEclipseStoreLazy.build(new ArrayList<>(List.of(TestData.DUMMY_STRING_ALTERNATIVE)))
+			))
+		);
+		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
+		repository.save(newLazy);
+		
+		return objectToStore;
+	}
+	
+	private void validateLazyComplexObject(
+		final ObjectWithLazyRepository<ComplexLazyObject> repository,
+		final ObjectWithLazy<ComplexLazyObject> loadedObjectToChange)
+	{
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {

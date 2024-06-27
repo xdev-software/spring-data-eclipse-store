@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-public class CustomerWithIdInteger
+public class CustomerWithIdIntegerNoAutoGenerate
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	
 	private String firstName;
 	private String lastName;
 	
-	public CustomerWithIdInteger()
+	public CustomerWithIdIntegerNoAutoGenerate()
 	{
 	}
 	
-	public CustomerWithIdInteger(final String firstName, final String lastName)
+	public CustomerWithIdIntegerNoAutoGenerate(final Integer id, final String firstName, final String lastName)
 	{
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -76,7 +74,7 @@ public class CustomerWithIdInteger
 		{
 			return false;
 		}
-		final CustomerWithIdInteger customer = (CustomerWithIdInteger)o;
+		final CustomerWithIdIntegerNoAutoGenerate customer = (CustomerWithIdIntegerNoAutoGenerate)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -89,8 +87,8 @@ public class CustomerWithIdInteger
 	}
 	
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithIdInteger getCustomerWithFirstName(
-		final List<CustomerWithIdInteger> customers,
+	public static CustomerWithIdIntegerNoAutoGenerate getCustomerWithFirstName(
+		final List<CustomerWithIdIntegerNoAutoGenerate> customers,
 		final String firstName)
 	{
 		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();

@@ -13,30 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
 import java.util.Objects;
-import java.util.Optional;
 
-import org.eclipse.serializer.reference.Lazy;
-import org.eclipse.serializer.reference.Referencing;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 
-public class LazyDaoObject extends ComplexObject<Lazy<String>>
+public class Purchase
 {
-	public LazyDaoObject(final Integer id, final Lazy<String> value)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
+	
+	private final String productName;
+	
+	public Purchase(final String productName)
 	{
-		super(id, value);
+		this.productName = productName;
 	}
 	
-	@Override
-	public int hashCode()
+	public String getProductName()
 	{
-		return Objects.hash(
-			this.getId(),
-			Optional.ofNullable(this.getValue())
-				.map(Referencing::get)
-				.orElse(null));
+		return this.productName;
+	}
+	
+	public Integer getId()
+	{
+		return this.id;
 	}
 	
 	@Override
@@ -50,9 +56,13 @@ public class LazyDaoObject extends ComplexObject<Lazy<String>>
 		{
 			return false;
 		}
-		final ComplexObject<Lazy<String>> that = (ComplexObject<Lazy<String>>)o;
-		return Objects.equals(this.getId(), that.getId())
-			&& (this.getValue() == null && that.getValue() == null)
-			|| Objects.equals(this.getValue().get(), that.getValue().get());
+		final Purchase purchase = (Purchase)o;
+		return Objects.equals(this.id, purchase.id) && Objects.equals(this.productName, purchase.productName);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(this.id, this.productName);
 	}
 }

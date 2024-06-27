@@ -113,24 +113,7 @@ class TransactionsTest
 	@Test
 	void accountAndCounterTransactionSequential(@Autowired final PlatformTransactionManager transactionManager)
 	{
-		new TransactionTemplate(transactionManager).execute(
-			status ->
-			{
-				this.account1.setBalance(this.account1.getBalance().subtract(BigDecimal.ONE));
-				this.accountRepository.save(this.account1);
-				
-				this.account2.setBalance(this.account2.getBalance().add(BigDecimal.ONE));
-				this.accountRepository.save(this.account2);
-				return null;
-			}
-		);
-		
-		Assertions.assertEquals(
-			BigDecimal.valueOf(9),
-			this.accountRepository.findById(this.account1.getId()).get().getBalance());
-		Assertions.assertEquals(
-			BigDecimal.ONE,
-			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+		this.accountTransactionWorking(transactionManager);
 		
 		new TransactionTemplate(transactionManager).execute(
 			status ->
@@ -254,8 +237,8 @@ class TransactionsTest
 	void accountNoTransactionUnexpectedError()
 	{
 		Assertions.assertThrows(RuntimeException.class, () -> {
-			final Account account1 = new Account(1, BigDecimal.TEN);
-			final Account account2 = new Account(2, BigDecimal.ZERO);
+			final Account account1 = new Account(3, BigDecimal.TEN);
+			final Account account2 = new Account(4, BigDecimal.ZERO);
 			this.accountRepository.saveAll(List.of(account1, account2));
 			
 			throw new RuntimeException("Unexpected error");

@@ -52,7 +52,8 @@ instructions** are in the documentation](https://xdev-software.github.io/spring-
 |---------------------------|--------|-------------|--------------|
 | ``<= 1.0.2``              | ``17`` | ``3.2.2``   | ``1.1.0``    |
 | ``1.0.3/1.0.4``           | ``17`` | ``3.2.3``   | ``1.2.0``    |
-| ``>= 1.0.5``              | ``17`` | ``3.2.5``   | ``1.3.2``    |
+| ``1.0.5-1.0.7``           | ``17`` | ``3.2.5``   | ``1.3.2``    |
+| ``>= 1.0.8``              | ``17`` | ``3.3.1``   | ``1.3.2``    |
 
 ## Demo
 
@@ -82,4 +83,5 @@ use [our support](https://xdev.software/en/services/support).
 See the [contributing guide](./CONTRIBUTING.md) for detailed instructions on how to get started with our project.
 
 ## Dependencies and Licenses
-View the [license of the current project](LICENSE) or the [summary including all dependencies](https://xdev-software.github.io/spring-data-eclipse-store/dependencies)
+
+View the [license of the current project](LICENSE).

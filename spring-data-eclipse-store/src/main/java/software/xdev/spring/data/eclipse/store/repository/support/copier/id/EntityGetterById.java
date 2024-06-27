@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.Optional;
 
 
-public interface CustomerWithPurchaseRepository extends CrudRepository<CustomerWithPurchase, Integer>
+public interface EntityGetterById<T, ID>
 {
+	Optional<T> findById(ID id);
 }
