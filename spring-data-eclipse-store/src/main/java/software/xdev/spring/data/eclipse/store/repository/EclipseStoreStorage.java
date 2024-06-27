@@ -333,7 +333,6 @@ public class EclipseStoreStorage
 	@SuppressWarnings("unchecked")
 	public <T, ID> IdManager<T, ID> ensureIdManager(final Class<T> domainClass)
 	{
-		this.ensureEntitiesInRoot();
 		return (IdManager<T, ID>)this.idManagers.computeIfAbsent(
 			domainClass,
 			clazz ->

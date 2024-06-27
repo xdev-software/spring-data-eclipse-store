@@ -61,7 +61,14 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 	@Override
 	public Object getValueOfField(final E objectOfFieldToRead) throws IllegalAccessException
 	{
-		return this.field.get(objectOfFieldToRead);
+		try
+		{
+			return this.field.get(objectOfFieldToRead);
+		}
+		catch(final IllegalAccessException e)
+		{
+			throw this.createIllegalAccessToField(this.field);
+		}
 	}
 	
 	@Override
@@ -73,11 +80,36 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 	{
 		if(throwExceptionIfFinal && this.isFinal)
 		{
-			throw new IllegalAccessException(String.format(
-				"Field %s:%s is final and cannot be modified. Make the field not final.",
-				objectOfFieldToWriteTo.toString(), this.field.getName()));
+			throw new IllegalAccessException(
+				"Field %s#%s is final and cannot be modified. Make the field not final."
+					.formatted(
+						this.field.getType().getName(),
+						this.field.getName()
+					)
+			);
 		}
-		this.field.set(objectOfFieldToWriteTo, valueToWrite);
+		try
+		{
+			this.field.set(objectOfFieldToWriteTo, valueToWrite);
+		}
+		catch(final IllegalAccessException e)
+		{
+			throw this.createIllegalAccessToField(this.field);
+		}
+	}
+	
+	private IllegalAccessException createIllegalAccessToField(final Field field) throws IllegalAccessException
+	{
+		return new IllegalAccessException(
+			("Could not access field %s#%s. Make sure that the module is open e.g. with following VM option: "
+				+ "\"--add-opens %s/%s=ALL-UNNAMED\"")
+				.formatted(
+					field.getDeclaringClass().getName(),
+					field.getName(),
+					field.getDeclaringClass().getModule().getName(),
+					field.getDeclaringClass().getPackageName()
+				)
+		);
 	}
 	
 	public boolean isFinal()

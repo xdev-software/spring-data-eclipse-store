@@ -112,9 +112,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 			}
 			catch(final Exception e)
 			{
-				throw new FieldAccessReflectionException(String.format(
-					FieldAccessReflectionException.COULD_NOT_READ_FIELD,
-					this.ensureIdField().getName()), e);
+				throw new FieldAccessReflectionException(this.ensureIdField(), e);
 			}
 		}
 		return null;
