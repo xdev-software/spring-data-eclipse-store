@@ -1,3 +1,8 @@
+# 1.0.8
+
+* Entities with same ID are replaced on saved and not added
+* Updated Spring to version 3.3.1
+
 # 1.0.7
 
 * QueryByExample now possible
