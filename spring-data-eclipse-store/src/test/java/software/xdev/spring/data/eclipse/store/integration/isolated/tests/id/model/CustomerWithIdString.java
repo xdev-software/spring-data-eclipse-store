@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
-import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.GeneratedValue;
@@ -23,20 +22,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-public class CustomerWithIdInt
+public class CustomerWithIdString
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	private String id;
 	
-	private String firstName;
-	private String lastName;
+	private final String firstName;
+	private final String lastName;
 	
-	public CustomerWithIdInt()
-	{
-	}
-	
-	public CustomerWithIdInt(final String firstName, final String lastName)
+	public CustomerWithIdString(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -50,11 +45,6 @@ public class CustomerWithIdInt
 	public String getLastName()
 	{
 		return this.lastName;
-	}
-	
-	public Integer getId()
-	{
-		return this.id;
 	}
 	
 	@Override
@@ -76,7 +66,7 @@ public class CustomerWithIdInt
 		{
 			return false;
 		}
-		final CustomerWithIdInt customer = (CustomerWithIdInt)o;
+		final CustomerWithIdString customer = (CustomerWithIdString)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -86,13 +76,5 @@ public class CustomerWithIdInt
 	public int hashCode()
 	{
 		return Objects.hash(this.firstName, this.lastName);
-	}
-	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithIdInt getCustomerWithFirstName(
-		final List<CustomerWithIdInt> customers,
-		final String firstName)
-	{
-		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();
 	}
 }

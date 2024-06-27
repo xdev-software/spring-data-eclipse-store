@@ -406,8 +406,7 @@
 							<excludes>
 								<exclude>**/benchmark/**/jmh_generated/**</exclude>
 								<!-- Dynamic types for tests -->
-								<exclude>**/shared/**/Customer*</exclude>
-								<exclude>**/shared/**/Child*</exclude>
+								<exclude>**/store/integration/**</exclude>
 							</excludes>
 						</configuration>
 						<dependencies>

@@ -13,27 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-public class CustomerWithIdIntegerNoAutoGenerate
+public class CustomerWithIdInteger
 {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	
 	private String firstName;
 	private String lastName;
 	
-	public CustomerWithIdIntegerNoAutoGenerate()
+	public CustomerWithIdInteger()
 	{
 	}
 	
-	public CustomerWithIdIntegerNoAutoGenerate(final Integer id, final String firstName, final String lastName)
+	public CustomerWithIdInteger(final String firstName, final String lastName)
+	{
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+	
+	public CustomerWithIdInteger(final Integer id, final String firstName, final String lastName)
 	{
 		this.id = id;
 		this.firstName = firstName;
@@ -74,7 +83,7 @@ public class CustomerWithIdIntegerNoAutoGenerate
 		{
 			return false;
 		}
-		final CustomerWithIdIntegerNoAutoGenerate customer = (CustomerWithIdIntegerNoAutoGenerate)o;
+		final CustomerWithIdInteger customer = (CustomerWithIdInteger)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -87,8 +96,8 @@ public class CustomerWithIdIntegerNoAutoGenerate
 	}
 	
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithIdIntegerNoAutoGenerate getCustomerWithFirstName(
-		final List<CustomerWithIdIntegerNoAutoGenerate> customers,
+	public static CustomerWithIdInteger getCustomerWithFirstName(
+		final List<CustomerWithIdInteger> customers,
 		final String firstName)
 	{
 		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();

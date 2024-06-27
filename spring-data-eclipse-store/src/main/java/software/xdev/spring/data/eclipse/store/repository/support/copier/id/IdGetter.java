@@ -15,17 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
 
-public class NotSettingIdSetter<T> implements IdSetter<T>
+public interface IdGetter<T, ID>
 {
-	@Override
-	public void ensureId(final T objectToSetIdIn)
-	{
-		// Do nothing because no id generation is needed
-	}
-	
-	@Override
-	public boolean isAutomaticSetter()
-	{
-		return false;
-	}
+	ID getId(T objectToSetIdIn) throws Exception;
 }

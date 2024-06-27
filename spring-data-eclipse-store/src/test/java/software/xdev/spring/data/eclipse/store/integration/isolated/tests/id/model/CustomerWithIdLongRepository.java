@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
+import org.springframework.data.repository.CrudRepository;
 
 
-public interface IdSetterProvider
+public interface CustomerWithIdLongRepository extends CrudRepository<CustomerWithIdLong, Long>
 {
-	<T> IdSetter<T> ensureIdSetter(final Class<T> domainClass);
 }

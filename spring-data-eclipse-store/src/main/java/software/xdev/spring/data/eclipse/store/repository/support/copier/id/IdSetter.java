@@ -62,4 +62,6 @@ public interface IdSetter<T>
 	 * done. If it is not set, a new one will be generated and set.
 	 */
 	void ensureId(T objectToSetIdIn);
+	
+	boolean isAutomaticSetter();
 }

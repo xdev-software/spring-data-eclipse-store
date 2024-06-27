@@ -38,17 +38,18 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreSto
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReentrantJavaReadWriteLock;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.RepositorySynchronizer;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
 
 public class EclipseStoreStorage
-	implements EntityListProvider, IdSetterProvider, PersistableChecker, ObjectSwizzling
+	implements EntityListProvider, IdManagerProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, SimpleEclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
-	private final Map<Class<?>, IdSetter<?>> idSetters = new ConcurrentHashMap<>();
+	private final Map<Class<?>, IdManager<?, ?>> idManagers = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
@@ -317,7 +318,7 @@ public class EclipseStoreStorage
 					this.storageManager = null;
 					this.root = null;
 					this.registry.reset();
-					this.idSetters.clear();
+					this.idManagers.clear();
 					LOG.info("Stopped storage.");
 				}
 				else
@@ -330,16 +331,20 @@ public class EclipseStoreStorage
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> IdSetter<T> ensureIdSetter(final Class<T> domainClass)
+	public <T, ID> IdManager<T, ID> ensureIdManager(final Class<T> domainClass)
 	{
 		this.ensureEntitiesInRoot();
-		return (IdSetter<T>)this.idSetters.computeIfAbsent(
+		return (IdManager<T, ID>)this.idManagers.computeIfAbsent(
 			domainClass,
 			clazz ->
-				IdSetter.createIdSetter(
-					clazz,
-					id -> this.setLastId(clazz, id),
-					() -> this.getLastId(clazz)
+				new IdManager<>(
+					domainClass,
+					(IdSetter<T>)IdSetter.createIdSetter(
+						clazz,
+						id -> this.setLastId(clazz, id),
+						() -> this.getLastId(clazz)
+					),
+					this
 				)
 		);
 	}

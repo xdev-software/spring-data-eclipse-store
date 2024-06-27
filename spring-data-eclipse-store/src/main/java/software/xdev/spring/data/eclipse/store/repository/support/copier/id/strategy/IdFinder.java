@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+
 import software.xdev.spring.data.eclipse.store.exceptions.IdGeneratorNotSupportedException;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto.AutoIntegerIdFinder;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto.AutoLongIdFinder;
@@ -34,7 +35,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.id.stra
 public interface IdFinder<ID>
 {
 	@SuppressWarnings({"java:S1452", "TypeParameterExplicitlyExtendsObject"})
-	static IdFinder<? extends Object> createIdFinder(
+	static <ID> IdFinder<ID> createIdFinder(
 		final Field idField,
 		final GeneratedValue generatedValueAnnotation,
 		final Supplier<Object> lastIdGetter)
@@ -44,15 +45,15 @@ public interface IdFinder<ID>
 		{
 			if(Integer.class.isAssignableFrom(idField.getType()) || int.class.isAssignableFrom(idField.getType()))
 			{
-				return new AutoIntegerIdFinder(lastIdGetter);
+				return (IdFinder<ID>)new AutoIntegerIdFinder(lastIdGetter);
 			}
 			else if(idField.getType().equals(String.class))
 			{
-				return new AutoStringIdFinder(lastIdGetter);
+				return (IdFinder<ID>)new AutoStringIdFinder(lastIdGetter);
 			}
 			else if(Long.class.isAssignableFrom(idField.getType()) || long.class.isAssignableFrom(idField.getType()))
 			{
-				return new AutoLongIdFinder(lastIdGetter);
+				return (IdFinder<ID>)new AutoLongIdFinder(lastIdGetter);
 			}
 		}
 		throw new IdGeneratorNotSupportedException(String.format(

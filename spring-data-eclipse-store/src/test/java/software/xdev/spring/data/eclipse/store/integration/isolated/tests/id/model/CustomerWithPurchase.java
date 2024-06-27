@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.GeneratedValue;
@@ -22,17 +24,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-public class CustomerWithIdLong
+public class CustomerWithPurchase
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private Integer id;
 	
-	private final String firstName;
-	private final String lastName;
+	private String firstName;
+	private String lastName;
 	
-	public CustomerWithIdLong(final String firstName, final String lastName)
+	private final List<Purchase> purchases;
+	
+	public CustomerWithPurchase()
 	{
+		this.purchases = new ArrayList<>();
+	}
+	
+	public CustomerWithPurchase(final String firstName, final String lastName)
+	{
+		this();
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -47,9 +57,14 @@ public class CustomerWithIdLong
 		return this.lastName;
 	}
 	
-	public Long getId()
+	public List<Purchase> getPurchases()
 	{
-		return this.id;
+		return this.purchases;
+	}
+	
+	public void addPurchase(final Purchase newPurchase)
+	{
+		this.purchases.add(newPurchase);
 	}
 	
 	@Override
@@ -71,7 +86,7 @@ public class CustomerWithIdLong
 		{
 			return false;
 		}
-		final CustomerWithIdLong customer = (CustomerWithIdLong)o;
+		final CustomerWithPurchase customer = (CustomerWithPurchase)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -81,5 +96,13 @@ public class CustomerWithIdLong
 	public int hashCode()
 	{
 		return Objects.hash(this.firstName, this.lastName);
+	}
+	
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	public static CustomerWithPurchase getCustomerWithLastName(
+		final List<CustomerWithPurchase> customers,
+		final String lastName)
+	{
+		return customers.stream().filter(customer -> customer.getLastName().equals(lastName)).findFirst().get();
 	}
 }

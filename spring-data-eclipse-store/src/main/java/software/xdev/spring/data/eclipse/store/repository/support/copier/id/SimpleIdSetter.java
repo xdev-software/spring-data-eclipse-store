@@ -60,7 +60,7 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 			final Object existingId = fam.getValueOfField(objectToSetIdIn);
 			if(existingId == null)
 			{
-				final ID newId = this.idFinder.findId();
+				final ID newId = (ID)this.idFinder.findId();
 				fam.writeValueOfField(objectToSetIdIn, newId, true);
 				this.lastIdPersister.accept(newId);
 			}
@@ -69,5 +69,11 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 		{
 			throw new FieldAccessReflectionException(this.idField, e);
 		}
+	}
+	
+	@Override
+	public boolean isAutomaticSetter()
+	{
+		return true;
 	}
 }
