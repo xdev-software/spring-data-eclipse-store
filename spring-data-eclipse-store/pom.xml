@@ -408,6 +408,7 @@
 								<!-- Dynamic types for tests -->
 								<exclude>**/shared/**/Customer*</exclude>
 								<exclude>**/shared/**/Child*</exclude>
+								<exclude>**/isolated/**/Customer*</exclude>
 							</excludes>
 						</configuration>
 						<dependencies>
