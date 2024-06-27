@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
@@ -307,17 +309,9 @@ class IdTest
 	{
 		final CustomerWithIdIntegerNoAutoGenerate customer1 =
 			new CustomerWithIdIntegerNoAutoGenerate();
-		customerRepository.save(customer1);
-		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
-					TestUtil.iterableToList(customerRepository.findAll());
-				Assertions.assertEquals(1, loadedCustomer.size());
-				Assertions.assertNull(loadedCustomer.get(0).getId());
-				Assertions.assertEquals(customer1, loadedCustomer.get(0));
-			}
+		Assertions.assertThrows(
+			IllegalArgumentException.class,
+			() -> customerRepository.save(customer1)
 		);
 	}
 	
@@ -455,7 +449,8 @@ class IdTest
 		customerRepository.save(existingCustomer);
 		final Integer existingId = customerRepository.findAll().iterator().next().getId();
 		
-		final CustomerWithIdInteger newCustomer = new CustomerWithIdInteger(existingId,
+		final CustomerWithIdInteger newCustomer = new CustomerWithIdInteger(
+			existingId,
 			TestData.FIRST_NAME_ALTERNATIVE,
 			TestData.LAST_NAME_ALTERNATIVE);
 		customerRepository.save(newCustomer);
@@ -481,18 +476,10 @@ class IdTest
 		final CustomerWithIdIntegerNoAutoGenerate newCustomer =
 			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME_ALTERNATIVE,
 				TestData.LAST_NAME_ALTERNATIVE);
-		customerRepository.saveAll(List.of(existingCustomer, newCustomer));
 		
-		TestUtil.doBeforeAndAfterRestartOfDatastore(
-			this.configuration,
-			() -> {
-				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
-					TestUtil.iterableToList(customerRepository.findAll());
-				
-				Assertions.assertEquals(1, loadedCustomer.size());
-				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
-				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
-			}
+		Assertions.assertThrows(
+			IllegalArgumentException.class,
+			() -> customerRepository.saveAll(List.of(existingCustomer, newCustomer))
 		);
 	}
 	
@@ -515,6 +502,77 @@ class IdTest
 					TestUtil.iterableToList(customerRepository.findAll());
 				
 				Assertions.assertEquals(2, loadedCustomer.size());
+			}
+		);
+	}
+	
+	@Test
+	void testIdsInMultipleTransactions(
+		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository,
+		@Autowired final PlatformTransactionManager transactionManager
+	)
+	{
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
+					new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+				customerRepository.save(existingCustomer);
+				return null;
+			});
+		
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				final CustomerWithIdIntegerNoAutoGenerate newCustomer =
+					new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME_ALTERNATIVE,
+						TestData.LAST_NAME_ALTERNATIVE);
+				customerRepository.save(newCustomer);
+				return null;
+			});
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(1, loadedCustomer.size());
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
+				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
+			}
+		);
+	}
+	
+	@Test
+	void testIdsInSingleTransactions(
+		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository,
+		@Autowired final PlatformTransactionManager transactionManager
+	)
+	{
+		new TransactionTemplate(transactionManager).execute(
+			status ->
+			{
+				final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
+					new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+				customerRepository.save(existingCustomer);
+				
+				final CustomerWithIdIntegerNoAutoGenerate newCustomer =
+					new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME_ALTERNATIVE,
+						TestData.LAST_NAME_ALTERNATIVE);
+				customerRepository.save(newCustomer);
+				return null;
+			});
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(1, loadedCustomer.size());
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
+				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
 			}
 		);
 	}

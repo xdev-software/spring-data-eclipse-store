@@ -8,13 +8,14 @@ import org.springframework.data.annotation.Id;
 public class PersonToTestInEclipseStore
 {
 	@Id
-	private String id;
+	private final String id;
 	
 	private final String firstName;
 	private final String lastName;
 	
-	public PersonToTestInEclipseStore(final String firstName, final String lastName)
+	public PersonToTestInEclipseStore(final String id, final String firstName, final String lastName)
 	{
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}

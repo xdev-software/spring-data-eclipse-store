@@ -45,7 +45,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.Sim
 
 
 public class EclipseStoreStorage
-	implements EntityListProvider, IdSetterProvider, PersistableChecker, ObjectSwizzling
+	implements EntityListProvider, IdManagerProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, SimpleEclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
@@ -329,6 +329,7 @@ public class EclipseStoreStorage
 		);
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T, ID> IdManager<T, ID> ensureIdManager(final Class<T> domainClass)
 	{
@@ -338,7 +339,7 @@ public class EclipseStoreStorage
 			clazz ->
 				new IdManager<>(
 					domainClass,
-					(IdSetter<T, ID>)IdSetter.createIdSetter(
+					(IdSetter<T>)IdSetter.createIdSetter(
 						clazz,
 						id -> this.setLastId(clazz, id),
 						() -> this.getLastId(clazz)
@@ -346,13 +347,6 @@ public class EclipseStoreStorage
 					this
 				)
 		);
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T, ID> IdSetter<T, ID> ensureIdSetter(final Class<T> domainClass)
-	{
-		return (IdSetter<T, ID>)this.ensureIdManager(domainClass).getIdSetter();
 	}
 	
 	public Object getLastId(final Class<?> entityClass)

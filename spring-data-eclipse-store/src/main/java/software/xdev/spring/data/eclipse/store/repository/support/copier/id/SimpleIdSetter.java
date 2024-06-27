@@ -25,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
 
 
-public class SimpleIdSetter<T, ID> implements IdSetter<T, ID>
+public class SimpleIdSetter<T, ID> implements IdSetter<T>
 {
 	private final IdFinder<ID> idFinder;
 	private final Field idField;
@@ -51,25 +51,29 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T, ID>
 	}
 	
 	@Override
-	public ID ensureId(final T objectToSetIdIn)
+	public void ensureId(final T objectToSetIdIn)
 	{
 		try(final FieldAccessModifier<T> fam = FieldAccessModifier.prepareForField(
 			this.idField,
 			objectToSetIdIn))
 		{
-			final ID existingId = (ID)fam.getValueOfField(objectToSetIdIn);
+			final Object existingId = fam.getValueOfField(objectToSetIdIn);
 			if(existingId == null)
 			{
-				final ID newId = this.idFinder.findId();
+				final ID newId = (ID)this.idFinder.findId();
 				fam.writeValueOfField(objectToSetIdIn, newId, true);
 				this.lastIdPersister.accept(newId);
-				return newId;
 			}
-			return existingId;
 		}
 		catch(final Exception e)
 		{
 			throw new FieldAccessReflectionException(this.idField, e);
 		}
+	}
+	
+	@Override
+	public boolean isAutomaticSetter()
+	{
+		return true;
 	}
 }

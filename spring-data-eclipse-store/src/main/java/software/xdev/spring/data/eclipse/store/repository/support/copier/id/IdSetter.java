@@ -31,9 +31,9 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.id.stra
  * A IdSetter <b>must be unique</b> in one storage for one entity-class. It creates Ids and therefore must know all
  * existing entities of one class.
  */
-public interface IdSetter<T, ID>
+public interface IdSetter<T>
 {
-	static <T, ID> IdSetter<T, ID> createIdSetter(
+	static <T> IdSetter<T> createIdSetter(
 		final Class<T> classWithId,
 		final Consumer<Object> lastIdPersister,
 		final Supplier<Object> lastIdGetter)
@@ -44,14 +44,14 @@ public interface IdSetter<T, ID>
 		final Optional<Field> idField = IdFieldFinder.findIdField(classWithId);
 		if(idField.isEmpty())
 		{
-			return (IdSetter<T, ID>)new NotSettingIdSetter<T>();
+			return new NotSettingIdSetter<>();
 		}
 		final GeneratedValue generatedValueAnnotation = idField.get().getAnnotation(GeneratedValue.class);
 		if(generatedValueAnnotation == null)
 		{
-			return (IdSetter<T, ID>)new NotSettingIdSetter<T>();
+			return new NotSettingIdSetter<>();
 		}
-		return new SimpleIdSetter<T, ID>(
+		return new SimpleIdSetter<>(
 			idField.get(),
 			IdFinder.createIdFinder(idField.get(), generatedValueAnnotation, lastIdGetter),
 			lastIdPersister);
@@ -60,7 +60,8 @@ public interface IdSetter<T, ID>
 	/**
 	 * This method makes sure, that an id is set for the given object. If it is already set (not null), then nothing is
 	 * done. If it is not set, a new one will be generated and set.
-	 * @return the existing or newly created id or empty optional if no id is used
 	 */
-	ID ensureId(T objectToSetIdIn);
+	void ensureId(T objectToSetIdIn);
+	
+	boolean isAutomaticSetter();
 }

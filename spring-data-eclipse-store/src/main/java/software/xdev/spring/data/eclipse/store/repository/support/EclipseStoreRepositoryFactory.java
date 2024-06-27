@@ -80,8 +80,7 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage,
 			storage,
 			new SupportedChecker.Implementation(),
-			storage,
-			storage.ensureIdManager(domainType)
+			storage
 		);
 	}
 	

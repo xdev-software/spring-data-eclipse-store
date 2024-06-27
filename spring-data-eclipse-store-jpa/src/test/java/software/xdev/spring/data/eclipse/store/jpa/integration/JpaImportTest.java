@@ -49,7 +49,7 @@ class JpaImportTest
 	@Test
 	void testBasicSaveAndFindSingleRecords()
 	{
-		final PersonToTestInEclipseStore customer = new PersonToTestInEclipseStore("", "");
+		final PersonToTestInEclipseStore customer = new PersonToTestInEclipseStore("1", "", "");
 		this.personToTestInEclipseStoreRepository.save(customer);
 		
 		final List<PersonToTestInEclipseStore> customers = this.personToTestInEclipseStoreRepository.findAll();

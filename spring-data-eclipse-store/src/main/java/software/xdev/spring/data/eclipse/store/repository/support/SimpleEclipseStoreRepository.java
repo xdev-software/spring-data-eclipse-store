@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.annotation.Nonnull;
 
@@ -103,9 +104,18 @@ public class SimpleEclipseStoreRepository<T, ID>
 				{
 					LOG.debug("Saving {} entities...", entities.size());
 				}
+				
+				this.checkEntityForNull(entities);
+				this.idManager.checkIds(entities);
+				
+				Stream<S> entitiesStream = entities.stream();
+				if(this.isMergeParallelizable())
+				{
+					entitiesStream = entities.parallelStream();
+				}
+				
 				final List<WorkingCopierResult<T>> results =
-					this.checkEntityForNull(entities)
-						.parallelStream()
+					entitiesStream
 						.map(this.copier::mergeBack)
 						.toList();
 				final Set<Object> nonEntitiesToStore =
@@ -127,6 +137,17 @@ public class SimpleEclipseStoreRepository<T, ID>
 				this.storage.store(nonEntitiesToStore, this.domainClass, entitiesToStore);
 			}
 		);
+	}
+	
+	/**
+	 * If the entities class to merge has an id, it is not possible to parallelize the merge. To search for existing
+	 * ids, we need a read lock. Since we are having a write lock to store the entities, we can not release the lock
+	 * and
+	 * would be stuck in a deadlock.
+	 */
+	private <S extends T> boolean isMergeParallelizable()
+	{
+		return !this.idManager.hasIdField();
 	}
 	
 	@Override
