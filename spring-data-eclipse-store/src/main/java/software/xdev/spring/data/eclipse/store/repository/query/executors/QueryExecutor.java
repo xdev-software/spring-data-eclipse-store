@@ -15,7 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 
 
 /**
@@ -36,5 +36,5 @@ public interface QueryExecutor<T>
 	 * @param values   for the query. These are values that might be compared to entities.
 	 * @return entities/entity on which the conditions match.
 	 */
-	Object execute(Class<T> clazz, final Collection<T> entities, Object[] values);
+	Object execute(Class<T> clazz, final EntityProvider<T> entities, Object[] values);
 }

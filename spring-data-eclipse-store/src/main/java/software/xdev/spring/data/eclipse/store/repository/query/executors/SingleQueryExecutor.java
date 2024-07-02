@@ -15,12 +15,13 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
 import java.util.Optional;
+
+import jakarta.annotation.Nullable;
 
 import org.springframework.data.domain.Sort;
 
-import jakarta.annotation.Nullable;
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -47,7 +48,7 @@ public class SingleQueryExecutor<T> implements QueryExecutor<T>
 	@Override
 	public T execute(
 		@Nullable final Class<T> clazz,
-		@Nullable final Collection<T> entities,
+		@Nullable final EntityProvider<T> entities,
 		@Nullable final Object[] values)
 	{
 		final Optional<T> optionalResult = this.optionalQueryExecutor.execute(clazz, entities, values);

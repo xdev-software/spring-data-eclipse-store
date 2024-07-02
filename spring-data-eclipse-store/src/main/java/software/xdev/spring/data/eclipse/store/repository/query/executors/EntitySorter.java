@@ -32,7 +32,10 @@ public final class EntitySorter
 	{
 	}
 	
-	public static <T> Stream<T> sortEntitiesStream(final Class<T> clazz, final Sort sort, final Stream<T> entityStream)
+	public static <T> Stream<? extends T> sortEntitiesStream(
+		final Class<T> clazz,
+		final Sort sort,
+		final Stream<? extends T> entityStream)
 	{
 		if(sort != null)
 		{

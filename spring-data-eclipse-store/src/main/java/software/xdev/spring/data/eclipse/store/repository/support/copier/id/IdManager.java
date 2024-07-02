@@ -65,9 +65,9 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 	public Optional<T> findById(@Nonnull final ID id)
 	{
 		this.ensureIdField();
-		return this.storage.getReadWriteLock().read(
+		return (Optional<T>)this.storage.getReadWriteLock().read(
 			() -> this.storage
-				.getEntityList(this.domainClass)
+				.getEntityProvider(this.domainClass)
 				.stream()
 				.filter(entity -> id.equals(this.getId(entity)))
 				.findAny()
@@ -77,9 +77,9 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 	public List<T> findAllById(@Nonnull final Iterable<ID> idsToFind)
 	{
 		this.ensureIdField();
-		return this.storage.getReadWriteLock().read(
+		return (List<T>)this.storage.getReadWriteLock().read(
 			() -> this.storage
-				.getEntityList(this.domainClass)
+				.getEntityProvider(this.domainClass)
 				.stream()
 				.filter(
 					entity ->

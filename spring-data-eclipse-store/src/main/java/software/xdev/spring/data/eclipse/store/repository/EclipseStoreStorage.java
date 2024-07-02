@@ -31,6 +31,8 @@ import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
@@ -150,14 +152,19 @@ public class EclipseStoreStorage
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> IdentitySet<T> getEntityList(final Class<T> clazz)
+	private <T> IdentitySet<T> getEntityList(final Class<T> clazz)
 	{
 		this.ensureEntitiesInRoot();
 		return this.readWriteLock.read(
 			() -> this.root.getEntityList(clazz)
 		);
+	}
+	
+	@Override
+	public <T> EntityProvider<T> getEntityProvider(final Class<T> clazz)
+	{
+		this.ensureEntitiesInRoot();
+		return this.entitySetCollector.getRelatedIdentitySets(clazz);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -206,21 +213,15 @@ public class EclipseStoreStorage
 	 */
 	private <T> Collection<Object> collectRootEntitiesToStore(final Class<T> clazz, final Iterable<T> entitiesToStore)
 	{
-		final List<IdentitySet<Object>> entityLists =
-			this.entitySetCollector.getRelatedIdentitySets(clazz);
+		final IdentitySet<T> identitySet = this.getEntityList(clazz);
 		final Collection<Object> objectsToStore = new ArrayList<>();
 		for(final T entityToStore : entitiesToStore)
 		{
-			entityLists.forEach(
-				relatedIdentitySet ->
-				{
-					if(!relatedIdentitySet.contains(entityToStore))
-					{
-						relatedIdentitySet.add(entityToStore);
-						objectsToStore.add(relatedIdentitySet.getInternalMap());
-					}
-				}
-			);
+			if(!identitySet.contains(entityToStore))
+			{
+				identitySet.add(entityToStore);
+				objectsToStore.add(identitySet.getInternalMap());
+			}
 			objectsToStore.add(entityToStore);
 			// Add the separate lists of entities to store.
 			this.repositorySynchronizer.syncAndReturnChangedObjectLists(entityToStore).forEach(
@@ -236,13 +237,9 @@ public class EclipseStoreStorage
 		this.readWriteLock.write(
 			() ->
 			{
-				final List<IdentitySet<Object>> entityLists =
-					this.entitySetCollector.getRelatedIdentitySets(clazz);
-				entityLists.forEach(entityList ->
-				{
-					entityList.remove(objectToRemove);
-					this.storageManager.store(entityList.getInternalMap());
-				});
+				final IdentitySet<T> entityList = this.getEntityList(clazz);
+				entityList.remove(objectToRemove);
+				this.storageManager.store(entityList.getInternalMap());
 				if(LOG.isDebugEnabled())
 				{
 					LOG.debug("Deleted single entity of class {}.", clazz.getSimpleName());
@@ -257,16 +254,11 @@ public class EclipseStoreStorage
 		this.readWriteLock.write(
 			() ->
 			{
-				final IdentitySet<T> entities = this.root.getEntityList(clazz);
+				final IdentitySet<T> entities = this.getEntityList(clazz);
 				final int oldSize = entities.size();
 				final List<T> entitiesToRemove = entities.stream().toList();
-				final List<IdentitySet<Object>> entityLists =
-					this.entitySetCollector.getRelatedIdentitySets(clazz);
-				entityLists.forEach(entityList ->
-				{
-					entityList.removeAll(entitiesToRemove);
-					this.storageManager.store(entityList.getInternalMap());
-				});
+				entities.removeAll(entitiesToRemove);
+				this.storageManager.store(entities.getInternalMap());
 				if(LOG.isDebugEnabled())
 				{
 					LOG.debug("Deleted {} entities of class {}.", oldSize, clazz.getSimpleName());

@@ -17,12 +17,13 @@ package software.xdev.spring.data.eclipse.store.repository.query;
 
 import java.lang.reflect.Method;
 
+import jakarta.annotation.Nonnull;
+
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.util.TypeInformation;
 
-import jakarta.annotation.Nonnull;
-import software.xdev.spring.data.eclipse.store.repository.EntityListProvider;
+import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.repository.Query;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.QueryExecutor;
@@ -78,7 +79,7 @@ public class FindAllEclipseStoreQueryProvider<T> implements RepositoryQuery
 		return
 			QueryExecutorCreator
 				.createQuery(this.typeInformation, this.copier, Criteria.createNoCriteria(), null)
-				.execute(this.domainClass, this.entityListProvider.getEntityList(this.domainClass), values);
+				.execute(this.domainClass, this.entityListProvider.getEntityProvider(this.domainClass), values);
 	}
 	
 	@Override

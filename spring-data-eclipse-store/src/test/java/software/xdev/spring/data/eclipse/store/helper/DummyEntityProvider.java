@@ -13,14 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository;
+package software.xdev.spring.data.eclipse.store.helper;
 
+import java.util.Collection;
+import java.util.List;
+
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
-public interface EntityListProvider
+public class DummyEntityProvider<T> extends EntityProvider<T>
 {
-	<T> IdentitySet<T> getEntityList(final Class<T> clazz);
+	public DummyEntityProvider(final Collection<T> collection)
+	{
+		super();
+		final IdentitySet<T> objects = new IdentitySet<>();
+		objects.addAll(collection);
+		this.addIdentitySet(objects);
+	}
 	
-	<T> long getEntityCount(final Class<T> clazz);
+	public static <E> DummyEntityProvider<E> of(final E... entities)
+	{
+		return new DummyEntityProvider<>(List.of(entities));
+	}
 }

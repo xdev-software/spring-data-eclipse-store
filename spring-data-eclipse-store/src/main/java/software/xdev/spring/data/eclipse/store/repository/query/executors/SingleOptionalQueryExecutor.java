@@ -15,16 +15,17 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import jakarta.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 
-import jakarta.annotation.Nullable;
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -56,7 +57,7 @@ public class SingleOptionalQueryExecutor<T> implements QueryExecutor<T>
 	@Override
 	public Optional<T> execute(
 		final Class<T> clazz,
-		@Nullable final Collection<T> entities,
+		@Nullable final EntityProvider<T> entities,
 		@Nullable final Object[] values)
 	{
 		Objects.requireNonNull(clazz);
@@ -64,7 +65,7 @@ public class SingleOptionalQueryExecutor<T> implements QueryExecutor<T>
 		{
 			return Optional.empty();
 		}
-		Stream<T> entityStream = entities
+		Stream<? extends T> entityStream = entities
 			.stream()
 			.filter(this.criteria::evaluate)
 			.map(this.copier::copy);
@@ -74,7 +75,7 @@ public class SingleOptionalQueryExecutor<T> implements QueryExecutor<T>
 			entityStream = EntitySorter.sortEntitiesStream(clazz, this.staticSort.get(), entityStream);
 		}
 		
-		final Optional<T> result = entityStream.findFirst();
+		final Optional<? extends T> result = entityStream.findFirst();
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug(
@@ -83,6 +84,6 @@ public class SingleOptionalQueryExecutor<T> implements QueryExecutor<T>
 				result.isPresent()
 			);
 		}
-		return result;
+		return (Optional<T>)result;
 	}
 }

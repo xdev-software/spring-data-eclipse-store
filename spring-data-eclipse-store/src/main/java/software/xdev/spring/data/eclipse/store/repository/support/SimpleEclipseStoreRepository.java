@@ -207,7 +207,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 		// Must get copied as one list to keep same references objects the same.
 		// (Example: If o1 and o2 (both part of the entity list) are referencing o3,
 		// o3 should be the same no matter from where it is referenced.
-		return this.copier.copy(this.storage.getEntityList(this.domainClass)).stream().toList();
+		return this.copier.copy(this.storage.getEntityProvider(this.domainClass).toCollection()).stream().toList();
 	}
 	
 	@Override
@@ -291,7 +291,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 			() ->
 				query.execute(
 					this.domainClass,
-					this.storage.getEntityList(this.domainClass),
+					this.storage.getEntityProvider(this.domainClass),
 					new Object[]{sort})
 		);
 	}
@@ -306,7 +306,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 			() ->
 				pageableQuery.execute(
 					this.domainClass,
-					this.storage.getEntityList(this.domainClass),
+					this.storage.getEntityProvider(this.domainClass),
 					new Object[]{pageable})
 		);
 	}
@@ -318,7 +318,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 			new SingleOptionalQueryExecutor<>(this.copier, new CriteriaByExample<>((Example<T>)example), null);
 		return this.storage.getReadWriteLock().read(
 			() ->
-				(Optional<S>)query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+				(Optional<S>)query.execute(this.domainClass, this.storage.getEntityProvider(this.domainClass), null)
 		);
 	}
 	
@@ -328,7 +328,10 @@ public class SimpleEclipseStoreRepository<T, ID>
 		final ListQueryExecutor<T> query =
 			new ListQueryExecutor<>(this.copier, new CriteriaByExample<>(example));
 		return this.storage.getReadWriteLock().read(
-			() -> (Iterable<S>)query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+			() -> (Iterable<S>)query.execute(
+				this.domainClass,
+				this.storage.getEntityProvider(this.domainClass),
+				null)
 		);
 	}
 	
@@ -341,7 +344,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 			() ->
 				(Iterable<S>)query.execute(
 					this.domainClass,
-					this.storage.getEntityList(this.domainClass),
+					this.storage.getEntityProvider(this.domainClass),
 					new Object[]{sort})
 		);
 	}
@@ -355,7 +358,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 			() ->
 				(Page<S>)pageableQuery.execute(
 					this.domainClass,
-					this.storage.getEntityList(this.domainClass),
+					this.storage.getEntityProvider(this.domainClass),
 					new Object[]{pageable})
 		);
 	}
@@ -365,7 +368,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		final CountQueryExecutor<T> query = new CountQueryExecutor<>(new CriteriaByExample<>(example));
 		return this.storage.getReadWriteLock().read(
-			() -> query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+			() -> query.execute(this.domainClass, this.storage.getEntityProvider(this.domainClass), null)
 		);
 	}
 	
@@ -374,7 +377,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		final ExistsQueryExecutor<T> query = new ExistsQueryExecutor<>(new CriteriaByExample<>(example));
 		return this.storage.getReadWriteLock().read(
-			() -> query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+			() -> query.execute(this.domainClass, this.storage.getEntityProvider(this.domainClass), null)
 		);
 	}
 	

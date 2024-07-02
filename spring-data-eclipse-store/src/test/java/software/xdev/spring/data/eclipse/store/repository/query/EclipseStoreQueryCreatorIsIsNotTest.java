@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.data.repository.Repository;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 
 
@@ -45,7 +46,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstName")
-	void findByFirstName(final Collection<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByFirstName(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstName", String.class);
@@ -60,7 +61,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstName")
-	void findByFirstNameIsNull(final Collection<QueryCreatorUtil.Customer> entities)
+	void findByFirstNameIsNull(final EntityProvider<QueryCreatorUtil.Customer> entities)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstName", String.class);
@@ -83,7 +84,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfId1")
 	void findById(
-		final Collection<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findById", int.class);
@@ -113,7 +114,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparable")
 	void findByIncomparable(
-		final Collection<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -131,7 +132,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparable")
 	void findByIncomparableIsNotNull(
-		final Collection<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -159,7 +160,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparableIsNull")
 	void findByIncomparableIsNullDynamic(
-		final Collection<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -177,7 +178,7 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparableIsNull")
 	void findByIncomparableIsNull(
-		final Collection<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIncomparableIsNull");

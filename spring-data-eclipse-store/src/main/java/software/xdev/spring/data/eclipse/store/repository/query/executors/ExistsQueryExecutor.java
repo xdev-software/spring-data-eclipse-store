@@ -15,7 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,6 +24,7 @@ import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 
 
@@ -51,7 +51,7 @@ public class ExistsQueryExecutor<T> implements QueryExecutor<T>
 	@Override
 	public Boolean execute(
 		final Class<T> clazz,
-		@Nullable final Collection<T> entities,
+		@Nullable final EntityProvider<T> entities,
 		@Nullable final Object[] values)
 	{
 		Objects.requireNonNull(clazz);
@@ -59,11 +59,11 @@ public class ExistsQueryExecutor<T> implements QueryExecutor<T>
 		{
 			return false;
 		}
-		final Stream<T> entityStream = entities
+		final Stream<? extends T> entityStream = entities
 			.stream()
 			.filter(this.criteria::evaluate);
 		
-		final Optional<T> result = entityStream.findAny();
+		final Optional<? extends T> result = entityStream.findAny();
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug(

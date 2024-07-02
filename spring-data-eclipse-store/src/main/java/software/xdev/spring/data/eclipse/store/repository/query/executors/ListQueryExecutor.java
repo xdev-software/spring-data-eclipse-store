@@ -15,14 +15,15 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+
+import jakarta.annotation.Nullable;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import jakarta.annotation.Nullable;
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -52,7 +53,7 @@ public class ListQueryExecutor<T> implements QueryExecutor<T>
 	 * @return a list of the found/sorted/paged entities
 	 */
 	@Override
-	public List<T> execute(final Class<T> clazz, @Nullable final Collection<T> entities, final Object[] values)
+	public List<T> execute(final Class<T> clazz, @Nullable final EntityProvider<T> entities, final Object[] values)
 	{
 		Objects.requireNonNull(clazz);
 		if(entities == null || entities.isEmpty())

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.Nonnull;
 
@@ -101,7 +102,8 @@ public class IdentitySet<E> implements Set<E>
 	@Override
 	public boolean addAll(@Nonnull final Collection<? extends E> c)
 	{
-		throw new NotImplementedYetError();
+		this.internalMap.putAll(c.stream().collect(Collectors.toMap(e -> e, i -> true)));
+		return true;
 	}
 	
 	@Override

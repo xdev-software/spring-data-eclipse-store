@@ -15,7 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -58,14 +58,14 @@ public class PageableSortableCollectionQuerier<T>
 	}
 	
 	protected List<T> getEntities(
-		@Nonnull final Collection<T> entities,
+		@Nonnull final EntityProvider<T> entities,
 		@Nullable final Pageable pageable,
 		@Nullable final Class<T> clazz,
 		@Nullable final Sort sort)
 	{
 		Objects.requireNonNull(entities);
 		
-		Stream<T> entityStream = entities
+		Stream<? extends T> entityStream = entities
 			.stream()
 			.filter(this.criteria::evaluate);
 		
@@ -86,14 +86,14 @@ public class PageableSortableCollectionQuerier<T>
 		return result;
 	}
 	
-	private List<T> copyEntities(final Stream<T> filteredEntityStream)
+	private List<T> copyEntities(final Stream<? extends T> filteredEntityStream)
 	{
 		return filteredEntityStream
 			.map(this.copier::copy)
 			.toList();
 	}
 	
-	private Stream<T> pageEntityStream(final Pageable pageable, final Stream<T> entityStream)
+	private Stream<? extends T> pageEntityStream(final Pageable pageable, final Stream<? extends T> entityStream)
 	{
 		if(pageable != null && pageable.isPaged())
 		{
@@ -106,7 +106,7 @@ public class PageableSortableCollectionQuerier<T>
 	}
 	
 	protected List<T> getEntities(
-		final Collection<T> entities,
+		final EntityProvider<T> entities,
 		final Pageable pageable,
 		final Class<T> clazz)
 	{
@@ -114,14 +114,14 @@ public class PageableSortableCollectionQuerier<T>
 	}
 	
 	protected List<T> getEntities(
-		final Collection<T> entities,
+		final EntityProvider<T> entities,
 		final Class<T> clazz,
 		final Sort sort)
 	{
 		return this.getEntities(entities, null, clazz, sort);
 	}
 	
-	protected List<T> getEntities(final Collection<T> entities, final Class<T> clazz)
+	protected List<T> getEntities(final EntityProvider<T> entities, final Class<T> clazz)
 	{
 		return this.getEntities(entities, null, clazz, null);
 	}

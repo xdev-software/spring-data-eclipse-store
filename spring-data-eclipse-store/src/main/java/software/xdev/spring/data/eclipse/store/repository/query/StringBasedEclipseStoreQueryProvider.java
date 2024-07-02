@@ -18,6 +18,8 @@ package software.xdev.spring.data.eclipse.store.repository.query;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.query.Parameters;
@@ -27,8 +29,7 @@ import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.data.util.TypeInformation;
 
-import jakarta.annotation.Nonnull;
-import software.xdev.spring.data.eclipse.store.repository.EntityListProvider;
+import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.QueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -90,7 +91,7 @@ public class StringBasedEclipseStoreQueryProvider<T> implements RepositoryQuery
 			LOG.debug("Executing query {}...", this.queryMethod);
 		}
 		final Object result = creator.createQuery()
-			.execute(this.domainClass, this.entityListProvider.getEntityList(this.domainClass), values);
+			.execute(this.domainClass, this.entityListProvider.getEntityProvider(this.domainClass), values);
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Done executing query {}.", this.queryMethod);
