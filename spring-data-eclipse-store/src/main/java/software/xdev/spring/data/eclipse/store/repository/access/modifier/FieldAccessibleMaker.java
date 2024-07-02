@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * the data from the field.<br/> }<br/>
  * </code>
  */
-@SuppressWarnings("java:S3011")
+@SuppressWarnings({"java:S3011", "PMD:PreserveStackTrace"})
 public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(FieldAccessibleMaker.class);
