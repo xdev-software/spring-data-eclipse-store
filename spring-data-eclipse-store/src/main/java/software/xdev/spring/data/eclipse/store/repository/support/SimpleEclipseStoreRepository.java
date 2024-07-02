@@ -234,14 +234,13 @@ public class SimpleEclipseStoreRepository<T, ID>
 		final EclipseStoreTransaction transaction = this.transactionManager.getTransaction();
 		transaction.addAction(() ->
 			this.storage.getReadWriteLock().write(
-				() -> {
+				() ->
 					this
 						.idManager
 						.findById(id)
 						.ifPresent(
 							foundEntity -> this.storage.delete(this.domainClass, foundEntity)
-						);
-				}
+						)
 			)
 		);
 	}
@@ -264,13 +263,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public void deleteAllById(final Iterable<? extends ID> ids)
 	{
 		this.storage.getReadWriteLock().write(
-			() ->
-			{
-				for(final ID id : ids)
-				{
-					this.deleteById(id);
-				}
-			}
+			() -> ids.forEach(this::deleteById)
 		);
 	}
 	
@@ -278,13 +271,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	public void deleteAll(final Iterable<? extends T> entities)
 	{
 		this.storage.getReadWriteLock().write(
-			() ->
-			{
-				for(final T entity : entities)
-				{
-					this.delete(entity);
-				}
-			}
+			() -> entities.forEach(this::delete)
 		);
 	}
 	
