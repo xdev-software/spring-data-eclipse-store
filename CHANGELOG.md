@@ -1,3 +1,7 @@
+# 1.0.9
+
+* Inherited entities with repositories are now realized by reading (finding coherent repositories) and not by writing
+
 # 1.0.8
 
 * Entities with same ID are replaced on saved and not added
