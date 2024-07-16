@@ -16,8 +16,6 @@
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -29,6 +27,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
+import software.xdev.spring.data.eclipse.store.helper.DummyEntityProvider;
 import software.xdev.spring.data.eclipse.store.helper.DummyWorkingCopier;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.repository.query.ReflectedField;
@@ -53,17 +53,17 @@ class PageableSortableCollectionQuerierTest
 		}
 	}
 	
-	private static final Collection<Customer> DATA_CUSTOMERS_EMPTY = new ArrayList<>();
-	private static final Collection<Customer> DATA_CUSTOMERS_ONE =
-		List.of(new Customer(TestData.FIRST_NAME, TestData.LAST_NAME));
-	private static final Collection<Customer> DATA_CUSTOMERS_TWO = List.of(
+	private static final EntityProvider<Customer> DATA_CUSTOMERS_EMPTY = DummyEntityProvider.of();
+	private static final EntityProvider<Customer> DATA_CUSTOMERS_ONE =
+		DummyEntityProvider.of(new Customer(TestData.FIRST_NAME, TestData.LAST_NAME));
+	private static final EntityProvider<Customer> DATA_CUSTOMERS_TWO = DummyEntityProvider.of(
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME),
 		new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE));
-	private static final Collection<Customer> DATA_CUSTOMERS_THREE = List.of(
+	private static final EntityProvider<Customer> DATA_CUSTOMERS_THREE = DummyEntityProvider.of(
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME),
 		new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE),
-		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME));
-	private static final Collection<Customer> DATA_CUSTOMERS_DABC_ABCD = List.of(
+		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME_ALTERNATIVE));
+	private static final EntityProvider<Customer> DATA_CUSTOMERS_DABC_ABCD = DummyEntityProvider.of(
 		new Customer("D", "A"),
 		new Customer("A", "B"),
 		new Customer("B", "C"),
@@ -85,7 +85,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_NoCriteria_NoPageable_NoSortable(final Collection<Customer> entities)
+	void getEntities_NoCriteria_NoPageable_NoSortable(final EntityProvider<Customer> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -96,7 +96,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_EmptyCriteria_NoPageable_NoSortable(final Collection<Customer> entities)
+	void getEntities_EmptyCriteria_NoPageable_NoSortable(final EntityProvider<Customer> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -107,7 +107,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_EmptyCriteria_NoPageable_Sortable_SameSize(final Collection<Customer> entities)
+	void getEntities_EmptyCriteria_NoPageable_Sortable_SameSize(final EntityProvider<Customer> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -120,7 +120,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_EmptyCriteria_Pageable_Sortable_FixedSize(final Collection<Customer> entities)
+	void getEntities_EmptyCriteria_Pageable_Sortable_FixedSize(final EntityProvider<Customer> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -195,7 +195,7 @@ class PageableSortableCollectionQuerierTest
 	@ParameterizedTest
 	@MethodSource("generateData")
 	void getEntities_CriteriaFirstName_NoPageable_NoSortable(
-		final Collection<Customer> entities,
+		final EntityProvider<Customer> entities,
 		final int countOfEntitiesWithFirstName)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(

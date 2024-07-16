@@ -100,7 +100,7 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 			() ->
 				(S)query.execute(
 					this.domainClass,
-					this.storage.getEntityList(this.domainClass),
+					this.storage.getEntityProvider(this.domainClass),
 					new Object[]{this.sort})
 		);
 	}
@@ -111,7 +111,10 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 		final ListQueryExecutor<T> query =
 			new ListQueryExecutor<>(this.copier, new CriteriaByExample<>(this.example));
 		return this.storage.getReadWriteLock().read(
-			() -> (List<S>)query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), new Object[]{
+			() -> (List<S>)query.execute(
+				this.domainClass,
+				this.storage.getEntityProvider(this.domainClass),
+				new Object[]{
 				this.sort})
 		);
 	}
@@ -125,7 +128,7 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 			() ->
 				(Page<S>)pageableQuery.execute(
 					this.domainClass,
-					this.storage.getEntityList(this.domainClass),
+					this.storage.getEntityProvider(this.domainClass),
 					new Object[]{pageable, this.sort})
 		);
 	}
@@ -141,7 +144,7 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 	{
 		final CountQueryExecutor<T> query = new CountQueryExecutor<>(new CriteriaByExample<>(this.example));
 		return this.storage.getReadWriteLock().read(
-			() -> query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+			() -> query.execute(this.domainClass, this.storage.getEntityProvider(this.domainClass), null)
 		);
 	}
 	
@@ -150,7 +153,7 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 	{
 		final ExistsQueryExecutor<T> query = new ExistsQueryExecutor<>(new CriteriaByExample<>(this.example));
 		return this.storage.getReadWriteLock().read(
-			() -> query.execute(this.domainClass, this.storage.getEntityList(this.domainClass), null)
+			() -> query.execute(this.domainClass, this.storage.getEntityProvider(this.domainClass), null)
 		);
 	}
 }

@@ -110,4 +110,17 @@ public final class AccessHelper
 			throw new FieldAccessReflectionException(field, e);
 		}
 	}
+	
+	public static void checkAllFieldsForReadRestrictions(final Class<?> clazz)
+	{
+		getInheritedPrivateFieldsByName(clazz).forEach(
+			(fieldName, field) ->
+			{
+				if(!field.trySetAccessible())
+				{
+					throw new FieldAccessReflectionException(field);
+				}
+			}
+		);
+	}
 }

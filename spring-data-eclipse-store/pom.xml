@@ -272,13 +272,10 @@
 				<version>3.3.0</version>
 				<configuration>
 					<argLine>
+						--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
 						--add-opens java.base/java.util=ALL-UNNAMED
 						--add-opens java.base/java.math=ALL-UNNAMED
 						--add-opens java.base/java.time=ALL-UNNAMED
-						--add-opens java.base/java.time.zone=ALL-UNNAMED
-						--add-opens java.base/java.util.concurrent=ALL-UNNAMED
-						--add-opens java.base/sun.util.calendar=ALL-UNNAMED
-						--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
@@ -413,12 +410,12 @@
 							<dependency>
 								<groupId>net.sourceforge.pmd</groupId>
 								<artifactId>pmd-core</artifactId>
-								<version>7.2.0</version>
+								<version>7.3.0</version>
 							</dependency>
 							<dependency>
 								<groupId>net.sourceforge.pmd</groupId>
 								<artifactId>pmd-java</artifactId>
-								<version>7.2.0</version>
+								<version>7.3.0</version>
 							</dependency>
 						</dependencies>
 					</plugin>

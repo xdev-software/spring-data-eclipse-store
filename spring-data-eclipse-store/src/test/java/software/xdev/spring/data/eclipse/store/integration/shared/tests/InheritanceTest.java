@@ -36,14 +36,23 @@ import software.xdev.spring.data.eclipse.store.integration.shared.repositories.S
 @DefaultTestAnnotations
 class InheritanceTest
 {
+	private final ParentCustomerRepository parentCustomerRepository;
+	private final ChildCustomerRepository childCustomerRepository;
+	private final SubCustomerRepository subCustomerRepository;
+	private final SharedTestConfiguration configuration;
+	
 	@Autowired
-	private ParentCustomerRepository parentCustomerRepository;
-	@Autowired
-	private ChildCustomerRepository childCustomerRepository;
-	@Autowired
-	private SubCustomerRepository subCustomerRepository;
-	@Autowired
-	private SharedTestConfiguration configuration;
+	public InheritanceTest(
+		final ParentCustomerRepository parentCustomerRepository,
+		final ChildCustomerRepository childCustomerRepository,
+		final SubCustomerRepository subCustomerRepository,
+		final SharedTestConfiguration configuration)
+	{
+		this.parentCustomerRepository = parentCustomerRepository;
+		this.childCustomerRepository = childCustomerRepository;
+		this.subCustomerRepository = subCustomerRepository;
+		this.configuration = configuration;
+	}
 	
 	@Test
 	void testSaveChildFindParent()
@@ -210,7 +219,7 @@ class InheritanceTest
 			() -> {
 				final List<ParentCustomer> parentCustomers =
 					TestUtil.iterableToList(this.parentCustomerRepository.findAll());
-				Assertions.assertTrue(parentCustomers.isEmpty());
+				Assertions.assertEquals(1, parentCustomers.size());
 				
 				final List<ChildCustomer> childCustomers =
 					TestUtil.iterableToList(this.childCustomerRepository.findAll());

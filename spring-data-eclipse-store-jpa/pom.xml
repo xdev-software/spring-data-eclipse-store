@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>spring-data-eclipse-store-jpa</artifactId>
-	<version>1.0.10-SNAPSHOT</version>
+	<version>1.0.9-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<inceptionYear>2023</inceptionYear>

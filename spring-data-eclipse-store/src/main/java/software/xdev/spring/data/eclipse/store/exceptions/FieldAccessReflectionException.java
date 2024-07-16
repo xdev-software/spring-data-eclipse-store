@@ -20,7 +20,15 @@ import java.lang.reflect.Field;
 
 public class FieldAccessReflectionException extends RuntimeException
 {
-	public static final String COULD_NOT_READ_FIELD = "Could not read field %s";
+	public static final String COULD_NOT_READ_FIELD = "Could not read field %s#%s";
+	
+	public FieldAccessReflectionException(final Field field)
+	{
+		super(String.format(
+			FieldAccessReflectionException.COULD_NOT_READ_FIELD,
+			field.getDeclaringClass().getName(),
+			field.getName()));
+	}
 	
 	public FieldAccessReflectionException(final String message, final Exception e)
 	{
@@ -29,6 +37,9 @@ public class FieldAccessReflectionException extends RuntimeException
 	
 	public FieldAccessReflectionException(final Field field, final Exception e)
 	{
-		this(String.format(FieldAccessReflectionException.COULD_NOT_READ_FIELD, field.getName()), e);
+		this(String.format(
+			FieldAccessReflectionException.COULD_NOT_READ_FIELD,
+			field.getDeclaringClass().getName(),
+			field.getName()), e);
 	}
 }

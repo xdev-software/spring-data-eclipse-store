@@ -26,6 +26,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.data.repository.Repository;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
+
 
 class EclipseStoreQueryCreatorBooleanTest
 {
@@ -43,7 +45,7 @@ class EclipseStoreQueryCreatorBooleanTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfEnabled")
-	void findByEnabledTrue(final Collection<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByEnabledTrue(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByEnabledTrue");
@@ -65,7 +67,7 @@ class EclipseStoreQueryCreatorBooleanTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfEnabledFalse")
-	void findByEnabledFalse(final Collection<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByEnabledFalse(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByEnabledFalse");

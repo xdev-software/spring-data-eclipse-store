@@ -15,7 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query.executors;
 
-import java.util.Collection;
 import java.util.Objects;
 
 import jakarta.annotation.Nullable;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.exceptions.NoPageableObjectFoundException;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.Criteria;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
@@ -52,7 +52,7 @@ public class PageableQueryExecutor<T> implements QueryExecutor<T>
 	 * @return a page of the found/sorted/paged entities
 	 */
 	@Override
-	public Page<T> execute(final Class<T> clazz, @Nullable final Collection<T> entities, final Object[] values)
+	public Page<T> execute(final Class<T> clazz, @Nullable final EntityProvider<T> entities, final Object[] values)
 	{
 		Objects.requireNonNull(clazz);
 		

@@ -15,9 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -25,23 +23,24 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
 public class EntitySetCollector
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EntitySetCollector.class);
-	private final Map<Class<?>, List<IdentitySet<? super Object>>> childClassToParentSets = new HashMap<>();
+	private final Map<Class<?>, EntityProvider<?>> childClassToParentSets = new HashMap<>();
 	
-	public EntitySetCollector(
-		final Function<Class<?>, IdentitySet<?>> entityLists,
+	public <T> EntitySetCollector(
+		final Function<Class<T>, IdentitySet<T>> entityLists,
 		final Set<Class<?>> entityClasses)
 	{
 		this.buildParentClassList(entityLists, entityClasses);
 	}
 	
-	private void buildParentClassList(
-		final Function<Class<?>, IdentitySet<?>> entityLists,
+	private <T> void buildParentClassList(
+		final Function<Class<T>, IdentitySet<T>> entityLists,
 		final Set<Class<?>> entityClasses
 	)
 	{
@@ -54,12 +53,15 @@ public class EntitySetCollector
 			for(final Class<?> possibleChildEntry : entityClasses)
 			{
 				this.childClassToParentSets.putIfAbsent(
-					possibleChildEntry, new ArrayList<>()
+					possibleChildEntry, new EntityProvider<>()
 				);
-				if(possibleParentEntry.isAssignableFrom(possibleChildEntry))
+				if(possibleChildEntry.isAssignableFrom(possibleParentEntry))
 				{
-					this.childClassToParentSets.get(possibleChildEntry)
-						.add((IdentitySet<? super Object>)entityLists.apply(possibleParentEntry));
+					this.addIdentitySet(
+						(EntityProvider<T>)this.childClassToParentSets.get(possibleChildEntry),
+						entityLists,
+						(Class<T>)possibleParentEntry
+					);
 				}
 			}
 		}
@@ -69,11 +71,20 @@ public class EntitySetCollector
 		}
 	}
 	
+	private <T> void addIdentitySet(
+		final EntityProvider<T> entities,
+		final Function<Class<T>, IdentitySet<T>> entityLists,
+		final Class<T> possibleParentEntry
+	)
+	{
+		entities.addIdentitySet(entityLists.apply(possibleParentEntry));
+	}
+	
 	/**
 	 * @return a list with all related IdentitySets (including its own).
 	 */
-	public <T> List<IdentitySet<Object>> getRelatedIdentitySets(final Class<T> clazz)
+	public <T> EntityProvider<T> getRelatedIdentitySets(final Class<T> clazz)
 	{
-		return this.childClassToParentSets.get(clazz);
+		return (EntityProvider<T>)this.childClassToParentSets.get(clazz);
 	}
 }
