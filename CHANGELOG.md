@@ -1,6 +1,7 @@
 # 1.0.9
 
 * Inherited entities with repositories are now realized by reading (finding coherent repositories) and not by writing
+* Multiple restarts of the storage at initial startup is now fixed
 
 # 1.0.8
 
