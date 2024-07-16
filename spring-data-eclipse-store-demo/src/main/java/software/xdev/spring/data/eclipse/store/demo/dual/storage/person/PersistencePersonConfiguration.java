@@ -29,11 +29,10 @@ public class PersistencePersonConfiguration extends EclipseStoreClientConfigurat
 	public PersistencePersonConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final EmbeddedStorageFoundationFactory foundation,
 		final EclipseStoreProperties properties)
 	{
 		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
-		this.foundation = foundation;
+		this.foundation = defaultEclipseStoreProvider;
 		this.properties = properties;
 	}
 	

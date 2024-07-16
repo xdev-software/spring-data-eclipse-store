@@ -86,3 +86,4 @@ storage-jpa
 .idea/codeStyles/*
 !.idea/codeStyles/codeStyleConfig.xml
 !.idea/codeStyles/Project.xml
+/spring-data-eclipse-store-demo/storage-complex

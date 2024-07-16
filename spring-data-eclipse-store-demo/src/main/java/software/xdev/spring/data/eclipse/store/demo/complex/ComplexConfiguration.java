@@ -1,7 +1,12 @@
 package software.xdev.spring.data.eclipse.store.demo.complex;
 
+import java.nio.file.Path;
+
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
+import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
+import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.eclipse.store.storage.types.Storage;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
@@ -24,6 +29,20 @@ public class ComplexConfiguration extends EclipseStoreClientConfiguration
 	)
 	{
 		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+	}
+	
+	/**
+	 * This is one option how to configure the {@link EmbeddedStorageFoundation}.
+	 * <p>
+	 * We create a completely new foundation. That means that all configuration (e.g. properties) are not used here.
+	 * With this method you have complete control over the configuration.
+	 * </p>
+	 * Another example: {@link PersistencePersonConfiguration#createEmbeddedStorageFoundation()}
+	 */
+	@Override
+	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
+	{
+		return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of("storage-complex"))));
 	}
 	
 	/**
