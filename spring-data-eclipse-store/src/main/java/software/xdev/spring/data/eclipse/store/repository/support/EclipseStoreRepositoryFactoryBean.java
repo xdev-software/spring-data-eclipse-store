@@ -118,9 +118,12 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 		catch(final BeansException ex)
 		{
 			LOG.warn(
-				"Could not initiate Bean {}. Using {} instead.",
-				this.configurationClass.getSimpleName(),
-				DefaultEclipseStoreClientConfiguration.class.getSimpleName());
+				"Could not initiate Bean %s. Using %s instead."
+					.formatted(
+						this.configurationClass.getSimpleName(),
+						DefaultEclipseStoreClientConfiguration.class.getSimpleName()
+					),
+				ex);
 		}
 		return this.beanFactory.getBean(DefaultEclipseStoreClientConfiguration.class);
 	}

@@ -27,7 +27,7 @@ public class DefaultEclipseStoreClientConfigurationFactory
 {
 	@Bean
 	@ConditionalOnMissingBean(EclipseStoreClientConfiguration.class)
-	public DefaultEclipseStoreClientConfiguration getDefaultConfiguration(
+	public EclipseStoreClientConfiguration getEclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
 	{
