@@ -41,17 +41,30 @@ import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseS
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReentrantJavaReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManagerProvider;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManager;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManagerProvider;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionSetter;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.RepositorySynchronizer;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
 
 public class EclipseStoreStorage
-	implements EntityListProvider, IdManagerProvider, PersistableChecker, ObjectSwizzling
+	implements EntityListProvider, IdManagerProvider, VersionManagerProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, SimpleEclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
+	/**
+	 * "Why are the IdManagers seperated from the repositories?" - Because there might be entities for which there are
+	 * no repositories, but they still have IDs.
+	 */
 	private final Map<Class<?>, IdManager<?, ?>> idManagers = new ConcurrentHashMap<>();
+	/**
+	 * "Why are the VersionManagers seperated from the repositories?" - Because there might be entities for which there
+	 * are no repositories, but they still have Versions.
+	 */
+	private final Map<Class<?>, VersionManager<?, ?>> versionManagers = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
@@ -311,6 +324,7 @@ public class EclipseStoreStorage
 					this.root = null;
 					this.registry.reset();
 					this.idManagers.clear();
+					this.versionManagers.clear();
 					LOG.info("Stopped storage.");
 				}
 				else
@@ -323,19 +337,33 @@ public class EclipseStoreStorage
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T, ID> IdManager<T, ID> ensureIdManager(final Class<T> domainClass)
+	public <T, ID> IdManager<T, ID> ensureIdManager(final Class<T> classPossiblyWithId)
 	{
 		return (IdManager<T, ID>)this.idManagers.computeIfAbsent(
-			domainClass,
+			classPossiblyWithId,
 			clazz ->
 				new IdManager<>(
-					domainClass,
+					classPossiblyWithId,
 					(IdSetter<T>)IdSetter.createIdSetter(
 						clazz,
-						id -> this.setLastId(clazz, id),
-						() -> this.getLastId(clazz)
+						id -> this.setLastId(classPossiblyWithId, id),
+						() -> this.getLastId(classPossiblyWithId)
 					),
 					this
+				)
+		);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T, VERSION> VersionManager<T, VERSION> ensureVersionManager(final Class<T> possiblyVersionedClass)
+	{
+		return (VersionManager<T, VERSION>)this.versionManagers.computeIfAbsent(
+			possiblyVersionedClass,
+			clazz ->
+				new VersionManager<T, VERSION>(
+					possiblyVersionedClass,
+					VersionSetter.createVersionSetter(possiblyVersionedClass)
 				)
 		);
 	}

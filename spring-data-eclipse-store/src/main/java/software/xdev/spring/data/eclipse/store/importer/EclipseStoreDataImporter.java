@@ -263,6 +263,7 @@ public class EclipseStoreDataImporter
 				storageInstance.getRegistry(),
 				storageInstance,
 				storageInstance,
+				storageInstance,
 				new SupportedChecker.Implementation(),
 				storageInstance
 			),

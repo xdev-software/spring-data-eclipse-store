@@ -86,4 +86,75 @@ class VersionTest
 		
 		Assertions.assertThrows(OptimisticLockException.class, () -> repository.save(secondLoadedEntry));
 	}
+	
+	@Test
+	void simpleSaveWithChild(@Autowired final VersionedEntityWithIntegerAndVersionedChildRepository repository)
+	{
+		final VersionedChildEntityWithLong child = new VersionedChildEntityWithLong(TestData.FIRST_NAME);
+		final VersionedEntityWithIntegerAndVersionedChild entity =
+			new VersionedEntityWithIntegerAndVersionedChild(TestData.FIRST_NAME_ALTERNATIVE, child);
+		repository.save(entity);
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<VersionedEntityWithIntegerAndVersionedChild> allEntities = repository.findAll();
+				Assertions.assertEquals(1, allEntities.size());
+				Assertions.assertEquals(1, allEntities.get(0).getVersion());
+				Assertions.assertEquals(1L, allEntities.get(0).getChild().getVersion());
+			}
+		);
+	}
+	
+	@Test
+	void doubleSaveWithChild(@Autowired final VersionedEntityWithIntegerAndVersionedChildRepository repository)
+	{
+		final VersionedChildEntityWithLong child = new VersionedChildEntityWithLong(TestData.FIRST_NAME);
+		final VersionedEntityWithIntegerAndVersionedChild entity =
+			new VersionedEntityWithIntegerAndVersionedChild(TestData.FIRST_NAME_ALTERNATIVE, child);
+		repository.save(entity);
+		repository.save(repository.findAll().get(0));
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<VersionedEntityWithIntegerAndVersionedChild> allEntities = repository.findAll();
+				Assertions.assertEquals(1, allEntities.size());
+				Assertions.assertEquals(2, allEntities.get(0).getVersion());
+				Assertions.assertEquals(2L, allEntities.get(0).getChild().getVersion());
+			}
+		);
+	}
+	
+	@Test
+	void saveButLockedWithChild(@Autowired final VersionedEntityWithIntegerAndVersionedChildRepository repository)
+	{
+		final VersionedChildEntityWithLong child = new VersionedChildEntityWithLong(TestData.FIRST_NAME);
+		final VersionedEntityWithIntegerAndVersionedChild entity =
+			new VersionedEntityWithIntegerAndVersionedChild(TestData.FIRST_NAME_ALTERNATIVE, child);
+		repository.save(entity);
+		
+		final VersionedEntityWithIntegerAndVersionedChild firstLoadedEntry = repository.findAll().get(0);
+		final VersionedEntityWithIntegerAndVersionedChild secondLoadedEntry = repository.findAll().get(0);
+		
+		firstLoadedEntry.getChild().setName(TestData.FIRST_NAME_ALTERNATIVE);
+		repository.save(firstLoadedEntry);
+		
+		Assertions.assertThrows(OptimisticLockException.class, () -> repository.save(secondLoadedEntry));
+	}
+	
+	@Test
+	void saveButLockedWithSameChild(@Autowired final VersionedEntityWithIntegerAndVersionedChildRepository repository)
+	{
+		final VersionedChildEntityWithLong child = new VersionedChildEntityWithLong(TestData.FIRST_NAME);
+		final VersionedEntityWithIntegerAndVersionedChild entity =
+			new VersionedEntityWithIntegerAndVersionedChild(TestData.FIRST_NAME_ALTERNATIVE, child);
+		repository.save(entity);
+		
+		final VersionedEntityWithIntegerAndVersionedChild firstLoadedEntry = repository.findAll().get(0);
+		final VersionedEntityWithIntegerAndVersionedChild secondLoadedEntry = repository.findAll().get(0);
+		
+		firstLoadedEntry.setChild(secondLoadedEntry.getChild());
+		repository.save(firstLoadedEntry);
+		
+		Assertions.assertThrows(OptimisticLockException.class, () -> repository.save(secondLoadedEntry));
+	}
 }
