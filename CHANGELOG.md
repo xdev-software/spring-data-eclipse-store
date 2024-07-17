@@ -1,3 +1,7 @@
+# 1.0.10
+
+* Optimistic locking with @Version now possible
+
 # 1.0.9
 
 * Inherited entities with repositories are now realized by reading (finding coherent repositories) and not by writing

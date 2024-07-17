@@ -23,7 +23,7 @@ public class LongVersionIncrementer implements VersionIncrementer<Long>
 	{
 		if(original == null || original == Long.MAX_VALUE)
 		{
-			return 0L;
+			return 1L;
 		}
 		return original + 1;
 	}

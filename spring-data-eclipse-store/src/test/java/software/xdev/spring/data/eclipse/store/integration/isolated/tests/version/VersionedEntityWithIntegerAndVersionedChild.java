@@ -18,7 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.versi
 import jakarta.persistence.Version;
 
 
-public class VersionedEntityWithIntegerAndVersionedChild
+public class VersionedEntityWithIntegerAndVersionedChild implements VersionedEntity<Integer>
 {
 	@Version
 	private int version;
@@ -31,7 +31,8 @@ public class VersionedEntityWithIntegerAndVersionedChild
 		this.child = child;
 	}
 	
-	public int getVersion()
+	@Override
+	public Integer getVersion()
 	{
 		return this.version;
 	}
@@ -46,6 +47,7 @@ public class VersionedEntityWithIntegerAndVersionedChild
 		this.version = version;
 	}
 	
+	@Override
 	public void setName(final String name)
 	{
 		this.name = name;

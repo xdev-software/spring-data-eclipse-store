@@ -16,23 +16,86 @@
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.version;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import jakarta.persistence.OptimisticLockException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {VersionTestConfiguration.class})
 class VersionTest
 {
+	public static Stream<Arguments> generateData()
+	{
+		return List.of(
+			new SingleTestDataset<>(
+				name -> new VersionedEntityWithInteger(name),
+				context -> context.getBean(VersionedEntityWithIntegerRepository.class),
+				1,
+				2
+			).toArguments(),
+			new SingleTestDataset<>(
+				name -> new VersionedEntityWithLong(name),
+				context -> context.getBean(VersionedEntityWithLongRepository.class),
+				1L,
+				2L
+			).toArguments(),
+			new SingleTestDataset<>(
+				name -> new VersionedEntityWithPrimitiveInteger(name),
+				context -> context.getBean(VersionedEntityWithPrimitiveIntegerRepository.class),
+				1,
+				2
+			).toArguments(),
+			new SingleTestDataset<>(
+				name -> new VersionedEntityWithPrimitiveLong(name),
+				context -> context.getBean(VersionedEntityWithPrimitiveLongRepository.class),
+				1L,
+				2L
+			).toArguments(),
+			new SingleTestDataset<>(
+				name -> new VersionedEntityWithString(name),
+				context -> context.getBean(VersionedEntityWithStringRepository.class),
+				null,
+				null
+			).toArguments(),
+			new SingleTestDataset<>(
+				name -> new VersionedEntityWithUuid(name),
+				context -> context.getBean(VersionedEntityWithUuidRepository.class),
+				null,
+				null
+			).toArguments()
+		).stream();
+	}
+	
+	private record SingleTestDataset<T extends VersionedEntity>(
+		Function<String, T> enitityGenerator,
+		Function<ApplicationContext, EclipseStoreRepository<T, Void>> repositoryGenerator,
+		Object firstVersion,
+		Object secondVersion
+	)
+	{
+		public Arguments toArguments()
+		{
+			return Arguments.of(this);
+		}
+	}
+	
+	
 	private final VersionTestConfiguration configuration;
 	
 	@Autowired
@@ -41,45 +104,68 @@ class VersionTest
 		this.configuration = configuration;
 	}
 	
-	@Test
-	void simpleSave(@Autowired final VersionedEntityWithIntegerRepository repository)
+	@ParameterizedTest
+	@MethodSource("generateData")
+	<T extends VersionedEntity> void simpleSave(
+		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final VersionedEntityWithInteger entity = new VersionedEntityWithInteger(TestData.FIRST_NAME);
+		final EclipseStoreRepository<T, Void> repository = data.repositoryGenerator.apply(context);
+		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final List<VersionedEntityWithInteger> allEntities = repository.findAll();
+				final List<T> allEntities = repository.findAll();
 				Assertions.assertEquals(1, allEntities.size());
-				Assertions.assertEquals(1, allEntities.get(0).getVersion());
+				if(data.firstVersion != null)
+				{
+					Assertions.assertEquals(data.firstVersion, allEntities.get(0).getVersion());
+				}
+				else
+				{
+					Assertions.assertNotNull(allEntities.get(0).getVersion());
+				}
 			}
 		);
 	}
 	
-	@Test
-	void doubleSave(@Autowired final VersionedEntityWithIntegerRepository repository)
+	@ParameterizedTest
+	@MethodSource("generateData")
+	<T extends VersionedEntity> void doubleSave(
+		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final VersionedEntityWithInteger entity = new VersionedEntityWithInteger(TestData.FIRST_NAME);
+		final EclipseStoreRepository<T, Void> repository = data.repositoryGenerator.apply(context);
+		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		repository.save(repository.findAll().get(0));
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final List<VersionedEntityWithInteger> allEntities = repository.findAll();
+				final List<T> allEntities = repository.findAll();
 				Assertions.assertEquals(1, allEntities.size());
-				Assertions.assertEquals(2, allEntities.get(0).getVersion());
+				if(data.secondVersion != null)
+				{
+					Assertions.assertEquals(data.secondVersion, allEntities.get(0).getVersion());
+				}
+				else
+				{
+					Assertions.assertNotNull(allEntities.get(0).getVersion());
+				}
 			}
 		);
 	}
 	
-	@Test
-	void saveButLocked(@Autowired final VersionedEntityWithIntegerRepository repository)
+	@ParameterizedTest
+	@MethodSource("generateData")
+	<T extends VersionedEntity> void saveButLocked(
+		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final VersionedEntityWithInteger entity = new VersionedEntityWithInteger(TestData.FIRST_NAME);
+		final EclipseStoreRepository<T, Void> repository = data.repositoryGenerator.apply(context);
+		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		
-		final VersionedEntityWithInteger firstLoadedEntry = repository.findAll().get(0);
-		final VersionedEntityWithInteger secondLoadedEntry = repository.findAll().get(0);
+		final T firstLoadedEntry = repository.findAll().get(0);
+		final T secondLoadedEntry = repository.findAll().get(0);
 		
 		firstLoadedEntry.setName(TestData.FIRST_NAME_ALTERNATIVE);
 		repository.save(firstLoadedEntry);

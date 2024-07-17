@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.version.incrementer;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.version;
 
-public class IntegerVersionIncrementer
-	implements VersionIncrementer<Integer>
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+
+
+public interface VersionedEntityWithPrimitiveLongRepository
+	extends EclipseStoreRepository<VersionedEntityWithPrimitiveLong, Void>
 {
-	@Override
-	public Integer increment(final Integer original)
-	{
-		if(original == null || original == Integer.MAX_VALUE)
-		{
-			return 1;
-		}
-		return original + 1;
-	}
 }
