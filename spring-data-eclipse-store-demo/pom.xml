@@ -7,11 +7,11 @@
 	<parent>
 		<groupId>software.xdev</groupId>
 		<artifactId>spring-data-eclipse-store-root</artifactId>
-		<version>1.0.10</version>
+		<version>1.0.11-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>spring-data-eclipse-store-demo</artifactId>
-	<version>1.0.10</version>
+	<version>1.0.11-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<organization>
