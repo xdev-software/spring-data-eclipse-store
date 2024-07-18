@@ -28,26 +28,26 @@ import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionE
 import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
-import software.xdev.spring.data.eclipse.store.repository.support.IdFieldFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
 
 
 public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID>
 {
-	private final Class<T> domainClass;
+	private final Class<T> classWithId;
 	private final IdSetter<T> idSetter;
 	private final Optional<Field> idField;
 	private final EclipseStoreStorage storage;
 	
 	public IdManager(
-		final Class<T> domainClass,
+		final Class<T> classWithId,
 		final IdSetter<T> idSetter,
 		final EclipseStoreStorage storage
 	)
 	{
-		this.domainClass = domainClass;
+		this.classWithId = classWithId;
 		this.idSetter = idSetter;
 		this.storage = storage;
-		this.idField = IdFieldFinder.findIdField(this.domainClass);
+		this.idField = AnnotatedFieldFinder.findIdField(this.classWithId);
 	}
 	
 	public Field ensureIdField()
@@ -56,7 +56,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		{
 			throw new NoIdFieldFoundException(String.format(
 				"Could not find id field in class %s",
-				this.domainClass.getSimpleName()));
+				this.classWithId.getSimpleName()));
 		}
 		return this.idField.get();
 	}
@@ -67,7 +67,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		this.ensureIdField();
 		return (Optional<T>)this.storage.getReadWriteLock().read(
 			() -> this.storage
-				.getEntityProvider(this.domainClass)
+				.getEntityProvider(this.classWithId)
 				.stream()
 				.filter(entity -> id.equals(this.getId(entity)))
 				.findAny()
@@ -79,7 +79,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		this.ensureIdField();
 		return (List<T>)this.storage.getReadWriteLock().read(
 			() -> this.storage
-				.getEntityProvider(this.domainClass)
+				.getEntityProvider(this.classWithId)
 				.stream()
 				.filter(
 					entity ->
