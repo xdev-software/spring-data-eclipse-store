@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 import jakarta.persistence.GeneratedValue;
 
-import software.xdev.spring.data.eclipse.store.repository.support.IdFieldFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
 
 
@@ -41,7 +41,7 @@ public interface IdSetter<T>
 		Objects.requireNonNull(classWithId);
 		Objects.requireNonNull(lastIdPersister);
 		Objects.requireNonNull(lastIdGetter);
-		final Optional<Field> idField = IdFieldFinder.findIdField(classWithId);
+		final Optional<Field> idField = AnnotatedFieldFinder.findIdField(classWithId);
 		if(idField.isEmpty())
 		{
 			return new NotSettingIdSetter<>();

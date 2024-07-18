@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.exceptions.MergeFailedException;
-import software.xdev.spring.data.eclipse.store.repository.IdManagerProvider;
 import software.xdev.spring.data.eclipse.store.repository.PersistableChecker;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
@@ -43,9 +42,12 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManagerProvider;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringObjectCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringStorageToWorkingCopyCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringWorkingCopyToStorageCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManager;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManagerProvider;
 
 
 /**
@@ -59,6 +61,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 	private final RegisteringObjectCopier storageToWorkingCopyCopier;
 	private final WorkingCopyRegistry registry;
 	private final IdManagerProvider idManagerProvider;
+	private final VersionManagerProvider versionManagerProvider;
 	private final Class<T> domainClass;
 	private final PersistableChecker persistableChecker;
 	
@@ -66,6 +69,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final Class<T> domainClass,
 		final WorkingCopyRegistry registry,
 		final IdManagerProvider idManagerProvider,
+		final VersionManagerProvider versionManagerProvider,
 		final PersistableChecker persistableChecker,
 		final SupportedChecker supportedChecker,
 		final ObjectSwizzling objectSwizzling
@@ -78,6 +82,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		this.storageToWorkingCopyCopier =
 			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this);
 		this.idManagerProvider = idManagerProvider;
+		this.versionManagerProvider = versionManagerProvider;
 		this.persistableChecker = persistableChecker;
 	}
 	
@@ -144,11 +149,16 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		}
 		final IdManager<E, Object> idManager =
 			this.idManagerProvider.ensureIdManager((Class<E>)workingCopy.getClass());
-		
 		idManager.ensureId(workingCopy);
+		
+		final VersionManager<E> versionManager =
+			this.versionManagerProvider.ensureVersionManager((Class<E>)workingCopy.getClass());
+		
 		final E originalObject = this.registry.getOriginalObjectFromWorkingCopy(workingCopy);
 		if(originalObject != null)
 		{
+			versionManager.ensureSameVersion(workingCopy, originalObject);
+			versionManager.incrementVersion(workingCopy);
 			return this.mergeValueIfNeeded(
 				workingCopy,
 				mergeValues,
@@ -158,6 +168,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			);
 		}
 		
+		
 		final Object id = idManager.getId(workingCopy);
 		if(id != null)
 		{
@@ -166,6 +177,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			final Optional<E> existingEntity = idManager.findById(id);
 			if(existingEntity.isPresent())
 			{
+				versionManager.ensureSameVersion(workingCopy, existingEntity.get());
+				versionManager.incrementVersion(workingCopy);
 				return this.mergeValueIfNeeded(
 					workingCopy,
 					mergeValues,
@@ -176,6 +189,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			}
 		}
 		
+		versionManager.incrementVersion(workingCopy);
 		// The object to merge back is not a working copy, but a originalObject.
 		// Therefore, we create a copy to persist this in the storage.
 		final E objectForDatastore = this.genericCopy(workingCopy, true);

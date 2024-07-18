@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository;
-
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
-
+package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
 
 public interface IdManagerProvider
 {

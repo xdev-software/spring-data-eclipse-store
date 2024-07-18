@@ -79,6 +79,7 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage.getRegistry(),
 			storage,
 			storage,
+			storage,
 			new SupportedChecker.Implementation(),
 			storage
 		);

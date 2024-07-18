@@ -15,16 +15,18 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 
 
-public final class IdFieldFinder
+public final class AnnotatedFieldFinder
 {
-	private IdFieldFinder()
+	private AnnotatedFieldFinder()
 	{
 	}
 	
@@ -36,15 +38,44 @@ public final class IdFieldFinder
 	 */
 	public static Optional<Field> findIdField(final Class<?> domainClass)
 	{
+		return findAnnotatedField(
+			domainClass,
+			List.of(jakarta.persistence.Id.class, org.springframework.data.annotation.Id.class)
+		);
+	}
+	
+	/**
+	 * Finds any field in a class with an Version-Annotation ({@link jakarta.persistence.Version} or
+	 * {@link org.springframework.data.annotation.Version}). Finds this field recursively in the Hierarchy-tree.
+	 *
+	 * @return field with Version-Annotation. Is {@link Optional#empty()} if no field was found.
+	 */
+	public static Optional<Field> findVersionField(final Class<?> domainClass)
+	{
+		return findAnnotatedField(
+			domainClass,
+			List.of(jakarta.persistence.Version.class, org.springframework.data.annotation.Version.class)
+		);
+	}
+	
+	/**
+	 * Finds any field in a class with specified annotations. Finds this field recursively in the Hierarchy-tree.
+	 *
+	 * @return field with annotation. Is {@link Optional#empty()} if no field was found.
+	 */
+	public static Optional<Field> findAnnotatedField(
+		final Class<?> domainClass,
+		final Collection<Class<? extends Annotation>> annotations)
+	{
 		final Collection<Field> classFields = AccessHelper.getInheritedPrivateFieldsByName(domainClass).values();
 		for(final Field currentField : classFields)
 		{
-			if(
-				currentField.getAnnotationsByType(jakarta.persistence.Id.class).length > 0
-					|| currentField.getAnnotationsByType(org.springframework.data.annotation.Id.class).length > 0
-			)
+			for(final Class<? extends Annotation> annotation : annotations)
 			{
-				return Optional.of(currentField);
+				if(currentField.getAnnotationsByType(annotation).length > 0)
+				{
+					return Optional.of(currentField);
+				}
 			}
 		}
 		return Optional.empty();
