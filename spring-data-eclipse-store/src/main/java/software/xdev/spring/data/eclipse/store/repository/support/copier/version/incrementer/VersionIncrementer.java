@@ -22,8 +22,14 @@ import java.util.UUID;
 import software.xdev.spring.data.eclipse.store.exceptions.IdGeneratorNotSupportedException;
 
 
+/**
+ * Increments given version to a new version
+ */
 public interface VersionIncrementer<VERSION>
 {
+	/**
+	 * Increments the original value and returns it.
+	 */
 	VERSION increment(final VERSION original);
 	
 	@SuppressWarnings({"java:S1452", "TypeParameterExplicitlyExtendsObject"})

@@ -151,7 +151,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			this.idManagerProvider.ensureIdManager((Class<E>)workingCopy.getClass());
 		idManager.ensureId(workingCopy);
 		
-		final VersionManager<E, Object> versionManager =
+		final VersionManager<E> versionManager =
 			this.versionManagerProvider.ensureVersionManager((Class<E>)workingCopy.getClass());
 		
 		final E originalObject = this.registry.getOriginalObjectFromWorkingCopy(workingCopy);

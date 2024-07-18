@@ -24,12 +24,14 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.incrementer.VersionIncrementer;
 
 
-public class SimpleVersionSetter<T, VERSION> implements VersionSetter<T>
+public class SimpleEntityVersionIncrementer<T, VERSION> implements EntityVersionIncrementer<T>
 {
 	private final VersionIncrementer<VERSION> versionIncrementer;
 	private final Field versionField;
 	
-	public SimpleVersionSetter(final Field versionField, final VersionIncrementer<VERSION> versionIncrementer)
+	public SimpleEntityVersionIncrementer(
+		final Field versionField,
+		final VersionIncrementer<VERSION> versionIncrementer)
 	{
 		this.versionField = versionField;
 		this.versionIncrementer = versionIncrementer;

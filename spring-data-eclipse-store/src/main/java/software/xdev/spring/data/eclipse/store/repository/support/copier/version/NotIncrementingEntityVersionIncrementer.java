@@ -15,7 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.version;
 
-public class NotSettingVersionSetter<T> implements VersionSetter<T>
+public class NotIncrementingEntityVersionIncrementer<T> implements EntityVersionIncrementer<T>
 {
 	@Override
 	public void incrementVersion(final T objectToSetVersionIn)

@@ -26,25 +26,40 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
 
 
-public class VersionManager<T, VERSION>
+/**
+ * Manages the versions of one type of entity
+ *
+ * @param <T> type of entity
+ */
+public class VersionManager<T>
 {
 	private final Optional<Field> versionField;
-	private final VersionSetter<T> versionSetter;
+	private final EntityVersionIncrementer<T> entityVersionIncrementer;
 	
 	public VersionManager(
-		final Class<T> domainClass,
-		final VersionSetter<T> versionSetter
+		final Class<T> entityClass,
+		final EntityVersionIncrementer<T> entityVersionIncrementer
 	)
 	{
-		this.versionField = AnnotatedFieldFinder.findVersionField(domainClass);
-		this.versionSetter = versionSetter;
+		this.versionField = AnnotatedFieldFinder.findVersionField(entityClass);
+		this.entityVersionIncrementer = entityVersionIncrementer;
 	}
 	
-	public void incrementVersion(final T workingCopy)
+	/**
+	 * Increments the version of given entity
+	 *
+	 * @param entity to increment the version in
+	 */
+	public void incrementVersion(final T entity)
 	{
-		this.versionSetter.incrementVersion(workingCopy);
+		this.entityVersionIncrementer.incrementVersion(entity);
 	}
 	
+	/**
+	 * Checks if the two entities are valid for merge. If they have the same version, everything is ok. But if the
+	 * workingCopy-version is null or different from the original-version, an Exception is thrown.
+	 */
+	@SuppressWarnings("PMD.AvoidRethrowingException")
 	public void ensureSameVersion(final T workingCopy, final T original)
 	{
 		if(this.versionField.isPresent() && original != null)

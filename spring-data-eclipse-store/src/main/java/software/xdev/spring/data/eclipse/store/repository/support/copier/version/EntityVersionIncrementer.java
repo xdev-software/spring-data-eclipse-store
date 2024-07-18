@@ -24,26 +24,29 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.version
 
 
 /**
- * A IdSetter <b>must be unique</b> in one storage for one entity-class. It creates Ids and therefore must know all
- * existing entities of one class.
+ * Increments the version of a given entity. One VersionSetter is created for every entity type.
  */
-public interface VersionSetter<T>
+public interface EntityVersionIncrementer<T>
 {
-	static <T> VersionSetter<T> createVersionSetter(final Class<T> classWithId)
+	/**
+	 * Creates a new version setter for one specific entity type. If the entity type has no version, a
+	 * {@link NotIncrementingEntityVersionIncrementer} is created, which does nothing.
+	 */
+	static <T> EntityVersionIncrementer<T> createVersionSetter(final Class<T> classWithId)
 	{
 		Objects.requireNonNull(classWithId);
 		final Optional<Field> versionField = AnnotatedFieldFinder.findVersionField(classWithId);
 		if(versionField.isEmpty())
 		{
-			return new NotSettingVersionSetter<>();
+			return new NotIncrementingEntityVersionIncrementer<>();
 		}
-		return new SimpleVersionSetter<>(
+		return new SimpleEntityVersionIncrementer<>(
 			versionField.get(),
 			VersionIncrementer.createVersionIncrementer(versionField.get()));
 	}
 	
 	/**
-	 * This method makes sure, that an version is set for the given object. If it is already set (not null), then the
+	 * This method makes sure, that a version is set for the given object. If it is already set (not null), then the
 	 * version is incremented. If it is not set, a new one will be generated and set.
 	 */
 	void incrementVersion(T objectToSetVersionIn);

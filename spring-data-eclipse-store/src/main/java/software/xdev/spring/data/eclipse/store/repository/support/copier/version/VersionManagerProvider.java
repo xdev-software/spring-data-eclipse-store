@@ -17,5 +17,5 @@ package software.xdev.spring.data.eclipse.store.repository.support.copier.versio
 
 public interface VersionManagerProvider
 {
-	<T, VERSION> VersionManager<T, VERSION> ensureVersionManager(final Class<T> domainClass);
+	<T> VersionManager<T> ensureVersionManager(final Class<T> domainClass);
 }

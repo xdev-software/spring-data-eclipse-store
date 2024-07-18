@@ -43,9 +43,9 @@ import software.xdev.spring.data.eclipse.store.repository.support.concurrency.Re
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManagerProvider;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdSetter;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.version.EntityVersionIncrementer;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManagerProvider;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionSetter;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.RepositorySynchronizer;
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
@@ -64,7 +64,7 @@ public class EclipseStoreStorage
 	 * "Why are the VersionManagers seperated from the repositories?" - Because there might be entities for which there
 	 * are no repositories, but they still have Versions.
 	 */
-	private final Map<Class<?>, VersionManager<?, ?>> versionManagers = new ConcurrentHashMap<>();
+	private final Map<Class<?>, VersionManager<?>> versionManagers = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
@@ -356,14 +356,14 @@ public class EclipseStoreStorage
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T, VERSION> VersionManager<T, VERSION> ensureVersionManager(final Class<T> possiblyVersionedClass)
+	public <T> VersionManager<T> ensureVersionManager(final Class<T> possiblyVersionedClass)
 	{
-		return (VersionManager<T, VERSION>)this.versionManagers.computeIfAbsent(
+		return (VersionManager<T>)this.versionManagers.computeIfAbsent(
 			possiblyVersionedClass,
 			clazz ->
-				new VersionManager<T, VERSION>(
+				new VersionManager<>(
 					possiblyVersionedClass,
-					VersionSetter.createVersionSetter(possiblyVersionedClass)
+					EntityVersionIncrementer.createVersionSetter(possiblyVersionedClass)
 				)
 		);
 	}
