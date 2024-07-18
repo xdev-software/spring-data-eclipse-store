@@ -168,7 +168,6 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			);
 		}
 		
-		versionManager.incrementVersion(workingCopy);
 		
 		final Object id = idManager.getId(workingCopy);
 		if(id != null)
@@ -178,6 +177,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			final Optional<E> existingEntity = idManager.findById(id);
 			if(existingEntity.isPresent())
 			{
+				versionManager.ensureSameVersion(workingCopy, existingEntity.get());
+				versionManager.incrementVersion(workingCopy);
 				return this.mergeValueIfNeeded(
 					workingCopy,
 					mergeValues,
@@ -188,6 +189,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			}
 		}
 		
+		versionManager.incrementVersion(workingCopy);
 		// The object to merge back is not a working copy, but a originalObject.
 		// Therefore, we create a copy to persist this in the storage.
 		final E objectForDatastore = this.genericCopy(workingCopy, true);

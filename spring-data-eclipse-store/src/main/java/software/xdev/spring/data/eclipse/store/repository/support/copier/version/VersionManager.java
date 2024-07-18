@@ -21,6 +21,7 @@ import java.util.Optional;
 import jakarta.persistence.OptimisticLockException;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
+import software.xdev.spring.data.eclipse.store.exceptions.InvalidVersionException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
 
@@ -62,6 +63,13 @@ public class VersionManager<T, VERSION>
 					workingCopy))
 				{
 					final Object workingCopyValue = fam2.getValueOfField(workingCopy);
+					if(workingCopyValue == null)
+					{
+						throw new InvalidVersionException(
+							"Trying to an existing versioned entity with an entity without version (version is null) "
+								+ "is not permitted."
+						);
+					}
 					if(!workingCopyValue.equals(originalValue))
 					{
 						throw new OptimisticLockException(
@@ -73,7 +81,7 @@ public class VersionManager<T, VERSION>
 					}
 				}
 			}
-			catch(final OptimisticLockException e)
+			catch(final OptimisticLockException | InvalidVersionException e)
 			{
 				throw e;
 			}

@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
+import software.xdev.spring.data.eclipse.store.exceptions.InvalidVersionException;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
@@ -42,49 +43,55 @@ class VersionTest
 {
 	public static Stream<Arguments> generateData()
 	{
-		return List.of(
+		return Stream.of(
 			new SingleTestDataset<>(
-				name -> new VersionedEntityWithInteger(name),
+				VersionedEntityWithInteger::new,
 				context -> context.getBean(VersionedEntityWithIntegerRepository.class),
 				1,
 				2
 			).toArguments(),
 			new SingleTestDataset<>(
-				name -> new VersionedEntityWithLong(name),
+				VersionedEntityWithLong::new,
 				context -> context.getBean(VersionedEntityWithLongRepository.class),
 				1L,
 				2L
 			).toArguments(),
 			new SingleTestDataset<>(
-				name -> new VersionedEntityWithPrimitiveInteger(name),
+				VersionedEntityWithPrimitiveInteger::new,
 				context -> context.getBean(VersionedEntityWithPrimitiveIntegerRepository.class),
 				1,
 				2
 			).toArguments(),
 			new SingleTestDataset<>(
-				name -> new VersionedEntityWithPrimitiveLong(name),
+				VersionedEntityWithPrimitiveLong::new,
 				context -> context.getBean(VersionedEntityWithPrimitiveLongRepository.class),
 				1L,
 				2L
 			).toArguments(),
 			new SingleTestDataset<>(
-				name -> new VersionedEntityWithString(name),
+				VersionedEntityWithString::new,
 				context -> context.getBean(VersionedEntityWithStringRepository.class),
 				null,
 				null
 			).toArguments(),
 			new SingleTestDataset<>(
-				name -> new VersionedEntityWithUuid(name),
+				VersionedEntityWithUuid::new,
 				context -> context.getBean(VersionedEntityWithUuidRepository.class),
 				null,
 				null
+			).toArguments(),
+			new SingleTestDataset<>(
+				VersionedEntityWithId::new,
+				context -> context.getBean(VersionedEntityWithIdRepository.class),
+				1,
+				2
 			).toArguments()
-		).stream();
+		);
 	}
 	
-	private record SingleTestDataset<T extends VersionedEntity>(
+	private record SingleTestDataset<T extends VersionedEntity<?>>(
 		Function<String, T> enitityGenerator,
-		Function<ApplicationContext, EclipseStoreRepository<T, Void>> repositoryGenerator,
+		Function<ApplicationContext, EclipseStoreRepository<T, ?>> repositoryGenerator,
 		Object firstVersion,
 		Object secondVersion
 	)
@@ -106,10 +113,10 @@ class VersionTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	<T extends VersionedEntity> void simpleSave(
+	<T extends VersionedEntity<?>> void simpleSave(
 		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final EclipseStoreRepository<T, Void> repository = data.repositoryGenerator.apply(context);
+		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator.apply(context);
 		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
@@ -131,10 +138,10 @@ class VersionTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	<T extends VersionedEntity> void doubleSave(
+	<T extends VersionedEntity<?>> void doubleSave(
 		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final EclipseStoreRepository<T, Void> repository = data.repositoryGenerator.apply(context);
+		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator.apply(context);
 		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		repository.save(repository.findAll().get(0));
@@ -157,10 +164,10 @@ class VersionTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	<T extends VersionedEntity> void saveButLocked(
+	<T extends VersionedEntity<?>> void saveButLocked(
 		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final EclipseStoreRepository<T, Void> repository = data.repositoryGenerator.apply(context);
+		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator.apply(context);
 		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		
@@ -242,5 +249,75 @@ class VersionTest
 		repository.save(firstLoadedEntry);
 		
 		Assertions.assertThrows(OptimisticLockException.class, () -> repository.save(secondLoadedEntry));
+	}
+	
+	@Test
+	void replaceWithIdWithNull(@Autowired final VersionedEntityWithIdRepository repository)
+	{
+		final VersionedEntityWithId existingEntity = new VersionedEntityWithId(TestData.FIRST_NAME);
+		repository.save(existingEntity);
+		
+		final int existingId = repository.findAll().get(0).getId();
+		final VersionedEntityWithId nextEntity = new VersionedEntityWithId(
+			existingId,
+			TestData.FIRST_NAME_ALTERNATIVE);
+		
+		Assertions.assertThrows(InvalidVersionException.class, () -> repository.save(nextEntity));
+	}
+	
+	@Test
+	void replaceWithIdWithDifferentVersion(@Autowired final VersionedEntityWithIdRepository repository)
+	{
+		final VersionedEntityWithId existingEntity = new VersionedEntityWithId(TestData.FIRST_NAME);
+		repository.save(existingEntity);
+		
+		final VersionedEntityWithId foundEntity = repository.findAll().get(0);
+		final VersionedEntityWithId nextEntity = new VersionedEntityWithId(
+			foundEntity.getId(),
+			TestData.FIRST_NAME_ALTERNATIVE);
+		nextEntity.setVersion(foundEntity.getVersion() + 1);
+		
+		Assertions.assertThrows(OptimisticLockException.class, () -> repository.save(nextEntity));
+	}
+	
+	@Test
+	void replaceWithIdWithSameVersion(@Autowired final VersionedEntityWithIdRepository repository)
+	{
+		final VersionedEntityWithId existingEntity = new VersionedEntityWithId(TestData.FIRST_NAME);
+		repository.save(existingEntity);
+		
+		final VersionedEntityWithId foundEntity = repository.findAll().get(0);
+		final VersionedEntityWithId nextEntity = new VersionedEntityWithId(
+			foundEntity.getId(),
+			TestData.FIRST_NAME_ALTERNATIVE);
+		nextEntity.setVersion(foundEntity.getVersion());
+		repository.save(nextEntity);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<VersionedEntityWithId> allEntities = repository.findAll();
+				Assertions.assertEquals(1, allEntities.size());
+				Assertions.assertEquals(2, allEntities.get(0).getVersion());
+			}
+		);
+	}
+	
+	@Test
+	void findById(@Autowired final VersionedEntityWithIdRepository repository)
+	{
+		final VersionedEntityWithId existingEntity = new VersionedEntityWithId(TestData.FIRST_NAME);
+		repository.save(existingEntity);
+		
+		final int existingId = repository.findAll().get(0).getId();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertTrue(repository.findById(existingId).isPresent());
+				Assertions.assertEquals(1, repository.findById(existingId).get().getVersion());
+				Assertions.assertEquals(existingId, repository.findById(existingId).get().getId());
+			}
+		);
 	}
 }
