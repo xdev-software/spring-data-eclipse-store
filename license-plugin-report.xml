@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1721304567504">
+<licensePluginReport goal="FORMAT" timestamp="1721307723422">
     <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="1.0.10"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
