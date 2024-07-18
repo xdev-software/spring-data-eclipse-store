@@ -1,14 +1,14 @@
 name: ROOT
 title: Spring-Data-Eclipse-Store
 version: master
-display_version: '1.0.9'
+display_version: '1.0.10'
 start_page: index.adoc
 nav:
   - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
     product-name: 'Spring-Data-Eclipse-Store'
-    display-version: '1.0.9'
-    maven-version: '1.0.9'
+    display-version: '1.0.10'
+    maven-version: '1.0.10'
     page-editable: false
     page-out-of-support: false
