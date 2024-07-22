@@ -61,6 +61,12 @@ hs_err_pid*
 .flattened-pom.xml
 .tern-project
 
+# EclipseStore
+storage
+storage-person
+storage-invoice
+storage-jpa
+
 # == IntelliJ ==
 *.iml
 *.ipr
@@ -80,3 +86,4 @@ hs_err_pid*
 .idea/codeStyles/*
 !.idea/codeStyles/codeStyleConfig.xml
 !.idea/codeStyles/Project.xml
+/spring-data-eclipse-store-demo/storage-complex
