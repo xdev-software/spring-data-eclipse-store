@@ -35,16 +35,16 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 @ContextConfiguration(classes = {TransactionsTestConfiguration.class})
 class TransactionsTest
 {
-	private final AccountRepository accountRepository;
+	private final AccountNoVersionRepository accountRepository;
 	private final CounterRepository counterRepository;
-	private Account account1;
-	private Account account2;
+	private AccountNoVersion account1;
+	private AccountNoVersion account2;
 	private Counter counter1;
 	private Counter counter2;
 	
 	@Autowired
 	public TransactionsTest(
-		final AccountRepository accountRepository,
+		final AccountNoVersionRepository accountRepository,
 		final CounterRepository counterRepository)
 	{
 		this.accountRepository = accountRepository;
@@ -54,8 +54,8 @@ class TransactionsTest
 	@BeforeEach
 	void initData()
 	{
-		this.account1 = new Account(1, BigDecimal.TEN);
-		this.account2 = new Account(2, BigDecimal.ZERO);
+		this.account1 = new AccountNoVersion(1, BigDecimal.TEN);
+		this.account2 = new AccountNoVersion(2, BigDecimal.ZERO);
 		this.accountRepository.saveAll(List.of(this.account1, this.account2));
 		
 		this.counter1 = new Counter(1, 10);
@@ -221,7 +221,7 @@ class TransactionsTest
 		new TransactionTemplate(transactionManager).execute(
 			status ->
 			{
-				final Account account3 = new Account(3, BigDecimal.valueOf(100.0));
+				final AccountNoVersion account3 = new AccountNoVersion(3, BigDecimal.valueOf(100.0));
 				this.accountRepository.save(account3);
 				
 				Assertions.assertFalse(this.accountRepository.findById(account3.getId()).isPresent());
@@ -237,8 +237,8 @@ class TransactionsTest
 	void accountNoTransactionUnexpectedError()
 	{
 		Assertions.assertThrows(RuntimeException.class, () -> {
-			final Account account1 = new Account(3, BigDecimal.TEN);
-			final Account account2 = new Account(4, BigDecimal.ZERO);
+			final AccountNoVersion account1 = new AccountNoVersion(3, BigDecimal.TEN);
+			final AccountNoVersion account2 = new AccountNoVersion(4, BigDecimal.ZERO);
 			this.accountRepository.saveAll(List.of(account1, account2));
 			
 			throw new RuntimeException("Unexpected error");

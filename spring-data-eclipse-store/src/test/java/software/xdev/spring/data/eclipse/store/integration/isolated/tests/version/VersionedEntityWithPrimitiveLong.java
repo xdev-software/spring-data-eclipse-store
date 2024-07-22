@@ -35,6 +35,7 @@ public class VersionedEntityWithPrimitiveLong implements VersionedEntity<Long>
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

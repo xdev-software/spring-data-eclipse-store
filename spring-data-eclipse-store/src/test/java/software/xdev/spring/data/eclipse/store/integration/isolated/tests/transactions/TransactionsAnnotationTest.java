@@ -33,10 +33,10 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 @Transactional
 class TransactionsAnnotationTest
 {
-	private final AccountRepository repository;
+	private final AccountNoVersionRepository repository;
 	
 	@Autowired
-	public TransactionsAnnotationTest(final AccountRepository repository)
+	public TransactionsAnnotationTest(final AccountNoVersionRepository repository)
 	{
 		this.repository = repository;
 	}
@@ -45,8 +45,8 @@ class TransactionsAnnotationTest
 	void accountTransactionUnexpectedErrorAnnotation()
 	{
 		Assertions.assertThrows(RuntimeException.class, () -> {
-			final Account account1 = new Account(3, BigDecimal.TEN);
-			final Account account2 = new Account(4, BigDecimal.ZERO);
+			final AccountNoVersion account1 = new AccountNoVersion(3, BigDecimal.TEN);
+			final AccountNoVersion account2 = new AccountNoVersion(4, BigDecimal.ZERO);
 			this.repository.saveAll(List.of(account1, account2));
 			
 			throw new RuntimeException("Unexpected error");

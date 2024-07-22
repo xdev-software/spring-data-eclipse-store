@@ -49,6 +49,7 @@ public class VersionedEntityWithId implements VersionedEntity<Integer>
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.transactions;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.version;
 
-import java.math.BigDecimal;
+import java.util.function.Function;
+
+import org.junit.jupiter.params.provider.Arguments;
+import org.springframework.context.ApplicationContext;
+
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-public interface Account
+public record SingleTestDataset<T extends VersionedEntity<?>>(
+	Function<String, T> enitityGenerator,
+	Function<ApplicationContext, EclipseStoreRepository<T, ?>> repositoryGenerator,
+	Object firstVersion,
+	Object secondVersion
+)
 {
-	int getId();
-	
-	BigDecimal getBalance();
-	
-	void setBalance(final BigDecimal balance);
+	public Arguments toArguments()
+	{
+		return Arguments.of(this);
+	}
 }

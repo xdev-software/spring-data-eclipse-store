@@ -37,6 +37,7 @@ public class VersionedEntityWithIntegerAndVersionedChild implements VersionedEnt
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

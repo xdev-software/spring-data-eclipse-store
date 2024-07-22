@@ -35,6 +35,7 @@ public class VersionedEntityWithPrimitiveInteger implements VersionedEntity<Inte
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

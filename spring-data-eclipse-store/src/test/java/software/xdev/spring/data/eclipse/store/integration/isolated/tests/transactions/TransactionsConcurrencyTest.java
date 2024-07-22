@@ -24,44 +24,82 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {TransactionsTestConfiguration.class})
 class TransactionsConcurrencyTest
 {
-	private final AccountRepository accountRepository;
-	
-	@Autowired
-	public TransactionsConcurrencyTest(final AccountRepository accountRepository)
+	private static Stream<Arguments> generateData()
 	{
-		this.accountRepository = accountRepository;
+		return Stream.of(
+			new SingleTestDataset<>(
+				i -> new AccountNoVersion(i, BigDecimal.TEN),
+				context -> context.getBean(AccountNoVersionRepository.class),
+				true
+			).toArguments(),
+			new SingleTestDataset<>(
+				i -> new AccountNoVersion(i, BigDecimal.TEN),
+				context -> context.getBean(AccountNoVersionRepository.class),
+				false
+			).toArguments(),
+			new SingleTestDataset<>(
+				i -> new AccountWithVersion(i, BigDecimal.TEN),
+				context -> context.getBean(AccountWithVersionRepository.class),
+				true
+			).toArguments(),
+			new SingleTestDataset<>(
+				i -> new AccountWithVersion(i, BigDecimal.TEN),
+				context -> context.getBean(AccountWithVersionRepository.class),
+				false
+			).toArguments()
+		);
+	}
+	
+	private record SingleTestDataset<T extends Account>(
+		Function<Integer, T> entityGenerator,
+		Function<ApplicationContext, ? extends EclipseStoreRepository<T, Integer>> repositoryGenerator,
+		boolean previouslyExisting
+	)
+	{
+		public Arguments toArguments()
+		{
+			return Arguments.of(this);
+		}
 	}
 	
 	@ParameterizedTest
-	@ValueSource(booleans = {false, true})
-	void saveConcurrently(
-		final boolean previouslyExisting,
-		@Autowired final PlatformTransactionManager transactionManager) throws InterruptedException
+	@MethodSource("generateData")
+	<T extends Account> void saveConcurrently(
+		final SingleTestDataset<T> dataset,
+		@Autowired final PlatformTransactionManager transactionManager,
+		@Autowired final ApplicationContext context
+	) throws InterruptedException
 	{
-		final List<Account> testAccounts =
-			IntStream.range(1, 1000).mapToObj(i -> new Account(i, BigDecimal.TEN)).toList();
-		if(previouslyExisting)
+		final EclipseStoreRepository<T, Integer> repository = dataset.repositoryGenerator().apply(context);
+		final List<T> testAccounts =
+			IntStream.range(1, 1000).mapToObj(dataset.entityGenerator::apply).toList();
+		if(dataset.previouslyExisting())
 		{
-			this.accountRepository.saveAll(testAccounts);
+			repository.saveAll(testAccounts);
 		}
 		
 		final ExecutorService service = Executors.newFixedThreadPool(10);
@@ -70,22 +108,22 @@ class TransactionsConcurrencyTest
 			account ->
 				service.execute(() ->
 					{
-						if(previouslyExisting)
+						if(dataset.previouslyExisting())
 						{
 							Assertions.assertEquals(
 								BigDecimal.TEN,
-								this.accountRepository.findById(account.getId()).get().getBalance());
+								repository.findById(account.getId()).get().getBalance());
 						}
 						new TransactionTemplate(transactionManager).execute(
 							status ->
 							{
 								account.setBalance(account.getBalance().subtract(BigDecimal.ONE));
-								this.accountRepository.save(account);
+								repository.save(account);
 								return null;
 							});
 						Assertions.assertEquals(
 							BigDecimal.valueOf(9),
-							this.accountRepository.findById(account.getId()).get().getBalance());
+							repository.findById(account.getId()).get().getBalance());
 						latch.countDown();
 					}
 				)
@@ -93,7 +131,7 @@ class TransactionsConcurrencyTest
 		
 		assertTrue(latch.await(5, TimeUnit.SECONDS));
 		
-		final List<Account> accounts = TestUtil.iterableToList(this.accountRepository.findAll());
+		final List<T> accounts = TestUtil.iterableToList(repository.findAll());
 		assertEquals(testAccounts.size(), accounts.size());
 		accounts.forEach(account -> Assertions.assertEquals(BigDecimal.valueOf(9), account.getBalance()));
 	}
@@ -104,11 +142,13 @@ class TransactionsConcurrencyTest
 	 */
 	@Test
 	void testSaveConcurrentlyChangesOnSameAccount(
-		@Autowired final PlatformTransactionManager transactionManager)
+		@Autowired final AccountNoVersionRepository repository,
+		@Autowired final PlatformTransactionManager transactionManager,
+		@Autowired final ApplicationContext context)
 		throws InterruptedException
 	{
-		final Account account = new Account(1, BigDecimal.ZERO);
-		this.accountRepository.save(account);
+		final AccountNoVersion account = new AccountNoVersion(1, BigDecimal.ZERO);
+		repository.save(account);
 		
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 		final CountDownLatch latch = new CountDownLatch(100);
@@ -119,9 +159,9 @@ class TransactionsConcurrencyTest
 						new TransactionTemplate(transactionManager).execute(
 							status ->
 							{
-								final Account loadedAccount = this.accountRepository.findById(1).get();
+								final AccountNoVersion loadedAccount = repository.findById(1).get();
 								loadedAccount.setBalance(loadedAccount.getBalance().add(BigDecimal.ONE));
-								this.accountRepository.save(loadedAccount);
+								repository.save(loadedAccount);
 								return null;
 							});
 						latch.countDown();
@@ -132,13 +172,17 @@ class TransactionsConcurrencyTest
 		assertTrue(latch.await(5, TimeUnit.SECONDS));
 	}
 	
-	@Test
-	void testSaveConcurrentlyChangesOnSameAccountMassRollback(
-		@Autowired final PlatformTransactionManager transactionManager)
+	@ParameterizedTest
+	@MethodSource("generateData")
+	<T extends Account> void testSaveConcurrentlyChangesOnSameAccountMassRollback(
+		final SingleTestDataset<T> dataset,
+		@Autowired final PlatformTransactionManager transactionManager,
+		@Autowired final ApplicationContext context)
 		throws InterruptedException
 	{
-		final Account account = new Account(1, BigDecimal.ZERO);
-		this.accountRepository.save(account);
+		final EclipseStoreRepository<T, Integer> repository = dataset.repositoryGenerator().apply(context);
+		final T account = dataset.entityGenerator.apply(1);
+		repository.save(account);
 		
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 		final CountDownLatch latch = new CountDownLatch(100);
@@ -151,9 +195,10 @@ class TransactionsConcurrencyTest
 								new TransactionTemplate(transactionManager).execute(
 									status ->
 									{
-										final Account loadedAccount = this.accountRepository.findById(1).get();
+										final T loadedAccount =
+											repository.findById(1).get();
 										loadedAccount.setBalance(loadedAccount.getBalance().add(BigDecimal.ONE));
-										this.accountRepository.save(loadedAccount);
+										repository.save(loadedAccount);
 										throw new RuntimeException("Random exception");
 									})
 						);
@@ -163,6 +208,6 @@ class TransactionsConcurrencyTest
 		);
 		
 		assertTrue(latch.await(5, TimeUnit.SECONDS));
-		Assertions.assertEquals(BigDecimal.ZERO, this.accountRepository.findById(1).get().getBalance());
+		Assertions.assertEquals(BigDecimal.TEN, repository.findById(1).get().getBalance());
 	}
 }

@@ -15,14 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.transactions;
 
-import java.math.BigDecimal;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-public interface Account
+public interface AccountNoVersionRepository extends EclipseStoreRepository<AccountNoVersion, Integer>
 {
-	int getId();
-	
-	BigDecimal getBalance();
-	
-	void setBalance(final BigDecimal balance);
 }

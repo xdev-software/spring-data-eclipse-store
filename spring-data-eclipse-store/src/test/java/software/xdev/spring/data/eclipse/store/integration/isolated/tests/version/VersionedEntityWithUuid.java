@@ -37,6 +37,7 @@ public class VersionedEntityWithUuid implements VersionedEntity<UUID>
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

@@ -35,6 +35,7 @@ public class VersionedChildEntityWithLong implements VersionedEntity<Long>
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

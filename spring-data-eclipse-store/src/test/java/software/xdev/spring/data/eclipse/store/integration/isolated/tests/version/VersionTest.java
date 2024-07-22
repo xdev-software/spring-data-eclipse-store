@@ -16,7 +16,6 @@
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.version;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import jakarta.persistence.OptimisticLockException;
@@ -89,20 +88,6 @@ class VersionTest
 		);
 	}
 	
-	private record SingleTestDataset<T extends VersionedEntity<?>>(
-		Function<String, T> enitityGenerator,
-		Function<ApplicationContext, EclipseStoreRepository<T, ?>> repositoryGenerator,
-		Object firstVersion,
-		Object secondVersion
-	)
-	{
-		public Arguments toArguments()
-		{
-			return Arguments.of(this);
-		}
-	}
-	
-	
 	private final VersionTestConfiguration configuration;
 	
 	@Autowired
@@ -116,17 +101,17 @@ class VersionTest
 	<T extends VersionedEntity<?>> void simpleSave(
 		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator.apply(context);
-		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
+		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator().apply(context);
+		final T entity = data.enitityGenerator().apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
 				final List<T> allEntities = repository.findAll();
 				Assertions.assertEquals(1, allEntities.size());
-				if(data.firstVersion != null)
+				if(data.firstVersion() != null)
 				{
-					Assertions.assertEquals(data.firstVersion, allEntities.get(0).getVersion());
+					Assertions.assertEquals(data.firstVersion(), allEntities.get(0).getVersion());
 				}
 				else
 				{
@@ -141,8 +126,8 @@ class VersionTest
 	<T extends VersionedEntity<?>> void doubleSave(
 		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator.apply(context);
-		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
+		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator().apply(context);
+		final T entity = data.enitityGenerator().apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		repository.save(repository.findAll().get(0));
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
@@ -150,9 +135,9 @@ class VersionTest
 			() -> {
 				final List<T> allEntities = repository.findAll();
 				Assertions.assertEquals(1, allEntities.size());
-				if(data.secondVersion != null)
+				if(data.secondVersion() != null)
 				{
-					Assertions.assertEquals(data.secondVersion, allEntities.get(0).getVersion());
+					Assertions.assertEquals(data.secondVersion(), allEntities.get(0).getVersion());
 				}
 				else
 				{
@@ -167,8 +152,8 @@ class VersionTest
 	<T extends VersionedEntity<?>> void saveButLocked(
 		final SingleTestDataset<T> data, @Autowired final ApplicationContext context)
 	{
-		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator.apply(context);
-		final T entity = data.enitityGenerator.apply(TestData.FIRST_NAME);
+		final EclipseStoreRepository<T, ?> repository = data.repositoryGenerator().apply(context);
+		final T entity = data.enitityGenerator().apply(TestData.FIRST_NAME);
 		repository.save(entity);
 		
 		final T firstLoadedEntry = repository.findAll().get(0);

@@ -15,9 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.transactions;
 
-import org.springframework.data.repository.CrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-public interface AccountRepository extends CrudRepository<Account, Integer>
+public interface AccountWithVersionRepository extends EclipseStoreRepository<AccountWithVersion, Integer>
 {
 }
