@@ -15,9 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 
 
-public interface PositionRepository extends CrudRepository<Position, String>
+public interface PositionRepository extends ListCrudRepository<Position, String>
 {
 }

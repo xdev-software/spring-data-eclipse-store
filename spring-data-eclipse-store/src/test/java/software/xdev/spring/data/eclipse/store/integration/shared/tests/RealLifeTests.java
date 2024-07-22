@@ -190,7 +190,7 @@ class RealLifeTests
 	{
 		this.buildDefaultModelAndSaveIt();
 		
-		final List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
+		final List<Position> positions = this.positionRepository.findAll();
 		createAndAddShoeToPosition(positions);
 		this.positionRepository.saveAll(positions);
 		
