@@ -13,36 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
-import java.util.function.Supplier;
-
-
-public class AutoLongIdFinder extends AbstractAutoIdFinder<Long>
+public class NotSettingIdSetter<T> implements IdSetter<T>
 {
-	public AutoLongIdFinder(final Supplier<Object> lastIdGetter)
+	@Override
+	public void ensureId(final T objectToSetIdIn)
 	{
-		super(() -> (Long)lastIdGetter.get());
+		// Do nothing because no id generation is needed
 	}
 	
 	@Override
-	protected Long getNext(final Long oldId)
+	public boolean isAutomaticSetter()
 	{
-		if(oldId == null)
-		{
-			return 0L;
-		}
-		try
-		{
-			if(oldId == Long.MAX_VALUE)
-			{
-				return 0L;
-			}
-			return oldId + 1L;
-		}
-		catch(final NumberFormatException e)
-		{
-			return 0L;
-		}
+		return false;
 	}
 }

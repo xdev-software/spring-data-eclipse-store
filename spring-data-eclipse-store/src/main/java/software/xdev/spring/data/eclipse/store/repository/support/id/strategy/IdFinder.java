@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy;
+package software.xdev.spring.data.eclipse.store.repository.support.id.strategy;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -23,9 +23,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 import software.xdev.spring.data.eclipse.store.exceptions.IdGeneratorNotSupportedException;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto.AutoIntegerIdFinder;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto.AutoLongIdFinder;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto.AutoStringIdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoIntegerIdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoLongIdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoStringIdFinder;
 
 
 /**

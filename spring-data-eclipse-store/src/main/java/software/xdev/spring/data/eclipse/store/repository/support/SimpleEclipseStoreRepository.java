@@ -50,9 +50,9 @@ import software.xdev.spring.data.eclipse.store.repository.query.executors.Exists
 import software.xdev.spring.data.eclipse.store.repository.query.executors.ListQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.PageableQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.SingleOptionalQueryExecutor;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierResult;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdManager;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransaction;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 

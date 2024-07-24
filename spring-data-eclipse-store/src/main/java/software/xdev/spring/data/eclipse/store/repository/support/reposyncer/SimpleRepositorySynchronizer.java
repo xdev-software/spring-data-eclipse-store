@@ -23,15 +23,15 @@ import org.eclipse.serializer.util.traversing.ObjectGraphTraverser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import software.xdev.spring.data.eclipse.store.core.IdentitySet;
-import software.xdev.spring.data.eclipse.store.repository.Root;
+import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.Root;
 
 
 public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleRepositorySynchronizer.class);
 	private final Root root;
-	private final HashSet<IdentitySet<Object>> listsToStore;
+	private final HashSet<EntityData<Object, Object>> listsToStore;
 	private final ObjectGraphTraverser buildObjectGraphTraverser;
 	
 	public SimpleRepositorySynchronizer(final Root root)
@@ -50,19 +50,20 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 						return;
 					}
 					final Class<Object> objectInGraphClass = (Class<Object>)objectInGraph.getClass();
-					final IdentitySet<Object> entityListForCurrentObject = this.root.getEntityList(objectInGraphClass);
-					if(entityListForCurrentObject != null
-						&& !entityListForCurrentObject.contains(objectInGraph))
+					final EntityData<Object, Object> entityDataForCurrentObject =
+						this.root.getEntityData(objectInGraphClass);
+					if(entityDataForCurrentObject != null
+						&& !entityDataForCurrentObject.getEntities().contains(objectInGraph))
 					{
-						entityListForCurrentObject.add(objectInGraph);
-						this.listsToStore.add(entityListForCurrentObject);
+						entityDataForCurrentObject.ensureEntityAndReturnObjectsToStore(objectInGraph);
+						this.listsToStore.add(entityDataForCurrentObject);
 					}
 				}
 			).buildObjectGraphTraverser();
 	}
 	
 	@Override
-	public Collection<IdentitySet<Object>> syncAndReturnChangedObjectLists(final Object objectToStore)
+	public Collection<EntityData<Object, Object>> syncAndReturnChangedObjectLists(final Object objectToStore)
 	{
 		this.listsToStore.clear();
 		this.buildObjectGraphTraverser.traverse(objectToStore);
@@ -70,7 +71,7 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 		{
 			LOG.trace("Amount of changed entities: {}", this.listsToStore.size());
 		}
-		final HashSet<IdentitySet<Object>> setOfChangedObjects = new HashSet<>(this.listsToStore);
+		final HashSet<EntityData<Object, Object>> setOfChangedObjects = new HashSet<>(this.listsToStore);
 		this.listsToStore.clear();
 		return setOfChangedObjects;
 	}

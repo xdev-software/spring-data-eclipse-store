@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -65,33 +65,23 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 	public Optional<T> findById(@Nonnull final ID id)
 	{
 		this.ensureIdField();
-		return (Optional<T>)this.storage.getReadWriteLock().read(
+		return this.storage.getReadWriteLock().read(
 			() -> this.storage
 				.getEntityProvider(this.classWithId)
-				.stream()
-				.filter(entity -> id.equals(this.getId(entity)))
-				.findAny()
+				.findAnyEntityWithId(id)
 		);
 	}
 	
 	public List<T> findAllById(@Nonnull final Iterable<ID> idsToFind)
 	{
 		this.ensureIdField();
-		return (List<T>)this.storage.getReadWriteLock().read(
-			() -> this.storage
-				.getEntityProvider(this.classWithId)
-				.stream()
-				.filter(
-					entity ->
-					{
-						final Object idOfEntity = this.getId(entity);
-						return StreamSupport
-							.stream(idsToFind.spliterator(), false)
-							.anyMatch(idToFind -> idToFind.equals(idOfEntity));
-					}
-				)
-				.toList()
-		);
+		
+		return StreamSupport
+			.stream(idsToFind.spliterator(), false)
+			.map(idToFind -> this.findById(idToFind))
+			.filter(e -> e != null && e.isPresent())
+			.map(Optional::get)
+			.toList();
 	}
 	
 	public IdSetter<T> getIdSetter()

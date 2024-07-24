@@ -17,7 +17,7 @@ package software.xdev.spring.data.eclipse.store.core;
 
 public interface EntityListProvider
 {
-	<T> EntityProvider<T> getEntityProvider(final Class<T> clazz);
+	<T, ID> EntityProvider<T, ID> getEntityProvider(final Class<T> clazz);
 	
 	<T> long getEntityCount(final Class<T> clazz);
 }

@@ -24,23 +24,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
-import software.xdev.spring.data.eclipse.store.core.IdentitySet;
+import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 
 
 public class EntitySetCollector
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EntitySetCollector.class);
-	private final Map<Class<?>, EntityProvider<?>> childClassToParentSets = new HashMap<>();
+	private final Map<Class<?>, EntityProvider<?, ?>> childClassToParentSets = new HashMap<>();
 	
-	public <T> EntitySetCollector(
-		final Function<Class<T>, IdentitySet<T>> entityLists,
+	public <T, ID> EntitySetCollector(
+		final Function<Class<T>, EntityData<T, ID>> entityLists,
 		final Set<Class<?>> entityClasses)
 	{
 		this.buildParentClassList(entityLists, entityClasses);
 	}
 	
-	private <T> void buildParentClassList(
-		final Function<Class<T>, IdentitySet<T>> entityLists,
+	private <T, ID> void buildParentClassList(
+		final Function<Class<T>, EntityData<T, ID>> entityLists,
 		final Set<Class<?>> entityClasses
 	)
 	{
@@ -57,8 +57,8 @@ public class EntitySetCollector
 				);
 				if(possibleChildEntry.isAssignableFrom(possibleParentEntry))
 				{
-					this.addIdentitySet(
-						(EntityProvider<T>)this.childClassToParentSets.get(possibleChildEntry),
+					this.addEntityData(
+						(EntityProvider<T, ID>)this.childClassToParentSets.get(possibleChildEntry),
 						entityLists,
 						(Class<T>)possibleParentEntry
 					);
@@ -71,20 +71,20 @@ public class EntitySetCollector
 		}
 	}
 	
-	private <T> void addIdentitySet(
-		final EntityProvider<T> entities,
-		final Function<Class<T>, IdentitySet<T>> entityLists,
+	private <T, ID> void addEntityData(
+		final EntityProvider<T, ID> entities,
+		final Function<Class<T>, EntityData<T, ID>> entityLists,
 		final Class<T> possibleParentEntry
 	)
 	{
-		entities.addIdentitySet(entityLists.apply(possibleParentEntry));
+		entities.addEntityData(entityLists.apply(possibleParentEntry));
 	}
 	
 	/**
 	 * @return a list with all related IdentitySets (including its own).
 	 */
-	public <T> EntityProvider<T> getRelatedIdentitySets(final Class<T> clazz)
+	public <T, ID> EntityProvider<T, ID> getRelatedIdentitySets(final Class<T> clazz)
 	{
-		return (EntityProvider<T>)this.childClassToParentSets.get(clazz);
+		return (EntityProvider<T, ID>)this.childClassToParentSets.get(clazz);
 	}
 }

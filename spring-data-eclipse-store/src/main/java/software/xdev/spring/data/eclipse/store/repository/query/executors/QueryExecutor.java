@@ -36,5 +36,5 @@ public interface QueryExecutor<T>
 	 * @param values   for the query. These are values that might be compared to entities.
 	 * @return entities/entity on which the conditions match.
 	 */
-	Object execute(Class<T> clazz, final EntityProvider<T> entities, Object[] values);
+	Object execute(Class<T> clazz, final EntityProvider<T, ?> entities, Object[] values);
 }

@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
-import java.util.Optional;
-
-
-public interface EntityGetterById<T, ID>
+public interface IdGetter<T, ID>
 {
-	Optional<T> findById(ID id);
+	ID getId(T objectToSetIdIn) throws Exception;
 }

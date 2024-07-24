@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto;
+package software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.IdFinder;
 
 
 public abstract class AbstractAutoIdFinder<ID> implements IdFinder<ID>

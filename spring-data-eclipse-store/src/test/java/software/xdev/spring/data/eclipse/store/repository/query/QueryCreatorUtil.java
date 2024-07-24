@@ -62,7 +62,7 @@ public final class QueryCreatorUtil
 	
 	@SuppressWarnings("unchecked")
 	public static <T> Collection<T> executeQuery(
-		final EntityProvider<T> entities,
+		final EntityProvider<T, Void> entities,
 		final Class<T> domainClass,
 		final Method method,
 		final Object[] values)
