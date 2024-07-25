@@ -15,10 +15,13 @@
  */
 package software.xdev.spring.data.eclipse.store.repository;
 
+import java.util.TreeSet;
+
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 
 import software.xdev.micromigration.eclipsestore.MigrationManager;
 import software.xdev.micromigration.migrater.reflection.ReflectiveMigrater;
+import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
 import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitalizeVersioning;
@@ -44,6 +47,7 @@ public final class EclipseStoreMigrator
 	{
 		final ReflectiveMigrater migrater =
 			new ReflectiveMigrater(FIRST_UPDATE_SCRIPT.getPackageName());
-		return migrater.getSortedScripts().last().getTargetVersion();
+		final TreeSet<VersionAgnosticMigrationScript<?, ?>> sortedScripts = migrater.getSortedScripts();
+		return sortedScripts.isEmpty() ? new MigrationVersion(0, 0, 0) : sortedScripts.last().getTargetVersion();
 	}
 }
