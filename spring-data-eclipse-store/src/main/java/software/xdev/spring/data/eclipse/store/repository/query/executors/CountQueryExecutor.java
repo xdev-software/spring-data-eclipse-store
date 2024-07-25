@@ -46,7 +46,7 @@ public class CountQueryExecutor<T> implements QueryExecutor<T>
 	 * @return a list of the found/sorted/paged entities
 	 */
 	@Override
-	public Long execute(final Class<T> clazz, @Nullable final EntityProvider<T> entities, final Object[] values)
+	public Long execute(final Class<T> clazz, @Nullable final EntityProvider<T, ?> entities, final Object[] values)
 	{
 		Objects.requireNonNull(entities);
 		

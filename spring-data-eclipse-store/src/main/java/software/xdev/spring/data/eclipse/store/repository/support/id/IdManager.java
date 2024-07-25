@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -31,6 +31,7 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
 
 
+@SuppressWarnings("java:S119")
 public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID>
 {
 	private final Class<T> classWithId;
@@ -65,33 +66,23 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 	public Optional<T> findById(@Nonnull final ID id)
 	{
 		this.ensureIdField();
-		return (Optional<T>)this.storage.getReadWriteLock().read(
+		return this.storage.getReadWriteLock().read(
 			() -> this.storage
 				.getEntityProvider(this.classWithId)
-				.stream()
-				.filter(entity -> id.equals(this.getId(entity)))
-				.findAny()
+				.findAnyEntityWithId(id)
 		);
 	}
 	
 	public List<T> findAllById(@Nonnull final Iterable<ID> idsToFind)
 	{
 		this.ensureIdField();
-		return (List<T>)this.storage.getReadWriteLock().read(
-			() -> this.storage
-				.getEntityProvider(this.classWithId)
-				.stream()
-				.filter(
-					entity ->
-					{
-						final Object idOfEntity = this.getId(entity);
-						return StreamSupport
-							.stream(idsToFind.spliterator(), false)
-							.anyMatch(idToFind -> idToFind.equals(idOfEntity));
-					}
-				)
-				.toList()
-		);
+		
+		return StreamSupport
+			.stream(idsToFind.spliterator(), false)
+			.map(this::findById)
+			.filter(e -> e.isPresent())
+			.map(Optional::get)
+			.toList();
 	}
 	
 	public IdSetter<T> getIdSetter()
@@ -140,7 +131,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		}
 		final List<ID> ids = entities
 			.stream()
-			.map(entity -> this.getId(entity))
+			.map(this::getId)
 			.toList();
 		
 		if(!this.getIdSetter().isAutomaticSetter() && ids.contains(null))

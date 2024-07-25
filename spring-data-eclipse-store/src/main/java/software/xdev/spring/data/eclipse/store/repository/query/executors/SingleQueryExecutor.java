@@ -48,7 +48,7 @@ public class SingleQueryExecutor<T> implements QueryExecutor<T>
 	@Override
 	public T execute(
 		@Nullable final Class<T> clazz,
-		@Nullable final EntityProvider<T> entities,
+		@Nullable final EntityProvider<T, ?> entities,
 		@Nullable final Object[] values)
 	{
 		final Optional<T> optionalResult = this.optionalQueryExecutor.execute(clazz, entities, values);

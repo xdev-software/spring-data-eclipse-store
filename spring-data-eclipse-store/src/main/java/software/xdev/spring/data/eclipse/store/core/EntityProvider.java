@@ -18,23 +18,27 @@ package software.xdev.spring.data.eclipse.store.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 
-public class EntityProvider<T>
+
+@SuppressWarnings("java:S119")
+public class EntityProvider<T, ID>
 {
-	private final List<IdentitySet<? extends T>> identitySets = new ArrayList<>();
+	private final List<EntityData<? extends T, ID>> entityDataList = new ArrayList<>();
 	
-	public void addIdentitySet(final IdentitySet<? extends T> identitySet)
+	public void addEntityData(final EntityData<? extends T, ID> entityData)
 	{
-		this.identitySets.add(identitySet);
+		this.entityDataList.add(entityData);
 	}
 	
 	public Stream<? extends T> stream()
 	{
-		return this.identitySets.stream().flatMap(Set::stream);
+		return this.entityDataList.stream().map(EntityData::getEntities).flatMap(Set::stream);
 	}
 	
 	public Collection<T> toCollection()
@@ -50,5 +54,14 @@ public class EntityProvider<T>
 	public long size()
 	{
 		return this.stream().count();
+	}
+	
+	public Optional<T> findAnyEntityWithId(final ID id)
+	{
+		return (Optional<T>)this.entityDataList
+			.stream()
+			.map(entityData -> entityData.getEntitiesById().get(id))
+			.filter(e -> e != null)
+			.findAny();
 	}
 }

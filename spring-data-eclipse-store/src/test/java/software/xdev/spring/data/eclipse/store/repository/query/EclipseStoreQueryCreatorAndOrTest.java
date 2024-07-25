@@ -47,7 +47,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstNameAndLastName")
 	void findByFirstNameAndLastName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method =
@@ -75,7 +75,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstNameOrLastName")
 	void findByFirstNameOrLastName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method =
@@ -103,7 +103,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfId2AndFirstName")
 	void findByIdAndFirstName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdAndFirstName", int.class, String.class);
@@ -130,7 +130,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdAndFirstNameAndLastName")
 	void findByIdAndFirstNameAndLastName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -161,7 +161,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdOrFirstNameOrLastName")
 	void findByIdOrFirstNameOrLastName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -195,7 +195,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdAndFirstNameOrLastName")
 	void findByIdAndFirstNameOrLastName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -224,7 +224,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@Disabled("This fails because AND is not prioritized higher then OR. Since this is a lot of work "
 		+ "in the criteria tree, this is postponed.")
 	void findByLastNameOrIdAndFirstName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -255,7 +255,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdOrFirstNameAndLastName")
 	void findByIdOrFirstNameAndLastName(
-		final EntityProvider<QueryCreatorUtil.Customer> entities,
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(

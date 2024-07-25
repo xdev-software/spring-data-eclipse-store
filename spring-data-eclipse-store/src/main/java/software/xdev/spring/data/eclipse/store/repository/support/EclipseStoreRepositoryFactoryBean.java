@@ -42,6 +42,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreRep
 	"software.xdev.spring.data.eclipse.store.transactions"
 })
 @Component
+@SuppressWarnings("java:S119")
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {

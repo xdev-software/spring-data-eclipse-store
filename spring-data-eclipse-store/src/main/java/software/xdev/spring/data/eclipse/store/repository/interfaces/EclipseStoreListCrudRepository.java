@@ -19,6 +19,7 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 
+@SuppressWarnings("java:S119")
 @NoRepositoryBean
 public interface EclipseStoreListCrudRepository<T, ID> extends ListCrudRepository<T, ID>
 {
