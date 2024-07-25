@@ -19,24 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import software.xdev.micromigration.version.MigrationVersion;
-import software.xdev.micromigration.version.Versioned;
-
 
 /**
  * This is the actually stored object.
  */
-public class Root implements Versioned
+public class RootDataV2
 {
-	/**
-	 * This is not used right now, but might be helpful in the future.
-	 */
-	private MigrationVersion version;
 	private final Map<String, EntityData<?, ?>> entityLists;
 	
-	public Root()
+	public RootDataV2()
 	{
-		this.version = new MigrationVersion(1,1,0);
 		this.entityLists = new HashMap<>();
 	}
 	
@@ -57,7 +49,12 @@ public class Root implements Versioned
 	
 	public <T, ID> EntityData<T, ID> getEntityData(final Class<T> entityClass)
 	{
-		return (EntityData<T, ID>)this.entityLists.get(this.getEntityName(entityClass));
+		return this.getEntityData(this.getEntityName(entityClass));
+	}
+	
+	public <T, ID> EntityData<T, ID> getEntityData(final String entityClassName)
+	{
+		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
 	public <T, ID> void createNewEntityList(final Class<T> entityClass, final Function<T, ID> idGetter)
@@ -84,17 +81,5 @@ public class Root implements Versioned
 	public EntityData<?, ?> getObjectsToStoreAfterNewLastId(final Class<?> entityClass)
 	{
 		return this.entityLists.get(this.getEntityName(entityClass));
-	}
-	
-	@Override
-	public void setVersion(final MigrationVersion migrationVersion)
-	{
-		this.version = migrationVersion;
-	}
-	
-	@Override
-	public MigrationVersion getVersion()
-	{
-		return this.version;
 	}
 }

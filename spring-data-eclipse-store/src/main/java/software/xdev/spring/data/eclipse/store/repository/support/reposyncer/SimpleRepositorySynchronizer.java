@@ -24,17 +24,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
-import software.xdev.spring.data.eclipse.store.repository.root.Root;
+import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
 
 
 public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleRepositorySynchronizer.class);
-	private final Root root;
+	private final RootDataV2 root;
 	private final HashSet<EntityData<Object, Object>> listsToStore;
 	private final ObjectGraphTraverser buildObjectGraphTraverser;
 	
-	public SimpleRepositorySynchronizer(final Root root)
+	public SimpleRepositorySynchronizer(final RootDataV2 root)
 	{
 		this.root = root;
 		this.listsToStore = new HashSet<>();

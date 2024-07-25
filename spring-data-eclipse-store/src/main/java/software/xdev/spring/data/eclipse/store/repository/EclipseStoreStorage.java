@@ -26,6 +26,7 @@ import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerIm
 import org.eclipse.serializer.persistence.types.Storer;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +34,11 @@ import org.slf4j.LoggerFactory;
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
+import software.xdev.spring.data.eclipse.store.exceptions.InvalidRootException;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreStorageFoundationProvider;
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
-import software.xdev.spring.data.eclipse.store.repository.root.Root;
+import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReentrantJavaReadWriteLock;
@@ -68,8 +70,8 @@ public class EclipseStoreStorage
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
-	private StorageManager storageManager;
-	private Root root;
+	private EmbeddedStorageManager storageManager;
+	private VersionedRoot root;
 	
 	private final WorkingCopyRegistry registry = new WorkingCopyRegistry();
 	private final ReadWriteLock readWriteLock = new ReentrantJavaReadWriteLock();
@@ -95,21 +97,53 @@ public class EclipseStoreStorage
 	{
 		if(this.storageManager == null)
 		{
-			LOG.info("Starting storage...");
-			this.root = new Root();
 			final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
-				this.foundationProvider.createEmbeddedStorageFoundation();
-			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
-			embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
-			this.storageManager = embeddedStorageFoundation.start(this.root);
+				this.startStorageManager();
 			this.persistenceChecker = new RelayedPersistenceChecker(embeddedStorageFoundation);
 			this.initRoot();
 			LOG.info(
 				"Storage started with {} entity lists and {} entities.",
-				this.root.getEntityTypesCount(),
-				this.root.getEntityCount()
+				this.root.getCurrentRootData().getEntityTypesCount(),
+				this.root.getCurrentRootData().getEntityCount()
 			);
+			EclipseStoreMigrator.migrate(this.root, this.storageManager);
 		}
+	}
+	
+	private EmbeddedStorageFoundation<?> startStorageManager()
+	{
+		LOG.info("Starting storage...");
+		final EmbeddedStorageFoundation<?> embeddedStorageFoundation =
+			this.foundationProvider.createEmbeddedStorageFoundation();
+		embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsSet12.New());
+		embeddedStorageFoundation.registerTypeHandler(BinaryHandlerImmutableCollectionsList12.New());
+		final EmbeddedStorageManager embeddedStorageManager = embeddedStorageFoundation.start();
+		if(embeddedStorageManager.root() != null)
+		{
+			if(embeddedStorageManager.root() instanceof final Root oldRoot)
+			{
+				embeddedStorageManager.setRoot(new VersionedRoot(oldRoot));
+				embeddedStorageManager.storeRoot();
+			}
+			else if(!(embeddedStorageManager.root() instanceof VersionedRoot))
+			{
+				throw new InvalidRootException(
+					"Root object of type %s is invalid."
+						.formatted(embeddedStorageManager.root()
+							.getClass()
+							.getName()
+						)
+				);
+			}
+		}
+		else
+		{
+			embeddedStorageManager.setRoot(new VersionedRoot());
+			embeddedStorageManager.storeRoot();
+		}
+		this.root = (VersionedRoot)embeddedStorageManager.root();
+		this.storageManager = embeddedStorageManager;
+		return embeddedStorageFoundation;
 	}
 	
 	public <T> SimpleEclipseStoreRepository<T, ?> getRepository(final Class<T> entityClass)
@@ -124,11 +158,11 @@ public class EclipseStoreStorage
 			LOG.debug("Initializing entity lists...");
 		}
 		this.repositorySynchronizer =
-			new SimpleRepositorySynchronizer(this.root);
+			new SimpleRepositorySynchronizer(this.root.getCurrentRootData());
 		boolean entityListMustGetStored = false;
 		for(final Class<?> entityClass : this.entityClassToRepository.keySet())
 		{
-			if(this.root.getEntityData(entityClass) == null)
+			if(this.root.getCurrentRootData().getEntityData(entityClass) == null)
 			{
 				this.createNewEntityList(entityClass);
 				entityListMustGetStored = true;
@@ -136,10 +170,12 @@ public class EclipseStoreStorage
 		}
 		if(entityListMustGetStored)
 		{
-			this.storageManager.store(this.root.getEntityLists());
+			this.storageManager.store(this.root.getCurrentRootData().getEntityLists());
 		}
 		this.entitySetCollector =
-			new EntitySetCollector(this.root::getEntityData, this.entityClassToRepository.keySet());
+			new EntitySetCollector(
+				this.root.getCurrentRootData()::getEntityData,
+				this.entityClassToRepository.keySet());
 		if(LOG.isDebugEnabled())
 		{
 			LOG.debug("Done initializing entity lists.");
@@ -149,7 +185,7 @@ public class EclipseStoreStorage
 	private <T, ID> void createNewEntityList(final Class<T> entityClass)
 	{
 		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
-		this.root.createNewEntityList(entityClass, e -> idManager.getId(e));
+		this.root.getCurrentRootData().createNewEntityList(entityClass, e -> idManager.getId(e));
 	}
 	
 	public synchronized <T> void registerEntity(
@@ -174,7 +210,7 @@ public class EclipseStoreStorage
 	{
 		this.ensureEntitiesInRoot();
 		return this.readWriteLock.read(
-			() -> this.root.getEntityData(clazz)
+			() -> this.root.getCurrentRootData().getEntityData(clazz)
 		);
 	}
 	
@@ -193,7 +229,7 @@ public class EclipseStoreStorage
 		return this.readWriteLock.read(
 			() ->
 			{
-				final EntityData<T, Object> entityData = this.root.getEntityData(clazz);
+				final EntityData<T, Object> entityData = this.root.getCurrentRootData().getEntityData(clazz);
 				return entityData == null ? 0 : entityData.getEntityCount();
 			}
 		);
@@ -286,7 +322,7 @@ public class EclipseStoreStorage
 		this.readWriteLock.write(
 			() ->
 			{
-				this.root = new Root();
+				this.root = new VersionedRoot();
 				final StorageManager instanceOfstorageManager = this.getInstanceOfStorageManager();
 				this.initRoot();
 				
@@ -370,7 +406,7 @@ public class EclipseStoreStorage
 	
 	public Object getLastId(final Class<?> entityClass)
 	{
-		return this.readWriteLock.read(() -> this.root.getLastId(entityClass));
+		return this.readWriteLock.read(() -> this.root.getCurrentRootData().getLastId(entityClass));
 	}
 	
 	public void setLastId(final Class<?> entityClass, final Object lastId)
@@ -378,14 +414,14 @@ public class EclipseStoreStorage
 		this.readWriteLock.write(
 			() ->
 			{
-				final EntityData<?, Object> entityData = this.root.getEntityData(entityClass);
+				final EntityData<?, Object> entityData = this.root.getCurrentRootData().getEntityData(entityClass);
 				if(entityData == null)
 				{
 					this.createNewEntityList(entityClass);
-					this.storageManager.store(this.root.getEntityLists());
+					this.storageManager.store(this.root.getCurrentRootData().getEntityLists());
 				}
-				this.root.setLastId(entityClass, lastId);
-				this.storageManager.store(this.root.getObjectsToStoreAfterNewLastId(entityClass));
+				this.root.getCurrentRootData().setLastId(entityClass, lastId);
+				this.storageManager.store(this.root.getCurrentRootData().getObjectsToStoreAfterNewLastId(entityClass));
 			}
 		);
 	}
