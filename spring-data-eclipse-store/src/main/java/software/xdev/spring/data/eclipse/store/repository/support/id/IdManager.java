@@ -147,7 +147,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		}
 		
 		final List<ID> multipleEqualIds = ids.stream()
-			.filter(id -> Collections.frequency(ids, id) > 1)
+			.filter(id -> id != null && Collections.frequency(ids, id) > 1)
 			.toList();
 		if(!multipleEqualIds.isEmpty())
 		{

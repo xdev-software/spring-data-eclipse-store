@@ -61,7 +61,7 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 			final Object existingId = fam.getValueOfField(objectToSetIdIn);
 			if(existingId == null)
 			{
-				final ID newId = (ID)this.idFinder.findId();
+				final ID newId = this.idFinder.findId();
 				fam.writeValueOfField(objectToSetIdIn, newId, true);
 				this.lastIdPersister.accept(newId);
 			}

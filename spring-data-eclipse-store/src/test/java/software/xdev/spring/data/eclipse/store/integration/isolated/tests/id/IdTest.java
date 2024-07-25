@@ -75,6 +75,29 @@ class IdTest
 		);
 	}
 	
+	@Test
+	void saveBulkWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	{
+		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdInteger customer2 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.saveAll(List.of(customer1, customer2));
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(2, customerRepository.count());
+				
+				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(0);
+				Assertions.assertTrue(loadedCustomer1.isPresent());
+				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				
+				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(1);
+				Assertions.assertTrue(loadedCustomer2.isPresent());
+				Assertions.assertEquals(customer2, loadedCustomer2.get());
+			}
+		);
+	}
+	
 	/**
 	 * In other tests {@link EclipseStoreStorage#clearData} is called. Here the datastore is restarted again to ensure
 	 * no previous method is called before the test.
