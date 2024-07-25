@@ -58,7 +58,7 @@ public class PageableSortableCollectionQuerier<T>
 	}
 	
 	protected List<T> getEntities(
-		@Nonnull final EntityProvider<T> entities,
+		@Nonnull final EntityProvider<T, ?> entities,
 		@Nullable final Pageable pageable,
 		@Nullable final Class<T> clazz,
 		@Nullable final Sort sort)
@@ -106,7 +106,7 @@ public class PageableSortableCollectionQuerier<T>
 	}
 	
 	protected List<T> getEntities(
-		final EntityProvider<T> entities,
+		final EntityProvider<T, ?> entities,
 		final Pageable pageable,
 		final Class<T> clazz)
 	{
@@ -114,14 +114,14 @@ public class PageableSortableCollectionQuerier<T>
 	}
 	
 	protected List<T> getEntities(
-		final EntityProvider<T> entities,
+		final EntityProvider<T, ?> entities,
 		final Class<T> clazz,
 		final Sort sort)
 	{
 		return this.getEntities(entities, null, clazz, sort);
 	}
 	
-	protected List<T> getEntities(final EntityProvider<T> entities, final Class<T> clazz)
+	protected List<T> getEntities(final EntityProvider<T, ?> entities, final Class<T> clazz)
 	{
 		return this.getEntities(entities, null, clazz, null);
 	}

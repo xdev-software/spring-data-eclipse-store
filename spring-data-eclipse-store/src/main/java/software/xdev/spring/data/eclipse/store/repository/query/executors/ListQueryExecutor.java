@@ -53,7 +53,7 @@ public class ListQueryExecutor<T> implements QueryExecutor<T>
 	 * @return a list of the found/sorted/paged entities
 	 */
 	@Override
-	public List<T> execute(final Class<T> clazz, @Nullable final EntityProvider<T> entities, final Object[] values)
+	public List<T> execute(final Class<T> clazz, @Nullable final EntityProvider<T, ?> entities, final Object[] values)
 	{
 		Objects.requireNonNull(clazz);
 		if(entities == null || entities.isEmpty())

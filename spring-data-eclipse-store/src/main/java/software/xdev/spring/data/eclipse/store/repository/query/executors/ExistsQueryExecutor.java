@@ -51,7 +51,7 @@ public class ExistsQueryExecutor<T> implements QueryExecutor<T>
 	@Override
 	public Boolean execute(
 		final Class<T> clazz,
-		@Nullable final EntityProvider<T> entities,
+		@Nullable final EntityProvider<T, ?> entities,
 		@Nullable final Object[] values)
 	{
 		Objects.requireNonNull(clazz);

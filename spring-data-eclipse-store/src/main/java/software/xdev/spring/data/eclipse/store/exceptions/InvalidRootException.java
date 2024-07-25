@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.exceptions;
 
-public class NotSettingIdSetter<T> implements IdSetter<T>
+public class InvalidRootException extends RuntimeException
 {
-	@Override
-	public void ensureId(final T objectToSetIdIn)
+	public InvalidRootException(final String message)
 	{
-		// Do nothing because no id generation is needed
-	}
-	
-	@Override
-	public boolean isAutomaticSetter()
-	{
-		return false;
+		super(message);
 	}
 }

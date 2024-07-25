@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.support.copier.versio
 import java.util.UUID;
 
 
+@SuppressWarnings("java:S119")
 public class UUIDVersionIncrementer implements VersionIncrementer<UUID>
 {
 	@Override

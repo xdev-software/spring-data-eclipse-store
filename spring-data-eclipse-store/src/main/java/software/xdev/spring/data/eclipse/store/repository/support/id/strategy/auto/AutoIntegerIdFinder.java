@@ -13,45 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.version;
+package software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto;
 
-import java.util.UUID;
-
-import jakarta.persistence.Version;
+import java.util.function.Supplier;
 
 
-@SuppressWarnings("java:S119")
-public class VersionedEntityWithUuid implements VersionedEntity<UUID>
+public class AutoIntegerIdFinder extends AbstractAutoIdFinder<Integer>
 {
-	@Version
-	private UUID version;
-	private String name;
-	
-	public VersionedEntityWithUuid(final String name)
+	public AutoIntegerIdFinder(final Supplier<Object> idGetter)
 	{
-		this.name = name;
+		super(() -> (Integer)idGetter.get());
 	}
 	
 	@Override
-	public UUID getVersion()
+	protected Integer getNext(final Integer oldId)
 	{
-		return this.version;
-	}
-	
-	@Override
-	public String getName()
-	{
-		return this.name;
-	}
-	
-	public void setVersion(final UUID version)
-	{
-		this.version = version;
-	}
-	
-	@Override
-	public void setName(final String name)
-	{
-		this.name = name;
+		if(oldId == null || oldId == Integer.MAX_VALUE)
+		{
+			return 0;
+		}
+		return oldId + 1;
 	}
 }

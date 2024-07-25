@@ -19,20 +19,20 @@ import java.util.Collection;
 import java.util.List;
 
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
-import software.xdev.spring.data.eclipse.store.core.IdentitySet;
+import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 
 
-public class DummyEntityProvider<T> extends EntityProvider<T>
+public class DummyEntityProvider<T> extends EntityProvider<T, Void>
 {
 	public DummyEntityProvider(final Collection<T> collection)
 	{
 		super();
-		final IdentitySet<T> objects = new IdentitySet<>();
-		objects.addAll(collection);
-		this.addIdentitySet(objects);
+		final EntityData<T, Void> objects = new EntityData<>(t -> null);
+		objects.getEntities().addAll(collection);
+		this.addEntityData(objects);
 	}
 	
-	public static <E> DummyEntityProvider<E> of(final E... entities)
+	public static <E, Void> DummyEntityProvider<E> of(final E... entities)
 	{
 		return new DummyEntityProvider<>(List.of(entities));
 	}

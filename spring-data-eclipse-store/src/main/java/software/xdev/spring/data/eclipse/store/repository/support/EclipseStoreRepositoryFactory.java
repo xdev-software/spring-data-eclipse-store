@@ -41,6 +41,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 /**
  * Creates the correct repository instance for repository-interfaces.
  */
+@SuppressWarnings("java:S119")
 public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 {
 	private final EclipseStoreStorage storage;

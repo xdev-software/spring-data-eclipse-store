@@ -52,7 +52,7 @@ public class PageableQueryExecutor<T> implements QueryExecutor<T>
 	 * @return a page of the found/sorted/paged entities
 	 */
 	@Override
-	public Page<T> execute(final Class<T> clazz, @Nullable final EntityProvider<T> entities, final Object[] values)
+	public Page<T> execute(final Class<T> clazz, @Nullable final EntityProvider<T, ?> entities, final Object[] values)
 	{
 		Objects.requireNonNull(clazz);
 		
