@@ -54,7 +54,7 @@ class EclipseStoreQueryCreatorCollectionTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdIn")
-	void findByIdIn(final EntityProvider<Customer> entities, final int expectedCount)
+	void findByIdIn(final EntityProvider<Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdIn", Collection.class);
@@ -86,7 +86,7 @@ class EclipseStoreQueryCreatorCollectionTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdNotIn")
-	void findByIdNotIn(final EntityProvider<Customer> entities, final int expectedCount)
+	void findByIdNotIn(final EntityProvider<Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdNotIn", Collection.class);

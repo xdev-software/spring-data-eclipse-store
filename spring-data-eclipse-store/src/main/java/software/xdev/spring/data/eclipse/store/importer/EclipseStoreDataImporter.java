@@ -34,8 +34,8 @@ import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdManager;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 

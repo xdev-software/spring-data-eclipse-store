@@ -53,17 +53,17 @@ class PageableSortableCollectionQuerierTest
 		}
 	}
 	
-	private static final EntityProvider<Customer> DATA_CUSTOMERS_EMPTY = DummyEntityProvider.of();
-	private static final EntityProvider<Customer> DATA_CUSTOMERS_ONE =
+	private static final EntityProvider<Customer, Void> DATA_CUSTOMERS_EMPTY = DummyEntityProvider.of();
+	private static final EntityProvider<Customer, Void> DATA_CUSTOMERS_ONE =
 		DummyEntityProvider.of(new Customer(TestData.FIRST_NAME, TestData.LAST_NAME));
-	private static final EntityProvider<Customer> DATA_CUSTOMERS_TWO = DummyEntityProvider.of(
+	private static final EntityProvider<Customer, Void> DATA_CUSTOMERS_TWO = DummyEntityProvider.of(
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME),
 		new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE));
-	private static final EntityProvider<Customer> DATA_CUSTOMERS_THREE = DummyEntityProvider.of(
+	private static final EntityProvider<Customer, Void> DATA_CUSTOMERS_THREE = DummyEntityProvider.of(
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME),
 		new Customer(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE),
 		new Customer(TestData.FIRST_NAME, TestData.LAST_NAME_ALTERNATIVE));
-	private static final EntityProvider<Customer> DATA_CUSTOMERS_DABC_ABCD = DummyEntityProvider.of(
+	private static final EntityProvider<Customer, Void> DATA_CUSTOMERS_DABC_ABCD = DummyEntityProvider.of(
 		new Customer("D", "A"),
 		new Customer("A", "B"),
 		new Customer("B", "C"),
@@ -85,7 +85,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_NoCriteria_NoPageable_NoSortable(final EntityProvider<Customer> entities)
+	void getEntities_NoCriteria_NoPageable_NoSortable(final EntityProvider<Customer, Void> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -96,7 +96,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_EmptyCriteria_NoPageable_NoSortable(final EntityProvider<Customer> entities)
+	void getEntities_EmptyCriteria_NoPageable_NoSortable(final EntityProvider<Customer, Void> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -107,7 +107,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_EmptyCriteria_NoPageable_Sortable_SameSize(final EntityProvider<Customer> entities)
+	void getEntities_EmptyCriteria_NoPageable_Sortable_SameSize(final EntityProvider<Customer, Void> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -120,7 +120,7 @@ class PageableSortableCollectionQuerierTest
 	
 	@ParameterizedTest
 	@MethodSource("generateData")
-	void getEntities_EmptyCriteria_Pageable_Sortable_FixedSize(final EntityProvider<Customer> entities)
+	void getEntities_EmptyCriteria_Pageable_Sortable_FixedSize(final EntityProvider<Customer, Void> entities)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(
 			new DummyWorkingCopier<>(),
@@ -195,7 +195,7 @@ class PageableSortableCollectionQuerierTest
 	@ParameterizedTest
 	@MethodSource("generateData")
 	void getEntities_CriteriaFirstName_NoPageable_NoSortable(
-		final EntityProvider<Customer> entities,
+		final EntityProvider<Customer, Void> entities,
 		final int countOfEntitiesWithFirstName)
 	{
 		final PageableSortableCollectionQuerier<Customer> querier = new PageableSortableCollectionQuerier<>(

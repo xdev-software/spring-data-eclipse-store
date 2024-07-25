@@ -19,6 +19,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 
 
+@SuppressWarnings("java:S119")
 @NoRepositoryBean
 public interface EclipseStoreCustomRepository<T, ID> extends Repository<T, ID>
 {

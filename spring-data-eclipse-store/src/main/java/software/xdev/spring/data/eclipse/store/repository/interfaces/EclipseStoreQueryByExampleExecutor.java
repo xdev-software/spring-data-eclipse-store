@@ -19,6 +19,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 
+@SuppressWarnings("java:S119")
 @NoRepositoryBean
 public interface EclipseStoreQueryByExampleExecutor<T> extends QueryByExampleExecutor<T>
 {

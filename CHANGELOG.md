@@ -1,3 +1,7 @@
+# 1.1.0
+
+* Restructured root to improve performance with IDs in entities
+
 # 1.0.10
 
 * Optimistic locking with @Version now possible

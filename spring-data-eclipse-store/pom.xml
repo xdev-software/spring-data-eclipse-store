@@ -6,7 +6,7 @@
 
 	<groupId>software.xdev</groupId>
 	<artifactId>spring-data-eclipse-store</artifactId>
-	<version>1.0.11-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>spring-data-eclipse-store</name>
@@ -146,6 +146,22 @@
 			<groupId>org.eclipse.serializer</groupId>
 			<artifactId>persistence-binary-jdk17</artifactId>
 			<version>${org.eclipse.serializer.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>software.xdev</groupId>
+			<artifactId>micro-migration</artifactId>
+			<version>2.0.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>storage-embedded</artifactId>
+					<groupId>org.eclipse.store</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>storage-embedded-configuration</artifactId>
+					<groupId>org.eclipse.store</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
