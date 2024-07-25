@@ -24,6 +24,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
 
+@SuppressWarnings("checkstyle:TypeName")
 public class v2_0_0_InitalizeVersioning extends LoggingUpdateScript
 {
 	private static final Logger LOG = LoggerFactory.getLogger(v2_0_0_InitalizeVersioning.class);

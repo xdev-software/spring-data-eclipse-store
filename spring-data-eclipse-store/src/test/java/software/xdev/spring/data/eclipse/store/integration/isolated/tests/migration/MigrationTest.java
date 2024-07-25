@@ -74,7 +74,8 @@ class MigrationTest
 		
 		// Init old data
 		try(final EmbeddedStorageManager storageManager =
-			Foundation(Storage.Configuration(Storage.FileProvider(Path.of(this.configuration.getStorageDirectory())))).start())
+			Foundation(Storage.Configuration(Storage.FileProvider(Path.of(this.configuration.getStorageDirectory()))))
+				.start())
 		{
 			final Root oldRoot = new Root();
 			oldRoot.createNewEntityList(User.class);

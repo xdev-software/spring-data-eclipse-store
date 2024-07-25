@@ -24,7 +24,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitalizeVersioning;
 
 
-public class EclipseStoreMigrator
+public final class EclipseStoreMigrator
 {
 	public static final Class<?> FIRST_UPDATE_SCRIPT = v2_0_0_InitalizeVersioning.class;
 	
