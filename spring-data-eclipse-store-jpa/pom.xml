@@ -30,7 +30,7 @@
 
 		<mainClass>software.xdev.spring.data.eclipse.store.demo.complex.ComplexDemoApplication</mainClass>
 
-		<org.springframework.boot.version>3.3.1</org.springframework.boot.version>
+		<org.springframework.boot.version>3.3.2</org.springframework.boot.version>
 	</properties>
 
 	<dependencyManagement>
