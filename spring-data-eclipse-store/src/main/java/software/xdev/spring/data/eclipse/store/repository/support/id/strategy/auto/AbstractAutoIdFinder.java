@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.IdFinder;
 
 
+@SuppressWarnings("java:S119")
 public abstract class AbstractAutoIdFinder<ID> implements IdFinder<ID>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractAutoIdFinder.class);

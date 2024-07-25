@@ -17,5 +17,5 @@ package software.xdev.spring.data.eclipse.store.repository.support.id;
 
 public interface IdGetter<T, ID>
 {
-	ID getId(T objectToSetIdIn) throws Exception;
+	ID getId(T objectToSetIdIn);
 }

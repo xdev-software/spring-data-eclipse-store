@@ -25,6 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.IdFinder;
 
 
+@SuppressWarnings("java:S119")
 public class SimpleIdSetter<T, ID> implements IdSetter<T>
 {
 	private final IdFinder<ID> idFinder;

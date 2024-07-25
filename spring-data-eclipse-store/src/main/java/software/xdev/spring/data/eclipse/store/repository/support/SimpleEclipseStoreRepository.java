@@ -57,6 +57,7 @@ import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransact
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
+@SuppressWarnings("java:S119")
 public class SimpleEclipseStoreRepository<T, ID>
 	implements
 	EclipseStoreRepository<T, ID>,

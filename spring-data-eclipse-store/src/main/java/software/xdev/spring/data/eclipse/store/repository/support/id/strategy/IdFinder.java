@@ -32,6 +32,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.au
  * A IdFinder <b>must be unique</b> in one storage for one entity-class. It creates Ids and therefore must know all
  * existing entities of one class.
  */
+@SuppressWarnings("java:S119")
 public interface IdFinder<ID>
 {
 	@SuppressWarnings({"java:S1452", "TypeParameterExplicitlyExtendsObject"})

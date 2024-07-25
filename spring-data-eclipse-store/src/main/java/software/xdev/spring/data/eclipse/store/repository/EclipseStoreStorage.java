@@ -52,6 +52,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.Rep
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
 
+@SuppressWarnings("java:S119")
 public class EclipseStoreStorage
 	implements EntityListProvider, IdManagerProvider, VersionManagerProvider, PersistableChecker, ObjectSwizzling
 {
@@ -170,7 +171,7 @@ public class EclipseStoreStorage
 		}
 		if(entityListMustGetStored)
 		{
-			this.storageManager.store(this.root.getCurrentRootData().getEntityLists());
+			this.storageManager.store(this.root.getCurrentRootData().getEntityListsToStore());
 		}
 		this.entitySetCollector =
 			new EntitySetCollector(
@@ -185,7 +186,7 @@ public class EclipseStoreStorage
 	private <T, ID> void createNewEntityList(final Class<T> entityClass)
 	{
 		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
-		this.root.getCurrentRootData().createNewEntityList(entityClass, e -> idManager.getId(e));
+		this.root.getCurrentRootData().createNewEntityList(entityClass, idManager::getId);
 	}
 	
 	public synchronized <T> void registerEntity(
@@ -418,7 +419,7 @@ public class EclipseStoreStorage
 				if(entityData == null)
 				{
 					this.createNewEntityList(entityClass);
-					this.storageManager.store(this.root.getCurrentRootData().getEntityLists());
+					this.storageManager.store(this.root.getCurrentRootData().getEntityListsToStore());
 				}
 				this.root.getCurrentRootData().setLastId(entityClass, lastId);
 				this.storageManager.store(this.root.getCurrentRootData().getObjectsToStoreAfterNewLastId(entityClass));

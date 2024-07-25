@@ -19,6 +19,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 
+@SuppressWarnings("java:S119")
 @NoRepositoryBean
 public interface EclipseStorePagingAndSortingRepositoryRepository<T, ID>
 	extends PagingAndSortingRepository<T, ID>

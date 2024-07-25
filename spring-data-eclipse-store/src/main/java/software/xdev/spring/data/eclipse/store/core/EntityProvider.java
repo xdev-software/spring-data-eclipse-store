@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 
 
+@SuppressWarnings("java:S119")
 public class EntityProvider<T, ID>
 {
 	private final List<EntityData<? extends T, ID>> entityDataList = new ArrayList<>();

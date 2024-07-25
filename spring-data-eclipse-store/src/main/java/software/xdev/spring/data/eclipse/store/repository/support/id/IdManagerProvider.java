@@ -15,6 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.id;
 
+@SuppressWarnings("java:S119")
 public interface IdManagerProvider
 {
 	<T, ID> IdManager<T, ID> ensureIdManager(final Class<T> domainClass);

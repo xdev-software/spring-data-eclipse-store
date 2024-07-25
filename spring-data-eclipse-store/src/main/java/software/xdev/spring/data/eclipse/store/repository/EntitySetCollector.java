@@ -27,6 +27,7 @@ import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 
 
+@SuppressWarnings("java:S119")
 public class EntitySetCollector
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EntitySetCollector.class);

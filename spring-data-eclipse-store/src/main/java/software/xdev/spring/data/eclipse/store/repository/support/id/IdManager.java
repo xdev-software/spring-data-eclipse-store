@@ -31,6 +31,7 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
 
 
+@SuppressWarnings("java:S119")
 public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID>
 {
 	private final Class<T> classWithId;
@@ -78,8 +79,8 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		
 		return StreamSupport
 			.stream(idsToFind.spliterator(), false)
-			.map(idToFind -> this.findById(idToFind))
-			.filter(e -> e != null && e.isPresent())
+			.map(this::findById)
+			.filter(e -> e.isPresent())
 			.map(Optional::get)
 			.toList();
 	}
@@ -130,7 +131,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		}
 		final List<ID> ids = entities
 			.stream()
-			.map(entity -> this.getId(entity))
+			.map(this::getId)
 			.toList();
 		
 		if(!this.getIdSetter().isAutomaticSetter() && ids.contains(null))

@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.support.id;
 import java.util.Optional;
 
 
+@SuppressWarnings("java:S119")
 public interface EntityGetterById<T, ID>
 {
 	Optional<T> findById(ID id);

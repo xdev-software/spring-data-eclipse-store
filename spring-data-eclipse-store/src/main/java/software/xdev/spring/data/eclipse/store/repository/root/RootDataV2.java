@@ -23,6 +23,7 @@ import java.util.function.Function;
 /**
  * This is the actually stored object.
  */
+@SuppressWarnings("java:S119")
 public class RootDataV2
 {
 	private final Map<String, EntityData<?, ?>> entityLists;
@@ -32,7 +33,7 @@ public class RootDataV2
 		this.entityLists = new HashMap<>();
 	}
 	
-	public Map<String, EntityData<?, ?>> getEntityLists()
+	public Object getEntityListsToStore()
 	{
 		return this.entityLists;
 	}
@@ -57,7 +58,9 @@ public class RootDataV2
 		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
-	public <T, ID> void createNewEntityList(final Class<T> entityClass, final Function<T, ID> idGetter)
+	public <T, ID> void createNewEntityList(
+		final Class<T> entityClass,
+		final Function<T, ID> idGetter)
 	{
 		this.entityLists.put(this.getEntityName(entityClass), new EntityData<>(idGetter));
 	}
@@ -78,7 +81,7 @@ public class RootDataV2
 		this.entityLists.get(this.getEntityName(entityClass)).setLastId(lastId);
 	}
 	
-	public EntityData<?, ?> getObjectsToStoreAfterNewLastId(final Class<?> entityClass)
+	public Object getObjectsToStoreAfterNewLastId(final Class<?> entityClass)
 	{
 		return this.entityLists.get(this.getEntityName(entityClass));
 	}
