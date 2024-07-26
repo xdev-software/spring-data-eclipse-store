@@ -28,4 +28,10 @@ public class NotSettingIdSetter<T> implements IdSetter<T>
 	{
 		return false;
 	}
+	
+	@Override
+	public Object getDefaultValue()
+	{
+		return null;
+	}
 }

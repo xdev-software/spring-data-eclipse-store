@@ -68,7 +68,7 @@ class IdTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(0);
+				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer.isPresent());
 				Assertions.assertEquals(customer1, loadedCustomer.get());
 			}
@@ -87,14 +87,49 @@ class IdTest
 			() -> {
 				Assertions.assertEquals(2, customerRepository.count());
 				
-				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(0);
+				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer1.isPresent());
 				Assertions.assertEquals(customer1, loadedCustomer1.get());
 				
-				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(1);
+				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(2);
 				Assertions.assertTrue(loadedCustomer2.isPresent());
 				Assertions.assertEquals(customer2, loadedCustomer2.get());
 			}
+		);
+	}
+	
+	@Test
+	void saveBulkWithAutoIdInt(@Autowired final CustomerWithIdIntRepository customerRepository)
+	{
+		final CustomerWithIdInt customer1 = new CustomerWithIdInt(TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdInt customer2 = new CustomerWithIdInt(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.saveAll(List.of(customer1, customer2));
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(2, customerRepository.count());
+				final Iterable<CustomerWithIdInt> all = customerRepository.findAll();
+				
+				final Optional<CustomerWithIdInt> loadedCustomer1 = customerRepository.findById(1);
+				Assertions.assertTrue(loadedCustomer1.isPresent());
+				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				
+				final Optional<CustomerWithIdInt> loadedCustomer2 = customerRepository.findById(2);
+				Assertions.assertTrue(loadedCustomer2.isPresent());
+				Assertions.assertEquals(customer2, loadedCustomer2.get());
+			}
+		);
+	}
+	
+	@Test
+	void saveBulkWithAutoIdIntAndHardcodedId(@Autowired final CustomerWithIdIntRepository customerRepository)
+	{
+		final CustomerWithIdInt customer1 = new CustomerWithIdInt(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdInt customer2 = new CustomerWithIdInt(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		Assertions.assertThrows(
+			IllegalArgumentException.class,
+			() -> customerRepository.saveAll(List.of(customer1, customer2))
 		);
 	}
 	
@@ -112,7 +147,7 @@ class IdTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(0);
+				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer.isPresent());
 				Assertions.assertEquals(customer1, loadedCustomer.get());
 			}
@@ -143,7 +178,7 @@ class IdTest
 			this.configuration,
 			() -> {
 				final List<CustomerWithIdInteger> loadedCustomers =
-					TestUtil.iterableToList(customerRepository.findAllById(List.of(0, 1)));
+					TestUtil.iterableToList(customerRepository.findAllById(List.of(1, 2)));
 				Assertions.assertEquals(2, loadedCustomers.size());
 				Assertions.assertNotEquals(loadedCustomers.get(0), loadedCustomers.get(1));
 			}
@@ -164,9 +199,9 @@ class IdTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(0);
+				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(1);
 				Assertions.assertEquals(customer1, loadedCustomer1.get());
-				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(1);
+				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(2);
 				Assertions.assertEquals(customer2, loadedCustomer2.get());
 			}
 		);
@@ -181,7 +216,7 @@ class IdTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<CustomerWithIdInt> loadedCustomer = customerRepository.findById(0);
+				final Optional<CustomerWithIdInt> loadedCustomer = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer.isPresent());
 				Assertions.assertEquals(customer1, loadedCustomer.get());
 			}
@@ -197,7 +232,7 @@ class IdTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<CustomerWithIdString> loadedCustomer = customerRepository.findById("0");
+				final Optional<CustomerWithIdString> loadedCustomer = customerRepository.findById("1");
 				Assertions.assertTrue(loadedCustomer.isPresent());
 				Assertions.assertEquals(customer1, loadedCustomer.get());
 			}
@@ -217,7 +252,7 @@ class IdTest
 			this.configuration,
 			() -> {
 				final List<CustomerWithIdString> loadedCustomers =
-					TestUtil.iterableToList(customerRepository.findAllById(List.of("0", "1")));
+					TestUtil.iterableToList(customerRepository.findAllById(List.of("1", "2")));
 				Assertions.assertEquals(2, loadedCustomers.size());
 				Assertions.assertNotEquals(loadedCustomers.get(0), loadedCustomers.get(1));
 			}
@@ -233,10 +268,10 @@ class IdTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<CustomerWithIdLong> loadedCustomer = customerRepository.findById(0L);
+				final Optional<CustomerWithIdLong> loadedCustomer = customerRepository.findById(1L);
 				Assertions.assertTrue(loadedCustomer.isPresent());
 				Assertions.assertEquals(customer1, loadedCustomer.get());
-				Assertions.assertEquals(0L, loadedCustomer.get().getId());
+				Assertions.assertEquals(1L, loadedCustomer.get().getId());
 			}
 		);
 	}
@@ -254,12 +289,12 @@ class IdTest
 			this.configuration,
 			() -> {
 				final List<CustomerWithIdLong> loadedCustomers =
-					TestUtil.iterableToList(customerRepository.findAllById(List.of(0L, 1L)));
+					TestUtil.iterableToList(customerRepository.findAllById(List.of(1L, 2L)));
 				Assertions.assertEquals(2, loadedCustomers.size());
 				Assertions.assertNotEquals(loadedCustomers.get(0), loadedCustomers.get(1));
 				final List<Long> idList = loadedCustomers.stream().map(CustomerWithIdLong::getId).toList();
-				Assertions.assertTrue(idList.contains(0L));
 				Assertions.assertTrue(idList.contains(1L));
+				Assertions.assertTrue(idList.contains(2L));
 			}
 		);
 	}
@@ -320,7 +355,7 @@ class IdTest
 				final List<CustomerWithIdInteger> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
 				Assertions.assertEquals(1, loadedCustomer.size());
-				Assertions.assertEquals(0, loadedCustomer.get(0).getId());
+				Assertions.assertEquals(1, loadedCustomer.get(0).getId());
 				Assertions.assertEquals(customer1, loadedCustomer.get(0));
 			}
 		);
@@ -355,7 +390,7 @@ class IdTest
 					TestUtil.iterableToList(customerRepository.findAll());
 				Assertions.assertEquals(1, loadedCustomer.get(0).getPurchases().size());
 				Assertions.assertEquals(purchaseName, loadedCustomer.get(0).getPurchases().get(0).getProductName());
-				Assertions.assertEquals(0, loadedCustomer.get(0).getPurchases().get(0).getId());
+				Assertions.assertEquals(1, loadedCustomer.get(0).getPurchases().get(0).getId());
 			}
 		);
 	}
@@ -377,8 +412,8 @@ class IdTest
 				final List<CustomerWithPurchase> loadedCustomer =
 					TestUtil.iterableToList(customerRepository.findAll());
 				Assertions.assertEquals(2, loadedCustomer.get(0).getPurchases().size());
-				Assertions.assertEquals(0, loadedCustomer.get(0).getPurchases().get(0).getId());
-				Assertions.assertEquals(1, loadedCustomer.get(0).getPurchases().get(1).getId());
+				Assertions.assertEquals(1, loadedCustomer.get(0).getPurchases().get(0).getId());
+				Assertions.assertEquals(2, loadedCustomer.get(0).getPurchases().get(1).getId());
 			}
 		);
 	}
@@ -405,13 +440,13 @@ class IdTest
 				final CustomerWithPurchase loadedCustomer1 =
 					CustomerWithPurchase.getCustomerWithLastName(loadedCustomer, TestData.LAST_NAME);
 				Assertions.assertEquals(1, loadedCustomer1.getPurchases().size());
-				Assertions.assertEquals(0, loadedCustomer1.getPurchases().get(0).getId());
+				Assertions.assertEquals(1, loadedCustomer1.getPurchases().get(0).getId());
 				
 				TestUtil.iterableToList(customerRepository.findAll());
 				final CustomerWithPurchase loadedCustomer2 =
 					CustomerWithPurchase.getCustomerWithLastName(loadedCustomer, TestData.LAST_NAME_ALTERNATIVE);
 				Assertions.assertEquals(1, loadedCustomer2.getPurchases().size());
-				Assertions.assertEquals(0, loadedCustomer2.getPurchases().get(0).getId());
+				Assertions.assertEquals(1, loadedCustomer2.getPurchases().get(0).getId());
 			}
 		);
 	}
@@ -433,8 +468,8 @@ class IdTest
 					TestUtil.iterableToList(customerRepository.findAll());
 				
 				Assertions.assertEquals(2, loadedCustomer.get(0).getPurchases().size());
-				Assertions.assertEquals(0, loadedCustomer.get(0).getPurchases().get(0).getId());
-				Assertions.assertEquals(0, loadedCustomer.get(0).getPurchases().get(1).getId());
+				Assertions.assertEquals(1, loadedCustomer.get(0).getPurchases().get(0).getId());
+				Assertions.assertEquals(1, loadedCustomer.get(0).getPurchases().get(1).getId());
 			}
 		);
 	}

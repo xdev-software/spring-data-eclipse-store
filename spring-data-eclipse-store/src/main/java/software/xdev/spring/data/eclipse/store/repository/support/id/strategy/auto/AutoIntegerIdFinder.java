@@ -28,10 +28,16 @@ public class AutoIntegerIdFinder extends AbstractAutoIdFinder<Integer>
 	@Override
 	protected Integer getNext(final Integer oldId)
 	{
-		if(oldId == null || oldId == Integer.MAX_VALUE)
+		if(oldId == null || oldId == 0 || oldId == Integer.MAX_VALUE)
 		{
-			return 0;
+			return 1;
 		}
 		return oldId + 1;
+	}
+	
+	@Override
+	public Integer getDefaultValue()
+	{
+		return 0;
 	}
 }

@@ -28,21 +28,27 @@ public class AutoLongIdFinder extends AbstractAutoIdFinder<Long>
 	@Override
 	protected Long getNext(final Long oldId)
 	{
-		if(oldId == null)
+		if(oldId == null || oldId == 0L)
 		{
-			return 0L;
+			return 1L;
 		}
 		try
 		{
 			if(oldId == Long.MAX_VALUE)
 			{
-				return 0L;
+				return 1L;
 			}
 			return oldId + 1L;
 		}
 		catch(final NumberFormatException e)
 		{
-			return 0L;
+			return 1L;
 		}
+	}
+	
+	@Override
+	public Long getDefaultValue()
+	{
+		return 0L;
 	}
 }

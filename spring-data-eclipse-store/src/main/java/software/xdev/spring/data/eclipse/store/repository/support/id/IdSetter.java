@@ -64,4 +64,6 @@ public interface IdSetter<T>
 	void ensureId(T objectToSetIdIn);
 	
 	boolean isAutomaticSetter();
+	
+	Object getDefaultValue();
 }

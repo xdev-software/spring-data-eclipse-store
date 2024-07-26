@@ -30,20 +30,26 @@ public class AutoStringIdFinder extends AbstractAutoIdFinder<String>
 	{
 		if(oldId == null)
 		{
-			return Long.toUnsignedString(0L);
+			return Long.toUnsignedString(1L);
 		}
 		try
 		{
 			final long newId = Long.parseUnsignedLong(oldId);
 			if(newId == Long.MAX_VALUE)
 			{
-				return Long.toUnsignedString(0L);
+				return Long.toUnsignedString(1L);
 			}
 			return Long.toUnsignedString(newId + 1L);
 		}
 		catch(final NumberFormatException e)
 		{
-			return Long.toUnsignedString(0L);
+			return Long.toUnsignedString(1L);
 		}
+	}
+	
+	@Override
+	public String getDefaultValue()
+	{
+		return null;
 	}
 }
