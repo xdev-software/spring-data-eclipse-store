@@ -147,7 +147,7 @@ class EclipseStoreQueryCreatorStringTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameStartingWith")
-	void findByFirstNameStartingWith(final EntityProvider<Customer> entities, final int expectedCount)
+	void findByFirstNameStartingWith(final EntityProvider<Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameStartingWith", String.class);
@@ -161,7 +161,7 @@ class EclipseStoreQueryCreatorStringTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameStartingWith")
-	void findByFirstNameEndingWith(final EntityProvider<Customer> entities, final int expectedCount)
+	void findByFirstNameEndingWith(final EntityProvider<Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameEndingWith", String.class);
@@ -175,7 +175,7 @@ class EclipseStoreQueryCreatorStringTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameStartingWith")
-	void findByFirstNameContainingWith(final EntityProvider<Customer> entities, final int expectedCount)
+	void findByFirstNameContainingWith(final EntityProvider<Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameContaining", String.class);

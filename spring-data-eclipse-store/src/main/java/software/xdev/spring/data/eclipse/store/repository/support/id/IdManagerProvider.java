@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
-public interface IdGetter<T, ID>
+@SuppressWarnings("java:S119")
+public interface IdManagerProvider
 {
-	ID getId(T objectToSetIdIn) throws Exception;
+	<T, ID> IdManager<T, ID> ensureIdManager(final Class<T> domainClass);
 }

@@ -13,36 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.transactions;
 
-import java.util.function.Supplier;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-public class AutoLongIdFinder extends AbstractAutoIdFinder<Long>
+public interface AccountNoVersionRepository extends EclipseStoreRepository<AccountNoVersion, Integer>
 {
-	public AutoLongIdFinder(final Supplier<Object> lastIdGetter)
-	{
-		super(() -> (Long)lastIdGetter.get());
-	}
-	
-	@Override
-	protected Long getNext(final Long oldId)
-	{
-		if(oldId == null)
-		{
-			return 0L;
-		}
-		try
-		{
-			if(oldId == Long.MAX_VALUE)
-			{
-				return 0L;
-			}
-			return oldId + 1L;
-		}
-		catch(final NumberFormatException e)
-		{
-			return 0L;
-		}
-	}
 }

@@ -41,13 +41,13 @@ import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManager;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.IdManagerProvider;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringObjectCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringStorageToWorkingCopyCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringWorkingCopyToStorageCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManager;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.VersionManagerProvider;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdManager;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdManagerProvider;
 
 
 /**

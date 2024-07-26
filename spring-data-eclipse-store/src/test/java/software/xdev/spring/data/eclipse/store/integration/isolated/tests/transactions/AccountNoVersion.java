@@ -13,19 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.transactions;
 
-public class NotSettingIdSetter<T> implements IdSetter<T>
+import java.math.BigDecimal;
+
+import jakarta.persistence.Id;
+
+
+public class AccountNoVersion implements Account
 {
-	@Override
-	public void ensureId(final T objectToSetIdIn)
+	@Id
+	private int id;
+	
+	private BigDecimal balance;
+	
+	public AccountNoVersion(final int id, final BigDecimal balance)
 	{
-		// Do nothing because no id generation is needed
+		this.id = id;
+		this.balance = balance;
 	}
 	
 	@Override
-	public boolean isAutomaticSetter()
+	public int getId()
 	{
-		return false;
+		return this.id;
+	}
+	
+	public void setId(final int id)
+	{
+		this.id = id;
+	}
+	
+	@Override
+	public BigDecimal getBalance()
+	{
+		return this.balance;
+	}
+	
+	@Override
+	public void setBalance(final BigDecimal balance)
+	{
+		this.balance = balance;
 	}
 }

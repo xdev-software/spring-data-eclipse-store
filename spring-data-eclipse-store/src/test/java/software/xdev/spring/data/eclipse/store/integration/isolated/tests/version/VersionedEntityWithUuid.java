@@ -20,6 +20,7 @@ import java.util.UUID;
 import jakarta.persistence.Version;
 
 
+@SuppressWarnings("java:S119")
 public class VersionedEntityWithUuid implements VersionedEntity<UUID>
 {
 	@Version
@@ -37,6 +38,7 @@ public class VersionedEntityWithUuid implements VersionedEntity<UUID>
 		return this.version;
 	}
 	
+	@Override
 	public String getName()
 	{
 		return this.name;

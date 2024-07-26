@@ -190,7 +190,7 @@ class RealLifeTests
 	{
 		this.buildDefaultModelAndSaveIt();
 		
-		final List<Position> positions = TestUtil.iterableToList(this.positionRepository.findAll());
+		final List<Position> positions = new ArrayList<>(this.positionRepository.findAll());
 		createAndAddShoeToPosition(positions);
 		this.positionRepository.saveAll(positions);
 		
@@ -211,6 +211,15 @@ class RealLifeTests
 		final Article shoe =
 			new Article(SHOE_ARTICLE_NAME, shoesGroup, List.of(positions.get(0).getArticle().getWarehouses().get(0)));
 		positions.add(new Position(shoe, 4));
+	}
+	
+	@Test
+	void addPositionToFoundPositions()
+	{
+		this.buildDefaultModelAndSaveIt();
+		
+		final List<Position> positions = this.positionRepository.findAll();
+		Assertions.assertThrows(UnsupportedOperationException.class, () -> positions.add(new Position(null, 0)));
 	}
 	
 	@Test

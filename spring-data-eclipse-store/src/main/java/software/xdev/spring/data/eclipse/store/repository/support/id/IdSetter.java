@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import jakarta.persistence.GeneratedValue;
 
 import software.xdev.spring.data.eclipse.store.repository.support.AnnotatedFieldFinder;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.IdFinder;
 
 
 /**
@@ -64,4 +64,6 @@ public interface IdSetter<T>
 	void ensureId(T objectToSetIdIn);
 	
 	boolean isAutomaticSetter();
+	
+	Object getDefaultValue();
 }

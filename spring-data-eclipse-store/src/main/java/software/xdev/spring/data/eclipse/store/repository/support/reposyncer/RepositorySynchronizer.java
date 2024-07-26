@@ -17,7 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.support.reposyncer;
 
 import java.util.Collection;
 
-import software.xdev.spring.data.eclipse.store.core.IdentitySet;
+import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 
 
 /**
@@ -29,7 +29,7 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 public interface RepositorySynchronizer
 {
 	/**
-	 * @return a list of entity-lists that have been changed and now must be stored.
+	 * @return a list of entity-data that have been changed and now must be stored.
 	 */
-	Collection<IdentitySet<Object>> syncAndReturnChangedObjectLists(Object objectToStore);
+	Collection<EntityData<Object, Object>> syncAndReturnChangedObjectLists(Object objectToStore);
 }

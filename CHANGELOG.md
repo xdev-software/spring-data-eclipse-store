@@ -1,3 +1,11 @@
+# 2.0.0
+
+* Restructured root to improve performance with IDs in entities
+* Implemented auto migration for older version (<2.0.0).
+  Added [XDEV MicroMigration](https://github.com/xdev-software/micro-migration) as dependency.
+* Updated EclipseStore version to 1.4.0
+* Updated Spring to version 3.3.2
+
 # 1.0.10
 
 * Optimistic locking with @Version now possible

@@ -45,7 +45,7 @@ class EclipseStoreQueryCreatorBooleanTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfEnabled")
-	void findByEnabledTrue(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByEnabledTrue(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByEnabledTrue");
@@ -67,7 +67,7 @@ class EclipseStoreQueryCreatorBooleanTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfEnabledFalse")
-	void findByEnabledFalse(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByEnabledFalse(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByEnabledFalse");

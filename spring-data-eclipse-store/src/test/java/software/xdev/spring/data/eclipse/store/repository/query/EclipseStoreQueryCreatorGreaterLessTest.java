@@ -47,7 +47,7 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdLessThan")
-	void findByIdLessThan(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByIdLessThan(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdLessThan", int.class);
@@ -73,7 +73,7 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdLessThanEqual")
-	void findByIdLessThanEqual(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByIdLessThanEqual(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdLessThanEqual", int.class);
@@ -99,7 +99,7 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdGreaterThan")
-	void findByIdGreaterThan(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByIdGreaterThan(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdGreaterThan", int.class);
@@ -125,7 +125,9 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdGreaterThanEqual")
-	void findByIdGreaterThanEqual(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByIdGreaterThanEqual(
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdGreaterThanEqual", int.class);
@@ -151,7 +153,7 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdBetween")
-	void findByIdBetween(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByIdBetween(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdBetween", int.class, int.class);
@@ -166,7 +168,7 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdBetween")
-	void findByIdBetweenInvalidRange(final EntityProvider<QueryCreatorUtil.Customer> entities)
+	void findByIdBetweenInvalidRange(final EntityProvider<QueryCreatorUtil.Customer, Void> entities)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdBetween", int.class, int.class);
@@ -192,7 +194,9 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameGreaterThan")
-	void findByFirstNameGreaterThan(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByFirstNameGreaterThan(
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameGreaterThan", String.class);
@@ -218,7 +222,9 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameLessThan")
-	void findByFirstNameLessThan(final EntityProvider<QueryCreatorUtil.Customer> entities, final int expectedCount)
+	void findByFirstNameLessThan(
+		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameLessThan", String.class);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id;
+package software.xdev.spring.data.eclipse.store.repository.support.id;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -22,9 +22,10 @@ import java.util.function.Consumer;
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.IdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.IdFinder;
 
 
+@SuppressWarnings("java:S119")
 public class SimpleIdSetter<T, ID> implements IdSetter<T>
 {
 	private final IdFinder<ID> idFinder;
@@ -58,9 +59,9 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 			objectToSetIdIn))
 		{
 			final Object existingId = fam.getValueOfField(objectToSetIdIn);
-			if(existingId == null)
+			if(existingId == null || existingId.equals(this.idFinder.getDefaultValue()))
 			{
-				final ID newId = (ID)this.idFinder.findId();
+				final ID newId = this.idFinder.findId();
 				fam.writeValueOfField(objectToSetIdIn, newId, true);
 				this.lastIdPersister.accept(newId);
 			}
@@ -75,5 +76,11 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 	public boolean isAutomaticSetter()
 	{
 		return true;
+	}
+	
+	@Override
+	public Object getDefaultValue()
+	{
+		return this.idFinder.getDefaultValue();
 	}
 }

@@ -20,4 +20,6 @@ public interface VersionedEntity<T>
 	T getVersion();
 	
 	void setName(String name);
+	
+	String getName();
 }

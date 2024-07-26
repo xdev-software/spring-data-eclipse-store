@@ -17,39 +17,12 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.trans
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Id;
 
-
-public class Account
+public interface Account
 {
-	@Id
-	private int id;
+	int getId();
 	
-	private BigDecimal balance;
+	BigDecimal getBalance();
 	
-	public Account(final int id, final BigDecimal balance)
-	{
-		this.id = id;
-		this.balance = balance;
-	}
-	
-	public int getId()
-	{
-		return this.id;
-	}
-	
-	public void setId(final int id)
-	{
-		this.id = id;
-	}
-	
-	public BigDecimal getBalance()
-	{
-		return this.balance;
-	}
-	
-	public void setBalance(final BigDecimal balance)
-	{
-		this.balance = balance;
-	}
+	void setBalance(final BigDecimal balance);
 }

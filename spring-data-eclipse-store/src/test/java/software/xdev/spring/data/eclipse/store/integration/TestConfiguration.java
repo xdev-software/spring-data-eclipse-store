@@ -69,4 +69,9 @@ public class TestConfiguration extends EclipseStoreClientConfiguration
 		this.getStorageInstance().stop();
 		FileSystemUtils.deleteRecursively(Path.of(this.storageDirectory));
 	}
+	
+	public String getStorageDirectory()
+	{
+		return this.storageDirectory;
+	}
 }

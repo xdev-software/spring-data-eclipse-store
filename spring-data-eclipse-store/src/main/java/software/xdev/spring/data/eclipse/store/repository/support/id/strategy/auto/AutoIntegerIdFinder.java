@@ -13,37 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.support.copier.id.strategy.auto;
+package software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto;
 
 import java.util.function.Supplier;
 
 
-public class AutoStringIdFinder extends AbstractAutoIdFinder<String>
+public class AutoIntegerIdFinder extends AbstractAutoIdFinder<Integer>
 {
-	public AutoStringIdFinder(final Supplier<Object> idGetter)
+	public AutoIntegerIdFinder(final Supplier<Object> idGetter)
 	{
-		super(() -> (String)idGetter.get());
+		super(() -> (Integer)idGetter.get());
 	}
 	
 	@Override
-	protected String getNext(final String oldId)
+	protected Integer getNext(final Integer oldId)
 	{
-		if(oldId == null)
+		if(oldId == null || oldId == 0 || oldId == Integer.MAX_VALUE)
 		{
-			return Long.toUnsignedString(0L);
+			return 1;
 		}
-		try
-		{
-			final long newId = Long.parseUnsignedLong(oldId);
-			if(newId == Long.MAX_VALUE)
-			{
-				return Long.toUnsignedString(0L);
-			}
-			return Long.toUnsignedString(newId + 1L);
-		}
-		catch(final NumberFormatException e)
-		{
-			return Long.toUnsignedString(0L);
-		}
+		return oldId + 1;
+	}
+	
+	@Override
+	public Integer getDefaultValue()
+	{
+		return 0;
 	}
 }

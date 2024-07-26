@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.interfaces;
 import org.springframework.data.repository.NoRepositoryBean;
 
 
+@SuppressWarnings("java:S119")
 @NoRepositoryBean
 public interface EclipseStoreRepository<T, ID>
 	extends

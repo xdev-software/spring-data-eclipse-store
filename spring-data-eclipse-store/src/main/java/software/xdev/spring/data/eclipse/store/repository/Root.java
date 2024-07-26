@@ -22,8 +22,10 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
 /**
- * This is the actually stored object.
+ * This is the root object for all versions <2.0.0 and is used for upgrading to the new root.
+ * @deprecated should not be initialised any more. Version for <2.0.0
  */
+@Deprecated(forRemoval = false, since = "2.0.0")
 public class Root
 {
 	private final Map<String, IdentitySet<Object>> entityLists;
@@ -64,6 +66,7 @@ public class Root
 	{
 		this.getLastIds().put(this.getEntityName(entityClass), lastId);
 	}
+	
 	public Map<String, Object> getLastIds()
 	{
 		return this.lastIds;

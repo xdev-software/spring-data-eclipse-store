@@ -58,8 +58,8 @@ public class HashSetChangedObjectCollector<T> implements ChangedObjectCollector,
 	public WorkingCopierResult<T> toResult()
 	{
 		return new WorkingCopierResult<>(
-			this.entityObjects.stream().collect(Collectors.toUnmodifiableSet()),
-			this.nonEntityObjects.stream().collect(Collectors.toUnmodifiableSet())
+			this.entityObjects.stream().collect(Collectors.toSet()),
+			this.nonEntityObjects.stream().collect(Collectors.toSet())
 		);
 	}
 }
