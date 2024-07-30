@@ -25,12 +25,6 @@ import org.springframework.test.context.ContextConfiguration;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
-
-/**
- * These tests should show that all or most of the following keywords are available in this library: <a
- * href="https://docs.spring.io/spring-data/jpa/reference/repositories/query-keywords-reference.html">Repository query
- * keywords</a>
- */
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {DeletionTestConfiguration.class})
 class DeletionTest
@@ -38,6 +32,16 @@ class DeletionTest
 	@Autowired
 	private DeletionTestConfiguration configuration;
 	
+	/**
+	 * JPA would throw a {@code JdbcSQLIntegrityConstraintViolationException} but it would be very expensive to search
+	 * the referencedObject in the complete object tree and throw the exception.
+	 * <p>
+	 * That is why this library simply removes the element from the repository, but if it is still referenced in
+	 * another
+	 * object, this reference is still working and pointing to the object. That means that in fact this the object to
+	 * remove could very well stay in the storage if it is referenced.
+	 * </p>
+	 */
 	@Test
 	void deleteReferencedObject(
 		@Autowired final ReferencedRepository referencedRepository,
@@ -71,9 +75,10 @@ class DeletionTest
 	{
 		final ReferencedDaoObject referencedObject = new ReferencedDaoObject("someValue");
 		final ReferencingDaoObject referencingDaoObject = new ReferencingDaoObject(referencedObject);
-		
 		referencingRepository.save(referencingDaoObject);
+		
 		referencedRepository.delete(referencedObject);
+		
 		referencingRepository.save(referencingDaoObject);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(

@@ -23,4 +23,53 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface EclipseStoreListCrudRepository<T, ID> extends ListCrudRepository<T, ID>
 {
+	/**
+	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
+	 * another object, the behavior of this function may differ from what you are used to!
+	 * <p>
+	 * For more information see {@link EclipseStoreCrudRepository#deleteById(Object)}
+	 * </p>
+	 */
+	@Override
+	void deleteById(ID id);
+	
+	/**
+	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
+	 * another object, the behavior of this function may differ from what you are used to!
+	 * <p>
+	 * For more information see {@link EclipseStoreCrudRepository#deleteById(Object)}
+	 * </p>
+	 */
+	@Override
+	void delete(T entity);
+	
+	/**
+	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
+	 * another object, the behavior of this function may differ from what you are used to!
+	 * <p>
+	 * For more information see {@link EclipseStoreCrudRepository#deleteById(Object)}
+	 * </p>
+	 */
+	@Override
+	void deleteAllById(Iterable<? extends ID> ids);
+	
+	/**
+	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
+	 * another object, the behavior of this function may differ from what you are used to!
+	 * <p>
+	 * For more information see {@link EclipseStoreCrudRepository#deleteById(Object)}
+	 * </p>
+	 */
+	@Override
+	void deleteAll(Iterable<? extends T> entities);
+	
+	/**
+	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
+	 * another object, the behavior of this function may differ from what you are used to!
+	 * <p>
+	 * For more information see {@link EclipseStoreCrudRepository#deleteById(Object)}
+	 * </p>
+	 */
+	@Override
+	void deleteAll();
 }
