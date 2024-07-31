@@ -418,11 +418,13 @@ public class EclipseStoreStorage
 	
 	public Object getLastId(final Class<?> entityClass)
 	{
+		this.ensureEntitiesInRoot();
 		return this.readWriteLock.read(() -> this.root.getCurrentRootData().getLastId(entityClass));
 	}
 	
 	public void setLastId(final Class<?> entityClass, final Object lastId)
 	{
+		this.ensureEntitiesInRoot();
 		this.readWriteLock.write(
 			() ->
 			{
