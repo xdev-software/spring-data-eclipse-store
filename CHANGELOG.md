@@ -1,3 +1,7 @@
+# 2.0.1
+
+* Fix for Issue [#131](https://github.com/xdev-software/spring-data-eclipse-store/issues/131)
+
 # 2.0.0
 
 * Restructured root to improve performance with IDs in entities
