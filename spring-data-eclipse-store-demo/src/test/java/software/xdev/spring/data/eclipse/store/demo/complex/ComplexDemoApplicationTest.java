@@ -31,7 +31,6 @@ class ComplexDemoApplicationTest
 	@Test
 	void checkPossibilityToSimplyStartAndRestartApplication()
 	{
-		this.configuration.getStorageInstance().clearData();
 		this.configuration.getStorageInstance().stop();
 		ComplexDemoApplication.main(new String[]{});
 	}

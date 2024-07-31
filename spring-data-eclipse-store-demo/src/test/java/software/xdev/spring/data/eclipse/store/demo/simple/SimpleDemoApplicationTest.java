@@ -33,7 +33,6 @@ class SimpleDemoApplicationTest
 	@Test
 	void checkPossibilityToSimplyStartAndRestartApplication()
 	{
-		this.configuration.getStorageInstance().clearData();
 		this.configuration.getStorageInstance().stop();
 		SimpleDemoApplication.main(new String[]{});
 	}

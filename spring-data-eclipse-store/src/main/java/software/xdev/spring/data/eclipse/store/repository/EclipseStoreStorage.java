@@ -165,10 +165,13 @@ public class EclipseStoreStorage
 		{
 			if(this.root.getCurrentRootData().getEntityData(entityClass) == null)
 			{
-				this.root.getCurrentRootData().createNewEntityData(entityClass);
+				this.createNewEntityData(entityClass, this.root);
 				entityListMustGetStored = true;
 			}
-			this.setIdManagerForEntityData(entityClass, this.root);
+			else
+			{
+				this.setIdManagerForEntityData(entityClass, this.root);
+			}
 		}
 		if(entityListMustGetStored)
 		{
@@ -182,6 +185,12 @@ public class EclipseStoreStorage
 		{
 			LOG.debug("Done initializing entity lists.");
 		}
+	}
+	
+	private <T, ID> void createNewEntityData(final Class<T> entityClass, final VersionedRoot root)
+	{
+		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
+		root.getCurrentRootData().createNewEntityData(entityClass, idManager::getId);
 	}
 	
 	private <T, ID> void setIdManagerForEntityData(final Class<T> entityClass, final VersionedRoot root)
@@ -420,9 +429,12 @@ public class EclipseStoreStorage
 				final EntityData<?, Object> entityData = this.root.getCurrentRootData().getEntityData(entityClass);
 				if(entityData == null)
 				{
-					this.root.getCurrentRootData().createNewEntityData(entityClass);
-					this.setIdManagerForEntityData(entityClass, this.root);
+					this.createNewEntityData(entityClass, this.root);
 					this.storageManager.store(this.root.getCurrentRootData().getEntityListsToStore());
+				}
+				else
+				{
+					this.setIdManagerForEntityData(entityClass, this.root);
 				}
 				this.root.getCurrentRootData().setLastId(entityClass, lastId);
 				this.storageManager.store(this.root.getCurrentRootData().getObjectsToStoreAfterNewLastId(entityClass));
