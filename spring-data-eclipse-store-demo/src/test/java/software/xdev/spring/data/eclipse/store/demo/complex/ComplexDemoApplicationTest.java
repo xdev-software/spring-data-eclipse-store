@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import software.xdev.spring.data.eclipse.store.demo.TestUtil;
-import software.xdev.spring.data.eclipse.store.demo.simple.SimpleDemoApplication;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
@@ -34,6 +33,6 @@ class ComplexDemoApplicationTest
 	{
 		this.configuration.getStorageInstance().clearData();
 		this.configuration.getStorageInstance().stop();
-		SimpleDemoApplication.main(new String[]{});
+		ComplexDemoApplication.main(new String[]{});
 	}
 }

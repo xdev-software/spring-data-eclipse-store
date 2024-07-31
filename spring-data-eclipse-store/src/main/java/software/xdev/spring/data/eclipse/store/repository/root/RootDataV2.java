@@ -17,7 +17,6 @@ package software.xdev.spring.data.eclipse.store.repository.root;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 
 /**
@@ -58,11 +57,9 @@ public class RootDataV2
 		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
-	public <T, ID> void createNewEntityList(
-		final Class<T> entityClass,
-		final Function<T, ID> idGetter)
+	public <T, ID> void createNewEntityData(final Class<T> entityClass)
 	{
-		this.entityLists.put(this.getEntityName(entityClass), new EntityData<>(idGetter));
+		this.entityLists.put(this.getEntityName(entityClass), new EntityData<>());
 	}
 	
 	private <T> String getEntityName(final Class<T> classToRegister)

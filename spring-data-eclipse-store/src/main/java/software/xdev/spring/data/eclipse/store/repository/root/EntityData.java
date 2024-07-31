@@ -40,13 +40,17 @@ public class EntityData<T, ID>
 	 */
 	private final HashMap<ID, T> entitiesById;
 	
-	private final transient Function<T, ID> idGetter;
+	private transient Function<T, ID> idGetter;
 	
-	public EntityData(final Function<T, ID> idGetter)
+	public EntityData()
 	{
-		this.idGetter = idGetter;
 		this.entities = new IdentitySet<>();
 		this.entitiesById = new HashMap<>();
+	}
+	
+	public void setIdGetter(final Function<T, ID> idGetter)
+	{
+		this.idGetter = idGetter;
 	}
 	
 	public IdentitySet<T> getEntities()
