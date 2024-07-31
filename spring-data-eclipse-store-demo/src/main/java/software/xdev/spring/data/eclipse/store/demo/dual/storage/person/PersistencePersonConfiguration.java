@@ -22,6 +22,8 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 @EnableEclipseStoreRepositories
 public class PersistencePersonConfiguration extends EclipseStoreClientConfiguration
 {
+	public static final String STORAGE_PATH = "storage-person";
+	
 	private final EmbeddedStorageFoundationFactory foundation;
 	private final EclipseStoreProperties properties;
 	
@@ -49,7 +51,7 @@ public class PersistencePersonConfiguration extends EclipseStoreClientConfigurat
 	{
 		final ConfigurationPair additionalProperties = new ConfigurationPair(
 			EmbeddedStorageConfigurationPropertyNames.STORAGE_DIRECTORY,
-			"storage-person");
+			STORAGE_PATH);
 		return this.foundation.createStorageFoundation(this.properties, additionalProperties);
 	}
 }
