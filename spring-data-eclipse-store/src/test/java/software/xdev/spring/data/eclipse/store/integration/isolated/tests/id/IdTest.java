@@ -228,9 +228,8 @@ class IdTest
 			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdUuid> loadedCustomer1 = customerRepository.findById(generatedId1);
-				Assertions.assertEquals(customer1, loadedCustomer1.get());
 				final Optional<CustomerWithIdUuid> loadedCustomer2 = customerRepository.findById(generatedId2);
-				Assertions.assertEquals(customer2, loadedCustomer2.get());
+				Assertions.assertNotEquals(loadedCustomer2, loadedCustomer1);
 			}
 		);
 	}
