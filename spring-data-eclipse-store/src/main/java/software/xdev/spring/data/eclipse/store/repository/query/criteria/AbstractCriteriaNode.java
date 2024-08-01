@@ -152,14 +152,14 @@ public abstract class AbstractCriteriaNode<T> implements Criteria<T>
 		final String completeRegex = sqlLikeStringToRegex(like);
 		this.predicates.add(entity -> {
 			final String fieldValue = (String)Objects.requireNonNull(this.field).readValue(entity);
-			return fieldValue != null && fieldValue.toUpperCase().matches(completeRegex);
+			return fieldValue != null && fieldValue.matches(completeRegex);
 		});
 		return this;
 	}
 	
 	private static String sqlLikeStringToRegex(final String like)
 	{
-		String regex = like.toUpperCase();
+		String regex = like;
 		regex = regex.replace(".", "\\.");
 		regex = regex.replace("_", ".");
 		return regex.replace("%", ".*");
@@ -185,7 +185,7 @@ public abstract class AbstractCriteriaNode<T> implements Criteria<T>
 		final String completeRegex = sqlLikeStringToRegex(notLikeString);
 		this.predicates.add(entity -> {
 			final String fieldValue = (String)Objects.requireNonNull(this.field).readValue(entity);
-			return fieldValue != null && !fieldValue.toUpperCase().matches(completeRegex);
+			return fieldValue != null && !fieldValue.matches(completeRegex);
 		});
 		return this;
 	}
