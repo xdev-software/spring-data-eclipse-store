@@ -42,7 +42,14 @@ public class User
 	{
 	}
 	
-	public User(final String firstName, final String lastName, final Integer age, final String email, final String city, final LocalDate dateOfBirth, final Boolean isActive)
+	public User(
+		final String firstName,
+		final String lastName,
+		final Integer age,
+		final String email,
+		final String city,
+		final LocalDate dateOfBirth,
+		final Boolean isActive)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
