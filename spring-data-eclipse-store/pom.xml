@@ -6,7 +6,7 @@
 
 	<groupId>software.xdev</groupId>
 	<artifactId>spring-data-eclipse-store</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>2.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>spring-data-eclipse-store</name>
