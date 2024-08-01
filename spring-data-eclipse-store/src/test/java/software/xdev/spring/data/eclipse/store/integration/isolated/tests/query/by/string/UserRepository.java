@@ -63,6 +63,8 @@ public interface UserRepository extends EclipseStoreRepository<User, Long>
 	// Test keyword: Like
 	List<User> findByFirstNameLike(String pattern);
 	
+	List<User> findByFirstNameLikeIgnoreCase(String pattern);
+	
 	// Test keyword: NotLike
 	List<User> findByFirstNameNotLike(String pattern);
 	

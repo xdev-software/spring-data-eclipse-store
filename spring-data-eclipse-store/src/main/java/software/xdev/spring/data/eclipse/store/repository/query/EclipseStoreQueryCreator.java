@@ -126,6 +126,9 @@ public class EclipseStoreQueryCreator<T> extends AbstractQueryCreator<QueryExecu
 	{
 		Objects.requireNonNull(criteria);
 		final Part.Type type = Objects.requireNonNull(part).getType();
+		final Part.IgnoreCaseType ignoreCaseType = part.shouldIgnoreCase();
+		final boolean doIgnoreCase =
+			ignoreCaseType == Part.IgnoreCaseType.ALWAYS || ignoreCaseType == Part.IgnoreCaseType.WHEN_POSSIBLE;
 		
 		switch(type)
 		{
@@ -169,27 +172,27 @@ public class EclipseStoreQueryCreator<T> extends AbstractQueryCreator<QueryExecu
 			}
 			case LIKE ->
 			{
-				return criteria.like((String)Objects.requireNonNull(parameters).next());
+				return criteria.like((String)Objects.requireNonNull(parameters).next(), doIgnoreCase);
 			}
 			case STARTING_WITH ->
 			{
-				return criteria.startWith((String)Objects.requireNonNull(parameters).next());
+				return criteria.startWith((String)Objects.requireNonNull(parameters).next(), doIgnoreCase);
 			}
 			case ENDING_WITH ->
 			{
-				return criteria.endWith((String)Objects.requireNonNull(parameters).next());
+				return criteria.endWith((String)Objects.requireNonNull(parameters).next(), doIgnoreCase);
 			}
 			case CONTAINING ->
 			{
-				return criteria.containing((String)Objects.requireNonNull(parameters).next());
+				return criteria.containing((String)Objects.requireNonNull(parameters).next(), doIgnoreCase);
 			}
 			case NOT_LIKE ->
 			{
-				return criteria.notLike((String)Objects.requireNonNull(parameters).next());
+				return criteria.notLike((String)Objects.requireNonNull(parameters).next(), doIgnoreCase);
 			}
 			case NOT_CONTAINING ->
 			{
-				return criteria.notContaining((String)Objects.requireNonNull(parameters).next());
+				return criteria.notContaining((String)Objects.requireNonNull(parameters).next(), doIgnoreCase);
 			}
 			case EXISTS ->
 			{

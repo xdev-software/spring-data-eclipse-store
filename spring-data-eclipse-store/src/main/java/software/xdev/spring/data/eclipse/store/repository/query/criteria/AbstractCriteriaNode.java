@@ -147,51 +147,59 @@ public abstract class AbstractCriteriaNode<T> implements Criteria<T>
 		return this;
 	}
 	
-	public AbstractCriteriaNode<T> like(final String like)
+	public AbstractCriteriaNode<T> like(final String like, final boolean doIgnoreCase)
 	{
-		final String completeRegex = sqlLikeStringToRegex(like);
+		final String completeRegex = sqlLikeStringToRegex(like, doIgnoreCase);
 		this.predicates.add(entity -> {
 			final String fieldValue = (String)Objects.requireNonNull(this.field).readValue(entity);
-			return fieldValue != null && fieldValue.matches(completeRegex);
+			if(fieldValue == null)
+			{
+				return false;
+			}
+			return (doIgnoreCase ? fieldValue.toUpperCase() : fieldValue).matches(completeRegex);
 		});
 		return this;
 	}
 	
-	private static String sqlLikeStringToRegex(final String like)
+	private static String sqlLikeStringToRegex(final String like, final boolean doIgnoreCase)
 	{
-		String regex = like;
+		String regex = doIgnoreCase ? like.toUpperCase() : like;
 		regex = regex.replace(".", "\\.");
 		regex = regex.replace("_", ".");
 		return regex.replace("%", ".*");
 	}
 	
-	public AbstractCriteriaNode<T> startWith(final String startString)
+	public AbstractCriteriaNode<T> startWith(final String startString, final boolean doIgnoreCase)
 	{
-		return this.like(startString + "%");
+		return this.like(startString + "%", doIgnoreCase);
 	}
 	
-	public AbstractCriteriaNode<T> endWith(final String endString)
+	public AbstractCriteriaNode<T> endWith(final String endString, final boolean doIgnoreCase)
 	{
-		return this.like("%" + endString);
+		return this.like("%" + endString, doIgnoreCase);
 	}
 	
-	public AbstractCriteriaNode<T> containing(final String containedString)
+	public AbstractCriteriaNode<T> containing(final String containedString, final boolean doIgnoreCase)
 	{
-		return this.like("%" + containedString + "%");
+		return this.like("%" + containedString + "%", doIgnoreCase);
 	}
 	
-	public AbstractCriteriaNode<T> notLike(final String notLikeString)
+	public AbstractCriteriaNode<T> notLike(final String notLikeString, final boolean doIgnoreCase)
 	{
-		final String completeRegex = sqlLikeStringToRegex(notLikeString);
+		final String completeRegex = sqlLikeStringToRegex(notLikeString, doIgnoreCase);
 		this.predicates.add(entity -> {
 			final String fieldValue = (String)Objects.requireNonNull(this.field).readValue(entity);
-			return fieldValue != null && !fieldValue.matches(completeRegex);
+			if(fieldValue == null)
+			{
+				return false;
+			}
+			return !(doIgnoreCase ? fieldValue.toUpperCase() : fieldValue).matches(completeRegex);
 		});
 		return this;
 	}
 	
-	public AbstractCriteriaNode<T> notContaining(final String containedString)
+	public AbstractCriteriaNode<T> notContaining(final String containedString, final boolean doIgnoreCase)
 	{
-		return this.notLike("%" + containedString + "%");
+		return this.notLike("%" + containedString + "%", doIgnoreCase);
 	}
 }

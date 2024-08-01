@@ -280,6 +280,25 @@ public class UserRepositoryTests
 	}
 	
 	@ParameterizedTest
+	@MethodSource("provideArgumentsForFindByFirstNameLikeIgnoreCase")
+	void testFindByFirstNameLikeIgnoreCase(final String pattern, final int expectedSize)
+	{
+		final List<User> users = this.userRepository.findByFirstNameLikeIgnoreCase(pattern);
+		Assertions.assertEquals(expectedSize, users.size());
+	}
+	
+	static Stream<Arguments> provideArgumentsForFindByFirstNameLikeIgnoreCase()
+	{
+		return Stream.of(
+			Arguments.of("John", 1),
+			Arguments.of("J%", 2),
+			Arguments.of("j%", 2),
+			Arguments.of("A%", 1),
+			Arguments.of("a%", 1)
+		);
+	}
+	
+	@ParameterizedTest
 	@MethodSource("provideArgumentsForFindByFirstNameNotLike")
 	void testFindByFirstNameNotLike(final String pattern, final int expectedSize)
 	{
