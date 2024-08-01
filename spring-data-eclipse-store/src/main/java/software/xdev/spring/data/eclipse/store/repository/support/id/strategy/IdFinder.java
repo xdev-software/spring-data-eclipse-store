@@ -17,6 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.support.id.strategy;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ import software.xdev.spring.data.eclipse.store.exceptions.IdGeneratorNotSupporte
 import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoIntegerIdFinder;
 import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoLongIdFinder;
 import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoStringIdFinder;
+import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.auto.AutoUUIDIdFinder;
 
 
 /**
@@ -55,6 +57,10 @@ public interface IdFinder<ID>
 			else if(Long.class.isAssignableFrom(idField.getType()) || long.class.isAssignableFrom(idField.getType()))
 			{
 				return (IdFinder<ID>)new AutoLongIdFinder(lastIdGetter);
+			}
+			else if(idField.getType().equals(UUID.class))
+			{
+				return (IdFinder<ID>)new AutoUUIDIdFinder(lastIdGetter);
 			}
 		}
 		throw new IdGeneratorNotSupportedException(String.format(

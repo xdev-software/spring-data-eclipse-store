@@ -20,7 +20,7 @@ import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
-import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
+import software.xdev.spring.data.eclipse.store.exceptions.IdFieldException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.support.id.strategy.IdFinder;
 
@@ -45,7 +45,7 @@ public class SimpleIdSetter<T, ID> implements IdSetter<T>
 		final int fieldModifiers = this.idField.getModifiers();
 		if(Modifier.isFinal(fieldModifiers))
 		{
-			throw new IdFieldFinalException(String.format(
+			throw new IdFieldException(String.format(
 				"Field %s is final and cannot be modified. ID fields must not be final.",
 				this.idField.getName()));
 		}
