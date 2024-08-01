@@ -15,9 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.exceptions;
 
-public class IdFieldFinalException extends RuntimeException
+public class IdFieldException extends RuntimeException
 {
-	public IdFieldFinalException(final String message)
+	public IdFieldException(final String message)
 	{
 		super(message);
 	}

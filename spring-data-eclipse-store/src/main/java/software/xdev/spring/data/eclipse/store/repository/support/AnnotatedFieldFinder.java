@@ -17,10 +17,17 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
+
+import software.xdev.spring.data.eclipse.store.exceptions.IdFieldException;
+import software.xdev.spring.data.eclipse.store.exceptions.InvalidVersionException;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 
 
@@ -39,13 +46,26 @@ public final class AnnotatedFieldFinder
 	 */
 	public static Optional<Field> findIdField(final Class<?> domainClass)
 	{
-		return findAnnotatedField(
+		final List<Field> idFields = findAnnotatedFields(
 			domainClass,
 			List.of(
-				jakarta.persistence.Id.class,
+				Id.class,
 				org.springframework.data.annotation.Id.class,
-				jakarta.persistence.EmbeddedId.class)
+				EmbeddedId.class)
 		);
+		
+		if(idFields.isEmpty())
+		{
+			return Optional.empty();
+		}
+		else
+		{
+			if(idFields.size() > 1)
+			{
+				throw new IdFieldException("Only one id field is allowed");
+			}
+			return Optional.of(idFields.get(0));
+		}
 	}
 	
 	/**
@@ -56,21 +76,35 @@ public final class AnnotatedFieldFinder
 	 */
 	public static Optional<Field> findVersionField(final Class<?> domainClass)
 	{
-		return findAnnotatedField(
+		final List<Field> versionFields = findAnnotatedFields(
 			domainClass,
-			List.of(jakarta.persistence.Version.class, org.springframework.data.annotation.Version.class)
+			List.of(Version.class, org.springframework.data.annotation.Version.class)
 		);
+		
+		if(versionFields.isEmpty())
+		{
+			return Optional.empty();
+		}
+		else
+		{
+			if(versionFields.size() > 1)
+			{
+				throw new InvalidVersionException("Only one version field is allowed");
+			}
+			return Optional.of(versionFields.get(0));
+		}
 	}
 	
 	/**
 	 * Finds any field in a class with specified annotations. Finds this field recursively in the Hierarchy-tree.
 	 *
-	 * @return field with annotation. Is {@link Optional#empty()} if no field was found.
+	 * @return fields with annotation.
 	 */
-	public static Optional<Field> findAnnotatedField(
+	public static List<Field> findAnnotatedFields(
 		final Class<?> domainClass,
 		final Collection<Class<? extends Annotation>> annotations)
 	{
+		final ArrayList<Field> foundFields = new ArrayList<>();
 		final Collection<Field> classFields = AccessHelper.getInheritedPrivateFieldsByName(domainClass).values();
 		for(final Field currentField : classFields)
 		{
@@ -78,10 +112,10 @@ public final class AnnotatedFieldFinder
 			{
 				if(currentField.getAnnotationsByType(annotation).length > 0)
 				{
-					return Optional.of(currentField);
+					foundFields.add(currentField);
 				}
 			}
 		}
-		return Optional.empty();
+		return foundFields;
 	}
 }
