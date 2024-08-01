@@ -31,8 +31,9 @@ public final class AnnotatedFieldFinder
 	}
 	
 	/**
-	 * Finds any field in a class with an ID-Annotation ({@link jakarta.persistence.Id} or
-	 * {@link org.springframework.data.annotation.Id}). Finds this field recursively in the Hierarchy-tree.
+	 * Finds any field in a class with an ID-Annotation ({@link jakarta.persistence.Id},
+	 * {@link org.springframework.data.annotation.Id} or {@link jakarta.persistence.EmbeddedId}). Finds this field
+	 * recursively in the Hierarchy-tree.
 	 *
 	 * @return field with ID-Annotation. Is {@link Optional#empty()} if no field was found.
 	 */
@@ -40,7 +41,10 @@ public final class AnnotatedFieldFinder
 	{
 		return findAnnotatedField(
 			domainClass,
-			List.of(jakarta.persistence.Id.class, org.springframework.data.annotation.Id.class)
+			List.of(
+				jakarta.persistence.Id.class,
+				org.springframework.data.annotation.Id.class,
+				jakarta.persistence.EmbeddedId.class)
 		);
 	}
 	

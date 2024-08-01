@@ -1,9 +1,10 @@
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.custom.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
-public class CompositeKey
+public class CompositeKey implements Serializable
 {
 	private final int idPart1;
 	private final int idPart2;
