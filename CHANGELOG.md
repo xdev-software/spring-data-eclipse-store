@@ -2,6 +2,7 @@
 
 * Implemented auto-id-generation for UUIDs.
 * Implemented composite primary keys.
+* Keyword "ignoreCase" now available for queries.
 
 # 2.0.1
 
