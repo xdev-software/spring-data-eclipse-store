@@ -24,6 +24,8 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfiguration
 {
 	
+	public static final String STORAGE_PATH = "storage-invoice";
+	
 	@Autowired
 	protected PersistenceInvoiceConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
@@ -43,6 +45,6 @@ public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfigura
 	@Override
 	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
-		return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of("storage-invoice"))));
+		return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of(STORAGE_PATH))));
 	}
 }

@@ -58,11 +58,11 @@ public class RootDataV2
 		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
-	public <T, ID> void createNewEntityList(
-		final Class<T> entityClass,
-		final Function<T, ID> idGetter)
+	public <T, ID> void createNewEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
 	{
-		this.entityLists.put(this.getEntityName(entityClass), new EntityData<>(idGetter));
+		final EntityData<T, ID> entityData = new EntityData<>();
+		entityData.setIdGetter(idGetter);
+		this.entityLists.put(this.getEntityName(entityClass), entityData);
 	}
 	
 	private <T> String getEntityName(final Class<T> classToRegister)

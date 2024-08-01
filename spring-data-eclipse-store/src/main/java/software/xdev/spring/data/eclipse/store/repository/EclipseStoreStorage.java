@@ -165,8 +165,12 @@ public class EclipseStoreStorage
 		{
 			if(this.root.getCurrentRootData().getEntityData(entityClass) == null)
 			{
-				this.createNewEntityList(entityClass);
+				this.createNewEntityData(entityClass, this.root);
 				entityListMustGetStored = true;
+			}
+			else
+			{
+				this.setIdManagerForEntityData(entityClass, this.root);
 			}
 		}
 		if(entityListMustGetStored)
@@ -183,10 +187,17 @@ public class EclipseStoreStorage
 		}
 	}
 	
-	private <T, ID> void createNewEntityList(final Class<T> entityClass)
+	private <T, ID> void createNewEntityData(final Class<T> entityClass, final VersionedRoot root)
 	{
 		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
-		this.root.getCurrentRootData().createNewEntityList(entityClass, idManager::getId);
+		root.getCurrentRootData().createNewEntityData(entityClass, idManager::getId);
+	}
+	
+	private <T, ID> void setIdManagerForEntityData(final Class<T> entityClass, final VersionedRoot root)
+	{
+		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
+		final EntityData<T, Object> entityData = root.getCurrentRootData().getEntityData(entityClass);
+		entityData.setIdGetter(idManager::getId);
 	}
 	
 	public synchronized <T> void registerEntity(
@@ -356,7 +367,7 @@ public class EclipseStoreStorage
 				LOG.info("Stopping storage...");
 				if(this.storageManager != null)
 				{
-					this.storageManager.shutdown();
+					this.storageManager.close();
 					this.storageManager = null;
 					this.root = null;
 					this.registry.reset();
@@ -407,19 +418,25 @@ public class EclipseStoreStorage
 	
 	public Object getLastId(final Class<?> entityClass)
 	{
+		this.ensureEntitiesInRoot();
 		return this.readWriteLock.read(() -> this.root.getCurrentRootData().getLastId(entityClass));
 	}
 	
 	public void setLastId(final Class<?> entityClass, final Object lastId)
 	{
+		this.ensureEntitiesInRoot();
 		this.readWriteLock.write(
 			() ->
 			{
 				final EntityData<?, Object> entityData = this.root.getCurrentRootData().getEntityData(entityClass);
 				if(entityData == null)
 				{
-					this.createNewEntityList(entityClass);
+					this.createNewEntityData(entityClass, this.root);
 					this.storageManager.store(this.root.getCurrentRootData().getEntityListsToStore());
+				}
+				else
+				{
+					this.setIdManagerForEntityData(entityClass, this.root);
 				}
 				this.root.getCurrentRootData().setLastId(entityClass, lastId);
 				this.storageManager.store(this.root.getCurrentRootData().getObjectsToStoreAfterNewLastId(entityClass));

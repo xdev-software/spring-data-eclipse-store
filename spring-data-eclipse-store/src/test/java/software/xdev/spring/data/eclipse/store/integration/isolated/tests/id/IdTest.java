@@ -240,6 +240,29 @@ class IdTest
 	}
 	
 	@Test
+	void testSaveAfterRestartSingleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
+	{
+		final CustomerWithIdString customer1 = new CustomerWithIdString(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(customer1);
+		
+		TestUtil.restartDatastore(this.configuration);
+		
+		customerRepository.deleteAll();
+		final CustomerWithIdString customer2 =
+			new CustomerWithIdString(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.save(customer2);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final Optional<CustomerWithIdString> loadedCustomer = customerRepository.findById("2");
+				Assertions.assertTrue(loadedCustomer.isPresent());
+				Assertions.assertEquals(customer2, loadedCustomer.get());
+			}
+		);
+	}
+	
+	@Test
 	void testCreateMultipleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
 	{
 		final CustomerWithIdString customer1 = new CustomerWithIdString(TestData.FIRST_NAME, TestData.LAST_NAME);

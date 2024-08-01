@@ -65,7 +65,10 @@ hs_err_pid*
 storage
 storage-person
 storage-invoice
-storage-jpa
+storage-complex
+storage-eclipsestore
+spring-data-eclipse-store-jpa/storage-h2.mv.db
+spring-data-eclipse-store-jpa/storage-h2.trace.db
 
 # == IntelliJ ==
 *.iml
@@ -86,4 +89,3 @@ storage-jpa
 .idea/codeStyles/*
 !.idea/codeStyles/codeStyleConfig.xml
 !.idea/codeStyles/Project.xml
-/spring-data-eclipse-store-demo/storage-complex

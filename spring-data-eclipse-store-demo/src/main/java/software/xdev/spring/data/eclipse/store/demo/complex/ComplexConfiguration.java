@@ -22,6 +22,9 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 @EnableEclipseStoreRepositories
 public class ComplexConfiguration extends EclipseStoreClientConfiguration
 {
+	
+	public static final String STORAGE_PATH = "storage-complex";
+	
 	@Autowired
 	public ComplexConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
@@ -42,7 +45,7 @@ public class ComplexConfiguration extends EclipseStoreClientConfiguration
 	@Override
 	public EmbeddedStorageFoundation<?> createEmbeddedStorageFoundation()
 	{
-		return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of("storage-complex"))));
+		return EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of(STORAGE_PATH))));
 	}
 	
 	/**

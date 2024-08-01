@@ -27,7 +27,8 @@ public class DummyEntityProvider<T> extends EntityProvider<T, Void>
 	public DummyEntityProvider(final Collection<T> collection)
 	{
 		super();
-		final EntityData<T, Void> objects = new EntityData<>(t -> null);
+		final EntityData<T, Void> objects = new EntityData<>();
+		objects.setIdGetter(i -> null);
 		objects.getEntities().addAll(collection);
 		this.addEntityData(objects);
 	}
