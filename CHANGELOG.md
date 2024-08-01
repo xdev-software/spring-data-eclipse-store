@@ -1,5 +1,6 @@
 # 2.1.0
 
+* Implemented auto-id-generation for UUIDs.
 * Implemented composite primary keys.
 
 # 2.0.1

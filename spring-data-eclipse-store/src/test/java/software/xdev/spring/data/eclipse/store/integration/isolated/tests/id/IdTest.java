@@ -19,6 +19,7 @@ import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDat
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,8 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.mod
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdLongRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdString;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdStringRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdUuid;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdUuidRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithPurchase;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithPurchaseRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.Purchase;
@@ -60,7 +63,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateSingleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	void createSingleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -138,7 +141,7 @@ class IdTest
 	 * no previous method is called before the test.
 	 */
 	@Test
-	void testSaveSingleWithoutAnyPreviousCall(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	void saveSingleWithoutAnyPreviousCall(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
 		restartDatastore(this.configuration);
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
@@ -155,7 +158,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateSingleWithAutoIdIntegerWorkingCopyIdSet(
+	void createSingleWithAutoIdIntegerWorkingCopyIdSet(
 		@Autowired final CustomerWithIdIntegerRepository customerRepository
 	)
 	{
@@ -166,7 +169,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateMultipleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	void createMultipleWithAutoIdInteger(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
 		final CustomerWithIdInteger customer1 = new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -186,7 +189,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateMultipleWithAutoIdIntegerSingleFinds(
+	void createMultipleWithAutoIdIntegerSingleFinds(
 		@Autowired final CustomerWithIdIntegerRepository customerRepository
 	)
 	{
@@ -208,7 +211,32 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateSingleWithAutoIdInt(@Autowired final CustomerWithIdIntRepository customerRepository)
+	void createMultipleWithAutoIdUuidSingleFinds(
+		@Autowired final CustomerWithIdUuidRepository customerRepository
+	)
+	{
+		final CustomerWithIdUuid customer1 = new CustomerWithIdUuid(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(customer1);
+		final CustomerWithIdUuid customer2 =
+			new CustomerWithIdUuid(TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.save(customer2);
+		
+		final UUID generatedId1 = customerRepository.findAll().get(0).getId();
+		final UUID generatedId2 = customerRepository.findAll().get(1).getId();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final Optional<CustomerWithIdUuid> loadedCustomer1 = customerRepository.findById(generatedId1);
+				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				final Optional<CustomerWithIdUuid> loadedCustomer2 = customerRepository.findById(generatedId2);
+				Assertions.assertEquals(customer2, loadedCustomer2.get());
+			}
+		);
+	}
+	
+	@Test
+	void createSingleWithAutoIdInt(@Autowired final CustomerWithIdIntRepository customerRepository)
 	{
 		final CustomerWithIdInt customer1 = new CustomerWithIdInt(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -224,7 +252,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateSingleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
+	void createSingleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
 	{
 		final CustomerWithIdString customer1 = new CustomerWithIdString(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -240,7 +268,25 @@ class IdTest
 	}
 	
 	@Test
-	void testSaveAfterRestartSingleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
+	void createSingleWithAutoIdUuid(@Autowired final CustomerWithIdUuidRepository customerRepository)
+	{
+		final CustomerWithIdUuid customer1 = new CustomerWithIdUuid(TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(customer1);
+		
+		final UUID generatedId = customerRepository.findAll().get(0).getId();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final Optional<CustomerWithIdUuid> loadedCustomer = customerRepository.findById(generatedId);
+				Assertions.assertTrue(loadedCustomer.isPresent());
+				Assertions.assertEquals(customer1, loadedCustomer.get());
+			}
+		);
+	}
+	
+	@Test
+	void saveAfterRestartSingleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
 	{
 		final CustomerWithIdString customer1 = new CustomerWithIdString(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -263,7 +309,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateMultipleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
+	void createMultipleWithAutoIdString(@Autowired final CustomerWithIdStringRepository customerRepository)
 	{
 		final CustomerWithIdString customer1 = new CustomerWithIdString(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -283,7 +329,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateSingleWithAutoIdLong(@Autowired final CustomerWithIdLongRepository customerRepository)
+	void createSingleWithAutoIdLong(@Autowired final CustomerWithIdLongRepository customerRepository)
 	{
 		final CustomerWithIdLong customer1 = new CustomerWithIdLong(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -300,7 +346,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateMultipleWithAutoIdLong(@Autowired final CustomerWithIdLongRepository customerRepository)
+	void createMultipleWithAutoIdLong(@Autowired final CustomerWithIdLongRepository customerRepository)
 	{
 		final CustomerWithIdLong customer1 = new CustomerWithIdLong(TestData.FIRST_NAME, TestData.LAST_NAME);
 		customerRepository.save(customer1);
@@ -323,7 +369,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateSingleWithNoAutoIdInteger(
+	void createSingleWithNoAutoIdInteger(
 		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
 	{
 		final CustomerWithIdIntegerNoAutoGenerate customer1 =
@@ -341,7 +387,7 @@ class IdTest
 	}
 	
 	@Test
-	void testCreateMultipleWithNoAutoIdInteger(
+	void createMultipleWithNoAutoIdInteger(
 		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
 	{
 		final CustomerWithIdIntegerNoAutoGenerate customer1 =
@@ -364,7 +410,7 @@ class IdTest
 	}
 	
 	@Test
-	void testSaveSingleWithAutoIdInteger(
+	void saveSingleWithAutoIdInteger(
 		@Autowired final CustomerWithIdIntegerRepository customerRepository
 	)
 	{
@@ -385,7 +431,7 @@ class IdTest
 	}
 	
 	@Test
-	void testSaveSingleWithNoAutoIdInteger(
+	void saveSingleWithNoAutoIdInteger(
 		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
 	{
 		final CustomerWithIdIntegerNoAutoGenerate customer1 =
@@ -397,7 +443,7 @@ class IdTest
 	}
 	
 	@Test
-	void testAutoIdWithSubnodeWithId(
+	void autoIdWithSubnodeWithId(
 		@Autowired final CustomerWithPurchaseRepository customerRepository)
 	{
 		final String purchaseName = "bag";
@@ -419,7 +465,7 @@ class IdTest
 	}
 	
 	@Test
-	void testAutoIdWithTwoSubnodeWithId(
+	void autoIdWithTwoSubnodeWithId(
 		@Autowired final CustomerWithPurchaseRepository customerRepository)
 	{
 		final String purchaseName = "bag";
@@ -442,7 +488,7 @@ class IdTest
 	}
 	
 	@Test
-	void testAutoIdWithTwoSameSubnodesWithSameIdDifferentNod(
+	void autoIdWithTwoSameSubnodesWithSameIdDifferentNod(
 		@Autowired final CustomerWithPurchaseRepository customerRepository)
 	{
 		final Purchase purchase = new Purchase("bag");
@@ -475,7 +521,7 @@ class IdTest
 	}
 	
 	@Test
-	void testAutoIdWithTwoSameSubnodesWithSameIdSameNode(
+	void autoIdWithTwoSameSubnodesWithSameIdSameNode(
 		@Autowired final CustomerWithPurchaseRepository customerRepository)
 	{
 		final Purchase purchase = new Purchase("bag");
@@ -498,7 +544,7 @@ class IdTest
 	}
 	
 	@Test
-	void testReplaceWithId(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	void replaceWithId(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
 	{
 		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
 			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
@@ -523,7 +569,7 @@ class IdTest
 	}
 	
 	@Test
-	void testReplaceWithAutoId(@Autowired final CustomerWithIdIntegerRepository customerRepository)
+	void replaceWithAutoId(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
 		final CustomerWithIdInteger existingCustomer =
 			new CustomerWithIdInteger(TestData.FIRST_NAME, TestData.LAST_NAME);
@@ -550,7 +596,7 @@ class IdTest
 	}
 	
 	@Test
-	void testReplaceWithIdSaveAll(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	void replaceWithIdSaveAll(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
 	{
 		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
 			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
@@ -565,7 +611,7 @@ class IdTest
 	}
 	
 	@Test
-	void testAddTwoWithId(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	void addTwoWithId(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
 	{
 		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
 			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
@@ -588,7 +634,7 @@ class IdTest
 	}
 	
 	@Test
-	void testIdsInMultipleTransactions(
+	void idsInMultipleTransactions(
 		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository,
 		@Autowired final PlatformTransactionManager transactionManager
 	)
@@ -626,7 +672,7 @@ class IdTest
 	}
 	
 	@Test
-	void testIdsInSingleTransactions(
+	void idsInSingleTransactions(
 		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository,
 		@Autowired final PlatformTransactionManager transactionManager
 	)

@@ -1,0 +1,8 @@
+= IDs
+
+{product-name} supports the following types with auto generating (``GenerationType.AUTO``) values:
+
+* ``int`` / ``Integer``
+* ``long`` / ``Long``
+* ``String``
+* ``UUID``
