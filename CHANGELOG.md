@@ -1,3 +1,7 @@
+# 2.1.0
+
+* Implemented composite primary keys.
+
 # 2.0.1
 
 * Fix for Issue [#131](https://github.com/xdev-software/spring-data-eclipse-store/issues/131)
