@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
-import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.data.util.TypeInformation;
 
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
@@ -20,7 +19,7 @@ public class HSqlQueryProvider<T> implements RepositoryQuery
 {
 	private static final Logger LOG = LoggerFactory.getLogger(HSqlQueryProvider.class);
 	
-	private final PartTree tree;
+	// private final PartTree tree;
 	private final Parameters<?, ?> parameters;
 	private final EntityListProvider entityListProvider;
 	private final Class<T> domainClass;
@@ -42,7 +41,7 @@ public class HSqlQueryProvider<T> implements RepositoryQuery
 		this.queryMethod = queryMethod;
 		this.domainClass = Objects.requireNonNull(domainClass);
 		this.entityListProvider = Objects.requireNonNull(entityListProvider);
-		this.tree = new PartTree(method.getName(), domainClass);
+		// this.tree = new PartTree(method.getName(), domainClass);
 		this.typeInformation = TypeInformation.fromReturnTypeOf(method);
 		this.parameters = queryMethod.getParameters();
 		this.copier = Objects.requireNonNull(copier);
