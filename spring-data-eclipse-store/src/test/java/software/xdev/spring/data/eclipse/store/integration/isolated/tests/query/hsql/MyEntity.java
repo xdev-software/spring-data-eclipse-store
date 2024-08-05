@@ -21,7 +21,7 @@ public class MyEntity
 	
 	private boolean active;
 	
-	private Object otherEntity;
+	private OtherEntity otherEntity;
 	
 	public MyEntity()
 	{
@@ -33,7 +33,7 @@ public class MyEntity
 		final int age,
 		final LocalDate creationDate,
 		final boolean active,
-		final Object otherEntity)
+		final OtherEntity otherEntity)
 	{
 		this.id = id;
 		this.name = name;
@@ -93,12 +93,12 @@ public class MyEntity
 		this.active = active;
 	}
 	
-	public Object getOtherEntity()
+	public OtherEntity getOtherEntity()
 	{
 		return this.otherEntity;
 	}
 	
-	public void setOtherEntity(final Object otherEntity)
+	public void setOtherEntity(final OtherEntity otherEntity)
 	{
 		this.otherEntity = otherEntity;
 	}
