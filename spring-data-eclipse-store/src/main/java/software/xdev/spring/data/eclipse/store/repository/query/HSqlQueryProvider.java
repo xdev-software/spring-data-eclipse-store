@@ -51,7 +51,7 @@ public class HSqlQueryProvider<T> implements RepositoryQuery
 	@Override
 	public Object execute(final Object[] parameters)
 	{
-		return null;
+		return this.executor.execute(parameters);
 	}
 	
 	@Override
