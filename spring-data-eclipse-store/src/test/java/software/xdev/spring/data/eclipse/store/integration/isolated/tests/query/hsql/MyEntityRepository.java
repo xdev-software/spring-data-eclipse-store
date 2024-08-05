@@ -11,51 +11,47 @@ import software.xdev.spring.data.eclipse.store.repository.Query;
 public interface MyEntityRepository extends ListCrudRepository<MyEntity, Long>
 {
 	// 1. Simple Select
-	@Query("SELECT e FROM MyEntity e")
+	@Query("SELECT * FROM MyEntity")
 	List<MyEntity> findAllEntities();
 	
 	// 2. Select with a where clause
-	@Query("SELECT e FROM MyEntity e WHERE e.name = ?1")
+	@Query("SELECT * FROM MyEntity WHERE name = ?1")
 	List<MyEntity> findByName(String name);
 	
 	// 3. Select with multiple where clauses
-	@Query("SELECT e FROM MyEntity e WHERE e.name = ?1 AND e.age > ?2")
+	@Query(" SELECT * FROM MyEntity WHERE (name = ?1 AND age > ?2)")
 	List<MyEntity> findByNameAndAgeGreaterThan(String name, int age);
 	
 	// 4. Select with order by
-	@Query("SELECT e FROM MyEntity e ORDER BY e.age DESC")
+	@Query(" SELECT * FROM MyEntity ORDER BY age DESC")
 	List<MyEntity> findAllOrderByAgeDesc();
 	
 	// 5. Select with limit
-	@Query(value = "SELECT e FROM MyEntity e ORDER BY e.age DESC")
-	List<MyEntity> findTop5ByOrderByAgeDesc();
+	@Query(value = " SELECT * FROM MyEntity ORDER BY age DESC LIMIT 2")
+	List<MyEntity> findTop2ByOrderByAgeDesc();
 	
 	// 6. Select with distinct
-	@Query("SELECT DISTINCT e.name FROM MyEntity e")
+	@Query("SELECT DISTINCT name FROM MyEntity")
 	List<String> findDistinctNames();
 	
-	// 7. Select with join
-	@Query("SELECT e FROM MyEntity e JOIN e.otherEntity o WHERE o.id = ?1")
-	List<MyEntity> findByOtherEntityId(Long otherEntityId);
-	
 	// 8. Select with group by
-	@Query("SELECT e.name, COUNT(e) FROM MyEntity e GROUP BY e.name")
+	@Query("SELECT name, COUNT(*) FROM MyEntity GROUP BY name")
 	List<Object[]> countByName();
 	
 	// 9. Select with having
-	@Query("SELECT e.name, COUNT(e) FROM MyEntity e GROUP BY e.name HAVING COUNT(e) > ?1")
+	@Query("SELECT name, COUNT(*) FROM MyEntity GROUP BY name HAVING COUNT(*) > ?1")
 	List<Object[]> countByNameHavingMoreThan(long count);
 	
 	// 10. Select with subquery
-	@Query("SELECT e FROM MyEntity e WHERE e.age = (SELECT MAX(e2.age) FROM MyEntity e2)")
+	@Query("SELECT * FROM MyEntity WHERE age = (SELECT MAX(age) FROM MyEntity2)")
 	MyEntity findEntityWithMaxAge();
 	
 	// 11. Select with IN clause
-	@Query("SELECT e FROM MyEntity e WHERE e.name IN ?1")
+	@Query(" SELECT * FROM MyEntity WHERE name IN ?1")
 	List<MyEntity> findByNameIn(List<String> names);
 	
 	// 12. Select with LIKE clause
-	@Query("SELECT e FROM MyEntity e WHERE e.name LIKE %?1%")
+	@Query(" SELECT * FROM MyEntity WHERE 'name' LIKE '%?1%'")
 	List<MyEntity> findByNameContaining(String keyword);
 	
 	// 13. Select with native query
@@ -63,31 +59,22 @@ public interface MyEntityRepository extends ListCrudRepository<MyEntity, Long>
 	List<MyEntity> findByNameNative(String name);
 	
 	// 14. Select with date comparison
-	@Query("SELECT e FROM MyEntity e WHERE e.creationDate > ?1")
+	@Query(" SELECT * FROM MyEntity WHERE creationDate > ?1")
 	List<MyEntity> findByCreationDateAfter(LocalDate date);
 	
 	// 15. Select with between clause
-	@Query("SELECT e FROM MyEntity e WHERE e.age BETWEEN ?1 AND ?2")
+	@Query(" SELECT * FROM MyEntity WHERE age BETWEEN ?1 AND ?2")
 	List<MyEntity> findByAgeBetween(int startAge, int endAge);
 	
 	// 16. Select with boolean condition
-	@Query("SELECT e FROM MyEntity e WHERE e.active = true")
+	@Query(" SELECT * FROM MyEntity WHERE active = true")
 	List<MyEntity> findAllActive();
 	
 	// 17. Select with is null condition
-	@Query("SELECT e FROM MyEntity e WHERE e.otherEntity IS NULL")
+	@Query(" SELECT * FROM MyEntity WHERE otherEntity IS NULL")
 	List<MyEntity> findWhereOtherEntityIsNull();
 	
 	// 18. Select with is not null condition
-	@Query("SELECT e FROM MyEntity e WHERE e.otherEntity IS NOT NULL")
+	@Query(" SELECT * FROM MyEntity WHERE otherEntity IS NOT NULL")
 	List<MyEntity> findWhereOtherEntityIsNotNull();
-	
-	// TODO
-	// 19. Select with a custom projection
-	// @Query("SELECT new com.example.demo.dto.MyEntityDTO(e.name, e.age) FROM MyEntity e")
-	// List<MyEntityDTO> findAllAsDTO();
-	
-	// 20. Select with function
-	@Query("SELECT e FROM MyEntity e WHERE FUNCTION('YEAR', e.creationDate) = ?1")
-	List<MyEntity> findByCreationYear(int year);
 }

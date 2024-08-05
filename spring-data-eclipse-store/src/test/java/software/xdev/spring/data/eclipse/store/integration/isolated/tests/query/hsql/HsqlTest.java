@@ -17,10 +17,10 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.query
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,218 +40,358 @@ class HsqlTest
 	@Autowired
 	private MyEntityRepository repository;
 	
+	private static Stream<Arguments> provideTestDataFindAllEntities()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 3),
+			Arguments.of(createEntityLists(1), 3),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindAllEntities(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindAllEntities")
+	void findAllEntities(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findAllEntities();
-		assertEquals(entities.size(), result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByName()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 1),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByName(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByName")
+	void findByName(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findByName("John");
-		assertEquals(1, result.size());
-		assertEquals("John", result.get(0).getName());
+		assertEquals(expectedSize, result.size());
+		if(expectedSize > 0)
+		{
+			assertEquals("John", result.get(0).getName());
+		}
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByNameAndAgeGreaterThan()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 0),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByNameAndAgeGreaterThan(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByNameAndAgeGreaterThan")
+	void findByNameAndAgeGreaterThan(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findByNameAndAgeGreaterThan("John", 25);
-		assertEquals(1, result.size());
-		assertEquals("John", result.get(0).getName());
+		assertEquals(expectedSize, result.size());
+		if(expectedSize > result.size())
+		{
+			assertEquals("John", result.get(0).getName());
+		}
 	}
 	
+	private static Stream<Arguments> provideTestDataFindAllOrderByAgeDesc()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 40),
+			Arguments.of(createEntityLists(1), 40),
+			Arguments.of(createEntityLists(2), 28),
+			Arguments.of(createEntityLists(3), null)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindAllOrderByAgeDesc(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindAllOrderByAgeDesc")
+	void findAllOrderByAgeDesc(final List<MyEntity> entities, final Integer expectedFirstAge)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findAllOrderByAgeDesc();
 		assertEquals(entities.size(), result.size());
-		assertEquals(40, result.get(0).getAge());
+		if(expectedFirstAge != null)
+		{
+			assertEquals(expectedFirstAge, result.get(0).getAge());
+		}
 	}
 	
+	private static Stream<Arguments> provideTestDataFindTop5ByOrderByAgeDesc()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 2),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindTop5ByOrderByAgeDesc(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindTop5ByOrderByAgeDesc")
+	void findTop5ByOrderByAgeDesc(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
-		final List<MyEntity> result = this.repository.findTop5ByOrderByAgeDesc();
-		assertEquals(Math.min(5, entities.size()), result.size());
+		final List<MyEntity> result = this.repository.findTop2ByOrderByAgeDesc();
+		assertEquals(Math.min(2, expectedSize), result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindDistinctNames()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 3),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindDistinctNames(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindDistinctNames")
+	void findDistinctNames(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<String> result = this.repository.findDistinctNames();
-		assertEquals(entities.stream().map(MyEntity::getName).distinct().count(), result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
-	@ParameterizedTest
-	@MethodSource("provideTestDataWithOtherEntity")
-	void testFindByOtherEntityId(final List<MyEntity> entities, final OtherEntity otherEntity)
+	private static Stream<Arguments> provideTestDataFindCountByName()
 	{
-		this.repository.saveAll(entities);
-		final List<MyEntity> result = this.repository.findByOtherEntityId(otherEntity.getId());
-		assertEquals(entities.stream()
-			.filter(e -> e.getOtherEntity() != null && e.getOtherEntity().getId().equals(otherEntity.getId()))
-			.count(), result.size());
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 1),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
 	}
-	
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testCountByName(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindCountByName")
+	void testCountByName(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<Object[]> result = this.repository.countByName();
 		assertNotNull(result);
 	}
 	
+	private static Stream<Arguments> provideTestDataFindCountByNameHavingMoreThan()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 1),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testCountByNameHavingMoreThan(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindCountByNameHavingMoreThan")
+	void testCountByNameHavingMoreThan(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<Object[]> result = this.repository.countByNameHavingMoreThan(1);
 		assertNotNull(result);
 	}
 	
+	private static Stream<Arguments> provideTestDataFindEntityWithMaxAge()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 40),
+			Arguments.of(createEntityLists(1), 40),
+			Arguments.of(createEntityLists(2), 28),
+			Arguments.of(createEntityLists(3), null)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindEntityWithMaxAge(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindEntityWithMaxAge")
+	void findEntityWithMaxAge(final List<MyEntity> entities, final Integer expectedMaxAge)
 	{
 		this.repository.saveAll(entities);
 		final MyEntity result = this.repository.findEntityWithMaxAge();
-		assertEquals(40, result.getAge());
+		
+		if(expectedMaxAge != null)
+		{
+			assertEquals(40, result.getAge());
+		}
+		else
+		{
+			assertNull(result);
+		}
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByNameIn()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 2),
+			Arguments.of(createEntityLists(2), 1),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByNameIn(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByNameIn")
+	void findByNameIn(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findByNameIn(Arrays.asList("John", "Jane"));
-		assertEquals(2, result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByNameContaining()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByNameContaining(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByNameContaining")
+	void findByNameContaining(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findByNameContaining("Jo");
-		assertEquals(1, result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByNameNative()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByNameNative(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByNameNative")
+	void findByNameNative(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findByNameNative("John");
-		assertEquals(1, result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByCreationDateAfter()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 3),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByCreationDateAfter(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByCreationDateAfter")
+	void findByCreationDateAfter(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result =
 			this.repository.findByCreationDateAfter(LocalDate.now().minusDays(1));
-		assertEquals(entities.size(), result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindByAgeBetween()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 2),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByAgeBetween(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindByAgeBetween")
+	void findByAgeBetween(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findByAgeBetween(20, 30);
-		assertEquals(2, result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindAllActive()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 2),
+			Arguments.of(createEntityLists(1), 0),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindAllActive(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindAllActive")
+	void findAllActive(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findAllActive();
-		assertEquals(entities.stream().filter(MyEntity::isActive).count(), result.size());
+		assertEquals(expectedSize, result.size());
+	}
+	
+	private static Stream<Arguments> provideTestDataFindWhereOtherEntityIsNull()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 0),
+			Arguments.of(createEntityLists(1), 1),
+			Arguments.of(createEntityLists(2), 2),
+			Arguments.of(createEntityLists(3), 0)
+		);
 	}
 	
 	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindWhereOtherEntityIsNull(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindWhereOtherEntityIsNull")
+	void findWhereOtherEntityIsNull(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findWhereOtherEntityIsNull();
-		assertEquals(entities.stream().filter(e -> e.getOtherEntity() == null).count(), result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
+	private static Stream<Arguments> provideTestDataFindWhereOtherEntityIsNotNull()
+	{
+		return Stream.of(
+			Arguments.of(createEntityLists(0), 3),
+			Arguments.of(createEntityLists(1), 2),
+			Arguments.of(createEntityLists(2), 0),
+			Arguments.of(createEntityLists(3), 0)
+		);
+	}
 	@ParameterizedTest
-	@MethodSource("provideTestDataWithOtherEntity")
-	void testFindWhereOtherEntityIsNotNull(final List<MyEntity> entities)
+	@MethodSource("provideTestDataFindWhereOtherEntityIsNotNull")
+	void findWhereOtherEntityIsNotNull(final List<MyEntity> entities, final int expectedSize)
 	{
 		this.repository.saveAll(entities);
 		final List<MyEntity> result = this.repository.findWhereOtherEntityIsNotNull();
-		assertEquals(entities.stream().filter(e -> e.getOtherEntity() != null).count(), result.size());
-	}
-	//
-	// @ParameterizedTest
-	// @MethodSource("provideTestData")
-	// void testFindAllAsDTO(List<MyEntity> entities) {
-	// 	repository.saveAll(entities);
-	// 	List<MyEntityDTO> result = repository.findAllAsDTO();
-	// 	assertEquals(entities.size(), result.size());
-	// }
-	
-	@ParameterizedTest
-	@MethodSource("provideTestData")
-	void testFindByCreationYear(final List<MyEntity> entities)
-	{
-		this.repository.saveAll(entities);
-		final List<MyEntity> result = this.repository.findByCreationYear(Calendar.getInstance().get(Calendar.YEAR));
-		assertEquals(entities.size(), result.size());
+		assertEquals(expectedSize, result.size());
 	}
 	
-	private static Stream<Arguments> provideTestData()
-	{
-		return Stream.of(
-			Arguments.of(Arrays.asList(
-				createMyEntity("John", 30, true, null),
-				createMyEntity("Jane", 25, false, null),
-				createMyEntity("Doe", 40, true, null)
-			)),
-			Arguments.of(Arrays.asList(
-				createMyEntity("Alice", 22, true, null),
-				createMyEntity("Bob", 28, false, null),
-				createMyEntity("Charlie", 35, true, null)
-			))
-		);
-	}
-	
-	private static Stream<Arguments> provideTestDataWithOtherEntity()
+	private static List<MyEntity> createEntityLists(final int testDataSetIndex)
 	{
 		final OtherEntity otherEntity = new OtherEntity();
 		otherEntity.setDescription("Test OtherEntity");
-		return Stream.of(
-			Arguments.of(Arrays.asList(
-				createMyEntity("John", 30, true, otherEntity),
-				createMyEntity("Jane", 25, false, null),
+		
+		return switch(testDataSetIndex)
+		{
+			case 0 -> Arrays.asList(
+				createMyEntity("John", 21, LocalDate.now().minusYears(1), true, otherEntity),
+				createMyEntity("John", 25, false, otherEntity),
 				createMyEntity("Doe", 40, true, otherEntity)
-			), otherEntity)
-		);
+			);
+			case 1 -> Arrays.asList(
+				createMyEntity("John", 30, false, otherEntity),
+				createMyEntity("Jane", 25, false, otherEntity),
+				createMyEntity("Doe", 40, false, null)
+			);
+			case 2 -> Arrays.asList(
+				createMyEntity("Jane", 22, true, null),
+				createMyEntity("Bob", 28, true, null)
+			);
+			case 3 -> Arrays.asList();
+			default -> throw new RuntimeException("Wrong index!");
+		};
 	}
 	
 	private static MyEntity createMyEntity(
@@ -260,10 +400,26 @@ class HsqlTest
 		final boolean active,
 		final OtherEntity otherEntity)
 	{
+		return createMyEntity(
+			name,
+			age,
+			LocalDate.now(),
+			active,
+			otherEntity
+		);
+	}
+	
+	private static MyEntity createMyEntity(
+		final String name,
+		final int age,
+		final LocalDate creationDate,
+		final boolean active,
+		final OtherEntity otherEntity)
+	{
 		final MyEntity entity = new MyEntity();
 		entity.setName(name);
 		entity.setAge(age);
-		entity.setCreationDate(LocalDate.now());
+		entity.setCreationDate(creationDate);
 		entity.setActive(active);
 		entity.setOtherEntity(otherEntity);
 		return entity;

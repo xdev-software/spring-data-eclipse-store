@@ -27,6 +27,7 @@ public class HSqlQueryProvider<T> implements RepositoryQuery
 	private final WorkingCopier<T> copier;
 	private final QueryMethod queryMethod;
 	private final HSqlQueryExecutor executor;
+	private final String sqlValue;
 	
 	public HSqlQueryProvider(
 		final String sqlValue,
@@ -41,17 +42,17 @@ public class HSqlQueryProvider<T> implements RepositoryQuery
 		this.queryMethod = queryMethod;
 		this.domainClass = Objects.requireNonNull(domainClass);
 		this.entityListProvider = Objects.requireNonNull(entityListProvider);
-		// this.tree = new PartTree(method.getName(), domainClass);
 		this.typeInformation = TypeInformation.fromReturnTypeOf(method);
 		this.parameters = queryMethod.getParameters();
 		this.copier = Objects.requireNonNull(copier);
-		this.executor = new HSqlQueryExecutor(sqlValue);
+		this.executor = new HSqlQueryExecutor(this.domainClass, this.entityListProvider);
+		this.sqlValue = sqlValue;
 	}
 	
 	@Override
 	public Object execute(final Object[] parameters)
 	{
-		return this.executor.execute(parameters);
+		return this.executor.execute(this.sqlValue, parameters);
 	}
 	
 	@Override

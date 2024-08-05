@@ -15,11 +15,11 @@ public class MyEntity
 	
 	private String name;
 	
-	private int age;
+	private Integer age;
 	
 	private LocalDate creationDate;
 	
-	private boolean active;
+	private Boolean active;
 	
 	private OtherEntity otherEntity;
 	

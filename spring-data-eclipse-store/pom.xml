@@ -49,8 +49,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<antlr4.plugin.version>4.13.1</antlr4.plugin.version>
-		<antlr4.version>4.13.1</antlr4.version>
 
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
 		<org.springframework.boot.version>3.3.2</org.springframework.boot.version>
@@ -166,11 +164,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr4-runtime</artifactId>
-			<version>${antlr4.version}</version>
+			<groupId>com.googlecode.cqengine</groupId>
+			<artifactId>cqengine</artifactId>
+			<version>3.6.0</version>
 		</dependency>
 
 		<dependency>
@@ -317,26 +315,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>${antlr4.plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>antlr4</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<sourceDirectory>src/main/antlr4</sourceDirectory>
-					<outputDirectory>target/generated-sources/antlr4</outputDirectory>
-					<arguments>
-						<argument>-package</argument>
-						<argument>software.xdev.spring.data.eclipse.store.repository.query.antlr</argument>
-					</arguments>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
