@@ -76,8 +76,7 @@ public class HSqlQueryExecutor<T>
 				value =
 					collection.stream()
 						.map(o -> "'" + o.toString() + "'")
-						.collect(Collectors.joining(", ", "(", ")"))
-						.toString();
+						.collect(Collectors.joining(", ", "(", ")"));
 			}
 			if(parameters[i] instanceof final LocalDate localDate)
 			{

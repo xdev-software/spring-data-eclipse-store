@@ -19,7 +19,6 @@ import java.util.Objects;
 
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
-import org.springframework.lang.Nullable;
 
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.antlr.HSqlQueryExecutor;
