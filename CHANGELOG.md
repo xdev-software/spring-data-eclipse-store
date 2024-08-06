@@ -1,12 +1,9 @@
-# 2.2.0
-
-* Implemented ``@Query`` annotation with simple SQL-Selects
-
 # 2.1.0
 
 * Implemented auto-id-generation for UUIDs.
 * Implemented composite primary keys.
 * Keyword "ignoreCase" now available for queries.
+* Implemented ``@Query`` annotation with simple SQL-Selects
 
 # 2.0.1
 
