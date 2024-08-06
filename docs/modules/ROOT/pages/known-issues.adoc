@@ -1,17 +1,5 @@
 = Known issues
 
-== Query annotations
-
-In Spring-Data-JPA you can write a Query over methods of repositories like this:
-
-[source,java,title="From https://github.com/spring-projects/spring-petclinic/blob/main/src/main/java/org/springframework/samples/petclinic/owner/OwnerRepository.java[spring-petclinic]"]
-----
-@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
-List<PetType> findPetTypes();
-----
-
-We created https://github.com/xdev-software/spring-data-eclipse-store/issues/32[an issue] for that but right now we *do not support Query annotations*.
-
 == Data changes
 
 There are two basic ways to keep your data up to date.
