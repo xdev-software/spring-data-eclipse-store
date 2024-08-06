@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1722488740639">
-    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.0.1"/>
+<licensePluginReport goal="FORMAT" timestamp="1722937971429">
+    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.1.0"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/core/EntityListProvider.java" result="NOOP"/>
@@ -10,7 +10,7 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/DataTypeNotSupportedException.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/DifferentClassesException.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/FieldAccessReflectionException.java" result="NOOP"/>
-        <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/IdFieldFinalException.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/IdFieldException.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/IdGeneratorNotSupportedException.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/InvalidRootException.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/InvalidVersionException.java" result="NOOP"/>
@@ -53,8 +53,10 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/lazy/SpringDataEclipseStoreLazyBinaryHandler.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/EclipseStoreQueryCreator.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/FindAllEclipseStoreQueryProvider.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/HSqlQueryProvider.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/ReflectedField.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/StringBasedEclipseStoreQueryProvider.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/antlr/HSqlQueryExecutor.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/by/example/EclipseStoreFetchableFluentQuery.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/criteria/AbstractCriteriaNode.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/criteria/Criteria.java" result="NOOP"/>
@@ -123,6 +125,7 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/id/strategy/auto/AutoIntegerIdFinder.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/id/strategy/auto/AutoLongIdFinder.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/id/strategy/auto/AutoStringIdFinder.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/id/strategy/auto/AutoUUIDIdFinder.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/reposyncer/RepositorySynchronizer.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/reposyncer/SimpleRepositorySynchronizer.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/transactions/EclipseStoreExistingTransactionObject.java" result="NOOP"/>
@@ -153,6 +156,18 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/duplicated/repositories/DuplicatedRepositoriesTestConfiguration.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/IdTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/IdTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/CustomIdTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/SingleTestDataset.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CompositeKey.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CompositeKeyAsRecord.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdCompositeKey.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdCompositeKeyAsRecord.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdCompositeKeyAsRecordRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdCompositeKeyEmbeddedId.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdCompositeKeyEmbeddedIdRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdCompositeKeyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdLocalDate.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/custom/model/CustomerWithIdLocalDateRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdInt.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdIntRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdInteger.java" result="NOOP"/>
@@ -163,6 +178,8 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdLongRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdString.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdStringRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdUuid.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdUuidRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithPurchase.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithPurchaseRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/Purchase.java" result="NOOP"/>
@@ -199,6 +216,23 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/example/QueryByExampleTestConfiguration.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/example/User.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/example/UserRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/Child.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/Customer.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/CustomerRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/CustomerWithChild.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/CustomerWithChildRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/QueryPageTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/QuerySortTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/QueryTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/QueryTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/User.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/UserRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/UserRepositoryTests.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/HsqlTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/HsqlTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/MyEntity.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/MyEntityRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/OtherEntity.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/special/types/BigDecimalDaoObject.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/special/types/BigDecimalRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/special/types/BigIntegerDaoObject.java" result="NOOP"/>
@@ -278,7 +312,6 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepositoryWithHashSet.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepositoryWithNonFinalHashSet.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepositoryWithQuery.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithChild.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithChildRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithHashSet.java" result="NOOP"/>
@@ -313,8 +346,6 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/ConcurrencyTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/HashSetTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/InheritanceTest.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/JpaCompatibilityTest.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/QueryTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/RealLifeTests.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/SimpleMultipleTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/SimpleSingleTest.java" result="NOOP"/>
