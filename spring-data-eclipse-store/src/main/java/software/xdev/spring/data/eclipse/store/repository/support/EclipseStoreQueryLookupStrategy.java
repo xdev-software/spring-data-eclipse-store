@@ -19,8 +19,6 @@ import java.lang.reflect.Method;
 
 import jakarta.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -38,7 +36,6 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 
 public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 {
-	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreQueryLookupStrategy.class);
 	private final EclipseStoreStorage storage;
 	private final WorkingCopierCreator workingCopierCreator;
 	

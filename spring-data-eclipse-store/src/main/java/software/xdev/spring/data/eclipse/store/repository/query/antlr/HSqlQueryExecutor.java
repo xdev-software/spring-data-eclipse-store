@@ -71,7 +71,7 @@ public class HSqlQueryExecutor<T>
 		{
 			final String placeholder = "\\?" + (i + 1);
 			String value = parameters[i].toString();
-			if(parameters[i] instanceof final Collection collection)
+			if(parameters[i] instanceof final Collection<?> collection)
 			{
 				value =
 					collection.stream()
@@ -81,7 +81,7 @@ public class HSqlQueryExecutor<T>
 			}
 			if(parameters[i] instanceof final LocalDate localDate)
 			{
-				value = localDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+				value = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 			}
 			stringWithReplacedValues = stringWithReplacedValues.replaceAll(placeholder, value);
 		}

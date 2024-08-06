@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.lang.Nullable;
 
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.antlr.HSqlQueryExecutor;
@@ -27,7 +28,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 
 public class HSqlQueryProvider<T> implements RepositoryQuery
 {
-	private final HSqlQueryExecutor executor;
+	private final HSqlQueryExecutor<T> executor;
 	private final String sqlValue;
 	private final QueryMethod queryMethod;
 	
@@ -40,7 +41,7 @@ public class HSqlQueryProvider<T> implements RepositoryQuery
 	)
 	{
 		this.queryMethod = queryMethod;
-		this.executor = new HSqlQueryExecutor(
+		this.executor = new HSqlQueryExecutor<>(
 			Objects.requireNonNull(domainClass),
 			Objects.requireNonNull(entityListProvider),
 			copier
