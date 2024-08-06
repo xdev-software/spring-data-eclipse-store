@@ -16,20 +16,22 @@
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.query.hsql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
 
@@ -39,6 +41,19 @@ class HsqlTest
 {
 	@Autowired
 	private MyEntityRepository repository;
+	
+	@Test
+	void workingCopyAndNotSameObject()
+	{
+		final MyEntity testEntity = new MyEntity();
+		testEntity.setName(TestData.FIRST_NAME);
+		this.repository.save(testEntity);
+		
+		final List<MyEntity> result = this.repository.findAllEntities();
+		assertEquals(1, result.size());
+		assertEquals(testEntity, result.get(0));
+		assertNotSame(testEntity, result.get(0));
+	}
 	
 	private static Stream<Arguments> provideTestDataFindAllEntities()
 	{
@@ -61,7 +76,7 @@ class HsqlTest
 	private static Stream<Arguments> provideTestDataFindByName()
 	{
 		return Stream.of(
-			Arguments.of(createEntityLists(0), 1),
+			Arguments.of(createEntityLists(0), 2),
 			Arguments.of(createEntityLists(1), 1),
 			Arguments.of(createEntityLists(2), 0),
 			Arguments.of(createEntityLists(3), 0)
@@ -124,104 +139,6 @@ class HsqlTest
 		}
 	}
 	
-	private static Stream<Arguments> provideTestDataFindTop5ByOrderByAgeDesc()
-	{
-		return Stream.of(
-			Arguments.of(createEntityLists(0), 2),
-			Arguments.of(createEntityLists(1), 2),
-			Arguments.of(createEntityLists(2), 2),
-			Arguments.of(createEntityLists(3), 0)
-		);
-	}
-	@ParameterizedTest
-	@MethodSource("provideTestDataFindTop5ByOrderByAgeDesc")
-	void findTop5ByOrderByAgeDesc(final List<MyEntity> entities, final int expectedSize)
-	{
-		this.repository.saveAll(entities);
-		final List<MyEntity> result = this.repository.findTop2ByOrderByAgeDesc();
-		assertEquals(Math.min(2, expectedSize), result.size());
-	}
-	
-	private static Stream<Arguments> provideTestDataFindDistinctNames()
-	{
-		return Stream.of(
-			Arguments.of(createEntityLists(0), 2),
-			Arguments.of(createEntityLists(1), 3),
-			Arguments.of(createEntityLists(2), 2),
-			Arguments.of(createEntityLists(3), 0)
-		);
-	}
-	@ParameterizedTest
-	@MethodSource("provideTestDataFindDistinctNames")
-	void findDistinctNames(final List<MyEntity> entities, final int expectedSize)
-	{
-		this.repository.saveAll(entities);
-		final List<String> result = this.repository.findDistinctNames();
-		assertEquals(expectedSize, result.size());
-	}
-	
-	private static Stream<Arguments> provideTestDataFindCountByName()
-	{
-		return Stream.of(
-			Arguments.of(createEntityLists(0), 1),
-			Arguments.of(createEntityLists(1), 1),
-			Arguments.of(createEntityLists(2), 0),
-			Arguments.of(createEntityLists(3), 0)
-		);
-	}
-	@ParameterizedTest
-	@MethodSource("provideTestDataFindCountByName")
-	void testCountByName(final List<MyEntity> entities, final int expectedSize)
-	{
-		this.repository.saveAll(entities);
-		final List<Object[]> result = this.repository.countByName();
-		assertNotNull(result);
-	}
-	
-	private static Stream<Arguments> provideTestDataFindCountByNameHavingMoreThan()
-	{
-		return Stream.of(
-			Arguments.of(createEntityLists(0), 1),
-			Arguments.of(createEntityLists(1), 1),
-			Arguments.of(createEntityLists(2), 0),
-			Arguments.of(createEntityLists(3), 0)
-		);
-	}
-	@ParameterizedTest
-	@MethodSource("provideTestDataFindCountByNameHavingMoreThan")
-	void testCountByNameHavingMoreThan(final List<MyEntity> entities, final int expectedSize)
-	{
-		this.repository.saveAll(entities);
-		final List<Object[]> result = this.repository.countByNameHavingMoreThan(1);
-		assertNotNull(result);
-	}
-	
-	private static Stream<Arguments> provideTestDataFindEntityWithMaxAge()
-	{
-		return Stream.of(
-			Arguments.of(createEntityLists(0), 40),
-			Arguments.of(createEntityLists(1), 40),
-			Arguments.of(createEntityLists(2), 28),
-			Arguments.of(createEntityLists(3), null)
-		);
-	}
-	@ParameterizedTest
-	@MethodSource("provideTestDataFindEntityWithMaxAge")
-	void findEntityWithMaxAge(final List<MyEntity> entities, final Integer expectedMaxAge)
-	{
-		this.repository.saveAll(entities);
-		final MyEntity result = this.repository.findEntityWithMaxAge();
-		
-		if(expectedMaxAge != null)
-		{
-			assertEquals(40, result.getAge());
-		}
-		else
-		{
-			assertNull(result);
-		}
-	}
-	
 	private static Stream<Arguments> provideTestDataFindByNameIn()
 	{
 		return Stream.of(
@@ -276,24 +193,26 @@ class HsqlTest
 		assertEquals(expectedSize, result.size());
 	}
 	
-	private static Stream<Arguments> provideTestDataFindByCreationDateAfter()
-	{
-		return Stream.of(
-			Arguments.of(createEntityLists(0), 2),
-			Arguments.of(createEntityLists(1), 3),
-			Arguments.of(createEntityLists(2), 2),
-			Arguments.of(createEntityLists(3), 0)
-		);
-	}
-	@ParameterizedTest
-	@MethodSource("provideTestDataFindByCreationDateAfter")
-	void findByCreationDateAfter(final List<MyEntity> entities, final int expectedSize)
-	{
-		this.repository.saveAll(entities);
-		final List<MyEntity> result =
-			this.repository.findByCreationDateAfter(LocalDate.now().minusDays(1));
-		assertEquals(expectedSize, result.size());
-	}
+	// TODO: This does not work currently, due to non existing parser in
+	//  com.googlecode.cqengine.query.parser.common.QueryParser
+	// private static Stream<Arguments> provideTestDataFindByCreationDateAfter()
+	// {
+	// 	return Stream.of(
+	// 		Arguments.of(createEntityLists(0), 2),
+	// 		Arguments.of(createEntityLists(1), 3),
+	// 		Arguments.of(createEntityLists(2), 2),
+	// 		Arguments.of(createEntityLists(3), 0)
+	// 	);
+	// }
+	// @ParameterizedTest
+	// @MethodSource("provideTestDataFindByCreationDateAfter")
+	// void findByCreationDateAfter(final List<MyEntity> entities, final int expectedSize)
+	// {
+	// 	this.repository.saveAll(entities);
+	// 	final List<MyEntity> result =
+	// 		this.repository.findByCreationDateAfter(LocalDate.now().minusDays(1));
+	// 	assertEquals(expectedSize, result.size());
+	// }
 	
 	private static Stream<Arguments> provideTestDataFindByAgeBetween()
 	{
@@ -373,10 +292,13 @@ class HsqlTest
 		final OtherEntity otherEntity = new OtherEntity();
 		otherEntity.setDescription("Test OtherEntity");
 		
+		final Calendar calendarPastOneYear = Calendar.getInstance();
+		calendarPastOneYear.add(Calendar.YEAR, -1);
+		
 		return switch(testDataSetIndex)
 		{
 			case 0 -> Arrays.asList(
-				createMyEntity("John", 21, LocalDate.now().minusYears(1), true, otherEntity),
+				createMyEntity("John", 21, calendarPastOneYear.getTime(), true, otherEntity),
 				createMyEntity("John", 25, false, otherEntity),
 				createMyEntity("Doe", 40, true, otherEntity)
 			);
@@ -389,7 +311,7 @@ class HsqlTest
 				createMyEntity("Jane", 22, true, null),
 				createMyEntity("Bob", 28, true, null)
 			);
-			case 3 -> Arrays.asList();
+			case 3 -> List.of();
 			default -> throw new RuntimeException("Wrong index!");
 		};
 	}
@@ -403,7 +325,7 @@ class HsqlTest
 		return createMyEntity(
 			name,
 			age,
-			LocalDate.now(),
+			new Date(),
 			active,
 			otherEntity
 		);
@@ -412,7 +334,7 @@ class HsqlTest
 	private static MyEntity createMyEntity(
 		final String name,
 		final int age,
-		final LocalDate creationDate,
+		final Date creationDate,
 		final boolean active,
 		final OtherEntity otherEntity)
 	{

@@ -169,6 +169,20 @@
 			<groupId>com.googlecode.cqengine</groupId>
 			<artifactId>cqengine</artifactId>
 			<version>3.6.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>kryo</artifactId>
+					<groupId>com.esotericsoftware</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>kryo-serializers</artifactId>
+					<groupId>de.javakaffee</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>sqlite-jdbc</artifactId>
+					<groupId>org.xerial</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

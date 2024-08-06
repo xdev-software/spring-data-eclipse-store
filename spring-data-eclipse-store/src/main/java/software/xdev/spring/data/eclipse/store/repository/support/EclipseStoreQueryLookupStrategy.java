@@ -76,8 +76,7 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 			return this.createHSqlQueryProvider(
 				queryAnnotation.value(),
 				metadata.getDomainType(),
-				queryMethod,
-				method
+				queryMethod
 			);
 		}
 		
@@ -121,14 +120,12 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 	private <T> RepositoryQuery createHSqlQueryProvider(
 		final String sqlString,
 		final Class<T> domainType,
-		final QueryMethod queryMethod,
-		final Method method
+		final QueryMethod queryMethod
 	)
 	{
 		return new HSqlQueryProvider<>(
 			sqlString,
 			queryMethod,
-			method,
 			domainType,
 			this.storage,
 			this.workingCopierCreator.createWorkingCopier(domainType, this.storage)
