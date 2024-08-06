@@ -40,5 +40,5 @@ import org.springframework.data.annotation.QueryAnnotation;
 @QueryAnnotation
 public @interface Query
 {
-	@SuppressWarnings("unused") String value() default "";
+	String value() default "";
 }

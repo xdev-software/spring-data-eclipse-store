@@ -48,8 +48,8 @@ class EclipseStoreQueryCreatorStringTest
 		return Stream.of(
 			Arguments.of("%", 3),
 			Arguments.of("M%", 2),
-			Arguments.of("m%", 2),
-			Arguments.of("m_ck", 2),
+			Arguments.of("m%", 0),
+			Arguments.of("m_ck", 0),
 			Arguments.of("%ick", 2),
 			Arguments.of("%k", 2),
 			Arguments.of("%ck%", 2),
@@ -93,8 +93,8 @@ class EclipseStoreQueryCreatorStringTest
 		return Stream.of(
 			Arguments.of("%", 0),
 			Arguments.of("M%", 1),
-			Arguments.of("m%", 1),
-			Arguments.of("m_ck", 1),
+			Arguments.of("m%", 3),
+			Arguments.of("m_ck", 3),
 			Arguments.of("%ick", 1),
 			Arguments.of("%k", 1),
 			Arguments.of("%ck%", 1),

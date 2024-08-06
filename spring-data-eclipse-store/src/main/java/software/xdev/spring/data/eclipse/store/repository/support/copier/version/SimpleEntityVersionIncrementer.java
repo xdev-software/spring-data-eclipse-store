@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
-import software.xdev.spring.data.eclipse.store.exceptions.IdFieldFinalException;
+import software.xdev.spring.data.eclipse.store.exceptions.IdFieldException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.incrementer.VersionIncrementer;
 
@@ -43,7 +43,7 @@ public class SimpleEntityVersionIncrementer<T, VERSION> implements EntityVersion
 		final int fieldModifiers = this.versionField.getModifiers();
 		if(Modifier.isFinal(fieldModifiers))
 		{
-			throw new IdFieldFinalException(String.format(
+			throw new IdFieldException(String.format(
 				"Field %s is final and cannot be modified. Version fields must not be final.",
 				this.versionField.getName()));
 		}

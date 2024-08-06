@@ -1,3 +1,10 @@
+# 2.1.0
+
+* Implemented auto-id-generation for UUIDs.
+* Implemented composite primary keys.
+* Keyword "ignoreCase" now available for queries.
+* Implemented ``@Query`` annotation with simple SQL-Selects
+
 # 2.0.1
 
 * Fix for Issue [#131](https://github.com/xdev-software/spring-data-eclipse-store/issues/131)

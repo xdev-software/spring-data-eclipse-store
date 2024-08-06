@@ -1,4 +1,4 @@
-= Migration
+= Migration from JPA
 
 Migrating from Spring Data JPA is very easy.
 We implemented a https://github.com/xdev-software/spring-data-eclipse-store-migration[OpenRewrite recipe] for that.

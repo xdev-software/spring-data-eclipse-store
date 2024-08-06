@@ -17,8 +17,8 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.annotation.Nonnull;
+
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -26,17 +26,16 @@ import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 
-import jakarta.annotation.Nonnull;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.Query;
 import software.xdev.spring.data.eclipse.store.repository.query.FindAllEclipseStoreQueryProvider;
+import software.xdev.spring.data.eclipse.store.repository.query.HSqlQueryProvider;
 import software.xdev.spring.data.eclipse.store.repository.query.StringBasedEclipseStoreQueryProvider;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopierCreator;
 
 
 public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 {
-	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreQueryLookupStrategy.class);
 	private final EclipseStoreStorage storage;
 	private final WorkingCopierCreator workingCopierCreator;
 	
@@ -58,11 +57,9 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 	{
 		final QueryMethod queryMethod = new QueryMethod(method, metadata, factory);
 		
-		if(method.getAnnotation(Query.class) != null)
+		final Query queryAnnotation = method.getAnnotation(Query.class);
+		if(queryAnnotation != null)
 		{
-			LOG.warn(
-				"Annotation @Query is used in Repository {}. This is useless for now and should be deleted.",
-				metadata.getRepositoryInterface().getSimpleName());
 			if(method.getName().equalsIgnoreCase("findall"))
 			{
 				// Special case for Queries that have findAll and are annotated with Query
@@ -72,6 +69,12 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 					method
 				);
 			}
+			
+			return this.createHSqlQueryProvider(
+				queryAnnotation.value(),
+				metadata.getDomainType(),
+				queryMethod
+			);
 		}
 		
 		return this.createStringBasedEclipseStoreQueryProvider(
@@ -105,6 +108,21 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 		return new StringBasedEclipseStoreQueryProvider<>(
 			queryMethod,
 			method,
+			domainType,
+			this.storage,
+			this.workingCopierCreator.createWorkingCopier(domainType, this.storage)
+		);
+	}
+	
+	private <T> RepositoryQuery createHSqlQueryProvider(
+		final String sqlString,
+		final Class<T> domainType,
+		final QueryMethod queryMethod
+	)
+	{
+		return new HSqlQueryProvider<>(
+			sqlString,
+			queryMethod,
 			domainType,
 			this.storage,
 			this.workingCopierCreator.createWorkingCopier(domainType, this.storage)

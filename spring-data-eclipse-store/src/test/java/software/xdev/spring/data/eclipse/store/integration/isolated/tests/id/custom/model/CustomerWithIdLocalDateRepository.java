@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.custom.model;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
-import org.springframework.data.repository.Repository;
-
-import software.xdev.spring.data.eclipse.store.repository.Query;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
 
-public interface CustomerRepositoryWithQuery extends Repository<CustomerWithQuery, String>
+public interface CustomerWithIdLocalDateRepository
+	extends EclipseStoreRepository<CustomerWithIdLocalDate, LocalDate>
 {
-	List<CustomerWithQuery> findAll();
-	
-	Optional<CustomerWithQuery> findByFirstName(String firstName);
-	
-	@Query()
-	Iterable<CustomerWithQuery> findAllByLastName(String lastName);
-	
-	void save(CustomerWithQuery customer);
 }
