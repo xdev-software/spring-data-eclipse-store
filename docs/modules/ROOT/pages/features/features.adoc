@@ -1,0 +1,7 @@
+= Features
+
+* xref:features/ids.adoc[IDs]
+* xref:features/lazies.adoc[Lazy References]
+* xref:features/queries.adoc[Queries]
+* xref:features/transactions.adoc[Transactions]
+* xref:features/versions.adoc[Versions]
