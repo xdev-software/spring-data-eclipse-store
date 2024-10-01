@@ -1,3 +1,7 @@
+# 2.2.1
+
+* Fixed release version
+
 # 2.2.0
 
 * Fixed issue with not found migration script (for v2.X)
