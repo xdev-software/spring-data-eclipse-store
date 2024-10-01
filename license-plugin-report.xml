@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1722937971429">
-    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.1.0"/>
+<licensePluginReport goal="FORMAT" timestamp="1727770258191">
+    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.1.1"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/core/EntityListProvider.java" result="NOOP"/>
@@ -78,7 +78,7 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/RootDataV2.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/VersionedRoot.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/LoggingUpdateScript.java" result="NOOP"/>
-        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/v2_0_0_InitalizeVersioning.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/v2_0_0_InitializeVersioning.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/AnnotatedFieldFinder.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/EclipseStoreQueryLookupStrategy.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/EclipseStoreRepositoryFactory.java" result="NOOP"/>
