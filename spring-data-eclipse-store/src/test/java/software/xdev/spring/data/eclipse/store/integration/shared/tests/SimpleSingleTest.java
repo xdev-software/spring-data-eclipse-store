@@ -15,6 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.shared.tests;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +129,16 @@ class SimpleSingleTest
 	void testNullSaveAll()
 	{
 		Assertions.assertThrows(IllegalArgumentException.class, () -> this.repository.saveAll(null));
+	}
+	
+	@Test
+	void testNullSaveAllWithList()
+	{
+		final Customer customer = new Customer(TestData.FIRST_NAME, TestData.LAST_NAME);
+		final List<Customer> listWithNullElement = new ArrayList<>();
+		listWithNullElement.add(customer);
+		listWithNullElement.add(null);
+		Assertions.assertDoesNotThrow(() -> this.repository.saveAll(listWithNullElement));
 	}
 	
 	@Test
