@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1727773168091">
-    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.2.1"/>
+<licensePluginReport goal="FORMAT" timestamp="1727779773805">
+    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.2.2"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/core/EntityListProvider.java" result="NOOP"/>
@@ -177,6 +177,8 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdLong.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdLongRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdString.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdStringNoAutoGenerate.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdStringNoAutoGenerateRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdStringRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdUuid.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/id/model/CustomerWithIdUuidRepository.java" result="NOOP"/>
