@@ -1,3 +1,8 @@
+# 2.2.0
+
+* Fixed issue with not found migration script (for v2.X)
+* Updated org.springframework.boot.version to v3.3.4
+
 # 2.1.0
 
 * Implemented auto-id-generation for UUIDs.

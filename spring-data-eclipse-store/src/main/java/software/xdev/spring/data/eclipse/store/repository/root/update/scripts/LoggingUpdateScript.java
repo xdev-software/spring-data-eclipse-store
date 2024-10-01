@@ -24,6 +24,10 @@ import software.xdev.micromigration.scripts.ReflectiveVersionMigrationScript;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
 
+/**
+ * <b>All migration scripts must be added to
+ * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator#SCRIPTS}!</b>
+ */
 public abstract class LoggingUpdateScript
 	extends ReflectiveVersionMigrationScript<VersionedRoot, MigrationEmbeddedStorageManager>
 {
