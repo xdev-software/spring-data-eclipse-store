@@ -49,6 +49,15 @@
 			<artifactId>spring-data-eclipse-store</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.store</groupId>
+			<artifactId>storage-restservice-springboot</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
