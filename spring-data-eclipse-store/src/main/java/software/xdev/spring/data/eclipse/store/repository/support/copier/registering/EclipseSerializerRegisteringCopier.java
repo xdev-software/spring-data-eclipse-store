@@ -134,6 +134,10 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 		loader.iterateEntries(
 			(id, copiedObject) ->
 			{
+				if(copiedObject == null)
+				{
+					return;
+				}
 				if(copiedObject != null && !this.supportedChecker.isSupported(copiedObject.getClass()))
 				{
 					throw new DataTypeNotSupportedException(copiedObject.getClass());

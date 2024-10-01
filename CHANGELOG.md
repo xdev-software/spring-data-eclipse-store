@@ -1,3 +1,7 @@
+# 2.2.2
+
+* Fixed NPE in EclipseSerializerRegisteringCopier
+
 # 2.2.1
 
 * Fixed release version

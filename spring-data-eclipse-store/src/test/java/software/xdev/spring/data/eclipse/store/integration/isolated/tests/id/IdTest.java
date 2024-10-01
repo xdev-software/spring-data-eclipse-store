@@ -40,6 +40,8 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.mod
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdLong;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdLongRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdString;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdStringNoAutoGenerate;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdStringNoAutoGenerateRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdStringRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdUuid;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.model.CustomerWithIdUuidRepository;
@@ -134,6 +136,45 @@ class IdTest
 			IllegalArgumentException.class,
 			() -> customerRepository.saveAll(List.of(customer1, customer2))
 		);
+	}
+	
+	@Test
+	void saveBulkWithNoAutoIdIntSameId(
+		@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdIntegerNoAutoGenerate customer1 =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdIntegerNoAutoGenerate customer2 =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		Assertions.assertThrows(
+			IllegalArgumentException.class,
+			() -> customerRepository.saveAll(List.of(customer1, customer2))
+		);
+	}
+	
+	@Test
+	void saveBulkWithNoAutoIdStringSameId(
+		@Autowired final CustomerWithIdStringNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdStringNoAutoGenerate customer1 =
+			new CustomerWithIdStringNoAutoGenerate("1", TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdStringNoAutoGenerate customer2 =
+			new CustomerWithIdStringNoAutoGenerate("1", TestData.FIRST_NAME, TestData.LAST_NAME);
+		Assertions.assertThrows(
+			IllegalArgumentException.class,
+			() -> customerRepository.saveAll(List.of(customer1, customer2))
+		);
+	}
+	
+	@Test
+	void saveBulkWithNoAutoIdStringDifferentId(
+		@Autowired final CustomerWithIdStringNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdStringNoAutoGenerate customer1 =
+			new CustomerWithIdStringNoAutoGenerate("1", TestData.FIRST_NAME, TestData.LAST_NAME);
+		final CustomerWithIdStringNoAutoGenerate customer2 =
+			new CustomerWithIdStringNoAutoGenerate("2", TestData.FIRST_NAME, TestData.LAST_NAME);
+		Assertions.assertDoesNotThrow(() -> customerRepository.saveAll(List.of(customer1, customer2)));
 	}
 	
 	/**
