@@ -1,3 +1,7 @@
+# 2.1.1
+
+* Fixed issue with not found migration script (for v2.X)
+
 # 2.1.0
 
 * Implemented auto-id-generation for UUIDs.

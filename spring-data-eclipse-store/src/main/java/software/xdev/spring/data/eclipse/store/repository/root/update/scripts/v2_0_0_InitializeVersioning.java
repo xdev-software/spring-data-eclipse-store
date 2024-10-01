@@ -21,13 +21,21 @@ import org.slf4j.LoggerFactory;
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
 
+/**
+ * Copies elements from the old Root({@link software.xdev.spring.data.eclipse.store.repository.Root} to the newer
+ * version of Root({@link RootDataV2}).
+ * <p>
+ * <b>All migration scripts must be added to
+ * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator#SCRIPTS}!</b>
+ */
 @SuppressWarnings("checkstyle:TypeName")
-public class v2_0_0_InitalizeVersioning extends LoggingUpdateScript
+public class v2_0_0_InitializeVersioning extends LoggingUpdateScript
 {
-	private static final Logger LOG = LoggerFactory.getLogger(v2_0_0_InitalizeVersioning.class);
+	private static final Logger LOG = LoggerFactory.getLogger(v2_0_0_InitializeVersioning.class);
 	
 	@Override
 	public void loggedMigrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
