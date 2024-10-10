@@ -99,10 +99,9 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	public PlatformTransactionManager transactionManager(
 		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
 	{
-		final EclipseStoreTransactionManager transactionManager = this.getTransactionManagerInstance();
-		transactionManagerCustomizers.ifAvailable((customizers) ->
-			customizers.customize((TransactionManager)transactionManager));
-		return transactionManager;
+		final EclipseStoreTransactionManager tm = this.getTransactionManagerInstance();
+		transactionManagerCustomizers.ifAvailable(customizers -> customizers.customize((TransactionManager)tm));
+		return tm;
 	}
 	
 	public EclipseStoreTransactionManager getTransactionManagerInstance()
