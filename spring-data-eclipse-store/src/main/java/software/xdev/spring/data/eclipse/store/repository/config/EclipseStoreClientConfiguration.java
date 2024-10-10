@@ -51,11 +51,11 @@ import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransact
 })
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
-	private final EclipseStoreProperties defaultEclipseStoreProperties;
-	private final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
+	protected final EclipseStoreProperties defaultEclipseStoreProperties;
+	protected final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
 	
-	private EclipseStoreStorage storageInstance;
-	private EclipseStoreTransactionManager transactionManager;
+	protected EclipseStoreStorage storageInstance;
+	protected EclipseStoreTransactionManager transactionManager;
 	
 	@Autowired
 	protected EclipseStoreClientConfiguration(
