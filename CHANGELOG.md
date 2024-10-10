@@ -1,3 +1,9 @@
+# 2.3.0
+
+* Add support for shuting down the storage during application shutdown
+  * By default only enabled when Spring DevTools are active
+    * This should fix "StorageExceptionInitialization: Active storage for ... already exists" errors during DevTools restart
+
 # 2.2.2
 
 * Fixed NPE in EclipseSerializerRegisteringCopier
