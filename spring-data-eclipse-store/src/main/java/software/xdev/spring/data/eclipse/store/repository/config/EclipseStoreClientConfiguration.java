@@ -20,9 +20,12 @@ import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorag
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
 
@@ -112,4 +115,71 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		}
 		return this.transactionManager;
 	}
+	
+	// region On context closed shutdown storage
+	
+	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.enabled:true}")
+	protected boolean contextCloseShutdownStorageEnabled;
+	
+	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.only-when-dev-tools:true}")
+	protected boolean contextCloseShutdownStorageOnlyWhenDevTools;
+	
+	/**
+	 * Upstream value from Spring Boot DevTools.
+	 *
+	 * @see org.springframework.boot.devtools.autoconfigure.DevToolsProperties.Restart
+	 */
+	@Value("${spring.devtools.restart.enabled:true}")
+	protected boolean springDevtoolsRestartEnabled;
+	
+	protected boolean shouldShutdownStorageOnContextClosed()
+	{
+		// Did the user disable support for this?
+		if(!this.contextCloseShutdownStorageEnabled)
+		{
+			return false;
+		}
+		
+		// Always or only for DevTools?
+		if(!this.contextCloseShutdownStorageOnlyWhenDevTools)
+		{
+			return true;
+		}
+		
+		// Spring DevTools loaded?
+		try
+		{
+			Class.forName("org.springframework.boot.devtools.autoconfigure.DevToolsProperties");
+		}
+		catch(final ClassNotFoundException e)
+		{
+			return false;
+		}
+		
+		// Spring Boot DevTools Restart enabled?
+		return this.springDevtoolsRestartEnabled;
+	}
+	
+	/**
+	 * Invoked when the application is "shut down" - or parts of it during a DevTools restart.
+	 * <p>
+	 * Shuts down the storage when it's present and {@link #shouldShutdownStorageOnContextClosed()} is
+	 * <code>true</code>
+	 * </p>
+	 *
+	 * <p>
+	 * This is required for the DevTools restart as it otherwise crashes with <code>StorageExceptionInitialization:
+	 * Active storage for ... already exists</code>
+	 * </p>
+	 */
+	@EventListener
+	public void shutdownStorageOnContextClosed(final ContextClosedEvent event)
+	{
+		if(this.storageInstance != null && this.shouldShutdownStorageOnContextClosed())
+		{
+			this.storageInstance.stop();
+		}
+	}
+	
+	// endregion
 }
