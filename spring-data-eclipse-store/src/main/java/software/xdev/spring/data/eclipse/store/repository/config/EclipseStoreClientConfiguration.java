@@ -18,6 +18,8 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +56,8 @@ import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransact
 })
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
+	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreClientConfiguration.class);
+	
 	protected final EclipseStoreProperties defaultEclipseStoreProperties;
 	protected final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
 	
@@ -157,7 +161,15 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		}
 		
 		// Spring Boot DevTools Restart enabled?
-		return this.springDevtoolsRestartEnabled;
+		final boolean enabled = this.springDevtoolsRestartEnabled;
+		if(enabled)
+		{
+			LOG.warn("Will shut down storage because Spring Boot DevTools Restarting is active. "
+				+ "This may cause some unexpected behavior. "
+				+ "For more information have a look at "
+				+ "https://spring-eclipsestore.xdev.software/known-issues.html#_spring_developer_tools");
+		}
+		return enabled;
 	}
 	
 	/**
