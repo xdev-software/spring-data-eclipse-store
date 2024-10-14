@@ -22,6 +22,7 @@ We created https://github.com/xdev-software/spring-data-eclipse-store/issues/33[
 
 Using https://docs.spring.io/spring-boot/reference/using/devtools.html[Spring Developer Tools] (`spring-boot-devtools`) can lead to serious issues in your project.
 That is manly due to the https://docs.spring.io/spring-boot/reference/using/devtools.html#using.devtools.livereload[LiveReload feature] and the usage of a "Restart Classloader".
+It derives from the https://docs.eclipsestore.io/manual/misc/integrations/spring-boot.html#_spring_dev_tools[issue with EclipseStore].
 
 This leads to problems within EclipseStore and can cause issues with discovering beans (https://github.com/spring-projects/spring-boot/issues/41011[Example Issue]).
 
