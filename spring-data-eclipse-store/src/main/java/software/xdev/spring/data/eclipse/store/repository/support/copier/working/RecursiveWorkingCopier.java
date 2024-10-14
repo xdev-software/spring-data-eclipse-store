@@ -30,6 +30,7 @@ import java.util.TreeSet;
 
 import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,15 +73,26 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final VersionManagerProvider versionManagerProvider,
 		final PersistableChecker persistableChecker,
 		final SupportedChecker supportedChecker,
-		final ObjectSwizzling objectSwizzling
+		final ObjectSwizzling objectSwizzling,
+		final ClassLoaderProvider currentClassLoaderProvider
 	)
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
 		this.workingCopyToStorageCopier =
-			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling, this);
+			new RegisteringWorkingCopyToStorageCopier(
+				registry,
+				supportedChecker,
+				objectSwizzling,
+				this,
+				currentClassLoaderProvider);
 		this.storageToWorkingCopyCopier =
-			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this);
+			new RegisteringStorageToWorkingCopyCopier(
+				registry,
+				supportedChecker,
+				objectSwizzling,
+				this,
+				currentClassLoaderProvider);
 		this.idManagerProvider = idManagerProvider;
 		this.versionManagerProvider = versionManagerProvider;
 		this.persistableChecker = persistableChecker;

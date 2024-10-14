@@ -15,6 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.duplicated.repositories;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,9 @@ public class DuplicatedRepositoriesTestConfiguration extends TestConfiguration
 	@Autowired
 	protected DuplicatedRepositoriesTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 	}
 }

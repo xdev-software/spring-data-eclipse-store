@@ -265,7 +265,8 @@ public class EclipseStoreDataImporter
 				storageInstance,
 				storageInstance,
 				new SupportedChecker.Implementation(),
-				storageInstance
+				storageInstance,
+				this.configuration.getClassLoaderProvider()
 			),
 			domainClass,
 			new EclipseStoreTransactionManager(),

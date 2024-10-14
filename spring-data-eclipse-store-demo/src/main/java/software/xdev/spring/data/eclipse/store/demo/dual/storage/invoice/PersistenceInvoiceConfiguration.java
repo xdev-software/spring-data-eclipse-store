@@ -26,16 +26,13 @@ public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfigura
 {
 	public static final String STORAGE_PATH = "storage-invoice";
 	
-	private final ClassLoaderProvider classLoaderProvider;
-	
 	@Autowired
 	protected PersistenceInvoiceConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
-		this.classLoaderProvider = classLoaderProvider;
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 	}
 	
 	/**
@@ -52,7 +49,7 @@ public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfigura
 		final EmbeddedStorageFoundation<?> storageFoundation =
 			EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of(STORAGE_PATH))));
 		// This is only needed, if a different ClassLoader is used (e.g. when using spring-dev-tools)
-		storageFoundation.getConnectionFoundation().setClassLoaderProvider(this.classLoaderProvider);
+		storageFoundation.getConnectionFoundation().setClassLoaderProvider(getClassLoaderProvider());
 		return storageFoundation;
 	}
 }

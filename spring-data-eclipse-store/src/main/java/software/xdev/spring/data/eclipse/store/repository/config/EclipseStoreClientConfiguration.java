@@ -15,6 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
@@ -60,6 +61,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	
 	protected final EclipseStoreProperties defaultEclipseStoreProperties;
 	protected final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
+	protected final ClassLoaderProvider classLoaderProvider;
 	
 	protected EclipseStoreStorage storageInstance;
 	protected EclipseStoreTransactionManager transactionManager;
@@ -81,9 +83,11 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Autowired
 	protected EclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider)
 	{
 		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
+		this.classLoaderProvider = classLoaderProvider;
 		this.defaultEclipseStoreProperties.setAutoStart(false);
 		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
 	}
@@ -96,6 +100,11 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	public EmbeddedStorageFoundationFactory getStoreProvider()
 	{
 		return this.defaultEclipseStoreProvider;
+	}
+	
+	public ClassLoaderProvider getClassLoaderProvider()
+	{
+		return classLoaderProvider;
 	}
 	
 	/**

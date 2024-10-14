@@ -25,6 +25,7 @@ import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerIm
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
 import org.eclipse.serializer.persistence.types.Storer;
 import org.eclipse.serializer.reference.ObjectSwizzling;
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.eclipse.store.storage.types.StorageManager;
@@ -69,6 +70,7 @@ public class EclipseStoreStorage
 	 */
 	private final Map<Class<?>, VersionManager<?>> versionManagers = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
+	private final ClassLoaderProvider classLoaderProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
 	private EmbeddedStorageManager storageManager;
@@ -81,6 +83,7 @@ public class EclipseStoreStorage
 	public EclipseStoreStorage(final EclipseStoreClientConfiguration storeConfiguration)
 	{
 		this.foundationProvider = storeConfiguration;
+		this.classLoaderProvider = storeConfiguration.getClassLoaderProvider();
 	}
 	
 	private StorageManager getInstanceOfStorageManager()
@@ -92,6 +95,11 @@ public class EclipseStoreStorage
 	public WorkingCopyRegistry getRegistry()
 	{
 		return this.registry;
+	}
+	
+	public ClassLoaderProvider getClassLoaderProvider()
+	{
+		return this.classLoaderProvider;
 	}
 	
 	private synchronized void ensureEntitiesInRoot()
