@@ -64,6 +64,20 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	protected EclipseStoreStorage storageInstance;
 	protected EclipseStoreTransactionManager transactionManager;
 	
+	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.enabled:true}")
+	protected boolean contextCloseShutdownStorageEnabled;
+	
+	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.only-when-dev-tools:true}")
+	protected boolean contextCloseShutdownStorageOnlyWhenDevTools;
+	
+	/**
+	 * Upstream value from Spring Boot DevTools.
+	 *
+	 * @see org.springframework.boot.devtools.autoconfigure.DevToolsProperties.Restart
+	 */
+	@Value("${spring.devtools.restart.enabled:true}")
+	protected boolean springDevtoolsRestartEnabled;
+	
 	@Autowired
 	protected EclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
@@ -119,22 +133,6 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		}
 		return this.transactionManager;
 	}
-	
-	// region On context closed shutdown storage
-	
-	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.enabled:true}")
-	protected boolean contextCloseShutdownStorageEnabled;
-	
-	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.only-when-dev-tools:true}")
-	protected boolean contextCloseShutdownStorageOnlyWhenDevTools;
-	
-	/**
-	 * Upstream value from Spring Boot DevTools.
-	 *
-	 * @see org.springframework.boot.devtools.autoconfigure.DevToolsProperties.Restart
-	 */
-	@Value("${spring.devtools.restart.enabled:true}")
-	protected boolean springDevtoolsRestartEnabled;
 	
 	protected boolean shouldShutdownStorageOnContextClosed()
 	{
@@ -192,6 +190,4 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 			this.storageInstance.stop();
 		}
 	}
-	
-	// endregion
 }
