@@ -116,7 +116,7 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 	{
 		persistenceManager.objectRegistry().truncateAll();
 		final BinaryStorer.Default storer = (BinaryStorer.Default)persistenceManager.createStorer();
-		// Loader erstellen
+		// Create Loader
 		final PersistenceLoader loader = persistenceManager.createLoader();
 		
 		storer.store(source);
