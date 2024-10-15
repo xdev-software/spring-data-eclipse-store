@@ -54,6 +54,10 @@
 		<org.springframework.boot.version>3.3.4</org.springframework.boot.version>
 		<org.eclipse.store.version>1.4.0</org.eclipse.store.version>
 		<org.eclipse.serializer.version>1.4.0</org.eclipse.serializer.version>
+		<hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+		<jakarta.el-api.version>6.0.1</jakarta.el-api.version>
+		<expressly.version>6.0.0-M1</expressly.version>
+		<hibernate-core.version>6.6.1.Final</hibernate-core.version>
 	</properties>
 
 	<repositories>
@@ -163,6 +167,31 @@
 					<groupId>org.eclipse.store</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.el</groupId>
+			<artifactId>jakarta.el-api</artifactId>
+			<version>${jakarta.el-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.expressly</groupId>
+			<artifactId>expressly</artifactId>
+			<version>${expressly.version}</version>
 		</dependency>
 		
 		<dependency>

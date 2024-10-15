@@ -18,8 +18,16 @@ package software.xdev.spring.data.eclipse.store.repository.support.copier.regist
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.binary.types.BinaryStorer;
@@ -45,6 +53,7 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 	private final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier;
 	private final SupportedChecker supportedChecker;
 	private final RegisteringWorkingCopyAndOriginal register;
+	private final Validator validator;
 	
 	public EclipseSerializerRegisteringCopier(
 		final SupportedChecker supportedChecker,
@@ -55,6 +64,9 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 		this.register = register;
 		this.persistenceManagerSupplier = persistenceManagerSupplier;
 		this.persistenceManagers = new ConcurrentLinkedQueue<>();
+		
+		final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+		this.validator = validatorFactory.getValidator();
 	}
 	
 	private PersistenceManager<Binary> ensurePersistenceManager()
@@ -138,9 +150,25 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 				{
 					return;
 				}
-				if(copiedObject != null && !this.supportedChecker.isSupported(copiedObject.getClass()))
+				if(copiedObject != null)
 				{
-					throw new DataTypeNotSupportedException(copiedObject.getClass());
+					if(!this.supportedChecker.isSupported(copiedObject.getClass()))
+					{
+						throw new DataTypeNotSupportedException(copiedObject.getClass());
+					}
+					final Set<ConstraintViolation<Object>> violations = this.validator.validate(copiedObject);
+					if(!violations.isEmpty())
+					{
+						final String violationsAsMessage = violations.stream()
+							.map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
+							.collect(Collectors.joining(", "));
+						
+						throw new ConstraintViolationException(
+							"Error validating " + copiedObject.getClass().getName() + ":" + System.lineSeparator()
+								+ violationsAsMessage,
+							violations
+						);
+					}
 				}
 				summarizer.incrementCopiedObjectsCount();
 				if(DataTypeUtil.isPrimitiveType(copiedObject.getClass()))

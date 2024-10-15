@@ -1,3 +1,7 @@
+# 2.3.0
+
+* Added [Jakarta Bean Validation Constraints](https://jakarta.ee/learn/docs/jakartaee-tutorial/current/beanvalidation/bean-validation/bean-validation.html#_using_jakarta_bean_validation_constraints) with Hibernate validator for entities.
+
 # 2.2.2
 
 * Fixed NPE in EclipseSerializerRegisteringCopier
