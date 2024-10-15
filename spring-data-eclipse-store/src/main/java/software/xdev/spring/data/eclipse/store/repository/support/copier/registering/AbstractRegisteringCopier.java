@@ -15,6 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.registering;
 
+import jakarta.validation.Validator;
+
 import org.eclipse.serializer.Serializer;
 import org.eclipse.serializer.SerializerFoundation;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
@@ -42,7 +44,8 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
 		final ObjectSwizzling objectSwizzling,
-		final WorkingCopier<?> copier)
+		final WorkingCopier<?> copier,
+		final Validator validator)
 	{
 		this.actualCopier = new EclipseSerializerRegisteringCopier(
 			supportedChecker,
@@ -52,7 +55,8 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 				this.createSerializerFoundation(),
 				objectSwizzling,
 				copier
-			)
+			),
+			validator
 		);
 	}
 	

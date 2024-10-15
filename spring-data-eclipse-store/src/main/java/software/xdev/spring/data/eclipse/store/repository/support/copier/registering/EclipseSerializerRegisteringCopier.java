@@ -58,15 +58,15 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 	public EclipseSerializerRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
-		final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier)
+		final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier,
+		final Validator validator
+	)
 	{
 		this.supportedChecker = supportedChecker;
 		this.register = register;
 		this.persistenceManagerSupplier = persistenceManagerSupplier;
+		this.validator = validator;
 		this.persistenceManagers = new ConcurrentLinkedQueue<>();
-		
-		final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-		this.validator = validatorFactory.getValidator();
 	}
 	
 	private PersistenceManager<Binary> ensurePersistenceManager()
