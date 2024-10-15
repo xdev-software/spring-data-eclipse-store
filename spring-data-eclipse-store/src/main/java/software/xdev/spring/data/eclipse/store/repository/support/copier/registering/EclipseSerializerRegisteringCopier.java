@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.binary.types.BinaryStorer;
@@ -150,26 +148,7 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 				{
 					return;
 				}
-				if(copiedObject != null)
-				{
-					if(!this.supportedChecker.isSupported(copiedObject.getClass()))
-					{
-						throw new DataTypeNotSupportedException(copiedObject.getClass());
-					}
-					final Set<ConstraintViolation<Object>> violations = this.validator.validate(copiedObject);
-					if(!violations.isEmpty())
-					{
-						final String violationsAsMessage = violations.stream()
-							.map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
-							.collect(Collectors.joining(", "));
-						
-						throw new ConstraintViolationException(
-							"Error validating " + copiedObject.getClass().getName() + ":" + System.lineSeparator()
-								+ violationsAsMessage,
-							violations
-						);
-					}
-				}
+				this.validate(copiedObject);
 				summarizer.incrementCopiedObjectsCount();
 				if(DataTypeUtil.isPrimitiveType(copiedObject.getClass()))
 				{
@@ -193,6 +172,30 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 		}
 		
 		return returnValue;
+	}
+	
+	private void validate(final Object copiedObject)
+	{
+		if(copiedObject != null)
+		{
+			if(!this.supportedChecker.isSupported(copiedObject.getClass()))
+			{
+				throw new DataTypeNotSupportedException(copiedObject.getClass());
+			}
+			final Set<ConstraintViolation<Object>> violations = this.validator.validate(copiedObject);
+			if(!violations.isEmpty())
+			{
+				final String violationsAsMessage = violations.stream()
+					.map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
+					.collect(Collectors.joining(", "));
+				
+				throw new ConstraintViolationException(
+					"Error validating " + copiedObject.getClass().getName() + ":" + System.lineSeparator()
+						+ violationsAsMessage,
+					violations
+				);
+			}
+		}
 	}
 	
 	private static class Summarizer

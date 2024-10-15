@@ -40,7 +40,7 @@ class ConstraintsTest
 	private ConstraintsRepository repository;
 	
 	@Test
-	void assertFalse_True()
+	void assertFalseWithTrue()
 	{
 		final ConstraintDaoObject constraintDaoObject = new ConstraintDaoObject();
 		constraintDaoObject.setAlwaysFalse(true);
@@ -51,7 +51,7 @@ class ConstraintsTest
 	}
 	
 	@Test
-	void assertFalse_False()
+	void assertFalseWithFalse()
 	{
 		final ConstraintDaoObject constraintDaoObject = new ConstraintDaoObject();
 		constraintDaoObject.setAlwaysFalse(false);
