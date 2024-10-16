@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 import java.util.Optional;
 
 import jakarta.annotation.Nonnull;
+import jakarta.validation.Validator;
 
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.repository.core.EntityInformation;
@@ -46,13 +47,16 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 {
 	private final EclipseStoreStorage storage;
 	private final PlatformTransactionManager transactionManager;
+	private final Validator validator;
 	
 	public EclipseStoreRepositoryFactory(
 		final EclipseStoreStorage storage,
-		final PlatformTransactionManager transactionManager)
+		final PlatformTransactionManager transactionManager,
+		final Validator validator)
 	{
 		this.storage = storage;
 		this.transactionManager = transactionManager;
+		this.validator = validator;
 	}
 	
 	@Override
@@ -82,7 +86,9 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage,
 			storage,
 			new SupportedChecker.Implementation(),
-			storage
+			storage,
+			this.validator,
+			storage.getClassLoaderProvider()
 		);
 	}
 	

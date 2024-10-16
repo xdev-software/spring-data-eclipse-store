@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.duplicated.repositories;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.constraints;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -27,11 +27,10 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 @Configuration
 @EnableEclipseStoreRepositories
-public class DuplicatedRepositoriesTestConfiguration extends TestConfiguration
+public class ConstraintsTestConfiguration extends TestConfiguration
 {
-	
 	@Autowired
-	protected DuplicatedRepositoriesTestConfiguration(
+	protected ConstraintsTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)
