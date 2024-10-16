@@ -88,6 +88,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				supportedChecker,
 				objectSwizzling,
 				this,
+				validator,
 				currentClassLoaderProvider);
 		this.storageToWorkingCopyCopier =
 			new RegisteringStorageToWorkingCopyCopier(
@@ -95,10 +96,8 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				supportedChecker,
 				objectSwizzling,
 				this,
+				validator,
 				currentClassLoaderProvider);
-			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling, this, validator);
-		this.storageToWorkingCopyCopier =
-			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this, validator);
 		this.idManagerProvider = idManagerProvider;
 		this.versionManagerProvider = versionManagerProvider;
 		this.persistableChecker = persistableChecker;

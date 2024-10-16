@@ -59,8 +59,7 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 				this.createSerializerFoundation(),
 				objectSwizzling,
 				copier,
-				currentClassLoaderProvider,
-				copier
+				currentClassLoaderProvider
 			),
 			validator
 		);
