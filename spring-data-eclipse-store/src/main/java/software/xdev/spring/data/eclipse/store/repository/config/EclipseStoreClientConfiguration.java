@@ -16,6 +16,9 @@
 package software.xdev.spring.data.eclipse.store.repository.config;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
@@ -198,5 +202,11 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		{
 			this.storageInstance.stop();
 		}
+	}
+
+	@Bean
+	public Validator getValidator()
+	{
+		return Validation.buildDefaultValidatorFactory().getValidator();
 	}
 }

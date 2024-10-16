@@ -15,6 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.registering;
 
+import jakarta.validation.Validator;
+
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 
@@ -34,13 +36,16 @@ public class RegisteringStorageToWorkingCopyCopier extends AbstractRegisteringCo
 		final SupportedChecker supportedChecker,
 		final ObjectSwizzling objectSwizzling,
 		final WorkingCopier<?> copier,
-		final ClassLoaderProvider currentClassLoaderProvider)
+		final Validator validator,
+		final ClassLoaderProvider currentClassLoaderProvider
+	)
 	{
 		super(
 			supportedChecker,
 			registry::register,
 			objectSwizzling,
 			copier,
+			validator,
 			currentClassLoaderProvider
 		);
 	}

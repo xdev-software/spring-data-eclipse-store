@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
+import jakarta.validation.Validation;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +44,10 @@ class RegisteringStorageToWorkingCopyCopierTest
 				new SupportedChecker.Implementation(),
 				o -> null,
 				new DummyWorkingCopier(),
-				ClassLoaderProvider.System()))
+				Validation.buildDefaultValidatorFactory().getValidator(),
+				ClassLoaderProvider.System()
+			)
+		)
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 1_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -63,7 +68,10 @@ class RegisteringStorageToWorkingCopyCopierTest
 				new SupportedChecker.Implementation(),
 				o -> null,
 				new DummyWorkingCopier(),
-				ClassLoaderProvider.System()))
+				Validation.buildDefaultValidatorFactory().getValidator(),
+				ClassLoaderProvider.System()
+			)
+		)
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -83,7 +91,10 @@ class RegisteringStorageToWorkingCopyCopierTest
 				new SupportedChecker.Implementation(),
 				o -> null,
 				new DummyWorkingCopier(),
-				ClassLoaderProvider.System()))
+				Validation.buildDefaultValidatorFactory().getValidator(),
+				ClassLoaderProvider.System()
+			)
+		)
 		{
 			final DummyData originalObject = new DummyData("Test", 1);
 			
@@ -105,7 +116,10 @@ class RegisteringStorageToWorkingCopyCopierTest
 				new SupportedChecker.Implementation(),
 				o -> null,
 				new DummyWorkingCopier(),
-				ClassLoaderProvider.System()))
+				Validation.buildDefaultValidatorFactory().getValidator(),
+				ClassLoaderProvider.System()
+			)
+		)
 		{
 			final List<DummyData> originalObjects = IntStream.range(0, 100_000).mapToObj(
 				i -> new DummyData("Data" + i, i)
@@ -126,7 +140,10 @@ class RegisteringStorageToWorkingCopyCopierTest
 				new SupportedChecker.Implementation(),
 				o -> null,
 				new DummyWorkingCopier(),
-				ClassLoaderProvider.System()))
+				Validation.buildDefaultValidatorFactory().getValidator(),
+				ClassLoaderProvider.System()
+			)
+		)
 		{
 			Assertions.assertThrows(NullPointerException.class, () -> copier.copy(null));
 		}

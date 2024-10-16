@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import jakarta.validation.Validator;
+
 import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
@@ -74,6 +76,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final PersistableChecker persistableChecker,
 		final SupportedChecker supportedChecker,
 		final ObjectSwizzling objectSwizzling,
+		final Validator validator,
 		final ClassLoaderProvider currentClassLoaderProvider
 	)
 	{
@@ -93,6 +96,9 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				objectSwizzling,
 				this,
 				currentClassLoaderProvider);
+			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling, this, validator);
+		this.storageToWorkingCopyCopier =
+			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this, validator);
 		this.idManagerProvider = idManagerProvider;
 		this.versionManagerProvider = versionManagerProvider;
 		this.persistableChecker = persistableChecker;

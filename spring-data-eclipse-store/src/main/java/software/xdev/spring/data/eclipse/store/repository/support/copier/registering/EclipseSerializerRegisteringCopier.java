@@ -18,8 +18,14 @@ package software.xdev.spring.data.eclipse.store.repository.support.copier.regist
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 
 import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.binary.types.BinaryStorer;
@@ -45,15 +51,19 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 	private final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier;
 	private final SupportedChecker supportedChecker;
 	private final RegisteringWorkingCopyAndOriginal register;
+	private final Validator validator;
 	
 	public EclipseSerializerRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
-		final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier)
+		final Supplier<PersistenceManager<Binary>> persistenceManagerSupplier,
+		final Validator validator
+	)
 	{
 		this.supportedChecker = supportedChecker;
 		this.register = register;
 		this.persistenceManagerSupplier = persistenceManagerSupplier;
+		this.validator = validator;
 		this.persistenceManagers = new ConcurrentLinkedQueue<>();
 	}
 	
@@ -138,10 +148,7 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 				{
 					return;
 				}
-				if(copiedObject != null && !this.supportedChecker.isSupported(copiedObject.getClass()))
-				{
-					throw new DataTypeNotSupportedException(copiedObject.getClass());
-				}
+				this.validate(copiedObject);
 				summarizer.incrementCopiedObjectsCount();
 				if(DataTypeUtil.isPrimitiveType(copiedObject.getClass()))
 				{
@@ -165,6 +172,30 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 		}
 		
 		return returnValue;
+	}
+	
+	private void validate(final Object copiedObject)
+	{
+		if(copiedObject != null)
+		{
+			if(!this.supportedChecker.isSupported(copiedObject.getClass()))
+			{
+				throw new DataTypeNotSupportedException(copiedObject.getClass());
+			}
+			final Set<ConstraintViolation<Object>> violations = this.validator.validate(copiedObject);
+			if(!violations.isEmpty())
+			{
+				final String violationsAsMessage = violations.stream()
+					.map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
+					.collect(Collectors.joining(", "));
+				
+				throw new ConstraintViolationException(
+					"Error validating " + copiedObject.getClass().getName() + ":" + System.lineSeparator()
+						+ violationsAsMessage,
+					violations
+				);
+			}
+		}
 	}
 	
 	private static class Summarizer
