@@ -15,18 +15,24 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
 
@@ -55,18 +61,37 @@ import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransact
 })
 public abstract class EclipseStoreClientConfiguration implements EclipseStoreStorageFoundationProvider
 {
-	private final EclipseStoreProperties defaultEclipseStoreProperties;
-	private final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
+	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreClientConfiguration.class);
 	
-	private EclipseStoreStorage storageInstance;
-	private EclipseStoreTransactionManager transactionManager;
+	protected final EclipseStoreProperties defaultEclipseStoreProperties;
+	protected final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider;
+	protected final ClassLoaderProvider classLoaderProvider;
+	
+	protected EclipseStoreStorage storageInstance;
+	protected EclipseStoreTransactionManager transactionManager;
+	
+	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.enabled:true}")
+	protected boolean contextCloseShutdownStorageEnabled;
+	
+	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.only-when-dev-tools:true}")
+	protected boolean contextCloseShutdownStorageOnlyWhenDevTools;
+	
+	/**
+	 * Upstream value from Spring Boot DevTools.
+	 *
+	 * @see org.springframework.boot.devtools.autoconfigure.DevToolsProperties.Restart
+	 */
+	@Value("${spring.devtools.restart.enabled:true}")
+	protected boolean springDevtoolsRestartEnabled;
 	
 	@Autowired
 	protected EclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider)
 	{
 		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
+		this.classLoaderProvider = classLoaderProvider;
 		this.defaultEclipseStoreProperties.setAutoStart(false);
 		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
 	}
@@ -79,6 +104,11 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	public EmbeddedStorageFoundationFactory getStoreProvider()
 	{
 		return this.defaultEclipseStoreProvider;
+	}
+	
+	public ClassLoaderProvider getClassLoaderProvider()
+	{
+		return classLoaderProvider;
 	}
 	
 	/**
@@ -103,10 +133,9 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	public PlatformTransactionManager transactionManager(
 		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
 	{
-		final EclipseStoreTransactionManager transactionManager = this.getTransactionManagerInstance();
-		transactionManagerCustomizers.ifAvailable((customizers) ->
-			customizers.customize((TransactionManager)transactionManager));
-		return transactionManager;
+		final EclipseStoreTransactionManager tm = this.getTransactionManagerInstance();
+		transactionManagerCustomizers.ifAvailable(customizers -> customizers.customize((TransactionManager)tm));
+		return tm;
 	}
 	
 	public EclipseStoreTransactionManager getTransactionManagerInstance()
@@ -118,6 +147,63 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		return this.transactionManager;
 	}
 	
+	protected boolean shouldShutdownStorageOnContextClosed()
+	{
+		// Did the user disable support for this?
+		if(!this.contextCloseShutdownStorageEnabled)
+		{
+			return false;
+		}
+		
+		// Always or only for DevTools?
+		if(!this.contextCloseShutdownStorageOnlyWhenDevTools)
+		{
+			return true;
+		}
+		
+		// Spring DevTools loaded?
+		try
+		{
+			Class.forName("org.springframework.boot.devtools.autoconfigure.DevToolsProperties");
+		}
+		catch(final ClassNotFoundException e)
+		{
+			return false;
+		}
+		
+		// Spring Boot DevTools Restart enabled?
+		final boolean enabled = this.springDevtoolsRestartEnabled;
+		if(enabled)
+		{
+			LOG.warn("Will shut down storage because Spring Boot DevTools Restarting is active. "
+				+ "This may cause some unexpected behavior. "
+				+ "For more information have a look at "
+				+ "https://spring-eclipsestore.xdev.software/known-issues.html#_spring_developer_tools");
+		}
+		return enabled;
+	}
+	
+	/**
+	 * Invoked when the application is "shut down" - or parts of it during a DevTools restart.
+	 * <p>
+	 * Shuts down the storage when it's present and {@link #shouldShutdownStorageOnContextClosed()} is
+	 * <code>true</code>
+	 * </p>
+	 *
+	 * <p>
+	 * This is required for the DevTools restart as it otherwise crashes with <code>StorageExceptionInitialization:
+	 * Active storage for ... already exists</code>
+	 * </p>
+	 */
+	@EventListener
+	public void shutdownStorageOnContextClosed(final ContextClosedEvent event)
+	{
+		if(this.storageInstance != null && this.shouldShutdownStorageOnContextClosed())
+		{
+			this.storageInstance.stop();
+		}
+	}
+
 	@Bean
 	public Validator getValidator()
 	{

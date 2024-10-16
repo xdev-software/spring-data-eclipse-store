@@ -15,6 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,8 +30,12 @@ public class DefaultEclipseStoreClientConfigurationFactory
 	@ConditionalOnMissingBean(EclipseStoreClientConfiguration.class)
 	public DefaultEclipseStoreClientConfiguration getEclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		return new DefaultEclipseStoreClientConfiguration(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+		return new DefaultEclipseStoreClientConfiguration(
+			defaultEclipseStoreProperties,
+			defaultEclipseStoreProvider,
+			classLoaderProvider);
 	}
 }

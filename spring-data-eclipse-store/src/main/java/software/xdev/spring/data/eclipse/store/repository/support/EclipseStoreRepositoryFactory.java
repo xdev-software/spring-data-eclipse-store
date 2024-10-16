@@ -87,7 +87,8 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage,
 			new SupportedChecker.Implementation(),
 			storage,
-			this.validator
+			this.validator,
+			storage.getClassLoaderProvider()
 		);
 	}
 	

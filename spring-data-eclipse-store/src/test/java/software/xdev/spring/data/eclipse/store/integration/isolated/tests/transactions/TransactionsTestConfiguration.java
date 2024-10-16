@@ -15,6 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.transactions;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -35,9 +36,10 @@ public class TransactionsTestConfiguration extends TestConfiguration
 	@Autowired
 	protected TransactionsTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 	}
 	
 	@Bean

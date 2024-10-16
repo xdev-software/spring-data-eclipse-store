@@ -28,3 +28,24 @@ public class DemoConfiguration extends EclipseStoreClientConfiguration
 The method ``createEmbeddedStorageFoundation`` could return a much more complicated ``EmbeddedStorageFoundation`` as described here in the https://docs.eclipsestore.io/manual/storage/configuration/index.html[EclipseStore documentation about configuration and foundations].
 
 This also enables you to use multiple EclipseStore-Storages in one project. See the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage[Dual storages demo].
+
+== Properties
+
+In general properties from EclipseStore can be used.
+See https://docs.eclipsestore.io/manual/storage/configuration/properties.html[EclipseStore - Properties].
+
+Here the {product-name}-Properties are displayed (all must be prefixed with ``spring-data-eclipse-store``):
+
+[cols="1,1"]
+|===
+|https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/config/EclipseStoreClientConfiguration.java[context-close-shutdown-storage.enabled] [[context-close-shutdown-storage]]
+| If enabled, the application listens to the ``ContextClosedEvent`` and shuts the storage down if the restart of the spring-dev-tools is enabled (see xref:known-issues.adoc#spring-dev-tools[Known issues] and https://docs.spring.io/spring-boot/api/java/org/springframework/boot/devtools/autoconfigure/DevToolsProperties.Restart.html[DevToolProperties])
+
+Default: ``true``
+
+|https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/config/EclipseStoreClientConfiguration.java[context-close-shutdown-storage.only-when-dev-tools]
+|If this and ``context-close-shutdown-storage.enabled`` are true, the application listens to the ``ContextClosedEvent`` and shuts the storage down **only if** the spring-dev-tools are present in the ClassLoader (see xref:known-issues.adoc#spring-dev-tools[Known issues])
+
+Default: ``true``
+
+

@@ -32,6 +32,7 @@ import jakarta.validation.Validator;
 
 import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,15 +76,28 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 		final PersistableChecker persistableChecker,
 		final SupportedChecker supportedChecker,
 		final ObjectSwizzling objectSwizzling,
-		final Validator validator
+		final Validator validator,
+		final ClassLoaderProvider currentClassLoaderProvider
 	)
 	{
 		this.domainClass = domainClass;
 		this.registry = registry;
 		this.workingCopyToStorageCopier =
-			new RegisteringWorkingCopyToStorageCopier(registry, supportedChecker, objectSwizzling, this, validator);
+			new RegisteringWorkingCopyToStorageCopier(
+				registry,
+				supportedChecker,
+				objectSwizzling,
+				this,
+				validator,
+				currentClassLoaderProvider);
 		this.storageToWorkingCopyCopier =
-			new RegisteringStorageToWorkingCopyCopier(registry, supportedChecker, objectSwizzling, this, validator);
+			new RegisteringStorageToWorkingCopyCopier(
+				registry,
+				supportedChecker,
+				objectSwizzling,
+				this,
+				validator,
+				currentClassLoaderProvider);
 		this.idManagerProvider = idManagerProvider;
 		this.versionManagerProvider = versionManagerProvider;
 		this.persistableChecker = persistableChecker;
