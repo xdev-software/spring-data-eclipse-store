@@ -50,8 +50,6 @@ public class EntityData<T, ID>
 	
 	/**
 	 * Accepts {@code null} if no id field is defined
-	 *
-	 * @param idGetter
 	 */
 	public void setIdGetter(final Function<T, ID> idGetter)
 	{
