@@ -1,7 +1,11 @@
+# 2.3.1
+
+* Auto-Fix problems with adding ids to entities with existing data store.
+
 # 2.3.0
 
-* Add support for shuting down the storage during application shutdown
-  * By default only enabled when Spring DevTools are active
+* Add support for shutting down the storage during application shutdown
+  * By default, only enabled when Spring DevTools are active
   * This should fix "StorageExceptionInitialization: Active storage for ... already exists" errors during DevTools restart
 * Added [Jakarta Bean Validation Constraints](https://jakarta.ee/learn/docs/jakartaee-tutorial/current/beanvalidation/bean-validation/bean-validation.html#_using_jakarta_bean_validation_constraints) with Hibernate validator for entities.
 
