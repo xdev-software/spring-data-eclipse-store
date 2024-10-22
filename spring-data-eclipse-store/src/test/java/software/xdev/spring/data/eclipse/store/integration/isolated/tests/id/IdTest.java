@@ -609,6 +609,33 @@ class IdTest
 	}
 	
 	@Test
+	void replaceWithIdAfterRestart(@Autowired final CustomerWithIdIntegerNoAutoGenerateRepository customerRepository)
+	{
+		final CustomerWithIdIntegerNoAutoGenerate existingCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME, TestData.LAST_NAME);
+		customerRepository.save(existingCustomer);
+		
+		restartDatastore(this.configuration);
+		
+		final CustomerWithIdIntegerNoAutoGenerate newCustomer =
+			new CustomerWithIdIntegerNoAutoGenerate(1, TestData.FIRST_NAME_ALTERNATIVE,
+				TestData.LAST_NAME_ALTERNATIVE);
+		customerRepository.save(newCustomer);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer =
+					TestUtil.iterableToList(customerRepository.findAll());
+				
+				Assertions.assertEquals(1, loadedCustomer.size());
+				Assertions.assertEquals(TestData.FIRST_NAME_ALTERNATIVE, loadedCustomer.get(0).getFirstName());
+				Assertions.assertEquals(TestData.LAST_NAME_ALTERNATIVE, loadedCustomer.get(0).getLastName());
+			}
+		);
+	}
+	
+	@Test
 	void replaceWithAutoId(@Autowired final CustomerWithIdIntegerRepository customerRepository)
 	{
 		final CustomerWithIdInteger existingCustomer =

@@ -48,9 +48,29 @@ public class EntityData<T, ID>
 		this.entitiesById = new HashMap<>();
 	}
 	
+	/**
+	 * Accepts {@code null} if no id field is defined
+	 *
+	 * @param idGetter
+	 */
 	public void setIdGetter(final Function<T, ID> idGetter)
 	{
 		this.idGetter = idGetter;
+		
+		this.ensureEntitiesAndEntitiesByIdAreTheSameSize();
+	}
+	
+	private void ensureEntitiesAndEntitiesByIdAreTheSameSize()
+	{
+		if(this.idGetter != null && this.entities.size() != this.entitiesById.size())
+		{
+			this.entitiesById.clear();
+			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.apply(entity), entity));
+		}
+		if(this.idGetter == null)
+		{
+			this.entitiesById.clear();
+		}
 	}
 	
 	public IdentitySet<T> getEntities()
@@ -83,7 +103,10 @@ public class EntityData<T, ID>
 		if(!this.getEntities().contains(entityToStore))
 		{
 			this.entities.add(entityToStore);
-			this.entitiesById.put(this.idGetter.apply(entityToStore), entityToStore);
+			if(this.idGetter != null)
+			{
+				this.entitiesById.put(this.idGetter.apply(entityToStore), entityToStore);
+			}
 			return this.getObjectsToStore();
 		}
 		return List.of();
@@ -97,7 +120,10 @@ public class EntityData<T, ID>
 	public Collection<Object> removeEntityAndReturnObjectsToStore(final T entityToRemove)
 	{
 		this.entities.remove(entityToRemove);
-		this.entitiesById.remove(this.idGetter.apply(entityToRemove));
+		if(this.idGetter != null)
+		{
+			this.entitiesById.remove(this.idGetter.apply(entityToRemove));
+		}
 		return this.getObjectsToStore();
 	}
 	

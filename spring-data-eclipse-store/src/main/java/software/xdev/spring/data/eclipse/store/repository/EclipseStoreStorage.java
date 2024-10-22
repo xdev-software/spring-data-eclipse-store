@@ -205,7 +205,14 @@ public class EclipseStoreStorage
 	{
 		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
 		final EntityData<T, Object> entityData = root.getCurrentRootData().getEntityData(entityClass);
-		entityData.setIdGetter(idManager::getId);
+		if(idManager.hasIdField())
+		{
+			entityData.setIdGetter(idManager::getId);
+		}
+		else
+		{
+			entityData.setIdGetter(null);
+		}
 	}
 	
 	public synchronized <T> void registerEntity(
