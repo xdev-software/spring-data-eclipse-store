@@ -1,0 +1,31 @@
+= Known issues
+
+== Data changes
+
+There are two basic ways to keep your data up to date.
+
+=== Structural
+
+As with most projects, data that needs persisting changes over time.
+In EclipseStore that's handled through https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html[Legacy Type Mapping].
+
+That consists of https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html#_automatic_mapping[Automatic Mapping] through EclipseStores internal heuristic and https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html#explicit-mapping[Explicit Mapping] by the user.
+
+=== Values
+
+There is a library to version your data in the store called https://github.com/xdev-software/micro-migration[XDEV MicroMigration].
+This helps you keep your data up to date regardless of the current version.
+
+We created https://github.com/xdev-software/spring-data-eclipse-store/issues/33[an issue] for that but right now we *do not support XDEVs MicroMigration*.
+
+== Spring Developer Tools [[spring-dev-tools]]
+
+Using https://docs.spring.io/spring-boot/reference/using/devtools.html[Spring Developer Tools] (`spring-boot-devtools`) can lead to serious issues in your project.
+That is manly due to the https://docs.spring.io/spring-boot/reference/using/devtools.html#using.devtools.livereload[LiveReload feature] and the usage of a "Restart ClassLoader".
+It derives from the https://docs.eclipsestore.io/manual/misc/integrations/spring-boot.html#_spring_dev_tools[issue with EclipseStore].
+
+To mitigate this issue, {product-name} listens to the closing of the Spring-Context and shuts down the storage.
+This **should** handle most problems with the ClassLoader.
+Restarting the storage leads to a reloading of all entities and may take some time, yet circumvents the Restart ClassLoader Issue.
+
+The behavior can be configured through xref:configuration.adoc#context-close-shutdown-storage[Properties] and is implemented in the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/config/EclipseStoreClientConfiguration.java[EclipseStoreClientConfiguration.java].
