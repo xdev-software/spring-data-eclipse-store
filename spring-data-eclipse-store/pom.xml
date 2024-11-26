@@ -57,7 +57,7 @@
 		<hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
 		<jakarta.el-api.version>6.0.1</jakarta.el-api.version>
 		<expressly.version>6.0.0-M1</expressly.version>
-		<hibernate-core.version>6.6.1.Final</hibernate-core.version>
+		<hibernate-core.version>6.6.3.Final</hibernate-core.version>
 	</properties>
 
 	<repositories>
