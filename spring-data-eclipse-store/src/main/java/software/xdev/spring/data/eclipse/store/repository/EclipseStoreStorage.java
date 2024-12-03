@@ -41,7 +41,6 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreSto
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
-import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReentrantJavaReadWriteLock;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.version.EntityVersionIncrementer;
@@ -60,6 +59,7 @@ public class EclipseStoreStorage
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
 	private final Map<Class<?>, EclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
+	private final Map<Class<?>, EclipseStoreRepository<?, ?>> lazyEntityClassToRepository = new HashMap<>();
 	/**
 	 * "Why are the IdManagers seperated from the repositories?" - Because there might be entities for which there are
 	 * no repositories, but they still have IDs.
@@ -161,6 +161,11 @@ public class EclipseStoreStorage
 		return this.entityClassToRepository.get(entityClass);
 	}
 	
+	public <T> EclipseStoreRepository<?, ?> getLazyRepository(final Class<T> entityClass)
+	{
+		return this.lazyEntityClassToRepository.get(entityClass);
+	}
+	
 	private void initRoot()
 	{
 		if(LOG.isDebugEnabled())
@@ -169,6 +174,20 @@ public class EclipseStoreStorage
 		}
 		this.repositorySynchronizer =
 			new SimpleRepositorySynchronizer(this.root.getCurrentRootData());
+		this.ensureEntityData();
+		this.ensureLazyEntityData();
+		this.entitySetCollector =
+			new EntitySetCollector(
+				this.root.getCurrentRootData()::getEntityData,
+				this.entityClassToRepository.keySet());
+		if(LOG.isDebugEnabled())
+		{
+			LOG.debug("Done initializing entity lists.");
+		}
+	}
+	
+	private void ensureEntityData()
+	{
 		boolean entityListMustGetStored = false;
 		for(final Class<?> entityClass : this.entityClassToRepository.keySet())
 		{
@@ -186,13 +205,26 @@ public class EclipseStoreStorage
 		{
 			this.storageManager.store(this.root.getCurrentRootData().getEntityListsToStore());
 		}
-		this.entitySetCollector =
-			new EntitySetCollector(
-				this.root.getCurrentRootData()::getEntityData,
-				this.entityClassToRepository.keySet());
-		if(LOG.isDebugEnabled())
+	}
+	
+	private void ensureLazyEntityData()
+	{
+		boolean entityListMustGetStored = false;
+		for(final Class<?> entityClass : this.lazyEntityClassToRepository.keySet())
 		{
-			LOG.debug("Done initializing entity lists.");
+			if(this.root.getCurrentRootData().getLazyEntityData(entityClass) == null)
+			{
+				this.createNewLazyEntityData(entityClass, this.root);
+				entityListMustGetStored = true;
+			}
+			else
+			{
+				this.setIdManagerForEntityData(entityClass, this.root);
+			}
+		}
+		if(entityListMustGetStored)
+		{
+			this.storageManager.store(this.root.getCurrentRootData().getLazyEntityListsToStore());
 		}
 	}
 	
@@ -200,6 +232,12 @@ public class EclipseStoreStorage
 	{
 		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
 		root.getCurrentRootData().createNewEntityData(entityClass, idManager::getId);
+	}
+	
+	private <T, ID> void createNewLazyEntityData(final Class<T> entityClass, final VersionedRoot root)
+	{
+		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
+		root.getCurrentRootData().createNewLazyEntityData(entityClass, idManager::getId);
 	}
 	
 	private <T, ID> void setIdManagerForEntityData(final Class<T> entityClass, final VersionedRoot root)
@@ -237,9 +275,13 @@ public class EclipseStoreStorage
 	private <T, ID> EntityData<T, ID> getEntityData(final Class<T> clazz)
 	{
 		this.ensureEntitiesInRoot();
-		return this.readWriteLock.read(
-			() -> this.root.getCurrentRootData().getEntityData(clazz)
-		);
+		return this.readWriteLock.read(() -> this.root.getCurrentRootData().getEntityData(clazz));
+	}
+	
+	private <T, ID> EntityData<T, ID> getLazyEntityData(final Class<T> clazz)
+	{
+		this.ensureEntitiesInRoot();
+		return this.readWriteLock.read(() -> this.root.getCurrentRootData().getLazyEntityData(clazz));
 	}
 	
 	@Override
@@ -298,10 +340,12 @@ public class EclipseStoreStorage
 		final Iterable<T> entitiesToStore)
 	{
 		final EntityData<T, ID> entityData = this.getEntityData(clazz);
+		final EntityData<T, ID> lazyEntityData = this.getLazyEntityData(clazz);
 		final Collection<Object> objectsToStore = new ArrayList<>();
 		for(final T entityToStore : entitiesToStore)
 		{
 			objectsToStore.addAll(entityData.ensureEntityAndReturnObjectsToStore(entityToStore));
+			objectsToStore.addAll(lazyEntityData.ensureEntityAndReturnObjectsToStore(entityToStore));
 			objectsToStore.add(entityToStore);
 			// Add the separate lists of entities to store.
 			this.repositorySynchronizer.syncAndReturnChangedObjectLists(entityToStore).forEach(

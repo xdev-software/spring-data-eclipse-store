@@ -22,6 +22,6 @@ import org.springframework.data.repository.Repository;
 
 @SuppressWarnings("java:S119")
 @NoRepositoryBean
-public interface LazyEclipseStoreCustomRepository<T, ID> extends Repository<Lazy<T>, ID>
+public interface LazyEclipseStoreCustomRepository<T, ID> extends Repository<T, ID>
 {
 }

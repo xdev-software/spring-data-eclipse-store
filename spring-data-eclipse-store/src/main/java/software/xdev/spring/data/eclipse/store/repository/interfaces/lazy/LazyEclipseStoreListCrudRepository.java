@@ -15,16 +15,13 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.interfaces.lazy;
 
-import java.util.List;
-
-import org.eclipse.serializer.reference.Lazy;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 
 @SuppressWarnings("java:S119")
 @NoRepositoryBean
-public interface LazyEclipseStoreListCrudRepository<T, ID> extends ListCrudRepository<Lazy<T>, ID>
+public interface LazyEclipseStoreListCrudRepository<T, ID> extends ListCrudRepository<T, ID>
 {
 	/**
 	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
@@ -34,26 +31,7 @@ public interface LazyEclipseStoreListCrudRepository<T, ID> extends ListCrudRepos
 	 * </p>
 	 */
 	@Override
-	void deleteById(ID id);
-	
-	/**
-	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
-	 * another object, the behavior of this function may differ from what you are used to!
-	 * <p>
-	 * For more information see {@link LazyEclipseStoreCrudRepository#deleteById(Object)}
-	 * </p>
-	 */
-	@Override
-	void delete(Lazy<T> entity);
-	
-	/**
-	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
-	 * another object, the behavior of this function may differ from what you are used to!
-	 * <p>
-	 * For more information see {@link LazyEclipseStoreCrudRepository#deleteById(Object)}
-	 * </p>
-	 */
-	void deleteEntity(T entity);
+	void delete(T entity);
 	
 	/**
 	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
@@ -73,16 +51,7 @@ public interface LazyEclipseStoreListCrudRepository<T, ID> extends ListCrudRepos
 	 * </p>
 	 */
 	@Override
-	void deleteAll(Iterable<? extends Lazy<T>> entities);
-	
-	/**
-	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
-	 * another object, the behavior of this function may differ from what you are used to!
-	 * <p>
-	 * For more information see {@link LazyEclipseStoreCrudRepository#deleteById(Object)}
-	 * </p>
-	 */
-	void deleteAllEntities(Iterable<? extends T> entities);
+	void deleteAll(Iterable<? extends T> entities);
 	
 	/**
 	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
@@ -93,8 +62,4 @@ public interface LazyEclipseStoreListCrudRepository<T, ID> extends ListCrudRepos
 	 */
 	@Override
 	void deleteAll();
-	
-	<S extends T> List<S> saveAllEntities(Iterable<S> entities);
-	
-	<S extends T> S saveEntity(S entity);
 }

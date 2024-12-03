@@ -19,6 +19,7 @@ import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.micromigration.version.Versioned;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.Root;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.RootDataV2_4;
 
 
 public class VersionedRoot implements Versioned
@@ -27,7 +28,9 @@ public class VersionedRoot implements Versioned
 	
 	private Root rootDataV1;
 	
-	private final RootDataV2 rootDataV2;
+	private RootDataV2 rootDataV2;
+	
+	private final RootDataV2_4 rootDataV2_4;
 	
 	public VersionedRoot()
 	{
@@ -41,6 +44,7 @@ public class VersionedRoot implements Versioned
 	{
 		this.rootDataV1 = rootDataV1;
 		this.rootDataV2 = new RootDataV2();
+		this.rootDataV2_4 = new RootDataV2_4();
 		if(rootDataV1 != null)
 		{
 			this.version = new MigrationVersion(0, 0, 0);
@@ -61,14 +65,21 @@ public class VersionedRoot implements Versioned
 		return this.rootDataV2;
 	}
 	
+	@SuppressWarnings("checkstyle:MethodName")
+	public RootDataV2_4 getRootDataV2_4()
+	{
+		return rootDataV2_4;
+	}
+	
 	public void clearOldRootData()
 	{
 		this.rootDataV1 = null;
+		this.rootDataV2 = null;
 	}
 	
-	public RootDataV2 getCurrentRootData()
+	public RootDataV2_4 getCurrentRootData()
 	{
-		return this.rootDataV2;
+		return this.rootDataV2_4;
 	}
 	
 	@Override

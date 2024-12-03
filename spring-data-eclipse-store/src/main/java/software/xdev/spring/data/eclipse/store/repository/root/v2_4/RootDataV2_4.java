@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.root;
+package software.xdev.spring.data.eclipse.store.repository.root.v2_4;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,18 +24,25 @@ import java.util.function.Function;
  * This is the actually stored object.
  */
 @SuppressWarnings("java:S119")
-public class RootDataV2
+public class RootDataV2_4
 {
 	private final Map<String, EntityData<?, ?>> entityLists;
+	private final Map<String, EntityData<?, ?>> lazyEntityLists;
 	
-	public RootDataV2()
+	public RootDataV2_4()
 	{
 		this.entityLists = new HashMap<>();
+		this.lazyEntityLists = new HashMap<>();
 	}
 	
-	public Map<String, EntityData<?, ?>> getEntityListsToStore()
+	public Object getEntityListsToStore()
 	{
 		return this.entityLists;
+	}
+	
+	public Object getLazyEntityListsToStore()
+	{
+		return this.lazyEntityLists;
 	}
 	
 	public long getEntityTypesCount()
@@ -45,7 +52,8 @@ public class RootDataV2
 	
 	public long getEntityCount()
 	{
-		return this.entityLists.values().stream().map(EntityData::getEntityCount).reduce(0L, Long::sum);
+		return this.entityLists.values().stream().map(EntityData::getEntityCount).reduce(0L, Long::sum)
+			+ this.lazyEntityLists.values().stream().map(EntityData::getEntityCount).reduce(0L, Long::sum);
 	}
 	
 	public <T, ID> EntityData<T, ID> getEntityData(final Class<T> entityClass)
@@ -58,9 +66,28 @@ public class RootDataV2
 		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
+	public <T, ID> EntityData<T, ID> getLazyEntityData(final Class<T> entityClass)
+	{
+		return this.getLazyEntityData(this.getEntityName(entityClass));
+	}
+	
+	public <T, ID> EntityData<T, ID> getLazyEntityData(final String entityClassName)
+	{
+		return (EntityData<T, ID>)this.lazyEntityLists.get(entityClassName);
+	}
+	
 	public <T, ID> void createNewEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
 	{
-		final EntityData<T, ID> entityData = new EntityData<>();
+		final EntityData<T, ID>
+			entityData = new EntityData<>();
+		entityData.setIdGetter(idGetter);
+		this.entityLists.put(this.getEntityName(entityClass), entityData);
+	}
+	
+	public <T, ID> void createNewLazyEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
+	{
+		final EntityData<T, ID>
+			entityData = new EntityData<>();
 		entityData.setIdGetter(idGetter);
 		this.entityLists.put(this.getEntityName(entityClass), entityData);
 	}

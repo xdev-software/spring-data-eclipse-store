@@ -34,7 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.StorageCommunicator;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
@@ -68,14 +68,14 @@ public class SimpleEclipseStoreRepository<T, ID>
 	EclipseStoreQueryByExampleExecutor<T>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleEclipseStoreRepository.class);
-	private final EclipseStoreStorage storage;
+	private final StorageCommunicator storage;
 	private final Class<T> domainClass;
 	private final WorkingCopier<T> copier;
 	private final EclipseStoreTransactionManager transactionManager;
 	private final IdManager<T, ID> idManager;
 	
 	public SimpleEclipseStoreRepository(
-		final EclipseStoreStorage storage,
+		final StorageCommunicator storage,
 		final WorkingCopier<T> copier,
 		final Class<T> domainClass,
 		final EclipseStoreTransactionManager transactionManager,

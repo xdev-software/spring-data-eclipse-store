@@ -98,7 +98,9 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	@Nonnull
 	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
 	{
-		final EclipseStoreRepository<?, ?> existingRepository = this.storage.getRepository(metadata.getDomainType());
+		Class<?> domainType = metadata.getDomainType();
+
+		final EclipseStoreRepository<?, ?> existingRepository = this.storage.getRepository(domainType);
 		if(existingRepository != null)
 		{
 			return existingRepository;
@@ -107,10 +109,10 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 		return this.getTargetRepositoryViaReflection(
 			metadata,
 			this.storage,
-			this.createWorkingCopier(metadata.getDomainType(), this.storage),
-			metadata.getDomainType(),
+			this.createWorkingCopier(domainType, this.storage),
+			domainType,
 			this.transactionManager,
-			this.storage.ensureIdManager(metadata.getDomainType())
+			this.storage.ensureIdManager(domainType)
 		);
 	}
 	

@@ -25,7 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.StorageCommunicator;
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.CriteriaByExample;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.CountQueryExecutor;
 import software.xdev.spring.data.eclipse.store.repository.query.executors.ExistsQueryExecutor;
@@ -43,14 +43,14 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 	private final WorkingCopier<T> copier;
 	private final Example<S> example;
 	private final Class<T> domainClass;
-	private final EclipseStoreStorage storage;
+	private final StorageCommunicator storage;
 	private final Sort sort;
 	
 	public EclipseStoreFetchableFluentQuery(
 		final WorkingCopier<T> copier,
 		final Example<S> example,
 		final Class<T> domainClass,
-		final EclipseStoreStorage storage,
+		final StorageCommunicator storage,
 		final Sort sort
 	)
 	{

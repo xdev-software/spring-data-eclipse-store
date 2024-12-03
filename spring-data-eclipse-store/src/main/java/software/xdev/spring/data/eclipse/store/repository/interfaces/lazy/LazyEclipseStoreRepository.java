@@ -28,6 +28,6 @@ public interface LazyEclipseStoreRepository<T, ID>
 	LazyEclipseStoreListCrudRepository<T, ID>,
 	LazyEclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
 	LazyEclipseStoreQueryByExampleExecutor<T>,
-	EclipseStoreRepository<Lazy<T>, ID>
+	EclipseStoreRepository<T, ID>
 {
 }

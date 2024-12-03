@@ -15,14 +15,13 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.interfaces.lazy;
 
-import org.eclipse.serializer.reference.Lazy;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 
 @SuppressWarnings("java:S119")
 @NoRepositoryBean
-public interface LazyEclipseStoreCrudRepository<T, ID> extends CrudRepository<Lazy<T>, ID>
+public interface LazyEclipseStoreCrudRepository<T, ID> extends CrudRepository<T, ID>
 {
 	/**
 	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
@@ -47,17 +46,8 @@ public interface LazyEclipseStoreCrudRepository<T, ID> extends CrudRepository<La
 	 * For more information see {@link #deleteById(Object)}
 	 * </p>
 	 */
-	void deleteEntity(T entity);
-	
-	/**
-	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
-	 * another object, the behavior of this function may differ from what you are used to!
-	 * <p>
-	 * For more information see {@link #deleteById(Object)}
-	 * </p>
-	 */
 	@Override
-	void delete(Lazy<T> entity);
+	void delete(T entity);
 	
 	/**
 	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
@@ -77,16 +67,7 @@ public interface LazyEclipseStoreCrudRepository<T, ID> extends CrudRepository<La
 	 * </p>
 	 */
 	@Override
-	void deleteAll(Iterable<? extends Lazy<T>> entities);
-	
-	/**
-	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by
-	 * another object, the behavior of this function may differ from what you are used to!
-	 * <p>
-	 * For more information see {@link #deleteById(Object)}
-	 * </p>
-	 */
-	void deleteAllEntities(Iterable<? extends T> entities);
+	void deleteAll(Iterable<? extends T> entities);
 	
 	/**
 	 * @inheritDoc <b>Caution with referenced objects!</b><br/> If you are deleting an object that is referenced by

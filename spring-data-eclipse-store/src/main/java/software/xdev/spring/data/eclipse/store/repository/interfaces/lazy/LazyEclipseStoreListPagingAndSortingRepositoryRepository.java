@@ -23,6 +23,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 @SuppressWarnings("java:S119")
 @NoRepositoryBean
 public interface LazyEclipseStoreListPagingAndSortingRepositoryRepository<T, ID>
-	extends ListPagingAndSortingRepository<Lazy<T>, ID>
+	extends ListPagingAndSortingRepository<T, ID>
 {
 }

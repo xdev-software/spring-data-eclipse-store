@@ -22,6 +22,6 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 @SuppressWarnings("java:S119")
 @NoRepositoryBean
-public interface LazyEclipseStoreQueryByExampleExecutor<T> extends QueryByExampleExecutor<Lazy<T>>
+public interface LazyEclipseStoreQueryByExampleExecutor<T> extends QueryByExampleExecutor<T>
 {
 }
