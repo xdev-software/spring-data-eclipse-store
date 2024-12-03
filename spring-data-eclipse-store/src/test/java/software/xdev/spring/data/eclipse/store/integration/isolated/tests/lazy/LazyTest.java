@@ -37,6 +37,7 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
+@SuppressWarnings("checkstyle:MethodName")
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {LazyTestConfiguration.class})
 class LazyTest
@@ -456,5 +457,40 @@ class LazyTest
 				Assertions.assertEquals(objectToStore2, lazy.get());
 			}
 		);
+	}
+	
+	@Test
+	void simpleEntityWithIdLazyRepository_PersistetAfterRestart(
+		@Autowired final SimpleEntityWithIdLazyRepository repository)
+	{
+		final SimpleEntityWithId objectToStore = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final SpringDataEclipseStoreLazy.Default<SimpleEntityWithId> lazyObject =
+			SpringDataEclipseStoreLazy.build(objectToStore);
+		repository.save(lazyObject);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, repository.findAll().size());
+				final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
+				Assertions.assertEquals(objectToStore, reloadedObject.get());
+			}
+		);
+	}
+	
+	@Test
+	void simpleEntityWithIdLazyRepository_OnlyLoadOnDemand(@Autowired final SimpleEntityWithIdLazyRepository repository)
+	{
+		final SimpleEntityWithId objectToStore = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final SpringDataEclipseStoreLazy.Default<SimpleEntityWithId> lazyObject =
+			SpringDataEclipseStoreLazy.build(objectToStore);
+		repository.save(lazyObject);
+		
+		restartDatastore(this.configuration);
+		
+		final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
+		Assertions.assertFalse(reloadedObject.isLoaded());
+		Assertions.assertEquals(objectToStore, reloadedObject.get());
+		Assertions.assertTrue(reloadedObject.isLoaded());
 	}
 }
