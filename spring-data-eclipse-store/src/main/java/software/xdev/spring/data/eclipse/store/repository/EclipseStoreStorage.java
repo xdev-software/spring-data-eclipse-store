@@ -38,6 +38,7 @@ import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredExcep
 import software.xdev.spring.data.eclipse.store.exceptions.InvalidRootException;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreStorageFoundationProvider;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
@@ -58,7 +59,7 @@ public class EclipseStoreStorage
 	implements EntityListProvider, IdManagerProvider, VersionManagerProvider, PersistableChecker, ObjectSwizzling
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreStorage.class);
-	private final Map<Class<?>, SimpleEclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
+	private final Map<Class<?>, EclipseStoreRepository<?, ?>> entityClassToRepository = new HashMap<>();
 	/**
 	 * "Why are the IdManagers seperated from the repositories?" - Because there might be entities for which there are
 	 * no repositories, but they still have IDs.
@@ -155,9 +156,9 @@ public class EclipseStoreStorage
 		return embeddedStorageFoundation;
 	}
 	
-	public <T> SimpleEclipseStoreRepository<T, ?> getRepository(final Class<T> entityClass)
+	public <T> EclipseStoreRepository<?, ?> getRepository(final Class<T> entityClass)
 	{
-		return (SimpleEclipseStoreRepository<T, ?>)this.entityClassToRepository.get(entityClass);
+		return this.entityClassToRepository.get(entityClass);
 	}
 	
 	private void initRoot()
@@ -217,7 +218,7 @@ public class EclipseStoreStorage
 	
 	public synchronized <T> void registerEntity(
 		final Class<T> classToRegister,
-		final SimpleEclipseStoreRepository<T, ?> repository)
+		final EclipseStoreRepository<?, ?> repository)
 	{
 		if(this.entityClassToRepository.containsKey(classToRegister))
 		{

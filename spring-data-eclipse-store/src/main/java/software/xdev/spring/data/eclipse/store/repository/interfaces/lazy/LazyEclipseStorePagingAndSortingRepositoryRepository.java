@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
+package software.xdev.spring.data.eclipse.store.repository.interfaces.lazy;
 
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
+import org.eclipse.serializer.reference.Lazy;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 
-public interface SimpleEntityWithIdLazyRepository extends LazyEclipseStoreRepository<SimpleEntityWithId, Long>
+@SuppressWarnings("java:S119")
+@NoRepositoryBean
+public interface LazyEclipseStorePagingAndSortingRepositoryRepository<T, ID>
+	extends PagingAndSortingRepository<Lazy<T>, ID>
 {
 }

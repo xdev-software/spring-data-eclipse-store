@@ -15,9 +15,10 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
+import org.eclipse.serializer.reference.Lazy;
+import org.springframework.data.repository.ListCrudRepository;
 
 
-public interface SimpleEntityWithIdLazyRepository extends LazyEclipseStoreRepository<SimpleEntityWithId, Long>
+public interface SimpleEntityWithIdLazyWrappedRepository extends ListCrudRepository<Lazy<SimpleEntityWithId>, Long>
 {
 }

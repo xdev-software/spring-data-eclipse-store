@@ -20,6 +20,7 @@ import java.util.Optional;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.Validator;
 
+import org.eclipse.serializer.reference.Lazy;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -35,6 +36,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -96,8 +98,7 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	@Nonnull
 	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
 	{
-		final SimpleEclipseStoreRepository<?, ?> existingRepository =
-			this.storage.getRepository(metadata.getDomainType());
+		final EclipseStoreRepository<?, ?> existingRepository = this.storage.getRepository(metadata.getDomainType());
 		if(existingRepository != null)
 		{
 			return existingRepository;
@@ -117,6 +118,11 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	@Nonnull
 	protected Class<?> getRepositoryBaseClass(@Nonnull final RepositoryMetadata metadata)
 	{
+		final Class<?> domainType = metadata.getDomainType();
+		if(domainType.equals(Lazy.class))
+		{
+			return LazySimpleEclipseStoreRepository.class;
+		}
 		return SimpleEclipseStoreRepository.class;
 	}
 	
