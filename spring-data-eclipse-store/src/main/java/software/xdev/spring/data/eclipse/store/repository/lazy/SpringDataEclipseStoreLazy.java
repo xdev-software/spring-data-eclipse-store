@@ -17,6 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.lazy;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import org.eclipse.serializer.collections.HashEnum;
@@ -67,7 +68,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 	 *
 	 * @param <T> the type of the lazily referenced element
 	 */
-	@SuppressWarnings({"java:S2065"})
+	@SuppressWarnings({"java:S2065", "PMD.AvoidSynchronizedStatement"})
 	final class Default<T> implements SpringDataEclipseStoreLazy<T>
 	{
 		private T objectToBeWrapped;
@@ -76,6 +77,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		private transient ObjectSwizzling loader;
 		private transient WorkingCopier<T> copier;
 		private transient boolean isStored;
+		private final transient ReentrantLock usageMarksLock = new ReentrantLock();
 		private final transient HashEnum<Object> usageMarks = HashEnum.New();
 		
 		private Default(final Lazy<T> lazySubject)
