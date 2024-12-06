@@ -19,8 +19,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
+import org.eclipse.serializer.reference.Lazy;
+import org.eclipse.serializer.reference.Referencing;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
 /**
@@ -29,7 +34,7 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
  */
 public class LazyEntityData<T, ID> implements EntityData<T, ID>
 {
-	private final IdentitySet<T> entities;
+	private final IdentitySet<Lazy<T>> entities;
 	private ID lastId;
 	/**
 	 * "Why do you keep the entites at two places? This seems like a waste of space." - Yes, it seems like it is
@@ -38,7 +43,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 	 * provided by google and apache, but they implemented this also with two seperate lists so there is no benefit in
 	 * using these.
 	 */
-	private final HashMap<ID, T> entitiesById;
+	private final HashMap<ID, Lazy<T>> entitiesById;
 	
 	private transient Function<T, ID> idGetter;
 	
@@ -51,6 +56,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 	/**
 	 * Accepts {@code null} if no id field is defined
 	 */
+	@Override
 	public void setIdGetter(final Function<T, ID> idGetter)
 	{
 		this.idGetter = idGetter;
@@ -58,12 +64,34 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		this.ensureEntitiesAndEntitiesByIdAreTheSameSize();
 	}
 	
+	@Override
+	public Stream<T> getEntitiesAsStream()
+	{
+		return this.entities.stream().map(Referencing::get);
+	}
+	
+	@Override
+	public boolean containsEntity(final T entity)
+	{
+		if(this.idGetter == null)
+		{
+			return this.entities
+				.stream()
+				.anyMatch(lazyEntity -> lazyEntity.get() == entity);
+		}
+		else
+		{
+			final ID id = this.idGetter.apply(entity);
+			return this.entitiesById.containsKey(id);
+		}
+	}
+	
 	private void ensureEntitiesAndEntitiesByIdAreTheSameSize()
 	{
 		if(this.idGetter != null && this.entities.size() != this.entitiesById.size())
 		{
 			this.entitiesById.clear();
-			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.apply(entity), entity));
+			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.apply(entity.get()), entity));
 		}
 		if(this.idGetter == null)
 		{
@@ -71,60 +99,76 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		}
 	}
 	
-	public IdentitySet<T> getEntities()
-	{
-		return this.entities;
-	}
-	
+	@Override
 	public ID getLastId()
 	{
 		return this.lastId;
 	}
 	
-	public HashMap<ID, T> getEntitiesById()
+	@Override
+	public T getEntityById(final ID id)
 	{
-		return this.entitiesById;
+		final Lazy<T> lazyEntity = this.entitiesById.get(id);
+		return lazyEntity == null ? null : lazyEntity.get();
 	}
 	
+	@Override
 	public long getEntityCount()
 	{
 		return this.entities.size();
 	}
 	
+	@Override
 	public void setLastId(final Object lastId)
 	{
 		this.lastId = (ID)lastId;
 	}
 	
+	@Override
 	public Collection<Object> ensureEntityAndReturnObjectsToStore(final T entityToStore)
 	{
-		if(!this.getEntities().contains(entityToStore))
+		if(!this.containsEntity(entityToStore))
 		{
-			this.entities.add(entityToStore);
+			final SpringDataEclipseStoreLazy.Default<T> newLazyEntity =
+				SpringDataEclipseStoreLazy.build(entityToStore);
+			this.entities.add(newLazyEntity);
 			if(this.idGetter != null)
 			{
-				this.entitiesById.put(this.idGetter.apply(entityToStore), entityToStore);
+				this.entitiesById.put(this.idGetter.apply(entityToStore), newLazyEntity);
 			}
 			return this.getObjectsToStore();
 		}
 		return List.of();
 	}
 	
+	@Override
 	public Collection<Object> getObjectsToStore()
 	{
 		return List.of(this.entities.getInternalMap(), this.entitiesById);
 	}
 	
+	@Override
 	public Collection<Object> removeEntityAndReturnObjectsToStore(final T entityToRemove)
 	{
-		this.entities.remove(entityToRemove);
-		if(this.idGetter != null)
+		if(this.idGetter == null)
 		{
-			this.entitiesById.remove(this.idGetter.apply(entityToRemove));
+			this.entities
+				.stream()
+				.filter(entity -> entity.get() == entityToRemove)
+				.findAny()
+				.ifPresent(this.entities::remove);
+		}
+		else
+		{
+			final ID id = this.idGetter.apply(entityToRemove);
+			final Lazy<T> lazyReference = this.entitiesById.get(id);
+			this.entities.remove(lazyReference);
+			this.entitiesById.remove(id);
 		}
 		return this.getObjectsToStore();
 	}
 	
+	@Override
 	public Collection<Object> removeAllEntitiesAndReturnObjectsToStore()
 	{
 		this.entities.clear();

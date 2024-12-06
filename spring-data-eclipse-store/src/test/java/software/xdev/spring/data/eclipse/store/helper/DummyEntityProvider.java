@@ -30,7 +30,7 @@ public class DummyEntityProvider<T> extends EntityProvider<T, Void>
 		super();
 		final EntityData<T, Void> objects = new NonLazyEntityData<>();
 		objects.setIdGetter(i -> null);
-		objects.getEntities().addAll(collection);
+		collection.forEach(objects::ensureEntityAndReturnObjectsToStore);
 		this.addEntityData(objects);
 	}
 	

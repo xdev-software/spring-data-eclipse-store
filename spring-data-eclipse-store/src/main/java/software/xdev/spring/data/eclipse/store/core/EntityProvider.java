@@ -18,8 +18,8 @@ package software.xdev.spring.data.eclipse.store.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +38,7 @@ public class EntityProvider<T, ID>
 	
 	public Stream<? extends T> stream()
 	{
-		return this.entityDataList.stream().map(EntityData::getEntities).flatMap(Set::stream);
+		return this.entityDataList.stream().flatMap(EntityData::getEntitiesAsStream);
 	}
 	
 	public Collection<T> toCollection()
@@ -61,8 +61,8 @@ public class EntityProvider<T, ID>
 	{
 		return (Optional<T>)this.entityDataList
 			.stream()
-			.map(entityData -> entityData.getEntitiesById().get(id))
-			.filter(e -> e != null)
+			.map(entityData -> entityData.getEntityById(id))
+			.filter(Objects::nonNull)
 			.findAny();
 	}
 }

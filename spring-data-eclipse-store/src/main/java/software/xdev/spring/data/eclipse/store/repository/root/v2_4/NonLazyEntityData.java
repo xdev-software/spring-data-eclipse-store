@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
@@ -51,11 +52,32 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 	/**
 	 * Accepts {@code null} if no id field is defined
 	 */
+	@Override
 	public void setIdGetter(final Function<T, ID> idGetter)
 	{
 		this.idGetter = idGetter;
 		
 		this.ensureEntitiesAndEntitiesByIdAreTheSameSize();
+	}
+	
+	@Override
+	public Stream<T> getEntitiesAsStream()
+	{
+		return this.entities.stream();
+	}
+	
+	@Override
+	public boolean containsEntity(final T entity)
+	{
+		if(this.idGetter == null)
+		{
+			return this.entities.contains(entity);
+		}
+		else
+		{
+			final ID id = this.idGetter.apply(entity);
+			return this.entitiesById.containsKey(id);
+		}
 	}
 	
 	private void ensureEntitiesAndEntitiesByIdAreTheSameSize()
@@ -71,34 +93,28 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 		}
 	}
 	
-	public IdentitySet<T> getEntities()
-	{
-		return this.entities;
-	}
-	
+	@Override
 	public ID getLastId()
 	{
 		return this.lastId;
 	}
 	
-	public HashMap<ID, T> getEntitiesById()
-	{
-		return this.entitiesById;
-	}
-	
+	@Override
 	public long getEntityCount()
 	{
 		return this.entities.size();
 	}
 	
+	@Override
 	public void setLastId(final Object lastId)
 	{
 		this.lastId = (ID)lastId;
 	}
 	
+	@Override
 	public Collection<Object> ensureEntityAndReturnObjectsToStore(final T entityToStore)
 	{
-		if(!this.getEntities().contains(entityToStore))
+		if(!this.containsEntity(entityToStore))
 		{
 			this.entities.add(entityToStore);
 			if(this.idGetter != null)
@@ -110,11 +126,19 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 		return List.of();
 	}
 	
+	@Override
 	public Collection<Object> getObjectsToStore()
 	{
 		return List.of(this.entities.getInternalMap(), this.entitiesById);
 	}
 	
+	@Override
+	public T getEntityById(final ID id)
+	{
+		return this.entitiesById.get(id);
+	}
+	
+	@Override
 	public Collection<Object> removeEntityAndReturnObjectsToStore(final T entityToRemove)
 	{
 		this.entities.remove(entityToRemove);
@@ -125,6 +149,7 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 		return this.getObjectsToStore();
 	}
 	
+	@Override
 	public Collection<Object> removeAllEntitiesAndReturnObjectsToStore()
 	{
 		this.entities.clear();

@@ -53,7 +53,7 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 					EntityData<Object, Object> entityDataForCurrentObject =
 						this.root.getEntityData(objectInGraphClass);
 					if(entityDataForCurrentObject != null
-						&& !entityDataForCurrentObject.getEntities().contains(objectInGraph))
+						&& !entityDataForCurrentObject.containsEntity(objectInGraph))
 					{
 						entityDataForCurrentObject.ensureEntityAndReturnObjectsToStore(objectInGraph);
 						this.listsToStore.add(entityDataForCurrentObject);

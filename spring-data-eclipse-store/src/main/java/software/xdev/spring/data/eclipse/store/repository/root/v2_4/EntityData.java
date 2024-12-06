@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.root.v2_4;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
@@ -34,11 +35,11 @@ public interface EntityData<T, ID>
 	 */
 	void setIdGetter(final Function<T, ID> idGetter);
 	
-	IdentitySet<T> getEntities();
+	Stream<T> getEntitiesAsStream();
+	
+	boolean containsEntity(final T entity);
 	
 	ID getLastId();
-	
-	HashMap<ID, T> getEntitiesById();
 	
 	long getEntityCount();
 	
@@ -51,4 +52,6 @@ public interface EntityData<T, ID>
 	Collection<Object> removeEntityAndReturnObjectsToStore(final T entityToRemove);
 	
 	Collection<Object> removeAllEntitiesAndReturnObjectsToStore();
+	
+	T getEntityById(ID id);
 }
