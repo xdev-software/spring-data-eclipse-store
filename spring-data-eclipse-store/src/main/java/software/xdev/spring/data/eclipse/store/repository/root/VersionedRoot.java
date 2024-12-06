@@ -22,6 +22,7 @@ import software.xdev.spring.data.eclipse.store.repository.Root;
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.RootDataV2_4;
 
 
+@SuppressWarnings("deprecation")
 public class VersionedRoot implements Versioned
 {
 	private MigrationVersion version;

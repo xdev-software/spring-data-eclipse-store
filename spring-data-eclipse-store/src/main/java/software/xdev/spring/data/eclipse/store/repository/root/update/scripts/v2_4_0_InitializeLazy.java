@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
-import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
@@ -32,7 +31,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
  * <b>All migration scripts must be added to
  * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator#SCRIPTS}!</b>
  */
-@SuppressWarnings("checkstyle:TypeName")
+@SuppressWarnings({"checkstyle:TypeName", "deprecation"})
 public class v2_4_0_InitializeLazy extends LoggingUpdateScript
 {
 	private static final Logger LOG = LoggerFactory.getLogger(v2_4_0_InitializeLazy.class);
@@ -44,28 +43,12 @@ public class v2_4_0_InitializeLazy extends LoggingUpdateScript
 		versionedRoot.getRootDataV2().getEntityListsToStore().forEach(
 			(entityName, entities) ->
 			{
-				final EntityData<Object, Object> entityData =
-					versionedRoot.getRootDataV2_4().getEntityData(entityName);
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				if(entityData == null)
-				{
-					LOG.warn("Dropping entities {} because there is no repository in the new root.", entityName);
-				}
-				entities.forEach(entity -> entityData.ensureEntityAndReturnObjectsToStore(entity));
-				context.getStorageManager().getNativeStorageManager().storeAll(entityData.getObjectsToStore());
+				final software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData<Object, Object>
+					newEntityData = versionedRoot.getRootDataV2_4().getEntityData(entityName);
+				entities.getEntities().forEach(newEntityData::ensureEntityAndReturnObjectsToStore);
+				newEntityData.setLastId(entities.getLastId());
+				context.getStorageManager().getNativeStorageManager().storeAll(newEntityData.getObjectsToStore());
 				LOG.info("Migrated entities {}.", entityName);
-			}
-		);
-		versionedRoot.getRootDataV1().getLastIds().forEach(
-			(entityName, lastId) ->
-			{
-				final EntityData<Object, Object> entityData = versionedRoot.getRootDataV2().getEntityData(entityName);
-				entityData.setLastId(lastId);
-				context.getStorageManager().store(entityData);
-				LOG.info("Migrated last id of entities {}.", entityName);
 			}
 		);
 		versionedRoot.clearOldRootData();

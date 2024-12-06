@@ -513,21 +513,18 @@ class LazyTest
 	void simpleEntityWithIdLazyRepository_FindById(@Autowired final SimpleEntityWithIdLazyRepository repository)
 	{
 		final SimpleEntityWithId objectToStore1 = new SimpleEntityWithId(TestData.DUMMY_STRING);
-		repository.save(SpringDataEclipseStoreLazy.build(objectToStore1));
+		repository.save(objectToStore1);
 		final SimpleEntityWithId objectToStore2 = new SimpleEntityWithId(TestData.DUMMY_STRING);
-		repository.save(SpringDataEclipseStoreLazy.build(objectToStore2));
+		repository.save(objectToStore2);
 		
-		final List<Lazy<SimpleEntityWithId>> all = repository.findAll();
+		final List<SimpleEntityWithId> all = repository.findAll();
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final Optional<Lazy<SimpleEntityWithId>> reloadedObject =
-					repository.findById(all.get(0).get().getId());
+				final Optional<SimpleEntityWithId> reloadedObject =
+					repository.findById(all.get(0).getId());
 				Assertions.assertTrue(reloadedObject.isPresent());
-				Assertions.assertFalse(reloadedObject.get().isLoaded());
-				Assertions.assertEquals(objectToStore1, reloadedObject.get().get());
-				Assertions.assertTrue(reloadedObject.get().isLoaded());
 			}
 		);
 	}

@@ -399,4 +399,9 @@ public class SimpleEclipseStoreRepository<T, ID>
 			() -> queryFunction.apply(query)
 		);
 	}
+	
+	public boolean isLazy()
+	{
+		return false;
+	}
 }

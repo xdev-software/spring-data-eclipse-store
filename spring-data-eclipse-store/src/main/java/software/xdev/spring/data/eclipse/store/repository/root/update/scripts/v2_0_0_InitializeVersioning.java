@@ -32,7 +32,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
  * <b>All migration scripts must be added to
  * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator#SCRIPTS}!</b>
  */
-@SuppressWarnings("checkstyle:TypeName")
+@SuppressWarnings({"checkstyle:TypeName", "deprecation"})
 public class v2_0_0_InitializeVersioning extends LoggingUpdateScript
 {
 	private static final Logger LOG = LoggerFactory.getLogger(v2_0_0_InitializeVersioning.class);

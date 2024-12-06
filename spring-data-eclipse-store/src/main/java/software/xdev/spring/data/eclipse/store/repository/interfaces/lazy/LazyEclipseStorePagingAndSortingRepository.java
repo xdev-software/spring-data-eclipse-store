@@ -15,14 +15,13 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.interfaces.lazy;
 
-import org.eclipse.serializer.reference.Lazy;
-import org.springframework.data.repository.ListPagingAndSortingRepository;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 
 @SuppressWarnings("java:S119")
 @NoRepositoryBean
-public interface LazyEclipseStoreListPagingAndSortingRepositoryRepository<T, ID>
-	extends ListPagingAndSortingRepository<T, ID>
+public interface LazyEclipseStorePagingAndSortingRepository<T, ID>
+	extends PagingAndSortingRepository<T, ID>
 {
 }

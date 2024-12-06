@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 
 
 @SuppressWarnings("java:S119")
@@ -56,6 +56,7 @@ public class EntityProvider<T, ID>
 		return this.stream().count();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Optional<T> findAnyEntityWithId(final ID id)
 	{
 		return (Optional<T>)this.entityDataList

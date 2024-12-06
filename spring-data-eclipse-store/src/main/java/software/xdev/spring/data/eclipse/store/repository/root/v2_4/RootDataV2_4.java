@@ -27,12 +27,10 @@ import java.util.function.Function;
 public class RootDataV2_4
 {
 	private final Map<String, EntityData<?, ?>> entityLists;
-	private final Map<String, EntityData<?, ?>> lazyEntityLists;
 	
 	public RootDataV2_4()
 	{
 		this.entityLists = new HashMap<>();
-		this.lazyEntityLists = new HashMap<>();
 	}
 	
 	public Object getEntityListsToStore()
@@ -40,10 +38,6 @@ public class RootDataV2_4
 		return this.entityLists;
 	}
 	
-	public Object getLazyEntityListsToStore()
-	{
-		return this.lazyEntityLists;
-	}
 	
 	public long getEntityTypesCount()
 	{
@@ -52,8 +46,7 @@ public class RootDataV2_4
 	
 	public long getEntityCount()
 	{
-		return this.entityLists.values().stream().map(EntityData::getEntityCount).reduce(0L, Long::sum)
-			+ this.lazyEntityLists.values().stream().map(EntityData::getEntityCount).reduce(0L, Long::sum);
+		return this.entityLists.values().stream().map(EntityData::getEntityCount).reduce(0L, Long::sum);
 	}
 	
 	public <T, ID> EntityData<T, ID> getEntityData(final Class<T> entityClass)
@@ -66,28 +59,16 @@ public class RootDataV2_4
 		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
-	public <T, ID> EntityData<T, ID> getLazyEntityData(final Class<T> entityClass)
-	{
-		return this.getLazyEntityData(this.getEntityName(entityClass));
-	}
-	
-	public <T, ID> EntityData<T, ID> getLazyEntityData(final String entityClassName)
-	{
-		return (EntityData<T, ID>)this.lazyEntityLists.get(entityClassName);
-	}
-	
 	public <T, ID> void createNewEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
 	{
-		final EntityData<T, ID>
-			entityData = new EntityData<>();
+		final NonLazyEntityData<T, ID> entityData = new NonLazyEntityData<>();
 		entityData.setIdGetter(idGetter);
 		this.entityLists.put(this.getEntityName(entityClass), entityData);
 	}
 	
 	public <T, ID> void createNewLazyEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
 	{
-		final EntityData<T, ID>
-			entityData = new EntityData<>();
+		final LazyEntityData<T, ID> entityData = new LazyEntityData<>();
 		entityData.setIdGetter(idGetter);
 		this.entityLists.put(this.getEntityName(entityClass), entityData);
 	}

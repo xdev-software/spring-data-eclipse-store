@@ -40,8 +40,8 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCustomRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListCrudRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListPagingAndSortingRepositoryRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListPagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStorePagingAndSortingRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRepositoryFactoryBean;
 
@@ -64,6 +64,7 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	 */
 	@Override
 	@Nonnull
+	@SuppressWarnings("deprecation")
 	public String getModulePrefix()
 	{
 		return this.getModuleIdentifier();
@@ -130,8 +131,8 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 			EclipseStoreListCrudRepository.class,
 			LazyEclipseStoreRepository.class,
 			LazyEclipseStoreCustomRepository.class,
-			LazyEclipseStorePagingAndSortingRepositoryRepository.class,
-			LazyEclipseStoreListPagingAndSortingRepositoryRepository.class,
+			LazyEclipseStorePagingAndSortingRepository.class,
+			LazyEclipseStoreListPagingAndSortingRepository.class,
 			LazyEclipseStoreCrudRepository.class,
 			LazyEclipseStoreListCrudRepository.class
 		);

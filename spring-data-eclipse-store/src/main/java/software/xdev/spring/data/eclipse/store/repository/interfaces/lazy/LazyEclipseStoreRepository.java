@@ -16,7 +16,6 @@
 package software.xdev.spring.data.eclipse.store.repository.interfaces.lazy;
 
 import org.springframework.data.repository.NoRepositoryBean;
-import org.eclipse.serializer.reference.Lazy;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 
@@ -26,7 +25,7 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 public interface LazyEclipseStoreRepository<T, ID>
 	extends
 	LazyEclipseStoreListCrudRepository<T, ID>,
-	LazyEclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
+	LazyEclipseStoreListPagingAndSortingRepository<T, ID>,
 	LazyEclipseStoreQueryByExampleExecutor<T>,
 	EclipseStoreRepository<T, ID>
 {

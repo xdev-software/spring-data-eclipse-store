@@ -19,7 +19,8 @@ import java.util.Collection;
 import java.util.List;
 
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
-import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.NonLazyEntityData;
 
 
 public class DummyEntityProvider<T> extends EntityProvider<T, Void>
@@ -27,7 +28,7 @@ public class DummyEntityProvider<T> extends EntityProvider<T, Void>
 	public DummyEntityProvider(final Collection<T> collection)
 	{
 		super();
-		final EntityData<T, Void> objects = new EntityData<>();
+		final EntityData<T, Void> objects = new NonLazyEntityData<>();
 		objects.setIdGetter(i -> null);
 		objects.getEntities().addAll(collection);
 		this.addEntityData(objects);
