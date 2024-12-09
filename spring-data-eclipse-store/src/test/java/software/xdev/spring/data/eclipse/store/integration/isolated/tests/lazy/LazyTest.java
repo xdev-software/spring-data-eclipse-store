@@ -475,7 +475,8 @@ class LazyTest
 			() -> {
 				Assertions.assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
-				Assertions.assertEquals(objectToStore, reloadedObject.get());
+				Assertions.assertEquals(objectToStore.getId(), reloadedObject.get().getId());
+				Assertions.assertEquals(objectToStore.getName(), reloadedObject.get().getName());
 			}
 		);
 	}
@@ -493,7 +494,8 @@ class LazyTest
 		
 		final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
 		Assertions.assertFalse(reloadedObject.isLoaded());
-		Assertions.assertEquals(objectToStore, reloadedObject.get());
+		Assertions.assertEquals(objectToStore.getId(), reloadedObject.get().getId());
+		Assertions.assertEquals(objectToStore.getName(), reloadedObject.get().getName());
 		Assertions.assertTrue(reloadedObject.isLoaded());
 	}
 	
