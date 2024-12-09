@@ -131,3 +131,20 @@ jobs:
           target/site/css/**
           target/site/images/logos/maven-feather.png
           target/site/images/external.png
+
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Antora and the Antora Lunr Extension
+        run: npm i antora @antora/lunr-extension
+
+      - name: Generate Site
+        run: npx antora docs/antora-playbook.yml

@@ -1,0 +1,47 @@
+body {
+	font-family: sans-serif;
+}
+
+.navbar {
+	background-color: #fff;
+}
+
+footer.footer {
+	color: #fff;
+	background-color: #333333;
+}
+
+footer.footer a,
+footer.footer .link-separator
+{
+	color: #c02222;
+}
+
+.navbar-item {
+	padding: 0px 8px;
+}
+
+.navbar-brand .navbar-item.logo {
+	align-self: center;
+	padding: 0;
+}
+
+.navbar-brand .navbar-item.logo img {
+	width: inherit;
+}
+
+.navbar-brand .navbar-item.title {
+	align-self: center;
+	color: var(--navbar-font-color);
+	font-size: 1rem;
+	line-height: 1;
+	position: relative;
+	top: 0.06em; /* compensate for built-in line height in font */
+	letter-spacing: -0.02em;
+	padding: 0;
+	margin: 0 1rem;
+}
+
+.doc h1 {
+	color: #333333;
+}
