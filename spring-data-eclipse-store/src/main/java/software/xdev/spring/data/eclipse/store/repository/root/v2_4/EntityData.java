@@ -21,6 +21,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdGetter;
 
 
 /**
@@ -33,7 +34,7 @@ public interface EntityData<T, ID>
 	/**
 	 * Accepts {@code null} if no id field is defined
 	 */
-	void setIdGetter(final Function<T, ID> idGetter);
+	void setIdGetter(final IdGetter<T, ID> idGetter);
 	
 	Stream<T> getEntitiesAsStream();
 	

@@ -17,7 +17,8 @@ package software.xdev.spring.data.eclipse.store.repository.root.v2_4;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdGetter;
 
 
 /**
@@ -59,14 +60,14 @@ public class RootDataV2_4
 		return (EntityData<T, ID>)this.entityLists.get(entityClassName);
 	}
 	
-	public <T, ID> void createNewEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
+	public <T, ID> void createNewEntityData(final Class<T> entityClass, final IdGetter<T, ID> idGetter)
 	{
 		final NonLazyEntityData<T, ID> entityData = new NonLazyEntityData<>();
 		entityData.setIdGetter(idGetter);
 		this.entityLists.put(this.getEntityName(entityClass), entityData);
 	}
 	
-	public <T, ID> void createNewLazyEntityData(final Class<T> entityClass, final Function<T, ID> idGetter)
+	public <T, ID> void createNewLazyEntityData(final Class<T> entityClass, final IdGetter<T, ID> idGetter)
 	{
 		final LazyEntityData<T, ID> entityData = new LazyEntityData<>();
 		entityData.setIdGetter(idGetter);

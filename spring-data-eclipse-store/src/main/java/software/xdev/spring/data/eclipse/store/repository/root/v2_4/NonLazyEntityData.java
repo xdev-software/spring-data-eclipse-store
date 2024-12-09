@@ -22,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdGetter;
 
 
 /**
@@ -41,7 +42,7 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 	 */
 	private final HashMap<ID, T> entitiesById;
 	
-	private transient Function<T, ID> idGetter;
+	private transient IdGetter<T, ID> idGetter;
 	
 	public NonLazyEntityData()
 	{
@@ -53,7 +54,7 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 	 * Accepts {@code null} if no id field is defined
 	 */
 	@Override
-	public void setIdGetter(final Function<T, ID> idGetter)
+	public void setIdGetter(final IdGetter<T, ID> idGetter)
 	{
 		this.idGetter = idGetter;
 		
@@ -75,8 +76,9 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 		}
 		else
 		{
-			final ID id = this.idGetter.apply(entity);
-			return this.entitiesById.containsKey(id);
+			final ID id = this.idGetter.getId(entity);
+			final T existingEntity = this.entitiesById.get(id);
+			return existingEntity != null && existingEntity == entity;
 		}
 	}
 	
@@ -85,7 +87,7 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 		if(this.idGetter != null && this.entities.size() != this.entitiesById.size())
 		{
 			this.entitiesById.clear();
-			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.apply(entity), entity));
+			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.getId(entity), entity));
 		}
 		if(this.idGetter == null)
 		{
@@ -114,16 +116,17 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 	@Override
 	public Collection<Object> ensureEntityAndReturnObjectsToStore(final T entityToStore)
 	{
-		if(!this.containsEntity(entityToStore))
+		Collection<Object> listToSave = List.of();
+		if(this.entities.add(entityToStore))
 		{
-			this.entities.add(entityToStore);
-			if(this.idGetter != null)
-			{
-				this.entitiesById.put(this.idGetter.apply(entityToStore), entityToStore);
-			}
-			return this.getObjectsToStore();
+			listToSave = this.getObjectsToStore();
 		}
-		return List.of();
+		if(this.idGetter != null && this.entitiesById.get(this.idGetter.getId(entityToStore)) != entityToStore)
+		{
+			this.entitiesById.put(this.idGetter.getId(entityToStore), entityToStore);
+			listToSave = this.getObjectsToStore();
+		}
+		return listToSave;
 	}
 	
 	@Override
@@ -144,7 +147,7 @@ public class NonLazyEntityData<T, ID> implements EntityData<T, ID>
 		this.entities.remove(entityToRemove);
 		if(this.idGetter != null)
 		{
-			this.entitiesById.remove(this.idGetter.apply(entityToRemove));
+			this.entitiesById.remove(this.idGetter.getId(entityToRemove));
 		}
 		return this.getObjectsToStore();
 	}

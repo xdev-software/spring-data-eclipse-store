@@ -40,17 +40,20 @@ public class v2_4_0_InitializeLazy extends LoggingUpdateScript
 	public void loggedMigrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
 	{
 		final VersionedRoot versionedRoot = context.getMigratingObject();
-		versionedRoot.getRootDataV2().getEntityListsToStore().forEach(
-			(entityName, entities) ->
-			{
-				final software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData<Object, Object>
-					newEntityData = versionedRoot.getRootDataV2_4().getEntityData(entityName);
-				entities.getEntities().forEach(newEntityData::ensureEntityAndReturnObjectsToStore);
-				newEntityData.setLastId(entities.getLastId());
-				context.getStorageManager().getNativeStorageManager().storeAll(newEntityData.getObjectsToStore());
-				LOG.info("Migrated entities {}.", entityName);
-			}
-		);
+		if(versionedRoot.getRootDataV2() != null)
+		{
+			versionedRoot.getRootDataV2().getEntityListsToStore().forEach(
+				(entityName, entities) ->
+				{
+					final software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData<Object, Object>
+						newEntityData = versionedRoot.getCurrentRootData().getEntityData(entityName);
+					entities.getEntities().forEach(newEntityData::ensureEntityAndReturnObjectsToStore);
+					newEntityData.setLastId(entities.getLastId());
+					context.getStorageManager().getNativeStorageManager().storeAll(newEntityData.getObjectsToStore());
+					LOG.info("Migrated entities {}.", entityName);
+				}
+			);
+		}
 		versionedRoot.clearOldRootData();
 		context.getStorageManager().store(versionedRoot);
 	}

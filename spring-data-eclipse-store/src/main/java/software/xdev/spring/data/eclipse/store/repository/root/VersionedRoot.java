@@ -61,6 +61,15 @@ public class VersionedRoot implements Versioned
 		return this.rootDataV1;
 	}
 	
+	/**
+	 * @deprecated and is only used in tests
+	 */
+	@Deprecated
+	public void setRootDataV2(final RootDataV2 rootDataV2)
+	{
+		this.rootDataV2 = rootDataV2;
+	}
+	
 	public RootDataV2 getRootDataV2()
 	{
 		return this.rootDataV2;
@@ -69,7 +78,7 @@ public class VersionedRoot implements Versioned
 	@SuppressWarnings("checkstyle:MethodName")
 	public RootDataV2_4 getRootDataV2_4()
 	{
-		return rootDataV2_4;
+		return this.rootDataV2_4;
 	}
 	
 	public void clearOldRootData()

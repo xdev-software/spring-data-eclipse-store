@@ -26,6 +26,7 @@ import org.eclipse.serializer.reference.Referencing;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
+import software.xdev.spring.data.eclipse.store.repository.support.id.IdGetter;
 
 
 /**
@@ -45,7 +46,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 	 */
 	private final HashMap<ID, Lazy<T>> entitiesById;
 	
-	private transient Function<T, ID> idGetter;
+	private transient IdGetter<T, ID> idGetter;
 	
 	public LazyEntityData()
 	{
@@ -57,7 +58,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 	 * Accepts {@code null} if no id field is defined
 	 */
 	@Override
-	public void setIdGetter(final Function<T, ID> idGetter)
+	public void setIdGetter(final IdGetter<T, ID> idGetter)
 	{
 		this.idGetter = idGetter;
 		
@@ -81,7 +82,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		}
 		else
 		{
-			final ID id = this.idGetter.apply(entity);
+			final ID id = this.idGetter.getId(entity);
 			return this.entitiesById.containsKey(id);
 		}
 	}
@@ -91,7 +92,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		if(this.idGetter != null && this.entities.size() != this.entitiesById.size())
 		{
 			this.entitiesById.clear();
-			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.apply(entity.get()), entity));
+			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.getId(entity.get()), entity));
 		}
 		if(this.idGetter == null)
 		{
@@ -134,7 +135,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 			this.entities.add(newLazyEntity);
 			if(this.idGetter != null)
 			{
-				this.entitiesById.put(this.idGetter.apply(entityToStore), newLazyEntity);
+				this.entitiesById.put(this.idGetter.getId(entityToStore), newLazyEntity);
 			}
 			return this.getObjectsToStore();
 		}
@@ -160,7 +161,7 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		}
 		else
 		{
-			final ID id = this.idGetter.apply(entityToRemove);
+			final ID id = this.idGetter.getId(entityToRemove);
 			final Lazy<T> lazyReference = this.entitiesById.get(id);
 			this.entities.remove(lazyReference);
 			this.entitiesById.remove(id);

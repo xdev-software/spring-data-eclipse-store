@@ -209,13 +209,14 @@ public class EclipseStoreStorage
 	public <T, ID> void createNewEntityData(final Class<T> entityClass, final VersionedRoot root)
 	{
 		final IdManager<T, ID> idManager = this.ensureIdManager(entityClass);
-		if(this.entityClassToRepository.get(entityClass).isLazy())
+		final SimpleEclipseStoreRepository<?, ?> repository = this.entityClassToRepository.get(entityClass);
+		if(repository != null && repository.isLazy())
 		{
-			root.getCurrentRootData().createNewLazyEntityData(entityClass, idManager::getId);
+			root.getCurrentRootData().createNewLazyEntityData(entityClass, idManager);
 		}
 		else
 		{
-			root.getCurrentRootData().createNewEntityData(entityClass, idManager::getId);
+			root.getCurrentRootData().createNewEntityData(entityClass, idManager);
 		}
 	}
 	
