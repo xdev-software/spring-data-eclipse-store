@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
@@ -81,6 +80,7 @@ public abstract class SimpleSingleTest
 		);
 	}
 	
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void testBasicSaveAndFindMultipleRecords()
 	{
@@ -186,12 +186,12 @@ public abstract class SimpleSingleTest
 	void testBasicSaveAndFindAllWithNotCrudRepository()
 	{
 		final CustomerNotCrud customer = new CustomerNotCrud(TestData.FIRST_NAME, TestData.LAST_NAME);
-		notCrudRepository.save(customer);
+		this.notCrudRepository.save(customer);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				final List<CustomerNotCrud> customers = TestUtil.iterableToList(notCrudRepository.findAll());
+				final List<CustomerNotCrud> customers = TestUtil.iterableToList(this.notCrudRepository.findAll());
 				Assertions.assertEquals(1, customers.size());
 				Assertions.assertEquals(customer, customers.get(0));
 			}

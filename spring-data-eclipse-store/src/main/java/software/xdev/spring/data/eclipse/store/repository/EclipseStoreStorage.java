@@ -54,7 +54,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.Rep
 import software.xdev.spring.data.eclipse.store.repository.support.reposyncer.SimpleRepositorySynchronizer;
 
 
-@SuppressWarnings("java:S119")
+@SuppressWarnings({"java:S119", "PMD.GodClass"})
 public class EclipseStoreStorage
 	implements EntityListProvider,
 	IdManagerProvider,
@@ -505,6 +505,6 @@ public class EclipseStoreStorage
 	 */
 	public VersionedRoot getRoot()
 	{
-		return root;
+		return this.root;
 	}
 }

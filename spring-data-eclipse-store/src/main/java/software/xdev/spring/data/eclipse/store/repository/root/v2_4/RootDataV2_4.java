@@ -24,7 +24,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.id.IdGetter;
 /**
  * This is the actually stored object.
  */
-@SuppressWarnings("java:S119")
+@SuppressWarnings({"java:S119", "checkstyle:TypeName"})
 public class RootDataV2_4
 {
 	private final Map<String, EntityData<?, ?>> entityLists;

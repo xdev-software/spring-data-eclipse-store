@@ -15,11 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.lazy;
 
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Customer;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;

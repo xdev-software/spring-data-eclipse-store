@@ -15,10 +15,10 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
-import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
@@ -108,7 +107,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	
 	public ClassLoaderProvider getClassLoaderProvider()
 	{
-		return classLoaderProvider;
+		return this.classLoaderProvider;
 	}
 	
 	/**
@@ -134,7 +133,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		final ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers)
 	{
 		final EclipseStoreTransactionManager tm = this.getTransactionManagerInstance();
-		transactionManagerCustomizers.ifAvailable(customizers -> customizers.customize((TransactionManager)tm));
+		transactionManagerCustomizers.ifAvailable(customizers -> customizers.customize(tm));
 		return tm;
 	}
 	

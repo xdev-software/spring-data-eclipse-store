@@ -8,12 +8,8 @@ import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorag
 import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.types.Storage;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import software.xdev.spring.data.eclipse.store.demo.dual.storage.person.PersistencePersonConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
@@ -50,7 +46,7 @@ public class LazyConfiguration extends EclipseStoreClientConfiguration
 		final EmbeddedStorageFoundation<?> storageFoundation =
 			EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of(STORAGE_PATH))));
 		// This is only needed, if a different ClassLoader is used (e.g. when using spring-dev-tools)
-		storageFoundation.getConnectionFoundation().setClassLoaderProvider(getClassLoaderProvider());
+		storageFoundation.getConnectionFoundation().setClassLoaderProvider(this.getClassLoaderProvider());
 		return storageFoundation;
 	}
 }

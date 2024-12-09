@@ -18,11 +18,9 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simpl
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerNotCrud;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerNotCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
 
 
 public interface CustomerNotCrudNonLazyRepository
 	extends EclipseStoreRepository<CustomerNotCrud, String>, CustomerNotCrudRepository
 {
 }
-

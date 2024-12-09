@@ -31,6 +31,7 @@ public class VersionedRoot implements Versioned
 	
 	private RootDataV2 rootDataV2;
 	
+	@SuppressWarnings("checkstyle:MemberName")
 	private final RootDataV2_4 rootDataV2_4;
 	
 	public VersionedRoot()
@@ -63,6 +64,7 @@ public class VersionedRoot implements Versioned
 	/**
 	 * @deprecated and is only used in tests
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
 	public void setRootDataV2(final RootDataV2 rootDataV2)
 	{

@@ -19,8 +19,6 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStorePagingAndSortingRepository;
 
 
 public interface CustomerNonLazyRepository

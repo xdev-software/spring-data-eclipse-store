@@ -15,7 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.interfaces.lazy;
 
-import org.eclipse.serializer.reference.Lazy;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 

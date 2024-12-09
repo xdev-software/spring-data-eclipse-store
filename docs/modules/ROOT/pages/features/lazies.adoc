@@ -27,7 +27,7 @@ public class Owner extends Person
 {
 	private String address;
 
-	private Lazy<List<Pet>> pets = SpringDataEclipseStoreLazy.build(new ArrayList<>());
+	private final Lazy<List<Pet>> pets = SpringDataEclipseStoreLazy.build(new ArrayList<>());
 	//...
 ----
 

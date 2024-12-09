@@ -18,7 +18,6 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simpl
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecord;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecordRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
 
 
 public interface CustomerAsRecordNonLazyRepository

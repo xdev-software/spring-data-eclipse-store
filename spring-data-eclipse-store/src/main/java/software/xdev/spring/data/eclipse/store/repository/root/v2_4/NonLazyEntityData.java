@@ -18,7 +18,6 @@ package software.xdev.spring.data.eclipse.store.repository.root.v2_4;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
