@@ -31,6 +31,34 @@ public class Owner extends Person
 	//...
 ----
 
+== Repositories
+
+Entities in a repository are by default **not lazy**.
+But we made it as easy as possible for you to make these entities lazy: Instead of extending the ``EclipseStoreRepository`` (or any similar class from the ``software.xdev.spring.data.eclipse.store.repository.interfaces``-Package), you simply extend the ``LazyEclipseStoreRepository``.
+
+=== https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/lazy/CustomerRepository.java[Example from lazy demo]
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple/CustomerRepository.java[Before (not lazy)]"]
+----
+public interface CustomerRepository extends CrudRepository<Customer, String>
+{
+}
+----
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/lazy/CustomerRepository.java[After (lazy)]"]
+----
+public interface CustomerRepository extends LazyEclipseStoreCrudRepository<Customer, String>
+{
+}
+----
+
+Every instance of the ``Customer``-Entities are now wrapped in a https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/index.html[``Lazy``-Reference].
+That means that these objects are **only loaded from the storage, if they are needed** e.g. when ``findAll`` is called.
+
+The method **``findById`` only loads the entities with the corresponding IDs**, because a separate list with all ids is stored.
+But if any method like **``findByName`` or ``findByChild`` is used, all objects are loaded** from the storage.
+This is currently the only way to get the actual values of the entities.
+
 == Internals
 
 SpringDataEclipseStoreLazies work as a proxy for the EclipseStore-Lazies.
