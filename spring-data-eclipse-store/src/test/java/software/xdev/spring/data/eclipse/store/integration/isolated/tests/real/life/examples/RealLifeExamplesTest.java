@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.tests;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
 
-import static software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Position.getPositionWithArticleWithName;
+import static software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.Position.getPositionWithArticleWithName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,22 +25,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Article;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.ArticleGroup;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Invoice;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.InvoiceRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Position;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.PositionRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example.Warehouse;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
-@DefaultTestAnnotations
-class RealLifeTests
+@IsolatedTestAnnotations
+@ContextConfiguration(classes = {RealLifeExamplesTestConfiguration.class})
+class RealLifeExamplesTest
 {
 	static final String STATIONERY = "Stationery";
 	static final String BUILDING_MATERIAL = "Building Material";
@@ -56,8 +49,13 @@ class RealLifeTests
 	InvoiceRepository invoiceRepository;
 	@Autowired
 	PositionRepository positionRepository;
+	private final RealLifeExamplesTestConfiguration configuration;
+	
 	@Autowired
-	private SharedTestConfiguration configuration;
+	public RealLifeExamplesTest(final RealLifeExamplesTestConfiguration configuration)
+	{
+		this.configuration = configuration;
+	}
 	
 	private Invoice buildDefaultModel()
 	{

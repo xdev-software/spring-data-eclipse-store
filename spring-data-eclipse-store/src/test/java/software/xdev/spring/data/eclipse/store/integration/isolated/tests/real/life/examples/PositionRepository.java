@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
 
 import org.springframework.data.repository.ListCrudRepository;
 

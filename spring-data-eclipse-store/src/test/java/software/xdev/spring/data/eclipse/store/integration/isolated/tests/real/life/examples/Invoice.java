@@ -13,11 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories.real.life.example;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
 
-public interface InvoiceRepository extends CrudRepository<Invoice, String>
+public class Invoice
 {
+	private List<Position> positions;
+	
+	public Invoice(final List<Position> positions)
+	{
+		this.positions = positions;
+	}
+	
+	public void setPositions(final List<Position> positions)
+	{
+		this.positions = positions;
+	}
+	
+	public List<Position> getPositions()
+	{
+		return this.positions;
+	}
 }
