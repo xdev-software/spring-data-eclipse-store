@@ -17,7 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.support.reposyncer;
 
 import java.util.Collection;
 
-import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 
 
 /**

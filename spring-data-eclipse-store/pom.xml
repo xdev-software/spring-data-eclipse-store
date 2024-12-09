@@ -314,6 +314,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
+					<source>${javaVersion}</source>
+					<target>${javaVersion}</target>
 					<release>${maven.compiler.release}</release>
 					<compilerArgs>
 						<arg>-proc:none</arg>
@@ -323,7 +325,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.1</version>
+				<version>3.11.2</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>

@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
-import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
 import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 
 
 /**
@@ -32,7 +32,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
  * <b>All migration scripts must be added to
  * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator#SCRIPTS}!</b>
  */
-@SuppressWarnings("checkstyle:TypeName")
+@SuppressWarnings({"checkstyle:TypeName", "deprecation"})
 public class v2_0_0_InitializeVersioning extends LoggingUpdateScript
 {
 	private static final Logger LOG = LoggerFactory.getLogger(v2_0_0_InitializeVersioning.class);
@@ -44,10 +44,12 @@ public class v2_0_0_InitializeVersioning extends LoggingUpdateScript
 		versionedRoot.getRootDataV1().getEntityLists().forEach(
 			(entityName, entities) ->
 			{
-				final EntityData<Object, Object> entityData = versionedRoot.getRootDataV2().getEntityData(entityName);
+				final EntityData<Object, Object> entityData =
+					versionedRoot.getCurrentRootData().getEntityData(entityName);
 				if(entityData == null)
 				{
 					LOG.warn("Dropping entities {} because there is no repository in the new root.", entityName);
+					return;
 				}
 				entities.forEach(entity -> entityData.ensureEntityAndReturnObjectsToStore(entity));
 				context.getStorageManager().getNativeStorageManager().storeAll(entityData.getObjectsToStore());
@@ -57,7 +59,8 @@ public class v2_0_0_InitializeVersioning extends LoggingUpdateScript
 		versionedRoot.getRootDataV1().getLastIds().forEach(
 			(entityName, lastId) ->
 			{
-				final EntityData<Object, Object> entityData = versionedRoot.getRootDataV2().getEntityData(entityName);
+				final software.xdev.spring.data.eclipse.store.repository.root.EntityData<Object, Object> entityData =
+					versionedRoot.getRootDataV2().getEntityData(entityName);
 				entityData.setLastId(lastId);
 				context.getStorageManager().store(entityData);
 				LOG.info("Migrated last id of entities {}.", entityName);

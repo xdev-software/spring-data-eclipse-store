@@ -66,6 +66,7 @@ the [demos](./spring-data-eclipse-store-demo):
 
 * [Simple demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple)
 * [Complex demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
+* [Lazy demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/lazy)
 * [Demo with coexisting JPA](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa)
 * [Dual storage demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage)
 

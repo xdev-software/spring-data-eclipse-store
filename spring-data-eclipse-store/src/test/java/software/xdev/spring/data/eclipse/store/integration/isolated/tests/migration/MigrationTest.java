@@ -30,12 +30,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.FileSystemUtils;
 
+import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 import software.xdev.spring.data.eclipse.store.repository.Root;
+import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
+import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
 
+@SuppressWarnings({"deprecation", "checkstyle:MethodName"})
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {MigrationTestConfiguration.class})
 class MigrationTest
@@ -53,9 +57,9 @@ class MigrationTest
 	}
 	
 	@Test
-	void simpleMigrateFromV000ToV200() throws IOException
+	void simpleMigrateFromV0_0_0ToNewest() throws IOException
 	{
-		this.initOldData();
+		this.initV1_0_0Data();
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
@@ -66,7 +70,21 @@ class MigrationTest
 		);
 	}
 	
-	private void initOldData() throws IOException
+	@Test
+	void simpleMigrateFromV2_0_0ToNewest() throws IOException
+	{
+		this.initV2_0_0Data();
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				final List<User> foundUsers = this.userRepository.findAll();
+				Assertions.assertEquals(1, foundUsers.size());
+				Assertions.assertEquals(TEST_USER, foundUsers.get(0));
+			}
+		);
+	}
+	
+	private void initV1_0_0Data() throws IOException
 	{
 		// Delete already created data
 		this.configuration.getStorageInstance().stop();
@@ -80,6 +98,27 @@ class MigrationTest
 			final Root oldRoot = new Root();
 			oldRoot.createNewEntityList(User.class);
 			oldRoot.getEntityList(User.class).add(TEST_USER);
+			storageManager.setRoot(oldRoot);
+			storageManager.storeRoot();
+		}
+	}
+	
+	private void initV2_0_0Data() throws IOException
+	{
+		// Delete already created data
+		this.configuration.getStorageInstance().stop();
+		FileSystemUtils.deleteRecursively(Path.of(this.configuration.getStorageDirectory()));
+		
+		// Init old data
+		try(final EmbeddedStorageManager storageManager =
+			Foundation(Storage.Configuration(Storage.FileProvider(Path.of(this.configuration.getStorageDirectory()))))
+				.start())
+		{
+			final VersionedRoot oldRoot = new VersionedRoot();
+			oldRoot.setRootDataV2(new RootDataV2());
+			oldRoot.getRootDataV2().createNewEntityData(User.class, e -> null);
+			oldRoot.getRootDataV2().getEntityData(User.class).ensureEntityAndReturnObjectsToStore(TEST_USER);
+			oldRoot.setVersion(new MigrationVersion(2, 0, 0));
 			storageManager.setRoot(oldRoot);
 			storageManager.storeRoot();
 		}
