@@ -44,7 +44,6 @@ public class VersionedRoot implements Versioned
 	public VersionedRoot(final Root rootDataV1)
 	{
 		this.rootDataV1 = rootDataV1;
-		this.rootDataV2 = new RootDataV2();
 		this.rootDataV2_4 = new RootDataV2_4();
 		if(rootDataV1 != null)
 		{

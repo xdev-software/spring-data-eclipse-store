@@ -24,7 +24,6 @@ import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.Referencing;
 
 import software.xdev.spring.data.eclipse.store.core.IdentitySet;
-import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.id.IdGetter;
 
 
@@ -131,7 +130,9 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		Collection<Object> listToSave = List.of();
 		if(this.idGetter == null && !this.containsEntity(entityToStore))
 		{
-			this.entities.add(SpringDataEclipseStoreLazy.build(entityToStore));
+			// Does not create a SpringDataEclipseStore.Lazy Instance, but a EclipseStore.Lazy because this is
+			// outside the scope of the SpringDataEclipseStore.Lazy. No conversion is taking place.
+			this.entities.add(Lazy.Reference(entityToStore));
 			listToSave = this.getObjectsToStore();
 		}
 		if(this.idGetter != null)
@@ -140,7 +141,9 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 			if(existingEntity == null || existingEntity.get() != entityToStore)
 			{
 				this.entities.remove(existingEntity);
-				final SpringDataEclipseStoreLazy<T> newLazyInstance = SpringDataEclipseStoreLazy.build(entityToStore);
+				// Does not create a SpringDataEclipseStore.Lazy Instance, but a EclipseStore.Lazy because this is
+				// outside the scope of the SpringDataEclipseStore.Lazy. No conversion is taking place.
+				final Lazy<T> newLazyInstance = Lazy.Reference(entityToStore);
 				this.entities.add(newLazyInstance);
 				this.entitiesById.put(this.idGetter.getId(entityToStore), newLazyInstance);
 				listToSave = this.getObjectsToStore();
