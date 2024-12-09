@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1729591203650">
-    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.3.1"/>
+<licensePluginReport goal="FORMAT" timestamp="1733759383924">
+    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.4.0"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/core/EntityListProvider.java" result="NOOP"/>
@@ -29,6 +29,7 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/Query.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/RelayedPersistenceChecker.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/Root.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/StorageCommunicator.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/SupportedChecker.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/WorkingCopyRegistry.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/access/AccessHelper.java" result="NOOP"/>
@@ -45,10 +46,17 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreCrudRepository.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreCustomRepository.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreListCrudRepository.java" result="NOOP"/>
-        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreListPagingAndSortingRepositoryRepository.java" result="NOOP"/>
-        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStorePagingAndSortingRepositoryRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreListPagingAndSortingRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStorePagingAndSortingRepository.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreQueryByExampleExecutor.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/EclipseStoreRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStoreCrudRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStoreCustomRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStoreListCrudRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStoreListPagingAndSortingRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStorePagingAndSortingRepository.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStoreQueryByExampleExecutor.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/interfaces/lazy/LazyEclipseStoreRepository.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/lazy/SpringDataEclipseStoreLazy.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/lazy/SpringDataEclipseStoreLazyBinaryHandler.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/EclipseStoreQueryCreator.java" result="NOOP"/>
@@ -79,10 +87,16 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/VersionedRoot.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/LoggingUpdateScript.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/v2_0_0_InitializeVersioning.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/v2_4_0_InitializeLazy.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/v2_4/EntityData.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/v2_4/LazyEntityData.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/v2_4/NonLazyEntityData.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/v2_4/RootDataV2_4.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/AnnotatedFieldFinder.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/EclipseStoreQueryLookupStrategy.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/EclipseStoreRepositoryFactory.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/EclipseStoreRepositoryFactoryBean.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/LazySimpleEclipseStoreRepository.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/SimpleEclipseStoreRepository.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/concurrency/ReadWriteLock.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/support/concurrency/ReentrantJavaReadWriteLock.java" result="NOOP"/>
@@ -213,6 +227,9 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazyRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazySimpleObject.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazySimpleObjectRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithId.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithIdLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithIdLazyWrappedRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleObject.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/migration/MigrationTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/migration/MigrationTestConfiguration.java" result="NOOP"/>
@@ -239,6 +256,47 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/MyEntity.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/MyEntityRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/OtherEntity.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/RealLifeExamplesTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/lazy/InvoiceLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/lazy/PositionLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/lazy/RealLifeExamplesLazyTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/lazy/RealLifeExamplesLazyTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/Article.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/ArticleGroup.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/Invoice.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/InvoiceRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/Position.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/PositionRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/model/Warehouse.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/nonlazy/InvoiceNonLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/nonlazy/PositionNonLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/nonlazy/RealLifeExamplesNonLazyTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/real/life/examples/nonlazy/RealLifeExamplesNonLazyTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/SimpleMultipleTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/SimpleSingleTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/CustomerAsRecordLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/CustomerLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/CustomerNotCrudLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/LazySimpleMultipleTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/LazySimpleSingleTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/OwnerLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/lazy/SimpleLazyTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/Customer.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/CustomerAsRecord.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/CustomerAsRecordRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/CustomerNotCrud.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/CustomerNotCrudRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/CustomerRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/Owner.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/OwnerRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/model/ParentCustomer.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/CustomerAsRecordNonLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/CustomerNonLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/CustomerNotCrudNonLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/NonLazySimpleMultipleTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/NonLazySimpleSingleTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/OwnerNonLazyRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/simple/nonlazy/SimpleNonLazyTestConfiguration.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/special/types/BigDecimalDaoObject.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/special/types/BigDecimalRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/special/types/BigIntegerDaoObject.java" result="NOOP"/>
@@ -307,26 +365,17 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/DefaultTestAnnotations.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/SharedTestConfiguration.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/package-info.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/Child.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/ChildCustomer.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/ChildCustomerRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/Customer.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerAsRecord.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerAsRecordRepository.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerNotCrud.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerNotCrudRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepositoryWithHashSet.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerRepositoryWithNonFinalHashSet.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithChild.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithChildRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithHashSet.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithNonFinalHashSet.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/CustomerWithQuery.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/Node.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/NodeRepository.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/Owner.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/OwnerRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/ParentCustomer.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/ParentCustomerRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/SubCustomer.java" result="NOOP"/>
@@ -341,20 +390,10 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/interfaces/CustomerListPagingAndSorting.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/interfaces/CustomerPagingAndSorting.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/interfaces/CustomerSimple.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/Article.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/ArticleGroup.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/Invoice.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/InvoiceRepository.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/Position.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/PositionRepository.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/repositories/real/life/example/Warehouse.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/ChangeRootTests.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/ConcurrencyTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/HashSetTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/InheritanceTest.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/RealLifeTests.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/SimpleMultipleTest.java" result="NOOP"/>
-        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/SimpleSingleTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/SpecificInterfacesTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/StressTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/shared/tests/WorkingCopyTests.java" result="NOOP"/>
