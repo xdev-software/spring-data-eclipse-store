@@ -18,7 +18,6 @@ package software.xdev.spring.data.eclipse.store.repository.root.v2_4;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.eclipse.serializer.reference.Lazy;
@@ -83,7 +82,8 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		else
 		{
 			final ID id = this.idGetter.getId(entity);
-			return this.entitiesById.containsKey(id);
+			final Lazy<T> existingEntity = this.entitiesById.get(id);
+			return existingEntity != null && existingEntity.get() == entity;
 		}
 	}
 	
@@ -128,18 +128,25 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 	@Override
 	public Collection<Object> ensureEntityAndReturnObjectsToStore(final T entityToStore)
 	{
-		if(!this.containsEntity(entityToStore))
+		Collection<Object> listToSave = List.of();
+		if(this.idGetter == null && !this.containsEntity(entityToStore))
 		{
-			final SpringDataEclipseStoreLazy.Default<T> newLazyEntity =
-				SpringDataEclipseStoreLazy.build(entityToStore);
-			this.entities.add(newLazyEntity);
-			if(this.idGetter != null)
-			{
-				this.entitiesById.put(this.idGetter.getId(entityToStore), newLazyEntity);
-			}
-			return this.getObjectsToStore();
+			this.entities.add(SpringDataEclipseStoreLazy.build(entityToStore));
+			listToSave = this.getObjectsToStore();
 		}
-		return List.of();
+		if(this.idGetter != null)
+		{
+			final Lazy<T> existingEntity = this.entitiesById.get(this.idGetter.getId(entityToStore));
+			if(existingEntity == null || existingEntity.get() != entityToStore)
+			{
+				this.entities.remove(existingEntity);
+				final SpringDataEclipseStoreLazy<T> newLazyInstance = SpringDataEclipseStoreLazy.build(entityToStore);
+				this.entities.add(newLazyInstance);
+				this.entitiesById.put(this.idGetter.getId(entityToStore), newLazyInstance);
+				listToSave = this.getObjectsToStore();
+			}
+		}
+		return listToSave;
 	}
 	
 	@Override
