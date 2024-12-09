@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
+package software.xdev.spring.data.eclipse.store.repository.interfaces;
 
-import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.data.repository.ListPagingAndSortingRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
 
-
-public interface PositionRepository extends ListCrudRepository<Position, String>
+@SuppressWarnings("java:S119")
+@NoRepositoryBean
+public interface EclipseStoreListPagingAndSortingRepository<T, ID>
+	extends ListPagingAndSortingRepository<T, ID>
 {
 }

@@ -30,16 +30,6 @@ public interface CustomerRepository
 {
 	Optional<Customer> findByFirstName(String firstName);
 	
-	Iterable<Customer> findAllByLastName(String lastName);
-	
 	@Override
 	Page<Customer> findAll(Pageable pageable);
-	
-	Page<Customer> findAllByLastName(String lastName, Pageable pageable);
-	
-	List<Customer> findByOrderByLastNameAsc();
-	
-	Iterable<Customer> findAllByLastName(String lastName, Sort sort);
-	
-	List<Customer> findAllByFirstName(String lastName, Pageable pageable);
 }

@@ -22,11 +22,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Customer;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecord;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecordRepository;
@@ -35,22 +34,22 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerRepository;
 
 
-@IsolatedTestAnnotations
-@ContextConfiguration(classes = {SimpleTestConfiguration.class})
-class SimpleSingleTest
+public abstract class SimpleSingleTest
 {
 	private final CustomerRepository repository;
 	private final CustomerAsRecordRepository recordRepository;
-	private final SimpleTestConfiguration configuration;
+	private final CustomerNotCrudRepository notCrudRepository;
+	private final TestConfiguration configuration;
 	
-	@Autowired
 	public SimpleSingleTest(
 		final CustomerRepository repository,
 		final CustomerAsRecordRepository recordRepository,
-		final SimpleTestConfiguration configuration)
+		final CustomerNotCrudRepository notCrudRepository,
+		final TestConfiguration configuration)
 	{
 		this.repository = repository;
 		this.recordRepository = recordRepository;
+		this.notCrudRepository = notCrudRepository;
 		this.configuration = configuration;
 	}
 	
@@ -184,7 +183,7 @@ class SimpleSingleTest
 	}
 	
 	@Test
-	void testBasicSaveAndFindAllWithNotCrudRepository(@Autowired final CustomerNotCrudRepository notCrudRepository)
+	void testBasicSaveAndFindAllWithNotCrudRepository()
 	{
 		final CustomerNotCrud customer = new CustomerNotCrud(TestData.FIRST_NAME, TestData.LAST_NAME);
 		notCrudRepository.save(customer);

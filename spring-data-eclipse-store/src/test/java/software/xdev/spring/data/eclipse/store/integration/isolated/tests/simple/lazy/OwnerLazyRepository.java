@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.lazy;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.lazy;
 
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.PositionRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListCrudRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Owner;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.OwnerRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
 
 
-public interface PositionLazyRepository extends LazyEclipseStoreListCrudRepository<Position, String>, PositionRepository
+public interface OwnerLazyRepository extends LazyEclipseStoreCrudRepository<Owner, String>, OwnerRepository
 {
 }

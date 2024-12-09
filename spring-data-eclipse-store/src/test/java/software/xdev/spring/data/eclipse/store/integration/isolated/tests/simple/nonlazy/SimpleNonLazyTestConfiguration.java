@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.nonlazy;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -27,10 +27,10 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 @Configuration
 @EnableEclipseStoreRepositories
-public class SimpleTestConfiguration extends TestConfiguration
+public class SimpleNonLazyTestConfiguration extends TestConfiguration
 {
 	@Autowired
-	protected SimpleTestConfiguration(
+	protected SimpleNonLazyTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)

@@ -24,5 +24,5 @@ public interface CustomerNotCrudRepository extends Repository<CustomerNotCrud, S
 {
 	List<CustomerNotCrud> findAll();
 	
-	void save(CustomerNotCrud customer);
+	CustomerNotCrud save(CustomerNotCrud customer);
 }

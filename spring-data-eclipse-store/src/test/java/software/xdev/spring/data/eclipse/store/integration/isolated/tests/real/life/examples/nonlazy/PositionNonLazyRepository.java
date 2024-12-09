@@ -17,8 +17,8 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.
 
 import org.springframework.data.repository.ListCrudRepository;
 
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.PositionRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.PositionRepository;
 
 
 public interface PositionNonLazyRepository extends ListCrudRepository<Position, String>, PositionRepository

@@ -24,26 +24,25 @@ import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
+import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.lazy.SimpleLazyTestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Customer;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Owner;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.OwnerRepository;
 
 
-@IsolatedTestAnnotations
-@ContextConfiguration(classes = {SimpleTestConfiguration.class})
-class SimpleMultipleTest
+public abstract class SimpleMultipleTest
 {
 	private final CustomerRepository customerRepository;
 	private final OwnerRepository ownerRepository;
-	private final SimpleTestConfiguration configuration;
+	private final TestConfiguration configuration;
 	
-	@Autowired
 	public SimpleMultipleTest(
 		final CustomerRepository customerRepository,
 		final OwnerRepository ownerRepository,
-		final SimpleTestConfiguration configuration)
+		final TestConfiguration configuration)
 	{
 		this.customerRepository = customerRepository;
 		this.ownerRepository = ownerRepository;

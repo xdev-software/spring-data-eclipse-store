@@ -17,8 +17,8 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.
 
 import org.springframework.data.repository.CrudRepository;
 
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.InvoiceRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Invoice;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.InvoiceRepository;
 
 
 public interface InvoiceNonLazyRepository extends CrudRepository<Invoice, String>, InvoiceRepository

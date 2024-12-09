@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.lazy;
+package software.xdev.spring.data.eclipse.store.repository.interfaces;
 
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.PositionRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListCrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 
-public interface PositionLazyRepository extends LazyEclipseStoreListCrudRepository<Position, String>, PositionRepository
+@SuppressWarnings("java:S119")
+@NoRepositoryBean
+public interface EclipseStorePagingAndSortingRepository<T, ID>
+	extends PagingAndSortingRepository<T, ID>
 {
 }

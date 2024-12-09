@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.lazy;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.nonlazy;
 
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Invoice;
-import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.InvoiceRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecord;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecordRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
 
 
-public interface InvoiceLazyRepository extends LazyEclipseStoreCrudRepository<Invoice, String>, InvoiceRepository
+public interface CustomerAsRecordNonLazyRepository
+	extends EclipseStoreCrudRepository<CustomerAsRecord, String>, CustomerAsRecordRepository
 {
 }

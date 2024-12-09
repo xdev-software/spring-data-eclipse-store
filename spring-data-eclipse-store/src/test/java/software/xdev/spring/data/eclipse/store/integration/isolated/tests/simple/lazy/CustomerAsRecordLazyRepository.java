@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.interfaces;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.lazy;
 
-import org.springframework.data.repository.ListPagingAndSortingRepository;
-import org.springframework.data.repository.NoRepositoryBean;
+import java.util.Optional;
+
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecord;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerAsRecordRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
 
 
-@SuppressWarnings("java:S119")
-@NoRepositoryBean
-public interface EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>
-	extends ListPagingAndSortingRepository<T, ID>
+public interface CustomerAsRecordLazyRepository
+	extends LazyEclipseStoreCrudRepository<CustomerAsRecord, String>, CustomerAsRecordRepository
 {
 }

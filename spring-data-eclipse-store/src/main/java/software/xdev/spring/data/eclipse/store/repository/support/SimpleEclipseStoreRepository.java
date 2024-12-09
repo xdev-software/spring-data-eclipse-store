@@ -38,8 +38,8 @@ import software.xdev.spring.data.eclipse.store.repository.StorageCommunicator;
 import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreQueryByExampleExecutor;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.query.by.example.EclipseStoreFetchableFluentQuery;
@@ -61,8 +61,8 @@ import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransact
 public class SimpleEclipseStoreRepository<T, ID>
 	implements
 	EclipseStoreRepository<T, ID>,
-	EclipseStorePagingAndSortingRepositoryRepository<T, ID>,
-	EclipseStoreListPagingAndSortingRepositoryRepository<T, ID>,
+	EclipseStorePagingAndSortingRepository<T, ID>,
+	EclipseStoreListPagingAndSortingRepository<T, ID>,
 	EclipseStoreCrudRepository<T, ID>,
 	EclipseStoreListCrudRepository<T, ID>,
 	EclipseStoreQueryByExampleExecutor<T>

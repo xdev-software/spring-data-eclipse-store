@@ -30,7 +30,9 @@ import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Article;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.ArticleGroup;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Invoice;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.InvoiceRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.PositionRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Warehouse;
 
 
