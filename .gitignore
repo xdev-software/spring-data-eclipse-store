@@ -67,6 +67,7 @@ spring-data-eclipse-store-demo/storage
 spring-data-eclipse-store-demo/storage-person
 spring-data-eclipse-store-demo/storage-invoice
 spring-data-eclipse-store-demo/storage-complex
+spring-data-eclipse-store-demo/storage-lazy
 spring-data-eclipse-store-jpa/storage-eclipsestore
 spring-data-eclipse-store-jpa/storage-h2.mv.db
 spring-data-eclipse-store-jpa/storage-h2.trace.db
