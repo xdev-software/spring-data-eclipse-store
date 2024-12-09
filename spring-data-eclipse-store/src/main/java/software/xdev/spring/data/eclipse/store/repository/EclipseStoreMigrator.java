@@ -25,13 +25,15 @@ import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
 import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitializeVersioning;
+import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_4_0_InitializeLazy;
 
 
 public final class EclipseStoreMigrator
 {
 	public static final VersionAgnosticMigrationScript<?, ?>[] SCRIPTS =
 		new VersionAgnosticMigrationScript[]{
-			new v2_0_0_InitializeVersioning()
+			new v2_0_0_InitializeVersioning(),
+			new v2_4_0_InitializeLazy()
 		};
 	
 	private EclipseStoreMigrator()

@@ -17,7 +17,11 @@ package software.xdev.spring.data.eclipse.store.repository.lazy;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
+import org.eclipse.serializer.collections.HashEnum;
+import org.eclipse.serializer.collections.types.XGettingEnum;
 import org.eclipse.serializer.reference.Lazy;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reference.Swizzling;
@@ -64,7 +68,7 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 	 *
 	 * @param <T> the type of the lazily referenced element
 	 */
-	@SuppressWarnings({"java:S2065"})
+	@SuppressWarnings({"java:S2065", "PMD.AvoidSynchronizedStatement"})
 	final class Default<T> implements SpringDataEclipseStoreLazy<T>
 	{
 		private T objectToBeWrapped;
@@ -73,6 +77,8 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		private transient ObjectSwizzling loader;
 		private transient WorkingCopier<T> copier;
 		private transient boolean isStored;
+		private final transient ReentrantLock usageMarksLock = new ReentrantLock();
+		private final transient HashEnum<Object> usageMarks = HashEnum.New();
 		
 		private Default(final Lazy<T> lazySubject)
 		{
@@ -259,5 +265,65 @@ public interface SpringDataEclipseStoreLazy<T> extends Lazy<T>
 		{
 			return this.objectToBeWrapped != null;
 		}
+		
+		// region Copied from org.eclipse.serializer.reference.UsageMarkable#Default
+		@Override
+		public int markUsedFor(final Object instance)
+		{
+			// lock internal instance to avoid side effect deadlocks
+			synchronized(this.usageMarks)
+			{
+				final boolean added = this.usageMarks.add(instance);
+				
+				return this.usageMarks.intSize() * (added ? 1 : -1);
+			}
+		}
+		
+		@Override
+		public int unmarkUsedFor(final Object instance)
+		{
+			// lock internal instance to avoid side effect deadlocks
+			synchronized(this.usageMarks)
+			{
+				final boolean removed = this.usageMarks.removeOne(instance);
+				
+				return this.usageMarks.intSize() * (removed ? 1 : -1);
+			}
+		}
+		
+		@Override
+		public boolean isUsed()
+		{
+			// lock internal instance to avoid side effect deadlocks
+			synchronized(this.usageMarks)
+			{
+				return !this.usageMarks.isEmpty();
+			}
+		}
+		
+		@Override
+		public int markUnused()
+		{
+			// lock internal instance to avoid side effect deadlocks
+			synchronized(this.usageMarks)
+			{
+				final int currentSize = this.usageMarks.intSize();
+				this.usageMarks.clear();
+				
+				return currentSize;
+			}
+		}
+		
+		@Override
+		public void accessUsageMarks(final Consumer<? super XGettingEnum<Object>> logic)
+		{
+			// lock internal instance to avoid side effect deadlocks
+			synchronized(this.usageMarks)
+			{
+				// no null check to give logic a chance to notice no-marks case.
+				logic.accept(this.usageMarks);
+			}
+		}
+		// endregion
 	}
 }

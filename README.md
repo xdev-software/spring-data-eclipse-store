@@ -56,7 +56,8 @@ instructions** are in the documentation](https://xdev-software.github.io/spring-
 | ``1.0.5-1.0.7``           | ``17`` | ``3.2.5``   | ``1.3.2``    |
 | ``1.0.8-1.0.10``          | ``17`` | ``3.3.1``   | ``1.3.2``    |
 | ``2.0.0-2.1.0``           | ``17`` | ``3.3.2``   | ``1.4.0``    |
-| ``>= 2.2.0``              | ``17`` | ``3.3.4``   | ``1.4.0``    |
+| ``2.2.0-2.3.1``           | ``17`` | ``3.3.4``   | ``1.4.0``    |
+| ``>= 2.4.0``              | ``17`` | ``3.4.0``   | ``2.0.0``    |
 
 ## Demo
 
@@ -65,6 +66,7 @@ the [demos](./spring-data-eclipse-store-demo):
 
 * [Simple demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple)
 * [Complex demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex)
+* [Lazy demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/lazy)
 * [Demo with coexisting JPA](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa)
 * [Dual storage demo](https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage)
 

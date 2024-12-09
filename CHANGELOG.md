@@ -1,3 +1,9 @@
+# 2.4.0
+
+* Updated org.springframework.boot.version to v3.4.0
+* Updated EclipseStore to v2.0.0
+* Implemented Lazy Repositories with ``LazyEclipseStoreRepository``
+
 # 2.3.1
 
 * Auto-Fix problems with adding ids to entities with existing data store.

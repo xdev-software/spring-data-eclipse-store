@@ -15,10 +15,10 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.shared.repositories.interfaces;
 
-import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepository;
 
 
 public interface CustomerEclipseStoreListPagingAndSortingRepository extends
-	EclipseStoreListPagingAndSortingRepositoryRepository<CustomerListPagingAndSorting, String>
+	EclipseStoreListPagingAndSortingRepository<CustomerListPagingAndSorting, String>
 {
 }

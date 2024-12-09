@@ -21,9 +21,11 @@ import java.util.function.Function;
 
 
 /**
- * This is the actually stored object.
+ * This is a object for all versions <2.4.0 and is used for upgrading to the new root.
+ * @deprecated should not be initialised anymore. Version for <2.4.0
  */
-@SuppressWarnings("java:S119")
+@Deprecated(forRemoval = false, since = "2.4.0")
+@SuppressWarnings({"java:S119", "unchecked"})
 public class RootDataV2
 {
 	private final Map<String, EntityData<?, ?>> entityLists;
@@ -33,7 +35,7 @@ public class RootDataV2
 		this.entityLists = new HashMap<>();
 	}
 	
-	public Object getEntityListsToStore()
+	public Map<String, EntityData<?, ?>> getEntityListsToStore()
 	{
 		return this.entityLists;
 	}
