@@ -13,40 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model;
 
-import java.util.List;
 import java.util.Objects;
 
 
-public class Owner
+public class CustomerNotCrud
 {
-	private String firstName;
-	private String lastName;
+	private final String firstName;
+	private final String lastName;
 	
-	public Owner(final String firstName, final String lastName)
+	public CustomerNotCrud(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-	
-	public String getFirstName()
-	{
-		return this.firstName;
-	}
-	
-	public void setFirstName(final String firstName)
-	{
-		this.firstName = firstName;
-	}
-	
-	public String getLastName()
-	{
-		return this.lastName;
-	}
-	
-	public void setLastName(final String lastName)
-	{
 		this.lastName = lastName;
 	}
 	
@@ -54,7 +33,7 @@ public class Owner
 	public String toString()
 	{
 		return String.format(
-			"Owner[firstName='%s', lastName='%s']",
+			"Customer[firstName='%s', lastName='%s']",
 			this.firstName, this.lastName);
 	}
 	
@@ -69,19 +48,15 @@ public class Owner
 		{
 			return false;
 		}
-		final Owner owner = (Owner)o;
-		return Objects.equals(this.firstName, owner.firstName) && Objects.equals(this.lastName, owner.lastName);
+		final CustomerNotCrud customer = (CustomerNotCrud)o;
+		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
+			this.lastName,
+			customer.lastName);
 	}
 	
 	@Override
 	public int hashCode()
 	{
 		return Objects.hash(this.firstName, this.lastName);
-	}
-	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static Owner getOwnerWithFirstName(final List<Owner> owners, final String firstName)
-	{
-		return owners.stream().filter(owner -> owner.getFirstName().equals(firstName)).findFirst().get();
 	}
 }

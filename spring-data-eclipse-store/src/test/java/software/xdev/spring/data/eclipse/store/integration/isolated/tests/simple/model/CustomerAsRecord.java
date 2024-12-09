@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model;
 
-import java.util.Optional;
-
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
 
-public interface CustomerWithChildRepository extends CrudRepository<CustomerWithChild, String>
+public record CustomerAsRecord(String firstName, String lastName)
 {
-	Optional<CustomerWithChild> findByChild(Child child);
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	public CustomerAsRecord getCustomerWithFirstName(
+		final List<CustomerAsRecord> customers,
+		final String firstNameToFind)
+	{
+		return customers.stream().filter(customer -> customer.firstName.equals(firstNameToFind)).findFirst().get();
+	}
 }

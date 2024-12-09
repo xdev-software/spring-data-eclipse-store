@@ -13,33 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.tests;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.shared.DefaultTestAnnotations;
-import software.xdev.spring.data.eclipse.store.integration.shared.SharedTestConfiguration;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Customer;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepository;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.Owner;
-import software.xdev.spring.data.eclipse.store.integration.shared.repositories.OwnerRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Customer;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.CustomerRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.Owner;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model.OwnerRepository;
 
 
-@DefaultTestAnnotations
+@IsolatedTestAnnotations
+@ContextConfiguration(classes = {SimpleTestConfiguration.class})
 class SimpleMultipleTest
 {
+	private final CustomerRepository customerRepository;
+	private final OwnerRepository ownerRepository;
+	private final SimpleTestConfiguration configuration;
+	
 	@Autowired
-	private CustomerRepository customerRepository;
-	@Autowired
-	private OwnerRepository ownerRepository;
-	@Autowired
-	private SharedTestConfiguration configuration;
+	public SimpleMultipleTest(
+		final CustomerRepository customerRepository,
+		final OwnerRepository ownerRepository,
+		final SimpleTestConfiguration configuration)
+	{
+		this.customerRepository = customerRepository;
+		this.ownerRepository = ownerRepository;
+		this.configuration = configuration;
+	}
 	
 	@Test
 	void testBasicSaveAndFindAll()
@@ -48,8 +57,7 @@ class SimpleMultipleTest
 			customer = new Customer(TestData.FIRST_NAME, TestData.LAST_NAME);
 		this.customerRepository.save(customer);
 		
-		final Owner
-			owner = new Owner(TestData.FIRST_NAME, TestData.LAST_NAME);
+		final Owner owner = new Owner(TestData.FIRST_NAME, TestData.LAST_NAME);
 		this.ownerRepository.save(owner);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(

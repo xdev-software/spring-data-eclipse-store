@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model;
 
+import java.util.List;
 import java.util.Objects;
 
 
-public class Child
+public class Owner
 {
 	private String firstName;
 	private String lastName;
 	
-	public Child(final String firstName, final String lastName)
+	public Owner(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -53,7 +54,7 @@ public class Child
 	public String toString()
 	{
 		return String.format(
-			"Child[firstName='%s', lastName='%s']",
+			"Owner[firstName='%s', lastName='%s']",
 			this.firstName, this.lastName);
 	}
 	
@@ -68,15 +69,19 @@ public class Child
 		{
 			return false;
 		}
-		final Child customer = (Child)o;
-		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
-			this.lastName,
-			customer.lastName);
+		final Owner owner = (Owner)o;
+		return Objects.equals(this.firstName, owner.firstName) && Objects.equals(this.lastName, owner.lastName);
 	}
 	
 	@Override
 	public int hashCode()
 	{
 		return Objects.hash(this.firstName, this.lastName);
+	}
+	
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	public static Owner getOwnerWithFirstName(final List<Owner> owners, final String firstName)
+	{
+		return owners.stream().filter(owner -> owner.getFirstName().equals(firstName)).findFirst().get();
 	}
 }

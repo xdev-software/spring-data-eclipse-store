@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.shared.repositories;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.simple.model;
 
 import java.util.List;
 import java.util.Objects;
 
 
-public class CustomerWithChild
+public class ParentCustomer
 {
 	private String firstName;
 	private String lastName;
 	
-	private Child child;
-	
-	public CustomerWithChild(final String firstName, final String lastName, final Child child)
+	public ParentCustomer(final String firstName, final String lastName)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.child = child;
 	}
 	
 	public String getFirstName()
@@ -53,16 +50,6 @@ public class CustomerWithChild
 		this.lastName = lastName;
 	}
 	
-	public Child getChild()
-	{
-		return this.child;
-	}
-	
-	public void setChild(final Child child)
-	{
-		this.child = child;
-	}
-	
 	@Override
 	public String toString()
 	{
@@ -82,7 +69,7 @@ public class CustomerWithChild
 		{
 			return false;
 		}
-		final CustomerWithChild customer = (CustomerWithChild)o;
+		final ParentCustomer customer = (ParentCustomer)o;
 		return Objects.equals(this.firstName, customer.firstName) && Objects.equals(
 			this.lastName,
 			customer.lastName);
@@ -95,9 +82,7 @@ public class CustomerWithChild
 	}
 	
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static CustomerWithChild getCustomerWithFirstName(
-		final List<CustomerWithChild> customers,
-		final String firstName)
+	public static ParentCustomer getCustomerWithFirstName(final List<ParentCustomer> customers, final String firstName)
 	{
 		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();
 	}
