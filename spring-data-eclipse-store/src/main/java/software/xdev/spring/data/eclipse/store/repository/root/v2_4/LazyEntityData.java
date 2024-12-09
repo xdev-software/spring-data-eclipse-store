@@ -186,4 +186,9 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		this.entitiesById.clear();
 		return this.getObjectsToStore();
 	}
+	
+	public HashMap<ID, Lazy<T>> getNativeLazyEntitiesById()
+	{
+		return entitiesById;
+	}
 }

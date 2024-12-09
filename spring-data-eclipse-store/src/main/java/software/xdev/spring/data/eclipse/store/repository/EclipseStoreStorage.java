@@ -498,4 +498,13 @@ public class EclipseStoreStorage
 	{
 		return this.readWriteLock;
 	}
+	
+	/**
+	 * <b>Warning!</b> Please be very cautious if you access the root object.
+	 * This should only be done if absolutely necessary!
+	 */
+	public VersionedRoot getRoot()
+	{
+		return root;
+	}
 }
