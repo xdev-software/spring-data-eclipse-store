@@ -16,7 +16,7 @@
 package software.xdev.spring.data.eclipse.store.repository.support.concurrency;
 
 /**
- * Operation with a return value, used by {@link ReentrantJavaReadWriteLock} and {@link ReadWriteLockedStriped}.
+ * Operation with a return value, used by {@link ReentrantJavaReadWriteLock}.
  *
  * @param T the return type
  */
@@ -28,5 +28,5 @@ public interface ValueOperation<T>
 	 *
 	 * @return the result of the operation
 	 */
-	public T execute();
+	T execute();
 }

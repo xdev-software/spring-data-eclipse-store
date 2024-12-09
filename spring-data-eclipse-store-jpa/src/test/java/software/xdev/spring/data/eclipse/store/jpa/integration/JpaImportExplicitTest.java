@@ -63,7 +63,7 @@ class JpaImportExplicitTest
 		this.configuration.getStorageInstance().stop();
 		Assertions.assertEquals(
 			1,
-			this.configuration.getStorageInstance().getNonLazyCommunicator().getEntityCount(PersonToTestInJpa.class),
+			this.configuration.getStorageInstance().getEntityCount(PersonToTestInJpa.class),
 			"After restart the imported entities are not there anymore.");
 	}
 }
