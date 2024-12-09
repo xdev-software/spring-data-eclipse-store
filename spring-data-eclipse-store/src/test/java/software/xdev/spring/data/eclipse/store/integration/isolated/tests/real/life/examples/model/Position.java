@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model;
 
 import java.util.List;
 import java.util.Optional;

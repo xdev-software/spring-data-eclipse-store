@@ -13,34 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.lazy;
 
-import java.util.HashSet;
-import java.util.Set;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.PositionRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListCrudRepository;
 
 
-public class Warehouse
+public interface PositionLazyRepository extends LazyEclipseStoreListCrudRepository<Position, String>, PositionRepository
 {
-	private String name;
-	private Set<Article> articles = new HashSet<>();
-	
-	public Set<Article> getArticles()
-	{
-		return this.articles;
-	}
-	
-	public void setArticles(final Set<Article> articles)
-	{
-		this.articles = articles;
-	}
-	
-	public String getName()
-	{
-		return this.name;
-	}
-	
-	public void setName(final String name)
-	{
-		this.name = name;
-	}
 }

@@ -15,7 +15,7 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
 
-import static software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.Position.getPositionWithArticleWithName;
+import static software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position.getPositionWithArticleWithName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,16 +24,17 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
-import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
+import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Article;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.ArticleGroup;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Invoice;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Warehouse;
 
 
-@IsolatedTestAnnotations
-@ContextConfiguration(classes = {RealLifeExamplesTestConfiguration.class})
-class RealLifeExamplesTest
+public abstract class RealLifeExamplesTest
 {
 	static final String STATIONERY = "Stationery";
 	static final String BUILDING_MATERIAL = "Building Material";
@@ -45,15 +46,17 @@ class RealLifeExamplesTest
 	static final String SHOE_ARTICLE_NAME = "Shoe";
 	static final String SHOES_ARTICLE_GROUP = "Shoes";
 	
-	@Autowired
-	InvoiceRepository invoiceRepository;
-	@Autowired
-	PositionRepository positionRepository;
-	private final RealLifeExamplesTestConfiguration configuration;
+	final InvoiceRepository invoiceRepository;
+	final PositionRepository positionRepository;
+	private final TestConfiguration configuration;
 	
-	@Autowired
-	public RealLifeExamplesTest(final RealLifeExamplesTestConfiguration configuration)
+	public RealLifeExamplesTest(
+		final InvoiceRepository invoiceRepository,
+		final PositionRepository positionRepository,
+		final TestConfiguration configuration)
 	{
+		this.invoiceRepository = invoiceRepository;
+		this.positionRepository = positionRepository;
 		this.configuration = configuration;
 	}
 	

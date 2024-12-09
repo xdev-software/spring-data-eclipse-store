@@ -13,27 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.lazy;
 
-import java.util.List;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.InvoiceRepository;
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Invoice;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
 
 
-public class Invoice
+public interface InvoiceLazyRepository extends LazyEclipseStoreCrudRepository<Invoice, String>, InvoiceRepository
 {
-	private List<Position> positions;
-	
-	public Invoice(final List<Position> positions)
-	{
-		this.positions = positions;
-	}
-	
-	public void setPositions(final List<Position> positions)
-	{
-		this.positions = positions;
-	}
-	
-	public List<Position> getPositions()
-	{
-		return this.positions;
-	}
 }

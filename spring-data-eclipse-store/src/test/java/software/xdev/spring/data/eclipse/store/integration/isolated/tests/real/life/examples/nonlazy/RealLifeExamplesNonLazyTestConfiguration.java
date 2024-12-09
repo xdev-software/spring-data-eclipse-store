@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.nonlazy;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -31,10 +31,10 @@ import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseSt
 
 @Configuration
 @EnableEclipseStoreRepositories
-public class RealLifeExamplesTestConfiguration extends TestConfiguration
+public class RealLifeExamplesNonLazyTestConfiguration extends TestConfiguration
 {
 	@Autowired
-	protected RealLifeExamplesTestConfiguration(
+	protected RealLifeExamplesNonLazyTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)

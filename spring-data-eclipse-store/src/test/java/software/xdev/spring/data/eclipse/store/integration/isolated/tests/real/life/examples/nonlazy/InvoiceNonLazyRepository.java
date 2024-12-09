@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.nonlazy;
 
 import org.springframework.data.repository.CrudRepository;
 
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.InvoiceRepository;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Invoice;
 
 
-public interface InvoiceRepository extends CrudRepository<Invoice, String>
+public interface InvoiceNonLazyRepository extends CrudRepository<Invoice, String>, InvoiceRepository
 {
 }

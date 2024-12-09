@@ -17,6 +17,8 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.
 
 import org.springframework.data.repository.ListCrudRepository;
 
+import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.life.examples.model.Position;
+
 
 public interface PositionRepository extends ListCrudRepository<Position, String>
 {
