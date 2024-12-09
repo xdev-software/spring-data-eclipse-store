@@ -34,9 +34,15 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCustomRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepositoryRepository;
-import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepositoryRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStorePagingAndSortingRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCustomRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListPagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStorePagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.EclipseStoreRepositoryFactoryBean;
 
 
@@ -58,6 +64,7 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	 */
 	@Override
 	@Nonnull
+	@SuppressWarnings("deprecation")
 	public String getModulePrefix()
 	{
 		return this.getModuleIdentifier();
@@ -118,10 +125,16 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 		return List.of(
 			EclipseStoreRepository.class,
 			EclipseStoreCustomRepository.class,
-			EclipseStorePagingAndSortingRepositoryRepository.class,
-			EclipseStoreListPagingAndSortingRepositoryRepository.class,
+			EclipseStorePagingAndSortingRepository.class,
+			EclipseStoreListPagingAndSortingRepository.class,
 			EclipseStoreCrudRepository.class,
-			EclipseStoreListCrudRepository.class
+			EclipseStoreListCrudRepository.class,
+			LazyEclipseStoreRepository.class,
+			LazyEclipseStoreCustomRepository.class,
+			LazyEclipseStorePagingAndSortingRepository.class,
+			LazyEclipseStoreListPagingAndSortingRepository.class,
+			LazyEclipseStoreCrudRepository.class,
+			LazyEclipseStoreListCrudRepository.class
 		);
 	}
 	

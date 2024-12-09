@@ -154,7 +154,7 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 	}
 	
 	@Override
-	public final void complete(
+	public void complete(
 		final Binary data,
 		final SpringDataEclipseStoreLazy.Default<?> instance,
 		final PersistenceLoadHandler handler
@@ -164,25 +164,25 @@ public final class SpringDataEclipseStoreLazyBinaryHandler
 	}
 	
 	@Override
-	public final boolean hasPersistedReferences()
+	public boolean hasPersistedReferences()
 	{
 		return true;
 	}
 	
 	@Override
-	public final boolean hasPersistedVariableLength()
+	public boolean hasPersistedVariableLength()
 	{
 		return false;
 	}
 	
 	@Override
-	public final boolean hasVaryingPersistedLengthInstances()
+	public boolean hasVaryingPersistedLengthInstances()
 	{
 		return false;
 	}
 	
 	@Override
-	public final void iterateLoadableReferences(
+	public void iterateLoadableReferences(
 		final Binary data,
 		final PersistenceReferenceLoader iterator
 	)

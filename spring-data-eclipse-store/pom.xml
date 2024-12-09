@@ -314,6 +314,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
+					<source>${javaVersion}</source>
+					<target>${javaVersion}</target>
 					<release>${maven.compiler.release}</release>
 					<compilerArgs>
 						<arg>-proc:none</arg>
