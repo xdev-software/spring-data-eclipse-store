@@ -51,17 +51,16 @@ class DeletionTest
 		final ReferencingDaoObject referencingDaoObject = new ReferencingDaoObject(referencedObject);
 		referencingRepository.save(referencingDaoObject);
 		
-		Assertions.assertEquals(1, TestUtil.iterableToList(referencingRepository.findAll()).size());
-		Assertions.assertEquals(1, TestUtil.iterableToList(referencedRepository.findAll()).size());
+		Assertions.assertEquals(1, referencingRepository.findAll().size());
+		Assertions.assertEquals(1, referencedRepository.findAll().size());
 		
 		referencedRepository.delete(referencedObject);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertTrue(TestUtil.iterableToList(referencedRepository.findAll()).isEmpty());
-				final List<ReferencingDaoObject> referencingDaoObjects =
-					TestUtil.iterableToList(referencingRepository.findAll());
+				Assertions.assertTrue(referencedRepository.findAll().isEmpty());
+				final List<ReferencingDaoObject> referencingDaoObjects = referencingRepository.findAll();
 				Assertions.assertEquals(1, referencingDaoObjects.size());
 				Assertions.assertNotNull(referencingDaoObjects.get(0).getValue());
 			}
@@ -84,8 +83,8 @@ class DeletionTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, TestUtil.iterableToList(referencingRepository.findAll()).size());
-				Assertions.assertEquals(1, TestUtil.iterableToList(referencedRepository.findAll()).size());
+				Assertions.assertEquals(1, referencingRepository.findAll().size());
+				Assertions.assertEquals(1, referencedRepository.findAll().size());
 			}
 		);
 	}

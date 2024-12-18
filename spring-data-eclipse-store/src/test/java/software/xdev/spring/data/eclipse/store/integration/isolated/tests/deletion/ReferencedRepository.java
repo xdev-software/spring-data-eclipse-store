@@ -15,9 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.deletion;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 
 
-public interface ReferencedRepository extends CrudRepository<ReferencedDaoObject, Integer>
+public interface ReferencedRepository extends ListCrudRepository<ReferencedDaoObject, Integer>
 {
 }
