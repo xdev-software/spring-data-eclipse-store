@@ -68,6 +68,52 @@ class DeletionTest
 	}
 	
 	@Test
+	void deleteUnreferencedObject(@Autowired final ReferencedRepository referencedRepository)
+	{
+		final ReferencedDaoObject referencedObject = new ReferencedDaoObject("someValue");
+		referencedRepository.save(referencedObject);
+		
+		Assertions.assertEquals(1, referencedRepository.findAll().size());
+		
+		referencedRepository.delete(referencedObject);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertTrue(referencedRepository.findAll().isEmpty());
+			}
+		);
+	}
+	
+	@Test
+	void deleteDoubleReferencedObject(
+		@Autowired final ReferencedRepository referencedRepository,
+		@Autowired final ReferencingRepository referencingRepository)
+	{
+		final ReferencedDaoObject referencedObject = new ReferencedDaoObject("someValue");
+		final ReferencingDaoObject referencingDaoObject1 = new ReferencingDaoObject(referencedObject);
+		final ReferencingDaoObject referencingDaoObject2 = new ReferencingDaoObject(referencedObject);
+		referencingRepository.save(referencingDaoObject1);
+		referencingRepository.save(referencingDaoObject2);
+		
+		Assertions.assertEquals(2, referencingRepository.findAll().size());
+		Assertions.assertEquals(1, referencedRepository.findAll().size());
+		
+		referencedRepository.delete(referencedObject);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertTrue(referencedRepository.findAll().isEmpty());
+				final List<ReferencingDaoObject> referencingDaoObjects = referencingRepository.findAll();
+				Assertions.assertEquals(2, referencingDaoObjects.size());
+				Assertions.assertNotNull(referencingDaoObjects.get(0).getValue());
+				Assertions.assertNotNull(referencingDaoObjects.get(1).getValue());
+			}
+		);
+	}
+	
+	@Test
 	void restoreDeletedReferencedObject(
 		@Autowired final ReferencedRepository referencedRepository,
 		@Autowired final ReferencingRepository referencingRepository)
