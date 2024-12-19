@@ -20,34 +20,22 @@
 	</organization>
 
 	<properties>
-		<javaVersion>17</javaVersion>
-		<maven.compiler.release>${javaVersion}</maven.compiler.release>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<mainClass>software.xdev.spring.data.eclipse.store.demo.complex.ComplexDemoApplication</mainClass>
-
-		<org.springframework.boot.version>3.4.0</org.springframework.boot.version>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${org.springframework.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>software.xdev</groupId>
 			<artifactId>spring-data-eclipse-store</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.store</groupId>
+			<artifactId>storage-restservice-springboot</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -73,12 +61,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-boot-starter-logging</artifactId>
-					<groupId>org.springframework.boot</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 

@@ -25,11 +25,45 @@ import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipse
 
 public class Owner extends Person
 {
-	private String address;
-
+	//...
 	private final Lazy<List<Pet>> pets = SpringDataEclipseStoreLazy.build(new ArrayList<>());
 	//...
 ----
+
+== FetchType.LAZY
+
+In Spring JPA, lazy loading is achieved by annotating a field or property with ``FetchType.LAZY``.
+This approach leverages JPA's built-in mechanisms to defer the retrieval of the related entity until it is accessed.
+
+In contrast, {product-name} takes a different approach.
+Instead of using annotations, you wrap the object intended to be loaded lazily in a ``Lazy``-wrapper.
+This wrapper encapsulates the object and ensures it is only loaded when needed.
+
+[source,java,title="JPA Example with lazy"]
+----
+import jakarta.persistence.OneToMany;
+
+public class Owner extends Person
+{
+	@OneToMany(fetch = FetchType.LAZY)
+	private final List<Pet> pets = new ArrayList<>();
+	//...
+----
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/owner/Owner.java[Slightly changed example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.owner;
+//...
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
+
+public class Owner extends Person
+{
+	private final List<Lazy<Pet>> pets = new ArrayList<>();
+	//...
+----
+
+The ``Lazy``-wrapper makes lazy loading **explicit and flexible**, avoiding JPA-specific overhead and potential exceptions.
+But it introduces a custom, less-standardized approach that may increase boilerplate and requires developers to remember to use the wrapper, which could lead to errors if overlooked.
 
 == Repositories
 

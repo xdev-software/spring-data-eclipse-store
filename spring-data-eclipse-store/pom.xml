@@ -52,12 +52,12 @@
 
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
 		<org.springframework.boot.version>3.4.0</org.springframework.boot.version>
-		<org.eclipse.store.version>2.0.0</org.eclipse.store.version>
-		<org.eclipse.serializer.version>2.0.0</org.eclipse.serializer.version>
-		<hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+		<org.eclipse.store.version>2.1.0</org.eclipse.store.version>
+		<org.eclipse.serializer.version>2.1.0</org.eclipse.serializer.version>
+		<hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
 		<jakarta.el-api.version>6.0.1</jakarta.el-api.version>
 		<expressly.version>6.0.0-M1</expressly.version>
-		<hibernate-core.version>6.6.3.Final</hibernate-core.version>
+		<hibernate-core.version>6.6.4.Final</hibernate-core.version>
 	</properties>
 
 	<repositories>
@@ -442,7 +442,7 @@
 							<dependency>
 								<groupId>com.puppycrawl.tools</groupId>
 								<artifactId>checkstyle</artifactId>
-								<version>10.20.2</version>
+								<version>10.21.0</version>
 							</dependency>
 						</dependencies>
 						<configuration>
