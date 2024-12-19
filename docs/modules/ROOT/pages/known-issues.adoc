@@ -29,3 +29,27 @@ This **should** handle most problems with the ClassLoader.
 Restarting the storage leads to a reloading of all entities and may take some time, yet circumvents the Restart ClassLoader Issue.
 
 The behavior can be configured through xref:configuration.adoc#context-close-shutdown-storage[Properties] and is implemented in the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/config/EclipseStoreClientConfiguration.java[EclipseStoreClientConfiguration.java].
+
+== Multiple Repositories with related entities [[multi-repos-with-related-entities]]
+
+Users of SQL-Databases usually have a different understanding regarding relations between entities.
+They are handled and checked by the database.
+
+In the Java object graph we only have the relations defined by the user.
+This means that if a contained object has no variable that points to the containing object, it does not know anything about it, and we can only find this relation by searching through the whole object graph.
+
+An example: If an order instance contains several references to articles, there is almost no way to find the containing order of an article.
+Of course, we could search the whole object tree and then finally find the parent, but that would not be effective at all.
+
+image::DependingClasses.svg[Example structure with orders and articles]
+
+Now what if we deleted a referenced article from the article repository?
+
+-> in a sql database we would expect an exception to arise, because we shouldn't remove a referenced article.
+
+-> but in Spring-Data-Eclipse-Store we can easily remove this article, because the system doesn't know about any references to it.
+This results in the article getting removed, but the article actually still exists in the order.
+Furthermore, if we store the order again, the article will be existing in the article repository once more.
+
+This is simply a very different behaviour from SQL databases and must be acknowledged.
+
