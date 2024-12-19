@@ -52,7 +52,7 @@
 
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
 		<org.springframework.boot.version>3.4.0</org.springframework.boot.version>
-		<org.eclipse.store.version>2.0.0</org.eclipse.store.version>
+		<org.eclipse.store.version>2.1.0</org.eclipse.store.version>
 		<org.eclipse.serializer.version>2.0.0</org.eclipse.serializer.version>
 		<hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
 		<jakarta.el-api.version>6.0.1</jakarta.el-api.version>
