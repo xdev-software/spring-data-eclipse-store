@@ -19,7 +19,9 @@ import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDat
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.serializer.collections.lazy.LazyArrayList;
 import org.eclipse.serializer.collections.lazy.LazyList;
@@ -31,12 +33,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import software.xdev.spring.data.eclipse.store.exceptions.NoIdFieldFoundException;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.LazyEntityData;
 
 
+@SuppressWarnings("checkstyle:MethodName")
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {LazyTestConfiguration.class})
 class LazyTest
@@ -299,7 +305,6 @@ class LazyTest
 	}
 	
 	@Test
-	@Disabled("This should work at some point. At least a warning should be displayed.")
 	void lazyUseEclipseStoreLazy(@Autowired final ObjectWithLazyRepository<SimpleObject> repository)
 	{
 		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
@@ -456,5 +461,81 @@ class LazyTest
 				Assertions.assertEquals(objectToStore2, lazy.get());
 			}
 		);
+	}
+	
+	@Test
+	void simpleEntityWithIdLazyWrappedRepository_PersistetAfterRestart(
+		@Autowired final SimpleEntityWithIdLazyWrappedRepository repository)
+	{
+		final SimpleEntityWithId objectToStore = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final SpringDataEclipseStoreLazy.Default<SimpleEntityWithId> lazyObject =
+			SpringDataEclipseStoreLazy.build(objectToStore);
+		repository.save(lazyObject);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, repository.findAll().size());
+				final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
+				Assertions.assertEquals(objectToStore.getId(), reloadedObject.get().getId());
+				Assertions.assertEquals(objectToStore.getName(), reloadedObject.get().getName());
+			}
+		);
+	}
+	
+	@Test
+	void simpleEntityWithIdLazyWrappedRepository_OnlyLoadOnDemand(
+		@Autowired final SimpleEntityWithIdLazyWrappedRepository repository)
+	{
+		final SimpleEntityWithId objectToStore = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final SpringDataEclipseStoreLazy.Default<SimpleEntityWithId> lazyObject =
+			SpringDataEclipseStoreLazy.build(objectToStore);
+		repository.save(lazyObject);
+		
+		restartDatastore(this.configuration);
+		
+		final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
+		Assertions.assertFalse(reloadedObject.isLoaded());
+		Assertions.assertEquals(objectToStore.getId(), reloadedObject.get().getId());
+		Assertions.assertEquals(objectToStore.getName(), reloadedObject.get().getName());
+		Assertions.assertTrue(reloadedObject.isLoaded());
+	}
+	
+	@Test
+	void simpleEntityWithIdLazyWrappedRepository_FindById(
+		@Autowired final SimpleEntityWithIdLazyWrappedRepository repository)
+	{
+		final SimpleEntityWithId objectToStore1 = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		repository.save(SpringDataEclipseStoreLazy.build(objectToStore1));
+		
+		final List<Lazy<SimpleEntityWithId>> all = repository.findAll();
+		
+		Assertions.assertThrows(NoIdFieldFoundException.class, () -> repository.findById(all.get(0).get().getId()));
+	}
+	
+	@Test
+	void simpleEntityWithIdLazyRepository_FindById(@Autowired final SimpleEntityWithIdLazyRepository repository)
+	{
+		final SimpleEntityWithId objectToStore1 = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final Long object1Id = repository.save(objectToStore1).getId();
+		final SimpleEntityWithId objectToStore2 = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final Long object2Id = repository.save(objectToStore2).getId();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				LazyReferenceManager.get().cleanUp();
+				final Optional<SimpleEntityWithId> reloadedObject = repository.findById(object1Id);
+				Assertions.assertTrue(reloadedObject.isPresent());
+			}
+		);
+		final EntityData<SimpleEntityWithId, Long> entityData = this.configuration.getStorageInstance()
+			.getRoot()
+			.getCurrentRootData()
+			.getEntityData(SimpleEntityWithId.class);
+		final HashMap<Long, Lazy<SimpleEntityWithId>> lazyEntitiesById =
+			((LazyEntityData<SimpleEntityWithId, Long>)entityData).getNativeLazyEntitiesById();
+		Assertions.assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
+		Assertions.assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
 	}
 }

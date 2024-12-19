@@ -23,18 +23,18 @@ import org.eclipse.serializer.util.traversing.ObjectGraphTraverser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import software.xdev.spring.data.eclipse.store.repository.root.EntityData;
-import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.RootDataV2_4;
 
 
 public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleRepositorySynchronizer.class);
-	private final RootDataV2 root;
+	private final RootDataV2_4 root;
 	private final HashSet<EntityData<Object, Object>> listsToStore;
 	private final ObjectGraphTraverser buildObjectGraphTraverser;
 	
-	public SimpleRepositorySynchronizer(final RootDataV2 root)
+	public SimpleRepositorySynchronizer(final RootDataV2_4 root)
 	{
 		this.root = root;
 		this.listsToStore = new HashSet<>();
@@ -53,7 +53,7 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 					final EntityData<Object, Object> entityDataForCurrentObject =
 						this.root.getEntityData(objectInGraphClass);
 					if(entityDataForCurrentObject != null
-						&& !entityDataForCurrentObject.getEntities().contains(objectInGraph))
+						&& !entityDataForCurrentObject.containsEntity(objectInGraph))
 					{
 						entityDataForCurrentObject.ensureEntityAndReturnObjectsToStore(objectInGraph);
 						this.listsToStore.add(entityDataForCurrentObject);
@@ -62,6 +62,9 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 			).buildObjectGraphTraverser();
 	}
 	
+	/**
+	 * This method can take a huge amount of time. Must be watched closely.
+	 */
 	@Override
 	public Collection<EntityData<Object, Object>> syncAndReturnChangedObjectLists(final Object objectToStore)
 	{

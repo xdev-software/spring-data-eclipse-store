@@ -7,11 +7,11 @@
 	<parent>
 		<groupId>software.xdev</groupId>
 		<artifactId>spring-data-eclipse-store-root</artifactId>
-		<version>2.2.1-SNAPSHOT</version>
+		<version>2.4.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>spring-data-eclipse-store-demo</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
+	<version>2.4.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<organization>
@@ -28,7 +28,7 @@
 
 		<mainClass>software.xdev.spring.data.eclipse.store.demo.complex.ComplexDemoApplication</mainClass>
 
-		<org.springframework.boot.version>3.3.2</org.springframework.boot.version>
+		<org.springframework.boot.version>3.4.0</org.springframework.boot.version>
 	</properties>
 
 	<dependencyManagement>
@@ -122,7 +122,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>3.5.2</version>
 				<configuration>
 					<argLine>
 						--add-opens java.base/java.util=ALL-UNNAMED

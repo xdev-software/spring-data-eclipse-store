@@ -20,6 +20,7 @@ import static org.eclipse.store.storage.embedded.types.EmbeddedStorage.Foundatio
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
@@ -43,9 +44,10 @@ public class TestConfiguration extends EclipseStoreClientConfiguration
 	@Autowired
 	protected TestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider)
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 	}
 	
 	@Override

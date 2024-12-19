@@ -24,9 +24,13 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
 /**
+ * This is a object for all versions <2.4.0 and is used for upgrading to the new root.
+ * @deprecated should not be initialised anymore. Version for <2.4.0
+ *
  * @param <T>  type of entity to store
  * @param <ID> type of id of the entity to store. Can be {@link Void} if no ID is used.
  */
+@Deprecated(forRemoval = false, since = "2.4.0")
 public class EntityData<T, ID>
 {
 	private final IdentitySet<T> entities;
@@ -48,9 +52,27 @@ public class EntityData<T, ID>
 		this.entitiesById = new HashMap<>();
 	}
 	
+	/**
+	 * Accepts {@code null} if no id field is defined
+	 */
 	public void setIdGetter(final Function<T, ID> idGetter)
 	{
 		this.idGetter = idGetter;
+		
+		this.ensureEntitiesAndEntitiesByIdAreTheSameSize();
+	}
+	
+	private void ensureEntitiesAndEntitiesByIdAreTheSameSize()
+	{
+		if(this.idGetter != null && this.entities.size() != this.entitiesById.size())
+		{
+			this.entitiesById.clear();
+			this.entities.forEach(entity -> this.entitiesById.put(this.idGetter.apply(entity), entity));
+		}
+		if(this.idGetter == null)
+		{
+			this.entitiesById.clear();
+		}
 	}
 	
 	public IdentitySet<T> getEntities()
@@ -83,7 +105,10 @@ public class EntityData<T, ID>
 		if(!this.getEntities().contains(entityToStore))
 		{
 			this.entities.add(entityToStore);
-			this.entitiesById.put(this.idGetter.apply(entityToStore), entityToStore);
+			if(this.idGetter != null)
+			{
+				this.entitiesById.put(this.idGetter.apply(entityToStore), entityToStore);
+			}
 			return this.getObjectsToStore();
 		}
 		return List.of();
@@ -97,7 +122,10 @@ public class EntityData<T, ID>
 	public Collection<Object> removeEntityAndReturnObjectsToStore(final T entityToRemove)
 	{
 		this.entities.remove(entityToRemove);
-		this.entitiesById.remove(this.idGetter.apply(entityToRemove));
+		if(this.idGetter != null)
+		{
+			this.entitiesById.remove(this.idGetter.apply(entityToRemove));
+		}
 		return this.getObjectsToStore();
 	}
 	

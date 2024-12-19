@@ -20,16 +20,21 @@ import java.util.TreeSet;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 
 import software.xdev.micromigration.eclipsestore.MigrationManager;
-import software.xdev.micromigration.migrater.reflection.ReflectiveMigrater;
+import software.xdev.micromigration.migrater.ExplicitMigrater;
 import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
 import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
-import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitalizeVersioning;
+import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitializeVersioning;
+import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_4_0_InitializeLazy;
 
 
 public final class EclipseStoreMigrator
 {
-	public static final Class<?> FIRST_UPDATE_SCRIPT = v2_0_0_InitalizeVersioning.class;
+	public static final VersionAgnosticMigrationScript<?, ?>[] SCRIPTS =
+		new VersionAgnosticMigrationScript[]{
+			new v2_0_0_InitializeVersioning(),
+			new v2_4_0_InitializeLazy()
+		};
 	
 	private EclipseStoreMigrator()
 	{
@@ -37,16 +42,13 @@ public final class EclipseStoreMigrator
 	
 	public static void migrate(final VersionedRoot versionedRoot, final EmbeddedStorageManager storageManager)
 	{
-		final ReflectiveMigrater migrater =
-			new ReflectiveMigrater(FIRST_UPDATE_SCRIPT.getPackageName());
-		new MigrationManager(versionedRoot, migrater, storageManager)
-			.migrate(versionedRoot);
+		final ExplicitMigrater migrater = new ExplicitMigrater(SCRIPTS);
+		new MigrationManager(versionedRoot, migrater, storageManager).migrate(versionedRoot);
 	}
 	
 	public static MigrationVersion getLatestVersion()
 	{
-		final ReflectiveMigrater migrater =
-			new ReflectiveMigrater(FIRST_UPDATE_SCRIPT.getPackageName());
+		final ExplicitMigrater migrater = new ExplicitMigrater(SCRIPTS);
 		final TreeSet<VersionAgnosticMigrationScript<?, ?>> sortedScripts = migrater.getSortedScripts();
 		return sortedScripts.isEmpty() ? new MigrationVersion(0, 0, 0) : sortedScripts.last().getTargetVersion();
 	}

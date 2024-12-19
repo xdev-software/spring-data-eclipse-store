@@ -1,5 +1,6 @@
 package software.xdev.spring.data.eclipse.store.demo.dual.storage.person;
 
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.ConfigurationPair;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
@@ -31,9 +32,10 @@ public class PersistencePersonConfiguration extends EclipseStoreClientConfigurat
 	public PersistencePersonConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final EclipseStoreProperties properties)
+		final EclipseStoreProperties properties,
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 		this.foundation = defaultEclipseStoreProvider;
 		this.properties = properties;
 	}

@@ -16,7 +16,7 @@
 package software.xdev.spring.data.eclipse.store.repository.support.concurrency;
 
 /**
- * Operation with no return value, used by {@link ReentrantJavaReadWriteLock} and {@link ReadWriteLockedStriped}.
+ * Operation with no return value, used by {@link ReentrantJavaReadWriteLock}.
  */
 @FunctionalInterface
 public interface VoidOperation
@@ -24,5 +24,5 @@ public interface VoidOperation
 	/**
 	 * Execute an arbitrary operation
 	 */
-	public void execute();
+	void execute();
 }

@@ -1,3 +1,33 @@
+# 2.4.0
+
+* Updated org.springframework.boot.version to v3.4.0
+* Updated EclipseStore to v2.0.0
+* Implemented Lazy Repositories with ``LazyEclipseStoreRepository``
+
+# 2.3.1
+
+* Auto-Fix problems with adding ids to entities with existing data store.
+
+# 2.3.0
+
+* Add support for shutting down the storage during application shutdown
+  * By default, only enabled when Spring DevTools are active
+  * This should fix "StorageExceptionInitialization: Active storage for ... already exists" errors during DevTools restart
+* Added [Jakarta Bean Validation Constraints](https://jakarta.ee/learn/docs/jakartaee-tutorial/current/beanvalidation/bean-validation/bean-validation.html#_using_jakarta_bean_validation_constraints) with Hibernate validator for entities.
+
+# 2.2.2
+
+* Fixed NPE in EclipseSerializerRegisteringCopier
+
+# 2.2.1
+
+* Fixed release version
+
+# 2.2.0
+
+* Fixed issue with not found migration script (for v2.X)
+* Updated org.springframework.boot.version to v3.3.4
+
 # 2.1.0
 
 * Implemented auto-id-generation for UUIDs.

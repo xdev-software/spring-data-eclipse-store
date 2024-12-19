@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 import jakarta.annotation.Nonnull;
 
+import org.eclipse.serializer.reference.Lazy;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
@@ -57,6 +58,12 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 	{
 		final QueryMethod queryMethod = new QueryMethod(method, metadata, factory);
 		
+		Class<?> domainType = metadata.getDomainType();
+		if(domainType.equals(Lazy.class))
+		{
+			domainType = metadata.getDomainTypeInformation().getTypeArguments().get(0).getType();
+		}
+		
 		final Query queryAnnotation = method.getAnnotation(Query.class);
 		if(queryAnnotation != null)
 		{
@@ -64,7 +71,7 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 			{
 				// Special case for Queries that have findAll and are annotated with Query
 				return this.createFindAllEclipseStoreQueryProvider(
-					metadata.getDomainType(),
+					domainType,
 					queryMethod,
 					method
 				);
@@ -72,13 +79,12 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 			
 			return this.createHSqlQueryProvider(
 				queryAnnotation.value(),
-				metadata.getDomainType(),
+				domainType,
 				queryMethod
 			);
 		}
-		
 		return this.createStringBasedEclipseStoreQueryProvider(
-			metadata.getDomainType(),
+			domainType,
 			queryMethod,
 			method
 		);

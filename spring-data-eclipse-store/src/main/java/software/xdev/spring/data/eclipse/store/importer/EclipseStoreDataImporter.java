@@ -51,7 +51,7 @@ public class EclipseStoreDataImporter
 	{
 		this.configuration = configuration;
 	}
-	
+
 	/**
 	 * Imports entities from all given {@link EntityManagerFactory}s that are available into the EclipseStore storage.
 	 * <p>
@@ -265,7 +265,9 @@ public class EclipseStoreDataImporter
 				storageInstance,
 				storageInstance,
 				new SupportedChecker.Implementation(),
-				storageInstance
+				storageInstance,
+				this.configuration.getValidator(),
+				this.configuration.getClassLoaderProvider()
 			),
 			domainClass,
 			new EclipseStoreTransactionManager(),

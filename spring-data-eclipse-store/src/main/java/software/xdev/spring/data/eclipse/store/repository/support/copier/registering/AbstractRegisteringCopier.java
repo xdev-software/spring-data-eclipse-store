@@ -15,6 +15,8 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support.copier.registering;
 
+import jakarta.validation.Validator;
+
 import org.eclipse.serializer.Serializer;
 import org.eclipse.serializer.SerializerFoundation;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
@@ -23,6 +25,7 @@ import org.eclipse.serializer.persistence.binary.types.Binary;
 import org.eclipse.serializer.persistence.types.PersistenceManager;
 import org.eclipse.serializer.reference.ObjectSwizzling;
 import org.eclipse.serializer.reference.Reference;
+import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.serializer.util.X;
 
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
@@ -37,12 +40,16 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 public abstract class AbstractRegisteringCopier implements RegisteringObjectCopier
 {
 	private final EclipseSerializerRegisteringCopier actualCopier;
+	private ClassLoader currentClassLoader;
 	
 	protected AbstractRegisteringCopier(
 		final SupportedChecker supportedChecker,
 		final RegisteringWorkingCopyAndOriginal register,
 		final ObjectSwizzling objectSwizzling,
-		final WorkingCopier<?> copier)
+		final WorkingCopier<?> copier,
+		final Validator validator,
+		final ClassLoaderProvider currentClassLoaderProvider
+	)
 	{
 		this.actualCopier = new EclipseSerializerRegisteringCopier(
 			supportedChecker,
@@ -51,17 +58,21 @@ public abstract class AbstractRegisteringCopier implements RegisteringObjectCopi
 			this.createPersistenceManager(
 				this.createSerializerFoundation(),
 				objectSwizzling,
-				copier
-			)
+				copier,
+				currentClassLoaderProvider
+			),
+			validator
 		);
 	}
 	
 	private PersistenceManager<Binary> createPersistenceManager(
 		final SerializerFoundation<?> serializerFoundation,
 		final ObjectSwizzling objectSwizzling,
-		final WorkingCopier<?> copier)
+		final WorkingCopier<?> copier,
+		final ClassLoaderProvider currentClassLoaderProvider)
 	{
 		return serializerFoundation
+			.setClassLoaderProvider(currentClassLoaderProvider)
 			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsSet12.New())
 			.registerCustomTypeHandler(BinaryHandlerImmutableCollectionsList12.New())
 			.registerCustomTypeHandlers(new SpringDataEclipseStoreLazyBinaryHandler(objectSwizzling, copier))

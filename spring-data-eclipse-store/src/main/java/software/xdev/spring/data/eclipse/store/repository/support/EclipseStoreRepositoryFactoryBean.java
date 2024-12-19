@@ -81,7 +81,8 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 		final EclipseStoreClientConfiguration ensuredConfiguration = this.ensureConfiguration();
 		return new EclipseStoreRepositoryFactory(
 			ensuredConfiguration.getStorageInstance(),
-			ensuredConfiguration.getTransactionManagerInstance()
+			ensuredConfiguration.getTransactionManagerInstance(),
+			ensuredConfiguration.getValidator()
 		);
 	}
 	

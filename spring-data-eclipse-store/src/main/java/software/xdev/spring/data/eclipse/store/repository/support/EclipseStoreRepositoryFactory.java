@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 import java.util.Optional;
 
 import jakarta.annotation.Nonnull;
+import jakarta.validation.Validator;
 
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.repository.core.EntityInformation;
@@ -34,6 +35,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreCustomRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListCrudRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreListPagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStorePagingAndSortingRepository;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreQueryByExampleExecutor;
+import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.RecursiveWorkingCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
@@ -46,13 +55,16 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 {
 	private final EclipseStoreStorage storage;
 	private final PlatformTransactionManager transactionManager;
+	private final Validator validator;
 	
 	public EclipseStoreRepositoryFactory(
 		final EclipseStoreStorage storage,
-		final PlatformTransactionManager transactionManager)
+		final PlatformTransactionManager transactionManager,
+		final Validator validator)
 	{
 		this.storage = storage;
 		this.transactionManager = transactionManager;
+		this.validator = validator;
 	}
 	
 	@Override
@@ -62,6 +74,7 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 		return new PersistentEntityInformation<>(new BasicPersistentEntity<>(TypeInformation.of(domainClass)));
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	@Nonnull
 	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(
@@ -82,7 +95,9 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 			storage,
 			storage,
 			new SupportedChecker.Implementation(),
-			storage
+			storage,
+			this.validator,
+			storage.getClassLoaderProvider()
 		);
 	}
 	
@@ -90,8 +105,9 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	@Nonnull
 	protected Object getTargetRepository(@Nonnull final RepositoryInformation metadata)
 	{
-		final SimpleEclipseStoreRepository<?, ?> existingRepository =
-			this.storage.getRepository(metadata.getDomainType());
+		final Class<?> domainType = metadata.getDomainType();
+
+		final EclipseStoreRepository<?, ?> existingRepository = this.storage.getRepository(domainType);
 		if(existingRepository != null)
 		{
 			return existingRepository;
@@ -100,10 +116,10 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 		return this.getTargetRepositoryViaReflection(
 			metadata,
 			this.storage,
-			this.createWorkingCopier(metadata.getDomainType(), this.storage),
-			metadata.getDomainType(),
+			this.createWorkingCopier(domainType, this.storage),
+			domainType,
 			this.transactionManager,
-			this.storage.ensureIdManager(metadata.getDomainType())
+			this.storage.ensureIdManager(domainType)
 		);
 	}
 	
@@ -111,7 +127,23 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	@Nonnull
 	protected Class<?> getRepositoryBaseClass(@Nonnull final RepositoryMetadata metadata)
 	{
+		if(this.isLazyRepository(metadata))
+		{
+			return LazySimpleEclipseStoreRepository.class;
+		}
 		return SimpleEclipseStoreRepository.class;
+	}
+	
+	private boolean isLazyRepository(final RepositoryMetadata metadata)
+	{
+		final Class<?> repositoryInterface = metadata.getRepositoryInterface();
+		return LazyEclipseStoreCrudRepository.class.isAssignableFrom(repositoryInterface)
+			|| LazyEclipseStoreCustomRepository.class.isAssignableFrom(repositoryInterface)
+			|| LazyEclipseStoreListCrudRepository.class.isAssignableFrom(repositoryInterface)
+			|| LazyEclipseStoreListPagingAndSortingRepository.class.isAssignableFrom(repositoryInterface)
+			|| LazyEclipseStorePagingAndSortingRepository.class.isAssignableFrom(repositoryInterface)
+			|| LazyEclipseStoreQueryByExampleExecutor.class.isAssignableFrom(repositoryInterface)
+			|| LazyEclipseStoreRepository.class.isAssignableFrom(repositoryInterface);
 	}
 	
 	@Override
