@@ -5,3 +5,4 @@
 * xref:features/queries.adoc[Queries]
 * xref:features/transactions.adoc[Transactions]
 * xref:features/versions.adoc[Versions]
+* xref:features/rest-api.adoc[REST Interface]

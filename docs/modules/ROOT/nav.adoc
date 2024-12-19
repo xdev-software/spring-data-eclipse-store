@@ -8,5 +8,6 @@
 ** xref:features/queries.adoc[Queries]
 ** xref:features/transactions.adoc[Transactions]
 ** xref:features/versions.adoc[Versions]
+** xref:features/rest-api.adoc[REST Interface]
 * xref:migration.adoc[Migration from JPA]
 * xref:known-issues.adoc[Known issues]
