@@ -92,7 +92,7 @@ public class EclipseStoreStorage
 		this.classLoaderProvider = storeConfiguration.getClassLoaderProvider();
 	}
 	
-	private StorageManager getInstanceOfStorageManager()
+	public StorageManager getInstanceOfStorageManager()
 	{
 		this.ensureEntitiesInRoot();
 		return this.storageManager;

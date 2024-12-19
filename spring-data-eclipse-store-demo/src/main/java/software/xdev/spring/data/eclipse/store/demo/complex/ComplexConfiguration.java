@@ -2,7 +2,6 @@ package software.xdev.spring.data.eclipse.store.demo.complex;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -14,7 +13,6 @@ import org.eclipse.store.storage.restadapter.types.StorageRestAdapter;
 import org.eclipse.store.storage.restservice.spring.boot.types.configuration.StoreDataRestServiceProperties;
 import org.eclipse.store.storage.restservice.spring.boot.types.rest.StoreDataRestController;
 import org.eclipse.store.storage.types.Storage;
-import org.eclipse.store.storage.types.StorageManager;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
@@ -67,7 +65,7 @@ public class ComplexConfiguration extends EclipseStoreClientConfiguration
 	public Map<String, StorageRestAdapter> storageRestAdapters(final Map<String, EmbeddedStorageManager> storages)
 	{
 		return Map.of(
-			"default", StorageRestAdapter.New(this.createEmbeddedStorageFoundation())
+			"default", StorageRestAdapter.New(this.storageInstance.getInstanceOfStorageManager())
 		);
 	}
 	
