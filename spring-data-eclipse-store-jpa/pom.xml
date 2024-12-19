@@ -22,28 +22,8 @@
 	</organization>
 
 	<properties>
-		<javaVersion>17</javaVersion>
-		<maven.compiler.release>${javaVersion}</maven.compiler.release>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<mainClass>software.xdev.spring.data.eclipse.store.demo.complex.ComplexDemoApplication</mainClass>
-
-		<org.springframework.boot.version>3.4.0</org.springframework.boot.version>
 	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${org.springframework.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
