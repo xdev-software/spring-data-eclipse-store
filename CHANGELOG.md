@@ -1,3 +1,8 @@
+# 2.4.1
+
+* Updated EclipseStore to v2.1.0
+* Added EclipseStore-Rest-API to tests (storage-restservice-springboot)
+
 # 2.4.0
 
 * Updated org.springframework.boot.version to v3.4.0
@@ -8,6 +13,7 @@
 
 * Auto-Fix problems with adding ids to entities with existing data store.
 
+~~~~
 # 2.3.0
 
 * Add support for shutting down the storage during application shutdown

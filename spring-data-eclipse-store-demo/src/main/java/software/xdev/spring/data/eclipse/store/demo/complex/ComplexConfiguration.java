@@ -10,13 +10,12 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.eclipse.store.storage.restadapter.types.StorageRestAdapter;
-import org.eclipse.store.storage.restservice.spring.boot.types.configuration.StoreDataRestServiceProperties;
-import org.eclipse.store.storage.restservice.spring.boot.types.rest.StoreDataRestController;
 import org.eclipse.store.storage.types.Storage;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -25,6 +24,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
+@ComponentScan({"org.eclipse.store.storage.restservice.spring.boot.types.rest"})
 @Configuration
 @EnableEclipseStoreRepositories
 public class ComplexConfiguration extends EclipseStoreClientConfiguration
@@ -59,23 +59,14 @@ public class ComplexConfiguration extends EclipseStoreClientConfiguration
 		storageFoundation.getConnectionFoundation().setClassLoaderProvider(this.getClassLoaderProvider());
 		return storageFoundation;
 	}
-	
+
 	@Bean
 	@DependsOn({"embeddedStorageFoundationFactory"})
 	public Map<String, StorageRestAdapter> storageRestAdapters(final Map<String, EmbeddedStorageManager> storages)
 	{
 		return Map.of(
-			"default", StorageRestAdapter.New(this.storageInstance.getInstanceOfStorageManager())
+			"defaultStorageManager", StorageRestAdapter.New(this.storageInstance.getInstanceOfStorageManager())
 		);
-	}
-	
-	@Bean
-	@DependsOn({"embeddedStorageFoundationFactory"})
-	public StoreDataRestController storageDataRestController(
-		final Map<String, StorageRestAdapter> storageRestAdapters,
-		final StoreDataRestServiceProperties properties)
-	{
-		return new StoreDataRestController(storageRestAdapters, properties);
 	}
 	
 	/**
