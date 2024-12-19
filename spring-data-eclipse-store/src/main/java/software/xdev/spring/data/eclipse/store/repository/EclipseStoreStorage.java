@@ -289,7 +289,6 @@ public class EclipseStoreStorage
 				final Collection<Object> entitiesAndPossiblyNonEntitiesToStore =
 					this.collectRootEntitiesToStore(
 						this.getEntityData(clazz),
-						clazz,
 						entitiesToStore);
 				entitiesAndPossiblyNonEntitiesToStore.addAll(nonEntitiesToStore);
 				if(LOG.isDebugEnabled())
@@ -312,7 +311,6 @@ public class EclipseStoreStorage
 	 */
 	private <T, ID> Collection<Object> collectRootEntitiesToStore(
 		final EntityData<T, ID> entityData,
-		final Class<T> clazz,
 		final Iterable<T> entitiesToStore)
 	{
 		final Collection<Object> objectsToStore = new ArrayList<>();
@@ -337,6 +335,7 @@ public class EclipseStoreStorage
 			{
 				final EntityData<T, ?> entityData = this.getEntityData(clazz);
 				this.storageManager.storeAll(entityData.removeEntityAndReturnObjectsToStore(entityToRemove));
+				
 				if(LOG.isDebugEnabled())
 				{
 					LOG.debug("Deleted single entity of class {}.", clazz.getSimpleName());

@@ -50,7 +50,7 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 						return;
 					}
 					final Class<Object> objectInGraphClass = (Class<Object>)objectInGraph.getClass();
-					EntityData<Object, Object> entityDataForCurrentObject =
+					final EntityData<Object, Object> entityDataForCurrentObject =
 						this.root.getEntityData(objectInGraphClass);
 					if(entityDataForCurrentObject != null
 						&& !entityDataForCurrentObject.containsEntity(objectInGraph))
@@ -62,6 +62,9 @@ public class SimpleRepositorySynchronizer implements RepositorySynchronizer
 			).buildObjectGraphTraverser();
 	}
 	
+	/**
+	 * This method can take a huge amount of time. Must be watched closely.
+	 */
 	@Override
 	public Collection<EntityData<Object, Object>> syncAndReturnChangedObjectLists(final Object objectToStore)
 	{
