@@ -15,8 +15,12 @@
  */
 package software.xdev.spring.data.eclipse.store.demo.complex.model;
 
+import jakarta.validation.constraints.NotBlank;
+
+
 public class Person extends BaseEntity
 {
+	@NotBlank
 	private String firstName;
 	
 	private String lastName;

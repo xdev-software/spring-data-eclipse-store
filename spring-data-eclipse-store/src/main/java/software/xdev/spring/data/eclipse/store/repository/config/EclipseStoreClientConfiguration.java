@@ -17,6 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -206,6 +207,9 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Bean
 	public Validator getValidator()
 	{
-		return Validation.buildDefaultValidatorFactory().getValidator();
+		try(ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
+		{
+			return factory.getValidator();
+		}
 	}
 }
