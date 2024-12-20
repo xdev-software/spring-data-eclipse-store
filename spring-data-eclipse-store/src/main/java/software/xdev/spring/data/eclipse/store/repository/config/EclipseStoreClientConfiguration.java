@@ -15,6 +15,9 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
+import java.util.Optional;
+
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -23,6 +26,7 @@ import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
+import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -36,6 +40,8 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import software.xdev.micromigration.migrater.MicroMigrater;
+import software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
@@ -76,6 +82,8 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.only-when-dev-tools:true}")
 	protected boolean contextCloseShutdownStorageOnlyWhenDevTools;
 	
+	protected Optional<MicroMigrater> possibleMigrater;
+	
 	/**
 	 * Upstream value from Spring Boot DevTools.
 	 *
@@ -84,16 +92,19 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Value("${spring.devtools.restart.enabled:true}")
 	protected boolean springDevtoolsRestartEnabled;
 	
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	@Autowired
 	protected EclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final ClassLoaderProvider classLoaderProvider)
+		final ClassLoaderProvider classLoaderProvider,
+		final Optional<MicroMigrater> possibleMigrater)
 	{
 		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
 		this.classLoaderProvider = classLoaderProvider;
 		this.defaultEclipseStoreProperties.setAutoStart(false);
 		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
+		this.possibleMigrater = possibleMigrater;
 	}
 	
 	public EclipseStoreProperties getEclipseStoreProperties()
@@ -207,9 +218,34 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Bean
 	public Validator getValidator()
 	{
-		try(ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
+		try(final ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
 		{
 			return factory.getValidator();
 		}
+	}
+	
+	@PostConstruct
+	public void migrateDataOnPostConstruct()
+	{
+		// "Why don't you migrate the data wherever you call EclipseStoreMigrator.migrateStructure?" -
+		// Because in order to be able to access repositories in DataMigrationScripts, we can't have
+		// the migration-method block the start of the storage. That would lead to a deadlock and we don't
+		// want that.
+		final EmbeddedStorageManager instanceOfStorageManager =
+			this.getStorageInstance().getInstanceOfStorageManager();
+		EclipseStoreMigrator.migrateData(
+			this.getStorageInstance().getRoot().getDataVersion(),
+			this.getDataMigrator(),
+			instanceOfStorageManager
+		);
+	}
+	
+	public MicroMigrater getDataMigrator()
+	{
+		if(this.possibleMigrater != null && this.possibleMigrater.isPresent())
+		{
+			return this.possibleMigrater.get();
+		}
+		return null;
 	}
 }

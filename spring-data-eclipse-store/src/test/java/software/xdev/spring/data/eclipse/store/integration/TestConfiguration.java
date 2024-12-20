@@ -19,6 +19,7 @@ import static org.eclipse.store.storage.embedded.types.EmbeddedStorage.Foundatio
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -32,6 +33,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.FileSystemUtils;
 
+import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.spring.data.eclipse.store.helper.StorageDirectoryNameProvider;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
@@ -41,13 +43,22 @@ public class TestConfiguration extends EclipseStoreClientConfiguration
 {
 	private final String storageDirectory = StorageDirectoryNameProvider.getNewStorageDirectoryPath();
 	
-	@Autowired
 	protected TestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
+		this(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider, Optional.empty());
+	}
+	
+	@Autowired
+	protected TestConfiguration(
+		final EclipseStoreProperties defaultEclipseStoreProperties,
+		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
+		final ClassLoaderProvider classLoaderProvider,
+		final Optional<MicroMigrater> possibleMigrater)
+	{
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider, possibleMigrater);
 	}
 	
 	@Override

@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.config;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.own.migrator;
 
 import java.util.Optional;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import software.xdev.micromigration.migrater.MicroMigrater;
+import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
+import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
-@Component
-public class DefaultEclipseStoreClientConfigurationFactory
+@ComponentScan({"software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.own.migrator"})
+@Configuration
+@EnableEclipseStoreRepositories
+public class DataMigrationOwnMigratorTestConfiguration extends TestConfiguration
 {
-	@Bean
-	@ConditionalOnMissingBean(EclipseStoreClientConfiguration.class)
-	public DefaultEclipseStoreClientConfiguration getEclipseStoreClientConfiguration(
+	@Autowired
+	protected DataMigrationOwnMigratorTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider,
 		final Optional<MicroMigrater> possibleMigrater)
 	{
-		return new DefaultEclipseStoreClientConfiguration(
-			defaultEclipseStoreProperties,
-			defaultEclipseStoreProvider,
-			classLoaderProvider,
-			possibleMigrater);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider, possibleMigrater);
 	}
 }

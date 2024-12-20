@@ -21,9 +21,11 @@ import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
 
 import software.xdev.micromigration.eclipsestore.MigrationManager;
 import software.xdev.micromigration.migrater.ExplicitMigrater;
+import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
 import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
+import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitializeVersioning;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_4_0_InitializeLazy;
 
@@ -40,10 +42,21 @@ public final class EclipseStoreMigrator
 	{
 	}
 	
-	public static void migrate(final VersionedRoot versionedRoot, final EmbeddedStorageManager storageManager)
+	public static void migrateStructure(final VersionedRoot versionedRoot, final EmbeddedStorageManager storageManager)
 	{
 		final ExplicitMigrater migrater = new ExplicitMigrater(SCRIPTS);
 		new MigrationManager(versionedRoot, migrater, storageManager).migrate(versionedRoot);
+	}
+	
+	public static void migrateData(
+		final DataVersion versionedData,
+		final MicroMigrater migrater,
+		final EmbeddedStorageManager storageManager)
+	{
+		if(migrater != null)
+		{
+			new MigrationManager(versionedData, migrater, storageManager).migrate(versionedData);
+		}
 	}
 	
 	public static MigrationVersion getLatestVersion()

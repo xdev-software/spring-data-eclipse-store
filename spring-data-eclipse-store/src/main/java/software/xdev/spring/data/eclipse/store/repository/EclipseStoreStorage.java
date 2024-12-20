@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
@@ -32,6 +33,7 @@ import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
@@ -40,6 +42,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreStorageFoundationProvider;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
+import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseStoreRepository;
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
@@ -77,6 +80,7 @@ public class EclipseStoreStorage
 	private final Map<Class<?>, VersionManager<?>> versionManagers = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private final ClassLoaderProvider classLoaderProvider;
+	private final Supplier<MicroMigrater> dataMigraterProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
 	private EmbeddedStorageManager storageManager;
@@ -90,9 +94,10 @@ public class EclipseStoreStorage
 	{
 		this.foundationProvider = storeConfiguration;
 		this.classLoaderProvider = storeConfiguration.getClassLoaderProvider();
+		this.dataMigraterProvider = storeConfiguration::getDataMigrator;
 	}
 	
-	public StorageManager getInstanceOfStorageManager()
+	public EmbeddedStorageManager getInstanceOfStorageManager()
 	{
 		this.ensureEntitiesInRoot();
 		return this.storageManager;
@@ -120,7 +125,7 @@ public class EclipseStoreStorage
 				this.root.getCurrentRootData().getEntityTypesCount(),
 				this.root.getCurrentRootData().getEntityCount()
 			);
-			EclipseStoreMigrator.migrate(this.root, this.storageManager);
+			EclipseStoreMigrator.migrateStructure(this.root, this.storageManager);
 		}
 	}
 	
@@ -490,6 +495,11 @@ public class EclipseStoreStorage
 	{
 		this.ensureEntitiesInRoot();
 		return this.storageManager.getObject(objectId);
+	}
+	
+	public DataVersion getDataVersion()
+	{
+		return this.getRoot().getDataVersion();
 	}
 	
 	@Override

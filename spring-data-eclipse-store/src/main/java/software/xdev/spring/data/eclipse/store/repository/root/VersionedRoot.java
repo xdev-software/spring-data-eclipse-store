@@ -19,6 +19,7 @@ import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.micromigration.version.Versioned;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.Root;
+import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.RootDataV2_4;
 
 
@@ -26,6 +27,8 @@ import software.xdev.spring.data.eclipse.store.repository.root.v2_4.RootDataV2_4
 public class VersionedRoot implements Versioned
 {
 	private MigrationVersion version;
+	
+	private DataVersion dataVersion;
 	
 	private Root rootDataV1;
 	
@@ -40,7 +43,7 @@ public class VersionedRoot implements Versioned
 	}
 	
 	/**
-	 * @param rootDataV1 is only filled if this is a old version <2.0.0 and needs upgrading
+	 * @param rootDataV1 is only filled if this is a old version {@literal <}2.0.0 and needs upgrading
 	 */
 	public VersionedRoot(final Root rootDataV1)
 	{
@@ -103,5 +106,10 @@ public class VersionedRoot implements Versioned
 	public MigrationVersion getVersion()
 	{
 		return this.version;
+	}
+	
+	public DataVersion getDataVersion()
+	{
+		return this.dataVersion;
 	}
 }

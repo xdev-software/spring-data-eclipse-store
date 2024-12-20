@@ -22,8 +22,8 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
 /**
- * This is the root object for all versions <2.0.0 and is used for upgrading to the new root.
- * @deprecated should not be initialised any more. Version for <2.0.0
+ * This is the root object for all versions {@literal <}2.0.0 and is used for upgrading to the new root.
+ * @deprecated should not be initialised any more. Version for {@literal <}2.0.0
  */
 @Deprecated(forRemoval = false, since = "2.0.0")
 public class Root
