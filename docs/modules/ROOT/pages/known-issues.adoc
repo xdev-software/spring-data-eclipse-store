@@ -1,0 +1,65 @@
+= Known issues
+
+== Data changes
+
+There are two basic ways to keep your data up to date.
+
+=== Structural
+
+As with most projects, data that needs persisting changes over time.
+In EclipseStore that's handled through https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html[Legacy Type Mapping].
+
+That consists of https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html#_automatic_mapping[Automatic Mapping] through EclipseStores internal heuristic and https://docs.eclipsestore.io/manual/storage/legacy-type-mapping/index.html#explicit-mapping[Explicit Mapping] by the user.
+
+=== Values
+
+There is a library to version your data in the store called https://github.com/xdev-software/micro-migration[XDEV MicroMigration].
+This helps you keep your data up to date regardless of the current version.
+
+We created https://github.com/xdev-software/spring-data-eclipse-store/issues/33[an issue] for that but right now we *do not support XDEVs MicroMigration*.
+
+== Spring Developer Tools [[spring-dev-tools]]
+
+Using https://docs.spring.io/spring-boot/reference/using/devtools.html[Spring Developer Tools] (`spring-boot-devtools`) can lead to serious issues in your project.
+That is manly due to the https://docs.spring.io/spring-boot/reference/using/devtools.html#using.devtools.livereload[LiveReload feature] and the usage of a "Restart ClassLoader".
+It derives from the https://docs.eclipsestore.io/manual/misc/integrations/spring-boot.html#_spring_dev_tools[issue with EclipseStore].
+
+To mitigate this issue, {product-name} listens to the closing of the Spring-Context and shuts down the storage.
+This **should** handle most problems with the ClassLoader.
+Restarting the storage leads to a reloading of all entities and may take some time, yet circumvents the Restart ClassLoader Issue.
+
+The behavior can be configured through xref:configuration.adoc#context-close-shutdown-storage[Properties] and is implemented in the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/config/EclipseStoreClientConfiguration.java[EclipseStoreClientConfiguration.java].
+
+== Multiple Repositories with related entities [[multi-repos-with-related-entities]]
+
+In SQL databases, relationships between entities are explicitly defined and enforced by the database system.
+This ensures that constraints, such as foreign keys, are consistently maintained.
+
+In contrast, relationships in a Java object graph are solely defined by the developer.
+If an object within the graph does not maintain a reference back to its parent or containing object, it has no inherent knowledge of that relationship.
+Consequently, finding such a relationship requires searching the entire object graph, which can be highly inefficient.
+
+image::DependingClasses.svg[Example structure with orders and articles]
+
+Example Scenario:
+Consider an *order object* that contains references to several *article objects*.
+In this case, determining which order contains a specific article is nearly impossible without traversing the entire object graph to locate it.
+This lack of direct reference contrasts sharply with the behavior of SQL databases.
+
+What Happens When an Article is Deleted?
+
+1. In an *SQL Database*: +
+Attempting to delete an article that is still referenced (e.g., by an order) would typically result in an exception. +
+The database enforces referential integrity, preventing the deletion of a referenced entity.
+
+2. In *{product-name}*: +
+Deleting an article from the article repository is allowed, even if it is still referenced elsewhere. +
+The system does not track or enforce such references.
+As a result:
+
+* The article is removed from the repository.
+* However, the order still retains its reference to the now-deleted article.
+* If the order is subsequently saved, the article is reintroduced into the repository.
+
+This behavior is fundamentally different from the strict relationship management seen in SQL databases.
+Developers must be aware of these differences to avoid unintended side effects in their applications.
