@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsList12;
 import org.eclipse.serializer.persistence.binary.jdk17.java.util.BinaryHandlerImmutableCollectionsSet12;
@@ -33,7 +32,6 @@ import org.eclipse.store.storage.types.StorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.exceptions.AlreadyRegisteredException;
@@ -81,7 +79,6 @@ public class EclipseStoreStorage
 	private final Map<Class<?>, VersionManager<?>> versionManagers = new ConcurrentHashMap<>();
 	private final EclipseStoreStorageFoundationProvider foundationProvider;
 	private final ClassLoaderProvider classLoaderProvider;
-	private final Supplier<MicroMigrater> dataMigraterProvider;
 	private EntitySetCollector entitySetCollector;
 	private PersistableChecker persistenceChecker;
 	private EmbeddedStorageManager storageManager;
@@ -95,7 +92,6 @@ public class EclipseStoreStorage
 	{
 		this.foundationProvider = storeConfiguration;
 		this.classLoaderProvider = storeConfiguration.getClassLoaderProvider();
-		this.dataMigraterProvider = storeConfiguration::getDataMigrator;
 	}
 	
 	public EmbeddedStorageManager getInstanceOfStorageManager()

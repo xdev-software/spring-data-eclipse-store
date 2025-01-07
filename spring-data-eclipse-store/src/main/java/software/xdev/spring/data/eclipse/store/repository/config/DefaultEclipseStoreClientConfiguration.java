@@ -35,9 +35,8 @@ public class DefaultEclipseStoreClientConfiguration extends EclipseStoreClientCo
 	protected DefaultEclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final ClassLoaderProvider classLoaderProvider,
-		final Optional<MicroMigrater> possibleMigrater)
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider, possibleMigrater);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 	}
 }

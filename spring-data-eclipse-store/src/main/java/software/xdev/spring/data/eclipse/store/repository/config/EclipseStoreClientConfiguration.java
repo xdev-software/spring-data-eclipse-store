@@ -15,8 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
-import java.util.Optional;
-
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -27,13 +25,16 @@ import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorag
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -81,8 +82,6 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Value("${spring-data-eclipse-store.context-close-shutdown-storage.only-when-dev-tools:true}")
 	protected boolean contextCloseShutdownStorageOnlyWhenDevTools;
 	
-	protected MicroMigrater possibleMigrater;
-	
 	/**
 	 * Upstream value from Spring Boot DevTools.
 	 *
@@ -92,31 +91,17 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	protected boolean springDevtoolsRestartEnabled;
 	
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	@Lazy
 	@Autowired
-	protected EclipseStoreClientConfiguration(
-		final EclipseStoreProperties defaultEclipseStoreProperties,
-		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final ClassLoaderProvider classLoaderProvider,
-		final Optional<MicroMigrater> possibleMigrater)
-	{
-		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
-		this.classLoaderProvider = classLoaderProvider;
-		this.defaultEclipseStoreProperties.setAutoStart(false);
-		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
-		this.possibleMigrater = possibleMigrater.orElse(null);
-	}
-	
 	protected EclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)
 	{
-		this(
-			defaultEclipseStoreProperties,
-			defaultEclipseStoreProvider,
-			classLoaderProvider,
-			Optional.empty()
-		);
+		this.defaultEclipseStoreProperties = defaultEclipseStoreProperties;
+		this.classLoaderProvider = classLoaderProvider;
+		this.defaultEclipseStoreProperties.setAutoStart(false);
+		this.defaultEclipseStoreProvider = defaultEclipseStoreProvider;
 	}
 	
 	public EclipseStoreProperties getEclipseStoreProperties()
@@ -236,26 +221,28 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 		}
 	}
 	
+	/**
+	 * <i>"Why don't you migrate the data wherever you call EclipseStoreMigrator.migrateStructure?"</i> - Because in
+	 * order to be able to access repositories in DataMigrationScripts, we can't have the migration-method block the
+	 * start of the storage. That would lead to a deadlock, and we don't want that.
+	 */
 	@EventListener
 	public void migrateDataOnContextStarted(final ContextRefreshedEvent event)
 	{
-		// "Why don't you migrate the data wherever you call EclipseStoreMigrator.migrateStructure?" -
-		// Because in order to be able to access repositories in DataMigrationScripts, we can't have
-		// the migration-method block the start of the storage. That would lead to a deadlock, and we don't
-		// want that.
-		if(this.getDataMigrator() != null)
+		final ApplicationContext applicationContext = event.getApplicationContext();
+		try
 		{
+			final MicroMigrater dataMigrater = event.getApplicationContext().getBean(MicroMigrater.class);
 			this.getStorageInstance().start(); // In case the storage hasn't started yet.
 			EclipseStoreMigrator.migrateData(
 				this.getStorageInstance().getRoot(),
-				this.getDataMigrator(),
+				dataMigrater,
 				this.getStorageInstance().getInstanceOfStorageManager()
 			);
 		}
-	}
-	
-	public MicroMigrater getDataMigrator()
-	{
-		return this.possibleMigrater;
+		catch(final NoSuchBeanDefinitionException e)
+		{
+			LOG.info("No migration of data needed since there is no migrater defined.");
+		}
 	}
 }

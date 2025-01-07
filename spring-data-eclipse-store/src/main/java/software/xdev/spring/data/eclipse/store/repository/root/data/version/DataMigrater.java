@@ -16,11 +16,11 @@
 package software.xdev.spring.data.eclipse.store.repository.root.data.version;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import software.xdev.micromigration.migrater.ExplicitMigrater;
@@ -30,15 +30,17 @@ import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
 import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.micromigration.versionagnostic.VersionAgnosticMigrationEmbeddedStorageManager;
 
-
 @Component
 public class DataMigrater implements MicroMigrater
 {
-	@Lazy
-	@Autowired
-	private List<DataMigrationScript> scripts;
-	
+	private final List<DataMigrationScript> scripts;
 	private ExplicitMigrater explicitMigrater;
+	
+	@Autowired
+	public DataMigrater(final Optional<List<DataMigrationScript>> scripts)
+	{
+		this.scripts = scripts.orElse(List.of());
+	}
 	
 	private ExplicitMigrater ensureExplicitMigrater()
 	{
@@ -49,10 +51,19 @@ public class DataMigrater implements MicroMigrater
 		return this.explicitMigrater;
 	}
 	
+	private boolean isUseful()
+	{
+		return this.scripts != null && !this.scripts.isEmpty();
+	}
+	
 	@Override
 	public TreeSet<? extends VersionAgnosticMigrationScript<?, ?>> getSortedScripts()
 	{
-		return this.ensureExplicitMigrater().getSortedScripts();
+		if(this.isUseful())
+		{
+			return this.ensureExplicitMigrater().getSortedScripts();
+		}
+		return new TreeSet<>();
 	}
 	
 	@Override
@@ -61,7 +72,11 @@ public class DataMigrater implements MicroMigrater
 		final E storageManager,
 		final Object root)
 	{
-		return this.ensureExplicitMigrater().migrateToNewest(fromVersion, storageManager, root);
+		if(this.isUseful())
+		{
+			return this.ensureExplicitMigrater().migrateToNewest(fromVersion, storageManager, root);
+		}
+		return null;
 	}
 	
 	@Override
@@ -71,8 +86,12 @@ public class DataMigrater implements MicroMigrater
 		final E storageManager,
 		final Object objectToMigrate)
 	{
+		if(this.isUseful())
+		{
 		return this.ensureExplicitMigrater()
 			.migrateToVersion(fromVersion, targetVersion, storageManager, objectToMigrate);
+		}
+		return null;
 	}
 	
 	@Override
@@ -80,6 +99,9 @@ public class DataMigrater implements MicroMigrater
 		final Consumer<ScriptExecutionNotificationWithScriptReference> notificationConsumer
 	)
 	{
-		this.ensureExplicitMigrater().registerNotificationConsumer(notificationConsumer);
+		if(this.isUseful())
+		{
+			this.ensureExplicitMigrater().registerNotificationConsumer(notificationConsumer);
+		}
 	}
 }

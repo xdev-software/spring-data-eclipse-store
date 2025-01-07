@@ -15,8 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.own.migrator;
 
-import java.util.Optional;
-
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
@@ -24,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
@@ -38,9 +35,8 @@ public class DataMigrationOwnMigratorTestConfiguration extends TestConfiguration
 	protected DataMigrationOwnMigratorTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final ClassLoaderProvider classLoaderProvider,
-		final Optional<MicroMigrater> possibleMigrater)
+		final ClassLoaderProvider classLoaderProvider)
 	{
-		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider, possibleMigrater);
+		super(defaultEclipseStoreProperties, defaultEclipseStoreProvider, classLoaderProvider);
 	}
 }

@@ -15,16 +15,12 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.config;
 
-import java.util.Optional;
-
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
 import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorageFoundationFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import software.xdev.micromigration.migrater.MicroMigrater;
 
 
 @Component
@@ -35,13 +31,11 @@ public class DefaultEclipseStoreClientConfigurationFactory
 	public DefaultEclipseStoreClientConfiguration getEclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
-		final ClassLoaderProvider classLoaderProvider,
-		final Optional<MicroMigrater> possibleMigrater)
+		final ClassLoaderProvider classLoaderProvider)
 	{
 		return new DefaultEclipseStoreClientConfiguration(
 			defaultEclipseStoreProperties,
 			defaultEclipseStoreProvider,
-			classLoaderProvider,
-			possibleMigrater);
+			classLoaderProvider);
 	}
 }
