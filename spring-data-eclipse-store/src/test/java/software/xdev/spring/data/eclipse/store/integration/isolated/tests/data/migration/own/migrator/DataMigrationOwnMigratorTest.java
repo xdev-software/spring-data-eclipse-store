@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import software.xdev.micromigration.version.MigrationVersion;
+import software.xdev.spring.data.eclipse.store.helper.TestUtil;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
 
@@ -36,5 +38,22 @@ class DataMigrationOwnMigratorTest
 	void assertUpdateV1Executed()
 	{
 		Assertions.assertEquals(1, this.repository.count());
+		Assertions.assertEquals(
+			new MigrationVersion(1, 0, 0),
+			this.configuration.getStorageInstance().getRoot().getDataVersion().getVersion());
+	}
+	
+	@Test
+	void assertNotUpdatedAfterMigration()
+	{
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, this.repository.count());
+				Assertions.assertEquals(
+					new MigrationVersion(1, 0, 0),
+					this.configuration.getStorageInstance().getRoot().getDataVersion().getVersion());
+			}
+		);
 	}
 }

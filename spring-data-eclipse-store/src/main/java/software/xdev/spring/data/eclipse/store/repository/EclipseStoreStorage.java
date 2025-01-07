@@ -41,6 +41,7 @@ import software.xdev.spring.data.eclipse.store.exceptions.InvalidRootException;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreStorageFoundationProvider;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.root.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;

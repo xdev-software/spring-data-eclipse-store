@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository;
+package software.xdev.spring.data.eclipse.store.repository.root;
 
 import java.util.TreeSet;
 
@@ -24,7 +24,6 @@ import software.xdev.micromigration.migrater.ExplicitMigrater;
 import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
 import software.xdev.micromigration.version.MigrationVersion;
-import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_0_0_InitializeVersioning;
 import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2_4_0_InitializeLazy;
@@ -49,14 +48,31 @@ public final class EclipseStoreMigrator
 	}
 	
 	public static void migrateData(
-		final DataVersion versionedData,
+		final VersionedRoot versionedRoot,
 		final MicroMigrater migrater,
 		final EmbeddedStorageManager storageManager)
 	{
 		if(migrater != null)
 		{
-			new MigrationManager(versionedData, migrater, storageManager).migrate(versionedData);
+			final DataVersion dataVersion = versionedRoot.getDataVersion();
+			new MigrationManager(
+				dataVersion::getVersion,
+				dataVersion::setVersion,
+				newVersion -> EclipseStoreMigrator.versionStorer(versionedRoot, storageManager, newVersion),
+				migrater,
+				storageManager)
+				.migrate(dataVersion);
 		}
+	}
+	
+	private static void versionStorer(
+		final VersionedRoot versionedRoot,
+		final EmbeddedStorageManager currentStorageManager,
+		final MigrationVersion newVersion)
+	{
+		currentStorageManager.store(versionedRoot);
+		currentStorageManager.store(versionedRoot.getDataVersion());
+		currentStorageManager.store(newVersion);
 	}
 	
 	public static MigrationVersion getLatestVersion()

@@ -17,7 +17,6 @@ package software.xdev.spring.data.eclipse.store.repository.root;
 
 import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.micromigration.version.Versioned;
-import software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.Root;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.RootDataV2_4;
@@ -110,6 +109,10 @@ public class VersionedRoot implements Versioned
 	
 	public DataVersion getDataVersion()
 	{
+		if(this.dataVersion == null)
+		{
+			this.dataVersion = new DataVersion();
+		}
 		return this.dataVersion;
 	}
 }
