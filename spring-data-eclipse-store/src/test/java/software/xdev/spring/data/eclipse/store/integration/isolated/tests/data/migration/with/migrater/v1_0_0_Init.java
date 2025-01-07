@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.own.migrator;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.migrater;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
@@ -25,12 +22,12 @@ import software.xdev.spring.data.eclipse.store.repository.root.data.version.Data
 
 
 @SuppressWarnings("CheckStyle")
-@Component
 public class v1_0_0_Init extends DataMigrationScript
 {
-	private final PersistedEntityRepository repository;
+	private final PersistedEntityRepository
+		repository;
 	
-	public v1_0_0_Init(@Autowired final PersistedEntityRepository repository)
+	public v1_0_0_Init(final PersistedEntityRepository repository)
 	{
 		this.repository = repository;
 	}

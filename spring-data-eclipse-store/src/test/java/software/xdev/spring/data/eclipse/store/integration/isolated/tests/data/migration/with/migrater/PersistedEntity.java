@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.own.migrator;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.migrater;
 
-import org.springframework.data.repository.CrudRepository;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 
-public interface PersistedEntityRepository extends CrudRepository<PersistedEntity, Integer>
+public class PersistedEntity
 {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
 }

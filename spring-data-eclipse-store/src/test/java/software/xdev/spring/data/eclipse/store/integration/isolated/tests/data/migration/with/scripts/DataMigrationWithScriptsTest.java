@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.own.migrator;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.scripts;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,11 +26,11 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 
 
 @IsolatedTestAnnotations
-@ContextConfiguration(classes = {DataMigrationOwnMigratorTestConfiguration.class})
-class DataMigrationOwnMigratorTest
+@ContextConfiguration(classes = {DataMigrationWithScriptsTestConfiguration.class})
+class DataMigrationWithScriptsTest
 {
 	@Autowired
-	private DataMigrationOwnMigratorTestConfiguration configuration;
+	private DataMigrationWithScriptsTestConfiguration configuration;
 	@Autowired
 	private PersistedEntityRepository repository;
 	
