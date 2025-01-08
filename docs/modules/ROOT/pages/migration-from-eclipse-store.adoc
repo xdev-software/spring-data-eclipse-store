@@ -6,7 +6,7 @@ The first step is to define the appropriate entities and repositories tailored t
 
 Next, the data must be transferred to the Spring-Data-Eclipse-Store storage.
 To facilitate this, both EclipseStore and {product-name} must run within the same JVM (Java Virtual Machine).
-This configuration enables the developer to operate both systems simultaneously and transfer data by making simple save calls to the respective repositories.
+This configuration enables the developer to operate both systems simultaneously and transfer data by making simple ``save`` calls to the respective repositories.
 
 == Example
 
