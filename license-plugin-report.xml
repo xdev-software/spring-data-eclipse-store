@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1734617622582">
-    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.4.1"/>
+<licensePluginReport goal="FORMAT" timestamp="1736324749835">
+    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.5.0"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/core/EntityListProvider.java" result="NOOP"/>
@@ -22,7 +22,6 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/exceptions/StringBlankException.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/importer/EclipseStoreDataImporter.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/importer/EclipseStoreDataImporterComponent.java" result="NOOP"/>
-        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/EclipseStoreMigrator.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/EclipseStoreStorage.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/EntitySetCollector.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/PersistableChecker.java" result="NOOP"/>
@@ -82,9 +81,15 @@
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/executors/QueryExecutorCreator.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/executors/SingleOptionalQueryExecutor.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/query/executors/SingleQueryExecutor.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/EclipseStoreMigrator.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/EntityData.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/RootDataV2.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/VersionedRoot.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/data/version/DataMigrater.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/data/version/DataMigraterFactory.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/data/version/DataMigrationScript.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/data/version/DataVersion.java" result="NOOP"/>
+        <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/data/version/ReflectiveDataMigrationScript.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/LoggingUpdateScript.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/v2_0_0_InitializeVersioning.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/repository/root/update/scripts/v2_4_0_InitializeLazy.java" result="NOOP"/>
@@ -161,6 +166,24 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/constraints/ConstraintsRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/constraints/ConstraintsTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/constraints/ConstraintsTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/CustomMigrater.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/DataMigrationWithMigraterTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/DataMigrationWithMigraterTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/PersistedEntity.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/PersistedEntityRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/v1_0_0_Init.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/DataMigrationWithMultipleScriptsTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/DataMigrationWithMultipleScriptsTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/PersistedEntity.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/PersistedEntityRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/v1_0_0_Init.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/v1_1_0_NextScript.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/multiple/scripts/v1_2_0_CustomNamedScript.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/script/DataMigrationWithScriptTest.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/script/DataMigrationWithScriptTestConfiguration.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/script/PersistedEntity.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/script/PersistedEntityRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/script/v1_0_0_Init.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/deletion/DeletionTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/deletion/DeletionTestConfiguration.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/deletion/ReferencedDaoObject.java" result="NOOP"/>
