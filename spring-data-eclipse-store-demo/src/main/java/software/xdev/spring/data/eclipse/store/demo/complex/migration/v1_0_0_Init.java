@@ -30,7 +30,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.data.version.Refl
  * {@link software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrater} through dependency
  * injection.
  * <p>
- * In contrast to {@link CustomNameScriptAddOwner} the version of this script is defined by
+ * In contrast to {@link CustomNameScript} the version of this script is defined by
  * <b>the name of the class defines the version</b>.
  */
 @SuppressWarnings("CheckStyle")
@@ -39,7 +39,8 @@ public class v1_0_0_Init extends ReflectiveDataMigrationScript
 {
 	private final OwnerService service;
 	
-	public v1_0_0_Init(@Autowired final OwnerService service)
+	@Autowired
+	public v1_0_0_Init(final OwnerService service)
 	{
 		this.service = service;
 	}

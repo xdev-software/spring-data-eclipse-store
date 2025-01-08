@@ -34,11 +34,11 @@ import software.xdev.spring.data.eclipse.store.repository.root.data.version.Data
  * In contrast to {@link v1_0_0_Init} the version of this script is defined in the method {@link #getTargetVersion()}.
  */
 @Component
-public class CustomNameScriptAddOwner implements DataMigrationScript
+public class CustomNameScript implements DataMigrationScript
 {
 	private final OwnerService service;
 	
-	public CustomNameScriptAddOwner(@Autowired final OwnerService service)
+	public CustomNameScript(@Autowired final OwnerService service)
 	{
 		this.service = service;
 	}

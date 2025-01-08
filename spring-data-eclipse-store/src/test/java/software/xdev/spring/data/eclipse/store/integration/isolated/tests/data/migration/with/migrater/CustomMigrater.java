@@ -32,28 +32,18 @@ import software.xdev.micromigration.versionagnostic.VersionAgnosticMigrationEmbe
 @Component
 public class CustomMigrater implements MicroMigrater
 {
-	private ExplicitMigrater explicitMigrater;
-	final PersistedEntityRepository repository;
+	private final ExplicitMigrater explicitMigrater;
 	
 	@Autowired
 	public CustomMigrater(final PersistedEntityRepository repository)
 	{
-		this.repository = repository;
-	}
-	
-	private ExplicitMigrater ensureExplicitMigrater()
-	{
-		if(this.explicitMigrater == null)
-		{
-			this.explicitMigrater = new ExplicitMigrater(new v1_0_0_Init(this.repository));
-		}
-		return this.explicitMigrater;
+		this.explicitMigrater = new ExplicitMigrater(new v1_0_0_Init(repository));
 	}
 	
 	@Override
 	public TreeSet<? extends VersionAgnosticMigrationScript<?, ?>> getSortedScripts()
 	{
-		return this.ensureExplicitMigrater().getSortedScripts();
+		return this.explicitMigrater.getSortedScripts();
 	}
 	
 	@Override
@@ -62,7 +52,7 @@ public class CustomMigrater implements MicroMigrater
 		final E storageManager,
 		final Object root)
 	{
-		return this.ensureExplicitMigrater().migrateToNewest(fromVersion, storageManager, root);
+		return this.explicitMigrater.migrateToNewest(fromVersion, storageManager, root);
 	}
 	
 	@Override
@@ -72,8 +62,7 @@ public class CustomMigrater implements MicroMigrater
 		final E storageManager,
 		final Object objectToMigrate)
 	{
-		return this.ensureExplicitMigrater()
-			.migrateToVersion(fromVersion, targetVersion, storageManager, objectToMigrate);
+		return this.explicitMigrater.migrateToVersion(fromVersion, targetVersion, storageManager, objectToMigrate);
 	}
 	
 	@Override
@@ -81,6 +70,6 @@ public class CustomMigrater implements MicroMigrater
 		final Consumer<ScriptExecutionNotificationWithScriptReference> notificationConsumer
 	)
 	{
-		this.ensureExplicitMigrater().registerNotificationConsumer(notificationConsumer);
+		this.explicitMigrater.registerNotificationConsumer(notificationConsumer);
 	}
 }
