@@ -24,8 +24,8 @@ import software.xdev.spring.data.eclipse.store.core.IdentitySet;
 
 
 /**
- * This is a object for all versions <2.4.0 and is used for upgrading to the new root.
- * @deprecated should not be initialised anymore. Version for <2.4.0
+ * This is a object for all versions {@literal <}2.4.0 and is used for upgrading to the new root.
+ * @deprecated should not be initialised anymore. Version for {@literal <}2.4.0
  *
  * @param <T>  type of entity to store
  * @param <ID> type of id of the entity to store. Can be {@link Void} if no ID is used.

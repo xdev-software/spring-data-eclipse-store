@@ -17,6 +17,7 @@ package software.xdev.spring.data.eclipse.store.repository.config;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -24,6 +25,7 @@ import org.eclipse.store.integrations.spring.boot.types.factories.EmbeddedStorag
 import org.eclipse.store.storage.embedded.types.EmbeddedStorageFoundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,11 +33,15 @@ import org.springframework.boot.autoconfigure.transaction.TransactionManagerCust
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import software.xdev.micromigration.migrater.MicroMigrater;
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
+import software.xdev.spring.data.eclipse.store.repository.root.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.transactions.EclipseStoreTransactionManager;
 
 
@@ -83,6 +89,8 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Value("${spring.devtools.restart.enabled:true}")
 	protected boolean springDevtoolsRestartEnabled;
 	
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	@Lazy
 	@Autowired
 	protected EclipseStoreClientConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
@@ -206,6 +214,33 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 	@Bean
 	public Validator getValidator()
 	{
-		return Validation.buildDefaultValidatorFactory().getValidator();
+		try(final ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
+		{
+			return factory.getValidator();
+		}
+	}
+	
+	/**
+	 * <i>"Why don't you migrate the data wherever you call EclipseStoreMigrator.migrateStructure?"</i> - Because in
+	 * order to be able to access repositories in DataMigrationScripts, we can't have the migration-method block the
+	 * start of the storage. That would lead to a deadlock, and we don't want that.
+	 */
+	@EventListener
+	public void migrateDataOnContextStarted(final ContextRefreshedEvent event)
+	{
+		try
+		{
+			final MicroMigrater dataMigrater = event.getApplicationContext().getBean(MicroMigrater.class);
+			this.getStorageInstance().start(); // In case the storage hasn't started yet.
+			EclipseStoreMigrator.migrateData(
+				this.getStorageInstance().getRoot(),
+				dataMigrater,
+				this.getStorageInstance().getInstanceOfStorageManager()
+			);
+		}
+		catch(final NoSuchBeanDefinitionException e)
+		{
+			LOG.info("No migration of data needed since there is no migrater defined.");
+		}
 	}
 }

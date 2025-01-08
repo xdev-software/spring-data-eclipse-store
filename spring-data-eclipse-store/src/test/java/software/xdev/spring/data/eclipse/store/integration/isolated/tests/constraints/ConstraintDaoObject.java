@@ -65,7 +65,7 @@ public class ConstraintDaoObject
 	@DecimalMin("5.00")
 	BigDecimal discountMin5;
 	
-	@DecimalMax("30.00")
+	@DecimalMax("20.00")
 	BigDecimal discountMax20;
 	
 	@Email
@@ -116,8 +116,8 @@ public class ConstraintDaoObject
 	@PositiveOrZero
 	int positiveOrZeroField;
 	
-	@Size(min = 2, max = 240)
-	String messageMin2AndMax240;
+	@Size(min = 2, max = 10)
+	String messageMin2AndMax10;
 	
 	public ConstraintDaoObject()
 	{
@@ -141,7 +141,7 @@ public class ConstraintDaoObject
 		this.phoneNumber = "(123)456-7890";
 		this.area = BigDecimal.valueOf(1);
 		this.positiveOrZeroField = 1;
-		this.messageMin2AndMax240 = "..";
+		this.messageMin2AndMax10 = "..";
 	}
 	
 	@AssertFalse
@@ -186,12 +186,12 @@ public class ConstraintDaoObject
 		this.discountMin5 = discountMin5;
 	}
 	
-	public @DecimalMax("30.00") BigDecimal getDiscountMax20()
+	public @DecimalMax("20.00") BigDecimal getDiscountMax20()
 	{
 		return this.discountMax20;
 	}
 	
-	public void setDiscountMax20(final @DecimalMax("30.00") BigDecimal discountMax20)
+	public void setDiscountMax20(final @DecimalMax("20.00") BigDecimal discountMax20)
 	{
 		this.discountMax20 = discountMax20;
 	}
@@ -361,13 +361,13 @@ public class ConstraintDaoObject
 		this.positiveOrZeroField = positiveOrZeroField;
 	}
 	
-	public @Size(min = 2, max = 240) String getMessageMin2AndMax240()
+	public @Size(min = 2, max = 10) String getMessageMin2AndMax10()
 	{
-		return this.messageMin2AndMax240;
+		return this.messageMin2AndMax10;
 	}
 	
-	public void setMessageMin2AndMax240(final @Size(min = 2, max = 240) String messageMin2AndMax240)
+	public void setMessageMin2AndMax10(final @Size(min = 2, max = 10) String messageMin2AndMax10)
 	{
-		this.messageMin2AndMax240 = messageMin2AndMax240;
+		this.messageMin2AndMax10 = messageMin2AndMax10;
 	}
 }

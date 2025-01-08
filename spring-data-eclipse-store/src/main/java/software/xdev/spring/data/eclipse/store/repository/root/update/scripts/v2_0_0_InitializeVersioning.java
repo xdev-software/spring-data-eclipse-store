@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
+import software.xdev.spring.data.eclipse.store.repository.root.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.root.RootDataV2;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
@@ -30,7 +31,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
  * version of Root({@link RootDataV2}).
  * <p>
  * <b>All migration scripts must be added to
- * {@link software.xdev.spring.data.eclipse.store.repository.EclipseStoreMigrator#SCRIPTS}!</b>
+ * {@link EclipseStoreMigrator#SCRIPTS}!</b>
  */
 @SuppressWarnings({"checkstyle:TypeName", "deprecation"})
 public class v2_0_0_InitializeVersioning extends LoggingUpdateScript

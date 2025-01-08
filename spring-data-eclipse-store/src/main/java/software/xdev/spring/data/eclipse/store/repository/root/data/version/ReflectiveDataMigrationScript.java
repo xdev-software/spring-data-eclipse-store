@@ -13,34 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.root.update.scripts;
+package software.xdev.spring.data.eclipse.store.repository.root.data.version;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
-import software.xdev.micromigration.scripts.Context;
 import software.xdev.micromigration.scripts.ReflectiveVersionMigrationScript;
-import software.xdev.spring.data.eclipse.store.repository.root.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
 
-/**
- * <b>All migration scripts must be added to
- * {@link EclipseStoreMigrator#SCRIPTS}!</b>
- */
-public abstract class LoggingUpdateScript
+@Component
+public abstract class ReflectiveDataMigrationScript
 	extends ReflectiveVersionMigrationScript<VersionedRoot, MigrationEmbeddedStorageManager>
+	implements DataMigrationScript
 {
-	private static final Logger LOG = LoggerFactory.getLogger(LoggingUpdateScript.class);
-	
-	@Override
-	public void migrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
-	{
-		LOG.info("Applying update {}...", this.getClass().getSimpleName());
-		this.loggedMigrate(context);
-		LOG.info("Applied update {}.", this.getClass().getSimpleName());
-	}
-	
-	public abstract void loggedMigrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context);
 }
