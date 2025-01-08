@@ -13,10 +13,7 @@ That consists of https://docs.eclipsestore.io/manual/storage/legacy-type-mapping
 
 === Values
 
-There is a library to version your data in the store called https://github.com/xdev-software/micro-migration[XDEV MicroMigration].
-This helps you keep your data up to date regardless of the current version.
-
-We created https://github.com/xdev-software/spring-data-eclipse-store/issues/33[an issue] for that but right now we *do not support XDEVs MicroMigration*.
+Keeping data up-to-date is made easy through https://github.com/xdev-software/micro-migration[XDEV's MicroMigration] explained in detail in xref:features/versioned-migration.adoc[Versioned Migration].
 
 == Spring Developer Tools [[spring-dev-tools]]
 
@@ -41,12 +38,12 @@ Consequently, finding such a relationship requires searching the entire object g
 
 image::DependingClasses.svg[Example structure with orders and articles]
 
-Example Scenario:
+=== Example Scenario
 Consider an *order object* that contains references to several *article objects*.
 In this case, determining which order contains a specific article is nearly impossible without traversing the entire object graph to locate it.
 This lack of direct reference contrasts sharply with the behavior of SQL databases.
 
-What Happens When an Article is Deleted?
+=== What Happens When an Article is Deleted?
 
 1. In an *SQL Database*: +
 Attempting to delete an article that is still referenced (e.g., by an order) would typically result in an exception. +
