@@ -88,16 +88,16 @@ public class OwnerService
 	/**
 	 * Transactional
 	 */
-	public void createNewOwnerAndVisit()
+	public void createNewOwnerAndVisit(final String ownerFirstName, final String ownerLastName, final String petName)
 	{
 		new TransactionTemplate(this.transactionManager).execute(
 			status ->
 			{
-				final Owner owner = this.createOwner();
+				final Owner owner = this.createOwner(ownerFirstName, ownerLastName, petName);
 				this.ownerRepository.save(owner);
 				
 				final Visit visit = this.createVisit();
-				owner.addVisit("Peter", visit);
+				owner.addVisit(petName, visit);
 				this.ownerRepository.save(owner);
 				LOG.info("----Stored new owner and visit----");
 				return null;
@@ -113,14 +113,14 @@ public class OwnerService
 	}
 	
 	@SuppressWarnings("checkstyle:MagicNumber")
-	private Owner createOwner()
+	private Owner createOwner(final String ownerFirstName, final String ownerLastName, final String petName)
 	{
 		final Owner owner = new Owner();
-		owner.setFirstName("Stevie");
-		owner.setLastName("Nicks");
+		owner.setFirstName(ownerFirstName);
+		owner.setLastName(ownerLastName);
 		final Pet pet = new Pet();
 		pet.setBirthDate(LocalDate.now().minusWeeks(6));
-		pet.setName("Peter");
+		pet.setName(petName);
 		final PetType petType = new PetType();
 		petType.setName("Dog");
 		pet.setType(petType);

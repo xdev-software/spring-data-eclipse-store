@@ -55,10 +55,7 @@ public class ComplexDemoApplication implements CommandLineRunner
 	 */
 	private void ownerCalls()
 	{
-		this.ownerService.logOwners();
-		this.ownerService.deleteAll();
-		this.ownerService.logOwners();
-		this.ownerService.createNewOwnerAndVisit();
+		this.ownerService.createNewOwnerAndVisit("Stevie", "Nicks", "Peter");
 		this.ownerService.logOwnersAndVisits();
 	}
 	
