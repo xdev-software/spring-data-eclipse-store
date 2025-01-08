@@ -13,33 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.multiple.scripts;
+package software.xdev.spring.data.eclipse.store.demo.complex.migration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
+import software.xdev.micromigration.version.MigrationVersion;
+import software.xdev.spring.data.eclipse.store.demo.complex.OwnerService;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrationScript;
-import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
 
 
-@SuppressWarnings("CheckStyle")
+/**
+ * This is automatically called by the
+ * {@link software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrater} through dependency
+ * injection.
+ * <p>
+ * In contrast to {@link v1_0_0_Init} the version of this script is defined in the method {@link #getTargetVersion()}.
+ */
 @Component
-public class v1_1_0_NextScript extends ReflectiveDataMigrationScript
+public class CustomNameScriptAddOwner implements DataMigrationScript
 {
-	private final PersistedEntityRepository
-		repository;
+	private final OwnerService service;
 	
-	public v1_1_0_NextScript(@Autowired final PersistedEntityRepository repository)
+	public CustomNameScriptAddOwner(@Autowired final OwnerService service)
 	{
-		this.repository = repository;
+		this.service = service;
+	}
+	
+	@Override
+	public MigrationVersion getTargetVersion()
+	{
+		return new MigrationVersion(1, 1, 0);
 	}
 	
 	@Override
 	public void migrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
 	{
-		this.repository.save(new PersistedEntity());
+		this.service.createNewOwnerAndVisit("John", "McVie", "Ivan");
 	}
 }

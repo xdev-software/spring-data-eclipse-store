@@ -37,9 +37,9 @@ class DataMigrationWithMultipleScriptsTest
 	@Test
 	void assertUpdateV1Executed()
 	{
-		Assertions.assertEquals(2, this.repository.count());
+		Assertions.assertEquals(3, this.repository.count());
 		Assertions.assertEquals(
-			new MigrationVersion(1, 1, 0),
+			new MigrationVersion(1, 2, 0),
 			this.configuration.getStorageInstance().getRoot().getDataVersion().getVersion());
 	}
 	
@@ -49,9 +49,9 @@ class DataMigrationWithMultipleScriptsTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(2, this.repository.count());
+				Assertions.assertEquals(3, this.repository.count());
 				Assertions.assertEquals(
-					new MigrationVersion(1, 1, 0),
+					new MigrationVersion(1, 2, 0),
 					this.configuration.getStorageInstance().getRoot().getDataVersion().getVersion());
 			}
 		);

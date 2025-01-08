@@ -18,12 +18,13 @@ package software.xdev.spring.data.eclipse.store.repository.root.data.version;
 import org.springframework.stereotype.Component;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
-import software.xdev.micromigration.scripts.VersionAgnosticMigrationScript;
+import software.xdev.micromigration.scripts.ReflectiveVersionMigrationScript;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 
 
 @Component
-public interface DataMigrationScript
-	extends VersionAgnosticMigrationScript<VersionedRoot, MigrationEmbeddedStorageManager>
+public abstract class ReflectiveDataMigrationScript
+	extends ReflectiveVersionMigrationScript<VersionedRoot, MigrationEmbeddedStorageManager>
+	implements DataMigrationScript
 {
 }

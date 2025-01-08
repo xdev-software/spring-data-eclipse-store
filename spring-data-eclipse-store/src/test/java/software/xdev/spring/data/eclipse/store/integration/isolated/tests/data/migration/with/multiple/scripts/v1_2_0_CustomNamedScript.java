@@ -20,21 +20,27 @@ import org.springframework.stereotype.Component;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
+import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrationScript;
-import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
 
 
 @SuppressWarnings("CheckStyle")
 @Component
-public class v1_1_0_NextScript extends ReflectiveDataMigrationScript
+public class v1_2_0_CustomNamedScript implements DataMigrationScript
 {
 	private final PersistedEntityRepository
 		repository;
 	
-	public v1_1_0_NextScript(@Autowired final PersistedEntityRepository repository)
+	public v1_2_0_CustomNamedScript(@Autowired final PersistedEntityRepository repository)
 	{
 		this.repository = repository;
+	}
+	
+	@Override
+	public MigrationVersion getTargetVersion()
+	{
+		return new MigrationVersion(1, 2, 0);
 	}
 	
 	@Override
