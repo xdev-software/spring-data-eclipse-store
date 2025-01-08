@@ -16,7 +16,6 @@
 package software.xdev.spring.data.eclipse.store.repository.root.data.version;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 

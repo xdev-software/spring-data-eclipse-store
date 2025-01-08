@@ -21,11 +21,9 @@ import org.springframework.stereotype.Component;
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
-import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrationScript;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
 
-
-@SuppressWarnings("CheckStyle")
+@SuppressWarnings("checkstyle:TypeName")
 @Component
 public class v1_1_0_NextScript extends ReflectiveDataMigrationScript
 {

@@ -33,7 +33,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.data.version.Refl
  * In contrast to {@link CustomNameScript} the version of this script is defined by
  * <b>the name of the class defines the version</b>.
  */
-@SuppressWarnings("CheckStyle")
+@SuppressWarnings("checkstyle:TypeName")
 @Component
 public class v1_0_0_Init extends ReflectiveDataMigrationScript
 {

@@ -24,8 +24,7 @@ import software.xdev.micromigration.version.MigrationVersion;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrationScript;
 
-
-@SuppressWarnings("CheckStyle")
+@SuppressWarnings("checkstyle:TypeName")
 @Component
 public class v1_2_0_CustomNamedScript implements DataMigrationScript
 {
