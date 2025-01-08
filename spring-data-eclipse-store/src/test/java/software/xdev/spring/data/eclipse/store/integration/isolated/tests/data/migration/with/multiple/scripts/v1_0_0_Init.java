@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.repository.root.update.scripts;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.multiple.scripts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import software.xdev.micromigration.eclipsestore.MigrationEmbeddedStorageManager;
 import software.xdev.micromigration.scripts.Context;
-import software.xdev.micromigration.scripts.ReflectiveVersionMigrationScript;
-import software.xdev.spring.data.eclipse.store.repository.root.EclipseStoreMigrator;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
+import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
 
-
-/**
- * <b>All migration scripts must be added to
- * {@link EclipseStoreMigrator#SCRIPTS}!</b>
- */
-public abstract class LoggingUpdateScript
-	extends ReflectiveVersionMigrationScript<VersionedRoot, MigrationEmbeddedStorageManager>
+@SuppressWarnings("checkstyle:TypeName")
+@Component
+public class v1_0_0_Init extends ReflectiveDataMigrationScript
 {
-	private static final Logger LOG = LoggerFactory.getLogger(LoggingUpdateScript.class);
+	private final PersistedEntityRepository
+		repository;
+	
+	public v1_0_0_Init(@Autowired final PersistedEntityRepository repository)
+	{
+		this.repository = repository;
+	}
 	
 	@Override
 	public void migrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
 	{
-		LOG.info("Applying update {}...", this.getClass().getSimpleName());
-		this.loggedMigrate(context);
-		LOG.info("Applied update {}.", this.getClass().getSimpleName());
+		this.repository.save(new PersistedEntity());
 	}
-	
-	public abstract void loggedMigrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context);
 }

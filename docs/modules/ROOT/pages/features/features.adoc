@@ -5,5 +5,6 @@
 * xref:features/queries.adoc[Queries]
 * xref:features/transactions.adoc[Transactions]
 * xref:features/versions.adoc[Versions]
+* xref:features/versioned-migration.adoc[Versioned Migration]
 * xref:features/rest-api.adoc[REST Interface]
 * xref:features/validation-constraints.adoc[Validation Constraints]

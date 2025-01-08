@@ -40,7 +40,7 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
 public class TestConfiguration extends EclipseStoreClientConfiguration
 {
 	private final String storageDirectory = StorageDirectoryNameProvider.getNewStorageDirectoryPath();
-	
+
 	@Autowired
 	protected TestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,

@@ -21,8 +21,8 @@ import java.util.function.Function;
 
 
 /**
- * This is a object for all versions <2.4.0 and is used for upgrading to the new root.
- * @deprecated should not be initialised anymore. Version for <2.4.0
+ * This is a object for all versions {@literal <}2.4.0 and is used for upgrading to the new root.
+ * @deprecated should not be initialised anymore. Version for {@literal <}2.4.0
  */
 @Deprecated(forRemoval = false, since = "2.4.0")
 @SuppressWarnings({"java:S119", "unchecked"})
