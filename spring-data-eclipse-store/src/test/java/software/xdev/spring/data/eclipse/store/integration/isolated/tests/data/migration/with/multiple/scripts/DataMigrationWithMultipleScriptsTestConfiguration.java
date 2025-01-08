@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.scripts;
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.multiple.scripts;
 
 import org.eclipse.serializer.reflect.ClassLoaderProvider;
 import org.eclipse.store.integrations.spring.boot.types.configuration.EclipseStoreProperties;
@@ -26,13 +26,14 @@ import software.xdev.spring.data.eclipse.store.integration.TestConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
-@ComponentScan({"software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.scripts"})
+@ComponentScan({
+	"software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.multiple.scripts"})
 @Configuration
 @EnableEclipseStoreRepositories
-public class DataMigrationWithScriptsTestConfiguration extends TestConfiguration
+public class DataMigrationWithMultipleScriptsTestConfiguration extends TestConfiguration
 {
 	@Autowired
-	protected DataMigrationWithScriptsTestConfiguration(
+	protected DataMigrationWithMultipleScriptsTestConfiguration(
 		final EclipseStoreProperties defaultEclipseStoreProperties,
 		final EmbeddedStorageFoundationFactory defaultEclipseStoreProvider,
 		final ClassLoaderProvider classLoaderProvider)
