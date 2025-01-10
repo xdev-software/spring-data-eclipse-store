@@ -15,8 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 

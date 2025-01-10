@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.lazy.LazyEclipseStoreRepository;
 
 
-public interface SimpleEntityWithComplexIdLazyRepository extends LazyEclipseStoreRepository<SimpleEntityWithComplexId, CompositeKeyAsRecord>
+public interface SimpleEntityWithComplexIdLazyRepository
+	extends LazyEclipseStoreRepository<SimpleEntityWithComplexId, CompositeKeyAsRecord>
 {
 }
