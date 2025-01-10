@@ -514,6 +514,23 @@ class LazyTest
 	}
 	
 	@Test
+	void simpleEntityWithIdLazyRepository_SimpleStore(@Autowired final SimpleEntityWithIdLazyRepository repository)
+	{
+		final SimpleEntityWithId objectToStore1 = new SimpleEntityWithId(TestData.DUMMY_STRING);
+		final Long object1Id = repository.save(objectToStore1).getId();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				LazyReferenceManager.get().cleanUp();
+				final Optional<SimpleEntityWithId> reloadedObject = repository.findById(object1Id);
+				Assertions.assertTrue(reloadedObject.isPresent());
+				Assertions.assertEquals(objectToStore1, reloadedObject.get());
+			}
+		);
+	}
+	
+	@Test
 	void simpleEntityWithIdLazyRepository_FindById(@Autowired final SimpleEntityWithIdLazyRepository repository)
 	{
 		final SimpleEntityWithId objectToStore1 = new SimpleEntityWithId(TestData.DUMMY_STRING);
@@ -535,6 +552,36 @@ class LazyTest
 			.getEntityData(SimpleEntityWithId.class);
 		final HashMap<Long, Lazy<SimpleEntityWithId>> lazyEntitiesById =
 			((LazyEntityData<SimpleEntityWithId, Long>)entityData).getNativeLazyEntitiesById();
+		Assertions.assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
+		Assertions.assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
+	}
+	
+	@Test
+	void simpleEntityWithComplexIdLazyRepository_FindById(
+		@Autowired final SimpleEntityWithComplexIdLazyRepository repository)
+	{
+		final SimpleEntityWithComplexId objectToStore1 =
+			new SimpleEntityWithComplexId(new CompositeKeyAsRecord(1, 1), TestData.DUMMY_STRING);
+		final CompositeKeyAsRecord object1Id = repository.save(objectToStore1).getId();
+		final SimpleEntityWithComplexId objectToStore2 =
+			new SimpleEntityWithComplexId(new CompositeKeyAsRecord(1, 2), TestData.DUMMY_STRING);
+		final CompositeKeyAsRecord object2Id = repository.save(objectToStore2).getId();
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				LazyReferenceManager.get().cleanUp();
+				final Optional<SimpleEntityWithComplexId> reloadedObject = repository.findById(object1Id);
+				Assertions.assertTrue(reloadedObject.isPresent());
+			}
+		);
+		final EntityData<SimpleEntityWithComplexId, CompositeKeyAsRecord> entityData =
+			this.configuration.getStorageInstance()
+				.getRoot()
+				.getCurrentRootData()
+				.getEntityData(SimpleEntityWithComplexId.class);
+		final HashMap<CompositeKeyAsRecord, Lazy<SimpleEntityWithComplexId>> lazyEntitiesById =
+			((LazyEntityData<SimpleEntityWithComplexId, CompositeKeyAsRecord>)entityData).getNativeLazyEntitiesById();
 		Assertions.assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
 		Assertions.assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
 	}
