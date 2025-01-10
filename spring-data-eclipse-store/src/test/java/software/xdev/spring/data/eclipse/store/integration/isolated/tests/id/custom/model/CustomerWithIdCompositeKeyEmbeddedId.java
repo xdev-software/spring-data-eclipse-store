@@ -23,7 +23,7 @@ import jakarta.persistence.EmbeddedId;
 public class CustomerWithIdCompositeKeyEmbeddedId
 {
 	@EmbeddedId
-	private final CompositeKey id;
+	private CompositeKey id;
 	
 	private final String firstName;
 	
