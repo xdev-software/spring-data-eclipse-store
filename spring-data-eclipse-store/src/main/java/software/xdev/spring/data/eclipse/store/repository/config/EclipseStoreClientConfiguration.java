@@ -185,7 +185,7 @@ public abstract class EclipseStoreClientConfiguration implements EclipseStoreSto
 			LOG.warn("Will shut down storage because Spring Boot DevTools Restarting is active. "
 				+ "This may cause some unexpected behavior. "
 				+ "For more information have a look at "
-				+ "https://spring-eclipsestore.xdev.software/known-issues.html#_spring_developer_tools");
+				+ "https://spring-eclipsestore.xdev.software/known-issues.html#spring-dev-tools");
 		}
 		return enabled;
 	}
