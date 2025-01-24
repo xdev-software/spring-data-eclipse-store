@@ -2,6 +2,7 @@
 
 * Simplified configuration injection in ``EclipseStoreRepositoryFactoryBean``.
 * Updated EclipseStore to v2.1.1
+* Updated org.springframework.boot.version to v3.4.2
 
 # 2.5.0
 
