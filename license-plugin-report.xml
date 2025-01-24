@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1736324749835">
-    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.5.0"/>
+<licensePluginReport goal="FORMAT" timestamp="1737713506426">
+    <module artifactId="spring-data-eclipse-store" groupId="software.xdev" version="2.5.1"/>
     <files>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/aot/EclipseStoreRuntimeHints.java" result="NOOP"/>
         <file path="src/main/java/software/xdev/spring/data/eclipse/store/core/EntityListProvider.java" result="NOOP"/>
@@ -238,6 +238,7 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/keywords/MinimalDaoObject.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/keywords/MinimalRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ComplexLazyObject.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/CompositeKeyAsRecord.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/LazyTest.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/LazyTestConfiguration.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazy.java" result="NOOP"/>
@@ -250,6 +251,8 @@
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazyRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazySimpleObject.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/ObjectWithLazySimpleObjectRepository.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithComplexId.java" result="NOOP"/>
+        <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithComplexIdLazyRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithId.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithIdLazyRepository.java" result="NOOP"/>
         <file path="src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/lazy/SimpleEntityWithIdLazyWrappedRepository.java" result="NOOP"/>
