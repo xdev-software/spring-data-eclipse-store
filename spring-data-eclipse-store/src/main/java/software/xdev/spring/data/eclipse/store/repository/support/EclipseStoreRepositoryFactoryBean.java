@@ -16,14 +16,15 @@
 package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 
 import jakarta.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.repository.Repository;
@@ -31,8 +32,8 @@ import org.springframework.data.repository.config.AnnotationRepositoryConfigurat
 import org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 
-import software.xdev.spring.data.eclipse.store.repository.config.DefaultEclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreRepositoryConfigurationExtension;
 
@@ -47,9 +48,9 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreRepositoryFactoryBean.class);
-	private EclipseStoreClientConfiguration configuration;
-	private BeanFactory beanFactory;
 	private Class<?> configurationClass;
+	@Autowired
+	private List<EclipseStoreClientConfiguration> configurations;
 	
 	public EclipseStoreRepositoryFactoryBean(
 		final Class<? extends T> repositoryInterface)
@@ -68,17 +69,10 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	}
 	
 	@Override
-	public void setBeanFactory(final BeanFactory beanFactory)
-	{
-		super.setBeanFactory(beanFactory);
-		this.beanFactory = beanFactory;
-	}
-	
-	@Override
 	@Nonnull
 	protected RepositoryFactorySupport createRepositoryFactory()
 	{
-		final EclipseStoreClientConfiguration ensuredConfiguration = this.ensureConfiguration();
+		final EclipseStoreClientConfiguration ensuredConfiguration = this.getSuitableConfiguration();
 		return new EclipseStoreRepositoryFactory(
 			ensuredConfiguration.getStorageInstance(),
 			ensuredConfiguration.getTransactionManagerInstance(),
@@ -86,47 +80,40 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 		);
 	}
 	
-	private EclipseStoreClientConfiguration ensureConfiguration()
-	{
-		if(this.configuration == null)
-		{
-			this.configuration = this.createConfiguration();
-		}
-		return this.configuration;
-	}
-	
 	/**
 	 * This is surely not the perfect way to get the correct configuration of that context, but it works with multiple
 	 * configurations, with no configuration and with a single configuration.
 	 * <p>
-	 * It checks if there is a configuration class defined (through
-	 * {@link EclipseStoreRepositoryConfigurationExtension}) and then tries to get the bean for it. If no configuration
-	 * is set, the {@link DefaultEclipseStoreClientConfiguration} is used.
+	 * It checks if any of the available configurations are suitable from the {@link #configurationClass}
+	 * and if so, returns it. Otherwise the
+	 * {@link software.xdev.spring.data.eclipse.store.repository.config.DefaultEclipseStoreClientConfiguration}
+	 * should be injected into the {@link #configurations} and get returned.
 	 * </p>
 	 */
-	private EclipseStoreClientConfiguration createConfiguration()
+	private EclipseStoreClientConfiguration getSuitableConfiguration()
 	{
-		Objects.requireNonNull(this.beanFactory);
-		try
+		if(this.configurationClass == null && this.configurations.size() == 1)
 		{
-			if(this.configurationClass != null
-				&& this.beanFactory.getBean(this.configurationClass)
-				instanceof final EclipseStoreClientConfiguration eclipseStoreConfiguration
+			return this.configurations.get(0);
+		}
+		final Optional<EclipseStoreClientConfiguration> definedConfiguration = this.configurations
+			.stream()
+			.filter(
+				configuration ->
+				{
+					if(this.configurationClass != null)
+					{
+						return this.configurationClass.getName()
+							.equals(ClassUtils.getUserClass(configuration).getName());
+					}
+					return false;
+				}
 			)
-			{
-				return eclipseStoreConfiguration;
-			}
-		}
-		catch(final BeansException ex)
+			.findAny();
+		if(definedConfiguration.isEmpty())
 		{
-			LOG.warn(
-				"Could not initiate Bean %s. Using %s instead."
-					.formatted(
-						this.configurationClass.getSimpleName(),
-						DefaultEclipseStoreClientConfiguration.class.getSimpleName()
-					),
-				ex);
+			throw new NoSuchBeanDefinitionException(this.configurationClass);
 		}
-		return this.beanFactory.getBean(DefaultEclipseStoreClientConfiguration.class);
+		return definedConfiguration.get();
 	}
 }

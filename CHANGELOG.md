@@ -1,3 +1,7 @@
+# 2.5.1
+
+* Simplified configuration injection in ``EclipseStoreRepositoryFactoryBean``.
+
 # 2.5.0
 
 * Updated org.springframework.boot.version to v3.4.1

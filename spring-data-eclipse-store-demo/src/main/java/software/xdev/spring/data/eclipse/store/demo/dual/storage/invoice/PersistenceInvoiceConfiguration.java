@@ -11,13 +11,14 @@ import org.eclipse.store.storage.types.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import software.xdev.spring.data.eclipse.store.demo.dual.storage.person.PersistencePersonConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
 /**
- * To set this configuration for the package we use the {@link EnableEclipseStoreRepositories#clientConfiguration()}
- * ()}. Another example:
+ * To set this configuration for the package we use the {@link EnableEclipseStoreRepositories#clientConfiguration()}.
+ * Another example:
  * {@link software.xdev.spring.data.eclipse.store.demo.dual.storage.person.PersistencePersonConfiguration}
  */
 @Configuration
@@ -49,7 +50,7 @@ public class PersistenceInvoiceConfiguration extends EclipseStoreClientConfigura
 		final EmbeddedStorageFoundation<?> storageFoundation =
 			EmbeddedStorage.Foundation(Storage.Configuration(Storage.FileProvider(Path.of(STORAGE_PATH))));
 		// This is only needed, if a different ClassLoader is used (e.g. when using spring-dev-tools)
-		storageFoundation.getConnectionFoundation().setClassLoaderProvider(getClassLoaderProvider());
+		storageFoundation.getConnectionFoundation().setClassLoaderProvider(this.getClassLoaderProvider());
 		return storageFoundation;
 	}
 }
