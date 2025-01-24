@@ -1,6 +1,7 @@
 # 2.5.1
 
 * Simplified configuration injection in ``EclipseStoreRepositoryFactoryBean``.
+* Updated EclipseStore to v2.1.1
 
 # 2.5.0
 
