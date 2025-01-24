@@ -43,6 +43,7 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.cus
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.custom.model.CustomerWithIdLocalDate;
 import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.custom.model.CustomerWithIdLocalDateRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreRepository;
+import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -139,6 +140,55 @@ class CustomIdTest
 				Assertions.assertEquals(customer2, loadedCustomer2.get());
 			}
 		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("generateData")
+	<T, ID> void createDoubleWithSameKey(
+		final SingleTestDataset<T, ID> data, @Autowired final ApplicationContext context)
+	{
+		final EclipseStoreRepository<T, ID> repository = data.repositoryGenerator().apply(context);
+		
+		final T customer1 = data.enitityGenerator().apply(data.firstIdSupplier().get());
+		repository.save(customer1);
+		
+		final T customer2 = data.enitityGenerator().apply(data.firstIdSupplier().get());
+		repository.save(customer2);
+		
+		TestUtil.doBeforeAndAfterRestartOfDatastore(
+			this.configuration,
+			() -> {
+				Assertions.assertEquals(1, repository.findAll().size());
+				Assertions.assertEquals(
+					1,
+					repository.findAllById(List.of(data.firstIdSupplier().get())).size());
+				
+				final Optional<T> loadedCustomer1 = repository.findById(data.firstIdSupplier().get());
+				Assertions.assertTrue(loadedCustomer1.isPresent());
+				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				Assertions.assertEquals(customer2, loadedCustomer1.get());
+			}
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("generateData")
+	<T, ID> void checkIfIdIsUsedInRepo(
+		final SingleTestDataset<T, ID> data,
+		@Autowired final ApplicationContext context,
+		@Autowired final IdTestConfiguration currentConfiguration)
+	{
+		final EclipseStoreRepository<T, ID> repository = data.repositoryGenerator().apply(context);
+		
+		final T customer1 = data.enitityGenerator().apply(data.firstIdSupplier().get());
+		repository.save(customer1);
+		
+		final EntityData<?, Object> entityData =
+			currentConfiguration.getStorageInstance()
+				.getRoot()
+				.getCurrentRootData()
+				.getEntityData(customer1.getClass());
+		Assertions.assertEquals(customer1, entityData.getEntityById(data.firstIdSupplier().get()));
 	}
 	
 	@ParameterizedTest

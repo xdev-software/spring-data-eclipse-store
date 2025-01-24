@@ -59,7 +59,8 @@ instructions** are in the documentation](https://xdev-software.github.io/spring-
 | ``2.2.0-2.3.1``           | ``17`` | ``3.3.4``   | ``1.4.0``    |
 | ``2.4.0``                 | ``17`` | ``3.4.0``   | ``2.0.0``    |
 | ``2.4.1``                 | ``17`` | ``3.4.0``   | ``2.1.0``    |
-| ``>= 2.5.0``              | ``17`` | ``3.4.1``   | ``2.1.0``    |
+| ``2.5.0``                 | ``17`` | ``3.4.1``   | ``2.1.0``    |
+| ``>= 2.5.1``              | ``17`` | ``3.4.2``   | ``2.1.1``    |
 
 ## Demo
 
@@ -85,6 +86,12 @@ the [demos](./spring-data-eclipse-store-demo):
 
 If you need support as soon as possible, and you can't wait for any pull request, feel free to
 use [our support](https://xdev.software/en/services/support).
+
+## Additional Information
+
+* [Recording of an introduction talk at JUG Bangalore](https://www.youtube.com/watch?v=OlGZ2Hr0FdA)
+* [Recording of an introduction talk at JCON 2024](https://youtu.be/-WBbKUGeYBw?si=utZRlY9b2twQLxW8)
+* Blog-Article: [Minimize Costs by Utilizing Cloud Storage with Spring-Data-Eclipse-Store](https://foojay.io/today/minimize-costs-by-utilizing-cloud-storage-with-spring-data-eclipse-store/)
 
 ## Contributing
 See the [contributing guide](./CONTRIBUTING.md) for detailed instructions on how to get started with our project.

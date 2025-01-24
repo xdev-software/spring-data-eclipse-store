@@ -81,6 +81,7 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 	 * This is surely not the perfect way to get the correct configuration of that context, but it works with multiple
 	 * configurations, with no configuration and with a single configuration.
 	 */
+	@SuppressWarnings("NullableProblems")
 	@Override
 	public void postProcess(final BeanDefinitionBuilder builder, final AnnotationRepositoryConfigurationSource config)
 	{

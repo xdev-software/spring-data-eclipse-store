@@ -15,23 +15,19 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
-import java.util.Objects;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
-public class SimpleEntityWithId
+public class SimpleEntityWithComplexId
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private CompositeKeyAsRecord id;
 	
 	private String name;
 	
-	public SimpleEntityWithId(final String name)
+	public SimpleEntityWithComplexId(final CompositeKeyAsRecord id, final String name)
 	{
+		this.id = id;
 		this.name = name;
 	}
 	
@@ -45,30 +41,13 @@ public class SimpleEntityWithId
 		this.name = name;
 	}
 	
-	public long getId()
+	public CompositeKeyAsRecord getId()
 	{
 		return this.id;
 	}
 	
-	public void setId(final long id)
+	public void setId(final CompositeKeyAsRecord id)
 	{
 		this.id = id;
-	}
-	
-	@Override
-	public boolean equals(final Object o)
-	{
-		if(o == null || this.getClass() != o.getClass())
-		{
-			return false;
-		}
-		final SimpleEntityWithId that = (SimpleEntityWithId)o;
-		return this.id == that.id && Objects.equals(this.name, that.name);
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(this.id, this.name);
 	}
 }
