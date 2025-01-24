@@ -19,6 +19,17 @@
         "maven"
       ],
       "groupName": "net.sourceforge.pmd"
+    },
+    {
+      "description": "Group org.eclipse.store/serializer",
+      "matchPackagePatterns": [
+        "^org.eclipse.store",
+        "^org.eclipse.serializer"
+      ],
+      "datasources": [
+        "maven"
+      ],
+      "groupName": "org.eclipse.store-serializer"
     }
   ]
 }
