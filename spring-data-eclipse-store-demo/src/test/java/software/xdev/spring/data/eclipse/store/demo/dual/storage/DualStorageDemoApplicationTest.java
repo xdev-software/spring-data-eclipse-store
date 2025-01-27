@@ -2,6 +2,7 @@ package software.xdev.spring.data.eclipse.store.demo.dual.storage;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,6 @@ class DualStorageDemoApplicationTest
 	{
 		this.invoiceConfiguration.getStorageInstance().stop();
 		this.personConfiguration.getStorageInstance().stop();
-		DualStorageDemoApplication.main(new String[]{});
+		Assertions.assertDoesNotThrow(() -> DualStorageDemoApplication.main(new String[]{}));
 	}
 }

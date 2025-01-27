@@ -98,7 +98,7 @@ public class FieldAccessibleMaker<E> implements FieldAccessModifier<E>
 		}
 	}
 	
-	private IllegalAccessException createIllegalAccessToField(final Field field) throws IllegalAccessException
+	private IllegalAccessException createIllegalAccessToField(final Field field)
 	{
 		return new IllegalAccessException(
 			("Could not access field %s#%s. Make sure that the module is open e.g. with following VM option: "

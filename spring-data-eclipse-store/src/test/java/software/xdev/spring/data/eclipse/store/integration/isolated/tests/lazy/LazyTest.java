@@ -15,12 +15,16 @@
  */
 package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static software.xdev.spring.data.eclipse.store.helper.TestUtil.restartDatastore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.serializer.collections.lazy.LazyArrayList;
@@ -64,10 +68,10 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final LazyList<SimpleObject> loadedLazyList = repository.findAll().get(0).getLazyList();
-				Assertions.assertEquals(1, loadedLazyList.size());
-				Assertions.assertEquals(objectToStore, loadedLazyList.get(0));
+				assertEquals(1, loadedLazyList.size());
+				assertEquals(objectToStore, loadedLazyList.get(0));
 			}
 		);
 	}
@@ -83,9 +87,9 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
-				Assertions.assertEquals(objectToStore, lazy.get());
+				assertEquals(objectToStore, lazy.get());
 			}
 		);
 	}
@@ -101,13 +105,13 @@ class LazyTest
 		restartDatastore(this.configuration);
 		
 		final List<ObjectWithLazy<SimpleObject>> loadedObjects = repository.findAll();
-		Assertions.assertEquals(1, loadedObjects.size());
-		Assertions.assertFalse(loadedObjects.get(0).getLazy().isLoaded());
+		assertEquals(1, loadedObjects.size());
+		assertFalse(loadedObjects.get(0).getLazy().isLoaded());
 		Assertions.assertNotNull(loadedObjects.get(0).getLazy().get());
-		Assertions.assertTrue(loadedObjects.get(0).getLazy().isLoaded());
+		assertTrue(loadedObjects.get(0).getLazy().isLoaded());
 		
 		LazyReferenceManager.get().clear();
-		Assertions.assertFalse(repository.findAll().get(0).getLazy().isLoaded());
+		assertFalse(repository.findAll().get(0).getLazy().isLoaded());
 	}
 	
 	@Test
@@ -124,7 +128,7 @@ class LazyTest
 				final SimpleObject storedObject = newLazy.getLazy().get();
 				final SimpleObject loadedObject = repository.findAll().get(0).getLazy().get();
 				Assertions.assertNotSame(storedObject, loadedObject);
-				Assertions.assertEquals(storedObject, loadedObject);
+				assertEquals(storedObject, loadedObject);
 			}
 		);
 	}
@@ -144,7 +148,7 @@ class LazyTest
 				final ObjectWithLazy<SimpleObject> workingCopy2 = repository.findAll().get(0);
 				Assertions.assertNotSame(workingCopy1.getLazy(), workingCopy2.getLazy());
 				Assertions.assertNotSame(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
-				Assertions.assertEquals(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
+				assertEquals(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
 			}
 		);
 	}
@@ -188,7 +192,7 @@ class LazyTest
 		
 		final ObjectWithLazy<SimpleObject> workingCopy1 = repository.findAll().get(0);
 		final ObjectWithLazy<SimpleObject> workingCopy2 = repository.findAll().get(0);
-		Assertions.assertEquals(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
+		assertEquals(workingCopy1.getLazy().get(), workingCopy2.getLazy().get());
 	}
 	
 	@Test
@@ -200,17 +204,17 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<ComplexLazyObject> lazy = repository.findAll().get(0).getLazy();
 				Assertions.assertNotNull(lazy.get());
-				Assertions.assertEquals(objectToStore.getSimpleObject().get(), lazy.get().getSimpleObject().get());
-				Assertions.assertEquals(
+				assertEquals(objectToStore.getSimpleObject().get(), lazy.get().getSimpleObject().get());
+				assertEquals(
 					objectToStore.getListOfLazyListOfString().size(),
 					lazy.get().getListOfLazyListOfString().size());
-				Assertions.assertEquals(
+				assertEquals(
 					objectToStore.getListOfLazyListOfString().get(0).get(),
 					lazy.get().getListOfLazyListOfString().get(0).get());
-				Assertions.assertEquals(
+				assertEquals(
 					objectToStore.getListOfLazyListOfString().get(1).get(),
 					lazy.get().getListOfLazyListOfString().get(1).get());
 			}
@@ -278,15 +282,15 @@ class LazyTest
 					loadedObjectToChange.getLazy().get(),
 					loadedObject.getLazy().get()
 				);
-				Assertions.assertEquals(
+				assertEquals(
 					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().size(),
 					loadedObject.getLazy().get().getListOfLazyListOfString().size()
 				);
-				Assertions.assertEquals(
+				assertEquals(
 					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().get(0).get().size(),
 					loadedObject.getLazy().get().getListOfLazyListOfString().get(0).get().size()
 				);
-				Assertions.assertEquals(
+				assertEquals(
 					loadedObjectToChange.getLazy().get().getListOfLazyListOfString().get(0).get().get(0),
 					loadedObject.getLazy().get().getListOfLazyListOfString().get(0).get().get(0)
 				);
@@ -301,7 +305,7 @@ class LazyTest
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		final Lazy<SimpleObject> lazy = newLazy.getLazy();
-		Assertions.assertThrows(IllegalStateException.class, () -> lazy.clear());
+		assertThrows(IllegalStateException.class, lazy::clear);
 	}
 	
 	@Test
@@ -310,7 +314,7 @@ class LazyTest
 		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(Lazy.Reference(objectToStore));
-		Assertions.assertThrows(Exception.class, () -> repository.save(newLazy));
+		assertThrows(Exception.class, () -> repository.save(newLazy));
 	}
 	
 	@Test
@@ -320,24 +324,24 @@ class LazyTest
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
 		
-		Assertions.assertTrue(newLazy.getLazy().isLoaded());
-		Assertions.assertFalse(newLazy.getLazy().isStored());
+		assertTrue(newLazy.getLazy().isLoaded());
+		assertFalse(newLazy.getLazy().isStored());
 		
 		repository.save(newLazy);
 		
-		Assertions.assertTrue(newLazy.getLazy().isLoaded());
-		Assertions.assertTrue(newLazy.getLazy().isStored());
+		assertTrue(newLazy.getLazy().isLoaded());
+		assertTrue(newLazy.getLazy().isStored());
 		
 		newLazy.getLazy().clear();
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
-				Assertions.assertFalse(lazy.isLoaded());
-				Assertions.assertEquals(objectToStore, lazy.get());
-				Assertions.assertTrue(lazy.isLoaded());
+				assertFalse(lazy.isLoaded());
+				assertEquals(objectToStore, lazy.get());
+				assertTrue(lazy.isLoaded());
 			}
 		);
 	}
@@ -351,11 +355,11 @@ class LazyTest
 		final ObjectWithLazy<SimpleObject> newLazy = new ObjectWithLazy<>();
 		final SimpleObject objectToStore = new SimpleObject(TestData.DUMMY_STRING);
 		newLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore));
-		Assertions.assertTrue(newLazy.getLazy().isLoaded());
-		Assertions.assertFalse(newLazy.getLazy().isStored());
+		assertTrue(newLazy.getLazy().isLoaded());
+		assertFalse(newLazy.getLazy().isStored());
 		LazyReferenceManager.get().cleanUp();
-		Assertions.assertTrue(newLazy.getLazy().isLoaded());
-		Assertions.assertFalse(newLazy.getLazy().isStored());
+		assertTrue(newLazy.getLazy().isLoaded());
+		assertFalse(newLazy.getLazy().isStored());
 	}
 	
 	@Test
@@ -370,11 +374,11 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
-				Assertions.assertFalse(lazy.isLoaded());
-				Assertions.assertEquals(objectToStore, lazy.get());
-				Assertions.assertTrue(lazy.isLoaded());
+				assertFalse(lazy.isLoaded());
+				assertEquals(objectToStore, lazy.get());
+				assertTrue(lazy.isLoaded());
 			}
 		);
 	}
@@ -407,9 +411,9 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
-				Assertions.assertEquals(objectToStore2, lazy.get());
+				assertEquals(objectToStore2, lazy.get());
 			}
 		);
 	}
@@ -428,9 +432,9 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
-				Assertions.assertEquals(objectToStore2, lazy.get());
+				assertEquals(objectToStore2, lazy.get());
 			}
 		);
 	}
@@ -445,9 +449,9 @@ class LazyTest
 		
 		restartDatastore(this.configuration);
 		
-		Assertions.assertEquals(1, repository.findAll().size());
+		assertEquals(1, repository.findAll().size());
 		final ObjectWithLazy<SimpleObject> reloadedObjectWithLazy = repository.findAll().get(0);
-		Assertions.assertEquals(objectToStore, reloadedObjectWithLazy.getLazy().get());
+		assertEquals(objectToStore, reloadedObjectWithLazy.getLazy().get());
 		
 		final SimpleObject objectToStore2 = new SimpleObject(TestData.DUMMY_STRING_ALTERNATIVE);
 		reloadedObjectWithLazy.setLazy(SpringDataEclipseStoreLazy.build(objectToStore2));
@@ -456,9 +460,9 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleObject> lazy = repository.findAll().get(0).getLazy();
-				Assertions.assertEquals(objectToStore2, lazy.get());
+				assertEquals(objectToStore2, lazy.get());
 			}
 		);
 	}
@@ -475,10 +479,10 @@ class LazyTest
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
 			() -> {
-				Assertions.assertEquals(1, repository.findAll().size());
+				assertEquals(1, repository.findAll().size());
 				final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
-				Assertions.assertEquals(objectToStore.getId(), reloadedObject.get().getId());
-				Assertions.assertEquals(objectToStore.getName(), reloadedObject.get().getName());
+				assertEquals(objectToStore.getId(), reloadedObject.get().getId());
+				assertEquals(objectToStore.getName(), reloadedObject.get().getName());
 			}
 		);
 	}
@@ -495,10 +499,10 @@ class LazyTest
 		restartDatastore(this.configuration);
 		
 		final Lazy<SimpleEntityWithId> reloadedObject = repository.findAll().get(0);
-		Assertions.assertFalse(reloadedObject.isLoaded());
-		Assertions.assertEquals(objectToStore.getId(), reloadedObject.get().getId());
-		Assertions.assertEquals(objectToStore.getName(), reloadedObject.get().getName());
-		Assertions.assertTrue(reloadedObject.isLoaded());
+		assertFalse(reloadedObject.isLoaded());
+		assertEquals(objectToStore.getId(), reloadedObject.get().getId());
+		assertEquals(objectToStore.getName(), reloadedObject.get().getName());
+		assertTrue(reloadedObject.isLoaded());
 	}
 	
 	@Test
@@ -510,7 +514,7 @@ class LazyTest
 		
 		final List<Lazy<SimpleEntityWithId>> all = repository.findAll();
 		
-		Assertions.assertThrows(NoIdFieldFoundException.class, () -> repository.findById(all.get(0).get().getId()));
+		assertThrows(NoIdFieldFoundException.class, () -> repository.findById(all.get(0).get().getId()));
 	}
 	
 	@Test
@@ -524,8 +528,8 @@ class LazyTest
 			() -> {
 				LazyReferenceManager.get().cleanUp();
 				final Optional<SimpleEntityWithId> reloadedObject = repository.findById(object1Id);
-				Assertions.assertTrue(reloadedObject.isPresent());
-				Assertions.assertEquals(objectToStore1, reloadedObject.get());
+				assertTrue(reloadedObject.isPresent());
+				assertEquals(objectToStore1, reloadedObject.get());
 			}
 		);
 	}
@@ -543,17 +547,17 @@ class LazyTest
 			() -> {
 				LazyReferenceManager.get().cleanUp();
 				final Optional<SimpleEntityWithId> reloadedObject = repository.findById(object1Id);
-				Assertions.assertTrue(reloadedObject.isPresent());
+				assertTrue(reloadedObject.isPresent());
 			}
 		);
 		final EntityData<SimpleEntityWithId, Long> entityData = this.configuration.getStorageInstance()
 			.getRoot()
 			.getCurrentRootData()
 			.getEntityData(SimpleEntityWithId.class);
-		final HashMap<Long, Lazy<SimpleEntityWithId>> lazyEntitiesById =
+		final Map<Long, Lazy<SimpleEntityWithId>> lazyEntitiesById =
 			((LazyEntityData<SimpleEntityWithId, Long>)entityData).getNativeLazyEntitiesById();
-		Assertions.assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
-		Assertions.assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
+		assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
+		assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
 	}
 	
 	@Test
@@ -572,7 +576,7 @@ class LazyTest
 			() -> {
 				LazyReferenceManager.get().cleanUp();
 				final Optional<SimpleEntityWithComplexId> reloadedObject = repository.findById(object1Id);
-				Assertions.assertTrue(reloadedObject.isPresent());
+				assertTrue(reloadedObject.isPresent());
 			}
 		);
 		final EntityData<SimpleEntityWithComplexId, CompositeKeyAsRecord> entityData =
@@ -580,9 +584,9 @@ class LazyTest
 				.getRoot()
 				.getCurrentRootData()
 				.getEntityData(SimpleEntityWithComplexId.class);
-		final HashMap<CompositeKeyAsRecord, Lazy<SimpleEntityWithComplexId>> lazyEntitiesById =
+		final Map<CompositeKeyAsRecord, Lazy<SimpleEntityWithComplexId>> lazyEntitiesById =
 			((LazyEntityData<SimpleEntityWithComplexId, CompositeKeyAsRecord>)entityData).getNativeLazyEntitiesById();
-		Assertions.assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
-		Assertions.assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
+		assertTrue(lazyEntitiesById.get(object1Id).isLoaded());
+		assertFalse(lazyEntitiesById.get(object2Id).isLoaded());
 	}
 }

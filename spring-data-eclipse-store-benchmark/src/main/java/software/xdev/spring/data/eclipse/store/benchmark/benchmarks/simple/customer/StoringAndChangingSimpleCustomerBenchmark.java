@@ -22,8 +22,7 @@ public class StoringAndChangingSimpleCustomerBenchmark extends AbstractStoringSi
 		customerRepository2.findAll().forEach(
 			customer ->
 			{
-				customer.setFirstName("Another" + customer.getFirstName());
-				customer.setLastName("Another" + customer.getLastName());
+				this.changeCustomerName(customer);
 				customerRepository2.save(customer);
 			});
 	}
@@ -42,8 +41,7 @@ public class StoringAndChangingSimpleCustomerBenchmark extends AbstractStoringSi
 		customerRepository2.findAll().forEach(
 			customer ->
 			{
-				customer.setFirstName("Another" + customer.getFirstName());
-				customer.setLastName("Another" + customer.getLastName());
+				this.changeCustomerName(customer);
 				customerRepository2.save(customer);
 			});
 	}
@@ -62,13 +60,14 @@ public class StoringAndChangingSimpleCustomerBenchmark extends AbstractStoringSi
 		
 		final CustomerRepository customerRepository2 = state.getBean(CustomerRepository.class);
 		final Iterable<Customer> all = customerRepository2.findAll();
-		all.forEach(
-			customer ->
-			{
-				customer.setFirstName("Another" + customer.getFirstName());
-				customer.setLastName("Another" + customer.getLastName());
-			});
+		all.forEach(this::changeCustomerName);
 		
 		customerRepository2.saveAll(all);
+	}
+	
+	private void changeCustomerName(final Customer customer)
+	{
+		customer.setFirstName("Another" + customer.getFirstName());
+		customer.setLastName("Another" + customer.getLastName());
 	}
 }

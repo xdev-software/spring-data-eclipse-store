@@ -229,7 +229,7 @@ public class EclipseStoreDataImporter
 		);
 		
 		return new EntityManagerSupplierRepositoryListPair(
-			() -> entityManagerFactory.createEntityManager(),
+			entityManagerFactory::createEntityManager,
 			repositoryList);
 	}
 	

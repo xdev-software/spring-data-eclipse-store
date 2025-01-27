@@ -21,7 +21,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
 
 
-@SuppressWarnings("checkstyle:TypeName")
+@SuppressWarnings({"checkstyle:TypeName", "java:S101"})
 public class v1_0_0_Init extends ReflectiveDataMigrationScript
 {
 	private final PersistedEntityRepository

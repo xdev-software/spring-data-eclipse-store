@@ -31,6 +31,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.update.scripts.v2
 
 public final class EclipseStoreMigrator
 {
+	@SuppressWarnings("java:S2386")
 	public static final VersionAgnosticMigrationScript<?, ?>[] SCRIPTS =
 		new VersionAgnosticMigrationScript[]{
 			new v2_0_0_InitializeVersioning(),

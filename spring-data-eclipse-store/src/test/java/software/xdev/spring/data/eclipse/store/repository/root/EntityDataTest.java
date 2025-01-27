@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 
 
+@SuppressWarnings({"deprecation", "java:S1874"})
 class EntityDataTest
 {
 	record Person(String id, String name)

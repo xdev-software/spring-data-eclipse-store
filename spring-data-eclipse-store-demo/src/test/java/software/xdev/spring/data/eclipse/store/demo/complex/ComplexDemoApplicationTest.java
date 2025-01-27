@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ class ComplexDemoApplicationTest
 	void checkPossibilityToSimplyStartAndRestartApplication()
 	{
 		this.configuration.getStorageInstance().stop();
-		ComplexDemoApplication.main(new String[]{});
+		Assertions.assertDoesNotThrow(() -> ComplexDemoApplication.main(new String[]{}));
 	}
 	
 	@Test
