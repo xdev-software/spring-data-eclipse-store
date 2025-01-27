@@ -86,6 +86,7 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 	 * should be injected into the {@link #configurations} and get returned.
 	 * </p>
 	 */
+	@SuppressWarnings("java:S1872")
 	private EclipseStoreClientConfiguration getSuitableConfiguration()
 	{
 		if(this.configurationClass == null && this.configurations.size() == 1)
