@@ -114,7 +114,7 @@ class IdTest
 			this.configuration,
 			() -> {
 				Assertions.assertEquals(2, customerRepository.count());
-				final Iterable<CustomerWithIdInt> all = customerRepository.findAll();
+				customerRepository.findAll();
 				
 				final Optional<CustomerWithIdInt> loadedCustomer1 = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer1.isPresent());

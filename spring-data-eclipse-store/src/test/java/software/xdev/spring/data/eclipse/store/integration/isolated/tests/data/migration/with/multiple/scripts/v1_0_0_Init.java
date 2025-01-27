@@ -23,12 +23,12 @@ import software.xdev.micromigration.scripts.Context;
 import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
 
-@SuppressWarnings("checkstyle:TypeName")
+
+@SuppressWarnings({"checkstyle:TypeName", "java:S101"})
 @Component
 public class v1_0_0_Init extends ReflectiveDataMigrationScript
 {
-	private final PersistedEntityRepository
-		repository;
+	private final PersistedEntityRepository repository;
 	
 	public v1_0_0_Init(@Autowired final PersistedEntityRepository repository)
 	{

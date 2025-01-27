@@ -148,7 +148,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	 * and
 	 * would be stuck in a deadlock.
 	 */
-	private <S extends T> boolean isMergeParallelizable()
+	private boolean isMergeParallelizable()
 	{
 		return !this.idManager.hasIdField();
 	}
@@ -189,7 +189,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 	{
 		return this.storage.getReadWriteLock().read(
 			() -> this.idManager.findById(id)
-				.map(foundEntity -> this.copier.copy(foundEntity))
+				.map(this.copier::copy)
 		);
 	}
 	

@@ -81,18 +81,19 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 		return this.predicate.test(object);
 	}
 	
-	private <T> Predicate<ExampleMatcher.PropertySpecifier> createPredicateForSpecifier(
+	@SuppressWarnings("unchecked")
+	private <E> Predicate<ExampleMatcher.PropertySpecifier> createPredicateForSpecifier(
 		final Example<S> example,
-		final T entity)
+		final E entity)
 	{
 		return specifier ->
 		{
-			final ReflectedField<T, Object> reflectedField =
-				(ReflectedField<T, Object>)ReflectedField.createReflectedField(
+			final ReflectedField<E, Object> reflectedField =
+				(ReflectedField<E, Object>)ReflectedField.createReflectedField(
 					example.getProbeType(),
 					specifier.getPath());
 			
-			final Object exampleValue = reflectedField.readValue((T)example.getProbe());
+			final Object exampleValue = reflectedField.readValue((E)example.getProbe());
 			final Optional<Object> transformedExampledValue =
 				specifier.getPropertyValueTransformer().apply(Optional.ofNullable(exampleValue));
 			

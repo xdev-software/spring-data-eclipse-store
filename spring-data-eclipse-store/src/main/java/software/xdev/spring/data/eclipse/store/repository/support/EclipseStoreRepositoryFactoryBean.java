@@ -17,12 +17,9 @@ package software.xdev.spring.data.eclipse.store.repository.support;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -47,7 +44,6 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreRep
 public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extends Serializable>
 	extends RepositoryFactoryBeanSupport<T, S, ID>
 {
-	private static final Logger LOG = LoggerFactory.getLogger(EclipseStoreRepositoryFactoryBean.class);
 	private Class<?> configurationClass;
 	@Autowired
 	private List<EclipseStoreClientConfiguration> configurations;
@@ -96,24 +92,12 @@ public class EclipseStoreRepositoryFactoryBean<T extends Repository<S, ID>, S, I
 		{
 			return this.configurations.get(0);
 		}
-		final Optional<EclipseStoreClientConfiguration> definedConfiguration = this.configurations
+		
+		return this.configurations
 			.stream()
-			.filter(
-				configuration ->
-				{
-					if(this.configurationClass != null)
-					{
-						return this.configurationClass.getName()
-							.equals(ClassUtils.getUserClass(configuration).getName());
-					}
-					return false;
-				}
-			)
-			.findAny();
-		if(definedConfiguration.isEmpty())
-		{
-			throw new NoSuchBeanDefinitionException(this.configurationClass);
-		}
-		return definedConfiguration.get();
+			.filter(configuration -> this.configurationClass != null
+				&& this.configurationClass.getName().equals(ClassUtils.getUserClass(configuration).getName()))
+			.findAny()
+			.orElseThrow(() -> new NoSuchBeanDefinitionException(this.configurationClass));
 	}
 }

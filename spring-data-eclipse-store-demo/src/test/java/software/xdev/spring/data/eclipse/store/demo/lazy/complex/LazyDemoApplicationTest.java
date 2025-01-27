@@ -2,6 +2,7 @@ package software.xdev.spring.data.eclipse.store.demo.lazy.complex;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,6 @@ class LazyDemoApplicationTest
 	void checkPossibilityToSimplyStartAndRestartApplication()
 	{
 		this.configuration.getStorageInstance().stop();
-		LazyDemoApplication.main(new String[]{});
+		Assertions.assertDoesNotThrow(() -> LazyDemoApplication.main(new String[]{}));
 	}
 }
