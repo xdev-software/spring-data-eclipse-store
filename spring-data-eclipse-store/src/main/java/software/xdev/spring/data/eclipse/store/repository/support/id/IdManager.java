@@ -80,7 +80,7 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 		return StreamSupport
 			.stream(idsToFind.spliterator(), false)
 			.map(this::findById)
-			.filter(e -> e.isPresent())
+			.filter(Optional::isPresent)
 			.map(Optional::get)
 			.toList();
 	}

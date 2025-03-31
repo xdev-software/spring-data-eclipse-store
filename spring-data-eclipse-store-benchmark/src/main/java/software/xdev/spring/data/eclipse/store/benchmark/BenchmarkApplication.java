@@ -9,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
 
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
+@SuppressWarnings({"checkstyle:HideUtilityClassConstructor", "PMD.UseUtilityClass"})
 @SpringBootApplication
 @EnableEclipseStoreRepositories
 public class BenchmarkApplication
