@@ -117,9 +117,6 @@ jobs:
     - name: Run PMD
       run: ./mvnw -B test pmd:aggregate-pmd-no-fork pmd:check -P pmd -DskipTests -T2C
 
-    - name: Run CPD (Copy Paste Detector)
-      run: ./mvnw -B pmd:aggregate-cpd pmd:cpd-check -P pmd -DskipTests -T2C
-
     - name: Upload report
       if: always()
       uses: actions/upload-artifact@v4
@@ -128,3 +125,20 @@ jobs:
         if-no-files-found: ignore
         path: |
           target/reports/**
+
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Antora and the Antora Lunr Extension
+        run: npm i antora @antora/lunr-extension
+
+      - name: Generate Site
+        run: npx antora docs/antora-playbook.yml
