@@ -1,0 +1,132 @@
+= Migration from EclipseStore
+
+Given the flexibility of EclipseStore and its diverse use cases, there is **no universal, one-size-fits-all solution for migrating data** between the two systems.
+
+The first step is to define the appropriate entities and repositories tailored to your requirements, ensuring they align with the existing data structure in EclipseStore.
+
+Next, the data must be transferred to the Spring-Data-Eclipse-Store storage.
+To facilitate this, both EclipseStore and {product-name} must run within the same JVM (Java Virtual Machine).
+This configuration enables the developer to operate both systems simultaneously and transfer data by making simple ``save`` calls to the respective repositories.
+
+== Example
+
+=== 0. Status Quo
+
+Let's say that this is the current state of the code:
+
+[source,java,title="``package software.xdev.example.eclipse.store``"]
+----
+public record Root(List<Owner> owners, List<Vet> vets){}
+public record Owner(String name, List<Pet> pets, List<Visit> visits){}
+public record Pet(String name){}
+public record Vet(String name, List<Owner> clients){}
+public record Visit(LocalDate date, Owner owner, Pet pet){}
+----
+
+In this case ``Root`` is the root-object of EclipseStore.
+
+=== 1. Building Repositories
+
+Now entities with its corresponding repositories must be created in the same project:
+
+[source,java,title="``package software.xdev.example.sdes.enitities``"]
+----
+	public class Owner{
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		private long id;
+		private final String name;
+		private final List<Pet> pets;
+		private final List<Visit> visits;
+		//...
+	}
+	public class Vet{
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		private long id;
+		private final String name;
+		private final List<Owner> clients;
+		//...
+	}
+	public class Visit{
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		private long id;
+		private final LocalDate date;
+		private final Owner owner;
+		private final Pet pet;
+		//...
+	}
+	public class Pet{
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		private long id;
+		private final String name;
+		//...
+	}
+----
+
+[source,java,title="``package software.xdev.example.sdes.repositories``"]
+----
+	public interface OwnerRepository extends CrudRepository<Owner, Long>{}
+	public interface VetRepository extends CrudRepository<Vet, Long>{}
+	public interface VisitRepository extends CrudRepository<Visit, Long>{}
+	public interface PetRepository extends CrudRepository<Pet, Long>{}
+----
+
+Note that the ``root`` object is not needed in the new structure.
+Since we want to transfer the data in the next step, it is good practice to keep these classes in the same project but in separate packages.
+It is recommended that **ids** fields are defined to improve performance.
+
+=== 3. Copy Data
+
+Now it's time to copy the actual data.
+For that we need to start up the old EclipseStore storage additionally to the {product-name} storage.
+Then we simply iterate over the existing data, repackage it in our new objects and store them through the repositories.
+
+[source,java,title="``package software.xdev.example.sdes.repositories``"]
+----
+package software.xdev.example;
+
+import org.eclipse.store.storage.embedded.types.EmbeddedStorage;
+import org.eclipse.store.storage.embedded.types.EmbeddedStorageManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+import software.xdev.example.sdes.repositories.*;
+
+@Service
+public class EclipseStoreDataMigrater
+{
+	OwnerRepository ownerRepository;
+	VetRepository vetRepository;
+	VisitRepository visitRepository;
+	PetRepository petRepository;
+
+	@Autowired
+	public EclipseStoreDataMigrater(OwnerRepository ownerRepository, VetRepository vetRepository, VisitRepository visitRepository, PetRepository petRepository
+	)
+	{
+		this.ownerRepository = ownerRepository;
+		this.vetRepository = vetRepository;
+		this.visitRepository = visitRepository;
+		this.petRepository = petRepository;
+	}
+
+	@EventListener
+	public void migrateData(final ContextRefreshedEvent event)
+	{
+		final software.xdev.example.eclipse.store.Root root = new software.xdev.example.eclipse.store.Root(null, null);
+		try(final EmbeddedStorageManager storageManager = EmbeddedStorage.start(root))
+		{
+			root.owners.forEach(owner -> {
+				owner.pets.forEach(pet -> this.petRepository.save(new software.xdev.example.sdes.entities.Pet(pet.name)));
+				//...
+			});
+		}
+	}
+}
+----
+
+This is very simplified but shows the general strategy to migrate data from EclipseStore to {product-name}.
