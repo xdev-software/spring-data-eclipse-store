@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>software.xdev</groupId>
 		<artifactId>spring-data-eclipse-store-root</artifactId>
-		<version>2.5.2-SNAPSHOT</version>
+		<version>2.5.2</version>
 	</parent>
 
 	<artifactId>spring-data-eclipse-store-benchmark</artifactId>
-	<version>2.5.2-SNAPSHOT</version>
+	<version>2.5.2</version>
 	<packaging>jar</packaging>
 
 	<inceptionYear>2023</inceptionYear>
