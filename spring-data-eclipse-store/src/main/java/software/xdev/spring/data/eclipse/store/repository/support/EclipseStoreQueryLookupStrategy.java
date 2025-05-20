@@ -67,7 +67,7 @@ public class EclipseStoreQueryLookupStrategy implements QueryLookupStrategy
 		final Query queryAnnotation = method.getAnnotation(Query.class);
 		if(queryAnnotation != null)
 		{
-			if(method.getName().equalsIgnoreCase("findall"))
+			if("findall".equalsIgnoreCase(method.getName()))
 			{
 				// Special case for Queries that have findAll and are annotated with Query
 				return this.createFindAllEclipseStoreQueryProvider(

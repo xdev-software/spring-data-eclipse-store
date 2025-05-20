@@ -40,7 +40,6 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 public abstract class AbstractRegisteringCopier implements RegisteringObjectCopier
 {
 	private final EclipseSerializerRegisteringCopier actualCopier;
-	private ClassLoader currentClassLoader;
 	
 	protected AbstractRegisteringCopier(
 		final SupportedChecker supportedChecker,

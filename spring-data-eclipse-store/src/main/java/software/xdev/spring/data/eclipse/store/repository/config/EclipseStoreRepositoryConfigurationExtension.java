@@ -29,7 +29,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 import org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport;
-import org.springframework.data.repository.core.RepositoryMetadata;
 
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCustomRepository;
@@ -137,11 +136,5 @@ public class EclipseStoreRepositoryConfigurationExtension extends RepositoryConf
 			LazyEclipseStoreCrudRepository.class,
 			LazyEclipseStoreListCrudRepository.class
 		);
-	}
-	
-	@Override
-	protected boolean useRepositoryConfiguration(final RepositoryMetadata metadata)
-	{
-		return super.useRepositoryConfiguration(metadata);
 	}
 }

@@ -52,7 +52,7 @@ public class v2_0_0_InitializeVersioning extends LoggingUpdateScript
 					LOG.warn("Dropping entities {} because there is no repository in the new root.", entityName);
 					return;
 				}
-				entities.forEach(entity -> entityData.ensureEntityAndReturnObjectsToStore(entity));
+				entities.forEach(entityData::ensureEntityAndReturnObjectsToStore);
 				context.getStorageManager().getNativeStorageManager().storeAll(entityData.getObjectsToStore());
 				LOG.info("Migrated entities {}.", entityName);
 			}

@@ -50,7 +50,7 @@ class ConcurrencyTest
 	private SharedTestConfiguration configuration;
 	
 	private final List<Customer> testCustomers =
-		IntStream.range(1, 100).mapToObj((i) -> new Customer(CUSTOMER_NO + i, "")).toList();
+		IntStream.range(1, 100).mapToObj(i -> new Customer(CUSTOMER_NO + i, "")).toList();
 	
 	@Test
 	void testSaveConcurrently() throws InterruptedException

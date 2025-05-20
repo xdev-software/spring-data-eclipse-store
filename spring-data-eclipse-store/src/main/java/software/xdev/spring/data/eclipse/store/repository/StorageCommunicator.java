@@ -22,6 +22,7 @@ import software.xdev.spring.data.eclipse.store.repository.support.SimpleEclipseS
 import software.xdev.spring.data.eclipse.store.repository.support.concurrency.ReadWriteLock;
 
 
+@SuppressWarnings("java:S119")
 public interface StorageCommunicator
 {
 	ReadWriteLock getReadWriteLock();

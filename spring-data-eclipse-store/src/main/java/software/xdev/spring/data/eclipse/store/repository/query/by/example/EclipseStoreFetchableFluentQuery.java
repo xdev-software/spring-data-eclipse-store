@@ -64,7 +64,7 @@ public class EclipseStoreFetchableFluentQuery<T, S extends T> implements FluentQ
 	@Override
 	public FetchableFluentQuery<S> sortBy(final Sort sort)
 	{
-		return new EclipseStoreFetchableFluentQuery(
+		return new EclipseStoreFetchableFluentQuery<>(
 			this.copier,
 			this.example,
 			this.domainClass,

@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.repository.root.v2_4;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.eclipse.serializer.reference.Lazy;
@@ -187,8 +188,8 @@ public class LazyEntityData<T, ID> implements EntityData<T, ID>
 		return this.getObjectsToStore();
 	}
 	
-	public HashMap<ID, Lazy<T>> getNativeLazyEntitiesById()
+	public Map<ID, Lazy<T>> getNativeLazyEntitiesById()
 	{
-		return entitiesById;
+		return this.entitiesById;
 	}
 }
