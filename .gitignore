@@ -82,6 +82,7 @@ spring-data-eclipse-store-jpa/storage-h2.trace.db
 .idea/*
 !.idea/saveactions_settings.xml
 !.idea/checkstyle-idea.xml
+!.idea/externalDependencies.xml
 
 !.idea/inspectionProfiles/
 .idea/inspectionProfiles/*
