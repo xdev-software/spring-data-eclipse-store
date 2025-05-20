@@ -1,3 +1,7 @@
+# 2.5.2
+* Migrated deployment to _Sonatype Maven Central Portal_ [#155](https://github.com/xdev-software/standard-maven-template/issues/155)
+* Updated dependencies
+
 # 2.5.1
 
 * Simplified configuration injection in ``EclipseStoreRepositoryFactoryBean``.
@@ -116,4 +120,3 @@
 # 1.0.0
 
 * Initial release
- 
