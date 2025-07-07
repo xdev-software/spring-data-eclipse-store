@@ -1,0 +1,19 @@
+= Validation Constraints
+
+By using the https://jakarta.ee/learn/docs/jakartaee-tutorial/current/beanvalidation/bean-validation/bean-validation.html[Jakarta Bean Validation Constraints] developers with {product-name} can easily limit the allowed input of entities.
+Here is a full list of supported validations: https://jakarta.ee/learn/docs/jakartaee-tutorial/current/beanvalidation/bean-validation/bean-validation.html#_using_jakarta_bean_validation_constraints[https://jakarta.ee/learn]
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/model/Person.java[Example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.model;
+
+import jakarta.validation.constraints.NotBlank;
+
+public class Person extends BaseEntity
+{
+    @NotBlank
+    private String firstName;
+    //...
+----
+
+The ``jakarta.validation.Validator`` is provided by the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/config/EclipseStoreClientConfiguration.java[``EclipseStoreClientConfiguration``] and can be changed in the project-specific configuration.
