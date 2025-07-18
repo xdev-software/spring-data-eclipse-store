@@ -51,7 +51,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
-		<org.springframework.boot.version>3.4.2</org.springframework.boot.version>
+		<org.springframework.boot.version>3.5.3</org.springframework.boot.version>
 		<org.eclipse.store.version>2.1.1</org.eclipse.store.version>
 		<org.eclipse.serializer.version>2.1.1</org.eclipse.serializer.version>
 		<hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
