@@ -1,3 +1,8 @@
+# 2.5.3
+
+* Updated org.springframework.boot.version to v3.5.3
+* Updated EclipseStore to v2.1.3
+
 # 2.5.2
 * Migrated deployment to _Sonatype Maven Central Portal_ [#155](https://github.com/xdev-software/standard-maven-template/issues/155)
 * Updated dependencies
