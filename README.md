@@ -1,6 +1,5 @@
 [![Latest version](https://img.shields.io/maven-central/v/software.xdev/spring-data-eclipse-store?logo=apache%20maven)](https://mvnrepository.com/artifact/software.xdev/spring-data-eclipse-store)
 [![Build](https://img.shields.io/github/actions/workflow/status/xdev-software/spring-data-eclipse-store/check-build.yml?branch=develop)](https://github.com/xdev-software/spring-data-eclipse-store/actions/workflows/check-build.yml?query=branch%3Adevelop)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xdev-software_spring-data-eclipse-store&metric=alert_status)](https://sonarcloud.io/dashboard?id=xdev-software_spring-data-eclipse-store)
 [![Documentation](https://img.shields.io/maven-central/v/software.xdev/spring-data-eclipse-store?label=docs)](https://spring-eclipsestore.xdev.software/)
 
 <div align="center">
@@ -60,7 +59,8 @@ instructions** are in the documentation](https://xdev-software.github.io/spring-
 | ``2.4.0``                 | ``17+`` | ``3.4.0``   | ``2.0.0``    |
 | ``2.4.1``                 | ``17+`` | ``3.4.0``   | ``2.1.0``    |
 | ``2.5.0``                 | ``17+`` | ``3.4.1``   | ``2.1.0``    |
-| ``>= 2.5.1``              | ``17+`` | ``3.4.2``   | ``2.1.1``    |
+| ``2.5.1-2.5.2``           | ``17+`` | ``3.4.2``   | ``2.1.1``    |
+| ``>= 2.5.3``              | ``17+`` | ``3.5.3``   | ``2.1.3``    |
 
 ## Demo
 
