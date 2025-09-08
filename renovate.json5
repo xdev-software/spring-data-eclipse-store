@@ -4,7 +4,7 @@
   "packageRules": [
     {
       "description": "Ignore project internal dependencies",
-      "packagePattern": "^software.xdev:template-placeholder",
+      "packagePattern": "^software.xdev:spring-data-eclipse-store",
       "datasources": [
         "maven"
       ],
@@ -19,6 +19,17 @@
         "maven"
       ],
       "groupName": "net.sourceforge.pmd"
+    },
+    {
+      "description": "Group org.eclipse.store/serializer",
+      "matchPackagePatterns": [
+        "^org.eclipse.store",
+        "^org.eclipse.serializer"
+      ],
+      "datasources": [
+        "maven"
+      ],
+      "groupName": "org.eclipse.store-serializer"
     }
   ]
 }
