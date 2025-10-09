@@ -37,6 +37,8 @@ import software.xdev.spring.data.eclipse.store.repository.support.copier.working
 
 public class HSqlQueryExecutor<T>
 {
+	protected static final DateTimeFormatter LOCAL_DATE_REPLACE_DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	
 	private final SQLParser<T> parser;
 	private final EntityListProvider entityListProvider;
 	private final Class<T> domainClass;
@@ -80,7 +82,7 @@ public class HSqlQueryExecutor<T>
 			}
 			if(parameters[i] instanceof final LocalDate localDate)
 			{
-				value = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+				value = localDate.format(LOCAL_DATE_REPLACE_DTF);
 			}
 			stringWithReplacedValues = stringWithReplacedValues.replaceAll(placeholder, value);
 		}

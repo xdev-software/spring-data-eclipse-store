@@ -17,10 +17,12 @@ package software.xdev.spring.data.eclipse.store.repository.query.criteria;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -38,6 +40,7 @@ import software.xdev.spring.data.eclipse.store.repository.query.ReflectedField;
  */
 public class CriteriaByExample<T, S extends T> implements Criteria<T>
 {
+	private static final Map<String, Pattern> REGEX_EXAMPLE_CACHE = Collections.synchronizedMap(new WeakHashMap<>());
 	private final Predicate<T> predicate;
 	
 	public CriteriaByExample(final Example<S> example)
@@ -143,7 +146,9 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 			case STARTING -> String::startsWith;
 			case ENDING -> String::endsWith;
 			case CONTAINING -> String::contains;
-			case REGEX -> (v, example) -> Pattern.compile(example).matcher(v).find();
+			case REGEX -> (v, example) -> REGEX_EXAMPLE_CACHE.computeIfAbsent(example, Pattern::compile)
+				.matcher(v)
+				.find();
 			default -> null;
 		};
 		
