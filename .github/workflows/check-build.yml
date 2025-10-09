@@ -165,7 +165,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install Antora and the Antora Lunr Extension
         run: npm i antora @antora/lunr-extension
