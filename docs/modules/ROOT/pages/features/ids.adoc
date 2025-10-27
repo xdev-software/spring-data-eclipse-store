@@ -1,0 +1,19 @@
+= IDs
+
+{product-name} supports the following types with auto generating (``GenerationType.AUTO``) values:
+
+* ``int`` / ``Integer``
+* ``long`` / ``Long``
+* ``String``
+* ``UUID``
+
+Other generation types are currently not supported.
+
+== Composite keys
+
+It is possible to use **any class as https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/id[``@Id``]** but without any auto generation.
+Most importantly the used class **must have a valid ``hashCode``** since a ``HashMap`` is used to store and manage entities.
+
+{product-name} can also handle https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/embeddedid[``@EmbeddedId``] which results in the same behavior as ``@Id`` but the id-class must then implement ``Serializable``.
+
+Multiple Ids for a single entity and https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/idclass[``@IdClass``] are **not** supported.
