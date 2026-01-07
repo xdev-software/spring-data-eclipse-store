@@ -35,6 +35,7 @@ import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
 
+@SuppressWarnings("checkstyle:TodoComment")
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {HsqlTestConfiguration.class})
 class HsqlTest

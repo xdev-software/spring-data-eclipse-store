@@ -28,6 +28,7 @@ import java.util.function.Function;
 @SuppressWarnings({"java:S119", "unchecked"})
 public class RootDataV2
 {
+	// CPD-OFF
 	private final Map<String, EntityData<?, ?>> entityLists;
 	
 	public RootDataV2()
@@ -87,4 +88,5 @@ public class RootDataV2
 	{
 		return this.entityLists.get(this.getEntityName(entityClass));
 	}
+	// CPD-ON
 }
