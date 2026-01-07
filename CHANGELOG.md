@@ -1,3 +1,7 @@
+# 3.0.0
+
+* Updated EclipseStore to v3.1.0
+
 # 2.6.0
 
 * Updated org.springframework.boot.version to v4.0.1
