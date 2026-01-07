@@ -43,7 +43,7 @@
 
 	<properties>
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
-		<javaVersion>25</javaVersion>
+		<javaVersion>17</javaVersion>
 		<maven.compiler.release>${javaVersion}</maven.compiler.release>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
