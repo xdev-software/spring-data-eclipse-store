@@ -19,9 +19,9 @@ import java.lang.reflect.Method;
 
 import jakarta.annotation.Nonnull;
 
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
-import org.springframework.data.util.TypeInformation;
 
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
 import software.xdev.spring.data.eclipse.store.repository.Query;
