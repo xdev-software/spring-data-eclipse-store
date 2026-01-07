@@ -30,6 +30,16 @@
         "maven"
       ],
       "groupName": "org.eclipse.store-serializer"
+    },
+    {
+      "description": "Group @antora",
+      "matchPackagePatterns": [
+        "^@antora\/"
+      ],
+      "datasources": [
+        "npm"
+      ],
+      "groupName": "@antora"
     }
   ]
 }
