@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class LazyDemoApplication implements CommandLineRunner
 {
-	@SuppressWarnings("CPD-START")
+	// CPD-OFF
 	private static final Logger LOG = LoggerFactory.getLogger(LazyDemoApplication.class);
 	private final CustomerRepository customerRepository;
 	private final PetRepository petRepository;
@@ -65,6 +65,5 @@ public class LazyDemoApplication implements CommandLineRunner
 		LOG.info("Pets found with findAll():");
 		this.petRepository.findAll().forEach(p -> LOG.info(p.toString()));
 	}
-	
-	@SuppressWarnings("CPD-END")
+	// CPD-ON
 }
