@@ -51,7 +51,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Should be in sync with org.eclipse.store:integrations-spring-boot3 -->
-		<org.springframework.boot.version>3.5.6</org.springframework.boot.version>
+		<org.springframework.boot.version>3.5.9</org.springframework.boot.version>
 		<org.eclipse.store.version>3.1.0</org.eclipse.store.version>
 		<org.eclipse.serializer.version>3.1.0</org.eclipse.serializer.version>
 		<hibernate-validator.version>9.0.1.Final</hibernate-validator.version>
@@ -322,7 +322,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>3.4.0</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -454,12 +454,12 @@
 							<dependency>
 								<groupId>net.sourceforge.pmd</groupId>
 								<artifactId>pmd-core</artifactId>
-								<version>7.17.0</version>
+								<version>7.20.0</version>
 							</dependency>
 							<dependency>
 								<groupId>net.sourceforge.pmd</groupId>
 								<artifactId>pmd-java</artifactId>
-								<version>7.17.0</version>
+								<version>7.20.0</version>
 							</dependency>
 						</dependencies>
 					</plugin>
