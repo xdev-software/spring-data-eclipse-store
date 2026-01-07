@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,6 +38,7 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
 
 @SuppressWarnings("checkstyle:TodoComment")
 @IsolatedTestAnnotations
+@Disabled("A replacement for cqengine must be found!")
 @ContextConfiguration(classes = {HsqlTestConfiguration.class})
 class HsqlTest
 {

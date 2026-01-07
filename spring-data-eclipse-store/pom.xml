@@ -163,12 +163,6 @@
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate-core.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>antlr4-runtime</artifactId>
-					<groupId>org.antlr</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.el</groupId>
