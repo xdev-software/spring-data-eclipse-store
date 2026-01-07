@@ -31,6 +31,7 @@ import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 
 
+@SuppressWarnings("checkstyle:TodoComment")
 class EclipseStoreQueryCreatorAndOrTest
 {
 	static Stream<Arguments> generateDataWithCountOfFirstNameAndLastName()

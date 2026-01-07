@@ -28,6 +28,7 @@ import java.util.function.Function;
 @SuppressWarnings({"java:S119", "unchecked"})
 public class RootDataV2
 {
+	@SuppressWarnings("CPD-START")
 	private final Map<String, EntityData<?, ?>> entityLists;
 	
 	public RootDataV2()
@@ -83,6 +84,7 @@ public class RootDataV2
 		this.entityLists.get(this.getEntityName(entityClass)).setLastId(lastId);
 	}
 	
+	@SuppressWarnings("CPD-END")
 	public Object getObjectsToStoreAfterNewLastId(final Class<?> entityClass)
 	{
 		return this.entityLists.get(this.getEntityName(entityClass));
