@@ -15,11 +15,10 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.support;
 
-import java.util.Optional;
-
 import jakarta.annotation.Nonnull;
 import jakarta.validation.Validator;
 
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
@@ -27,10 +26,6 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.PersistentEntityInformation;
 import org.springframework.data.repository.core.support.RepositoryComposition;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
-import org.springframework.data.repository.query.QueryLookupStrategy;
-import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
-import org.springframework.data.util.TypeInformation;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
@@ -72,16 +67,6 @@ public class EclipseStoreRepositoryFactory extends RepositoryFactorySupport
 	public <T, ID> EntityInformation<T, ID> getEntityInformation(@Nonnull final Class<T> domainClass)
 	{
 		return new PersistentEntityInformation<>(new BasicPersistentEntity<>(TypeInformation.of(domainClass)));
-	}
-	
-	@SuppressWarnings("deprecation")
-	@Override
-	@Nonnull
-	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(
-		@Nullable final QueryLookupStrategy.Key key,
-		@Nonnull final QueryMethodEvaluationContextProvider evaluationContextProvider)
-	{
-		return Optional.of(new EclipseStoreQueryLookupStrategy(this.storage, this::createWorkingCopier));
 	}
 	
 	private <T> WorkingCopier<T> createWorkingCopier(
