@@ -22,13 +22,13 @@ import java.util.Objects;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.ParameterAccessor;
 import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.data.util.Streamable;
-import org.springframework.data.util.TypeInformation;
 import org.springframework.util.ObjectUtils;
 
 import software.xdev.spring.data.eclipse.store.repository.query.criteria.AbstractCriteriaNode;

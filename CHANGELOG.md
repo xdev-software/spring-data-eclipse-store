@@ -1,3 +1,13 @@
+# 2.6.0
+
+* Updated org.springframework.boot.version to v4.0.1
+* Disabled Tests for HSQL. This is not working due to the unmaintained library cqengine. This must be
+  fixed [in this issue](https://github.com/xdev-software/spring-data-eclipse-store/issues/336).
+
+# 2.5.4
+
+* Updated org.springframework.boot.version to v3.5.9
+
 # 2.5.3
 
 * Updated org.springframework.boot.version to v3.5.3

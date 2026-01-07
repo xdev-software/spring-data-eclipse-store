@@ -18,12 +18,12 @@ package software.xdev.spring.data.eclipse.store.repository.query;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.springframework.data.core.TypeInformation;
 import org.springframework.data.repository.core.support.DefaultRepositoryMetadata;
 import org.springframework.data.repository.query.DefaultParameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.ParametersSource;
 import org.springframework.data.repository.query.parser.PartTree;
-import org.springframework.data.util.TypeInformation;
 
 import software.xdev.spring.data.eclipse.store.core.EntityProvider;
 import software.xdev.spring.data.eclipse.store.helper.DummyEntityProvider;
