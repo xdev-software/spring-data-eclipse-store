@@ -22,6 +22,7 @@ import org.springframework.data.repository.ListCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.Query;
 
 
+@SuppressWarnings("checkstyle:TodoComment")
 public interface MyEntityRepository extends ListCrudRepository<MyEntity, Long>
 {
 	// Simple Select

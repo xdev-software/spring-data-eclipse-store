@@ -59,7 +59,6 @@ public class VersionManager<T>
 	 * Checks if the two entities are valid for merge. If they have the same version, everything is ok. But if the
 	 * workingCopy-version is null or different from the original-version, an Exception is thrown.
 	 */
-	@SuppressWarnings("PMD.AvoidRethrowingException")
 	public void ensureSameVersion(final T workingCopy, final T original)
 	{
 		if(this.versionField.isPresent() && original != null)
