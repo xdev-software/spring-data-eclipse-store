@@ -401,9 +401,9 @@ class IdTest
 					TestUtil.iterableToList(customerRepository.findAllById(List.of(1L, 2L)));
 				Assertions.assertEquals(2, loadedCustomers.size());
 				Assertions.assertNotEquals(loadedCustomers.get(0), loadedCustomers.get(1));
-				final List<Long> idList = loadedCustomers.stream().map(CustomerWithIdLong::getId).toList();
-				Assertions.assertTrue(idList.contains(1L));
-				Assertions.assertTrue(idList.contains(2L));
+				final List<Long> ids = loadedCustomers.stream().map(CustomerWithIdLong::getId).toList();
+				Assertions.assertTrue(ids.contains(1L));
+				Assertions.assertTrue(ids.contains(2L));
 			}
 		);
 	}

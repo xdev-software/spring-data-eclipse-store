@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 import org.eclipse.serializer.collections.lazy.LazyHashMap;
 
 
+@SuppressWarnings("checkstyle:IllegalIdentifierName")
 public class ObjectWithLazyHashMap
 {
 	private LazyHashMap<String, SimpleObject> lazyHashMap;

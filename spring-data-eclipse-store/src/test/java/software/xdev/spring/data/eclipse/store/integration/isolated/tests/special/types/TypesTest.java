@@ -161,13 +161,13 @@ class TypesTest
 	{
 		final Optional<T> storedObject2 = repository.findById(id);
 		Assertions.assertTrue(storedObject2.isPresent());
-		if(storedObject2.get().getValue() instanceof final Map<?, ?> storedMap)
+		if(storedObject2.get().getValue() instanceof final Map<?, ?> stored)
 		{
-			Assertions.assertEquals(((Map<?, ?>)objectToStore.getValue()).size(), storedMap.size());
+			Assertions.assertEquals(((Map<?, ?>)objectToStore.getValue()).size(), stored.size());
 		}
-		else if(storedObject2.get().getValue() instanceof final Collection<?> storedList)
+		else if(storedObject2.get().getValue() instanceof final Collection<?> stored)
 		{
-			Assertions.assertEquals(((Collection<?>)objectToStore.getValue()).size(), storedList.size());
+			Assertions.assertEquals(((Collection<?>)objectToStore.getValue()).size(), stored.size());
 		}
 		else
 		{

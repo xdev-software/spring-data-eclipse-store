@@ -54,6 +54,7 @@ class LazyTest
 	@Autowired
 	private LazyTestConfiguration configuration;
 	
+	@SuppressWarnings("checkstyle:IllegalIdentifierName")
 	@Test
 	@Disabled("This should work at some point. At least a warning should be displayed.")
 	void lazyListStore(@Autowired final ObjectWithLazyListRepository repository)

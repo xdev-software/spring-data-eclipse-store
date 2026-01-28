@@ -443,19 +443,19 @@ final class TypesData
 				new TestArguments<>(
 					MapRepository.class,
 					id -> {
-						final LazyHashMap<String, String> lazyHashMap = new LazyHashMap<>();
-						lazyHashMap.put("1", "1");
-						return new MapDaoObject(id, lazyHashMap);
+						final LazyHashMap<String, String> values = new LazyHashMap<>();
+						values.put("1", "1");
+						return new MapDaoObject(id, values);
 					},
 					set -> set.getValue().put("2", "2")
 				),
 				new TestArguments<>(
 					MapRepository.class,
 					id -> {
-						final LazyHashMap<String, String> lazyHashMap = new LazyHashMap<>();
-						lazyHashMap.put("1", "1");
-						lazyHashMap.put("2", "2");
-						return new MapDaoObject(id, lazyHashMap);
+						final LazyHashMap<String, String> values = new LazyHashMap<>();
+						values.put("1", "1");
+						values.put("2", "2");
+						return new MapDaoObject(id, values);
 					},
 					set -> set.getValue().put("3", "3")
 				),

@@ -223,33 +223,33 @@ public class EclipseStoreDataImporter
 	private EntityManagerSupplierRepositoryListPair createEclipseStoreRepositoriesFromEntityManagerFactory(
 		final EntityManagerFactory entityManagerFactory)
 	{
-		final List<ClassRepositoryPair<?>> repositoryList = new ArrayList<>();
+		final List<ClassRepositoryPair<?>> repositories = new ArrayList<>();
 		entityManagerFactory.getMetamodel().getEntities().forEach(
-			entityType -> this.createRepositoryForType(entityType, repositoryList)
+			entityType -> this.createRepositoryForType(entityType, repositories)
 		);
 		
 		return new EntityManagerSupplierRepositoryListPair(
 			entityManagerFactory::createEntityManager,
-			repositoryList);
+			repositories);
 	}
 	
 	private EntityManagerSupplierRepositoryListPair createEclipseStoreRepositoriesFromEntityManager(
 		final EntityManager entityManager)
 	{
-		final List<ClassRepositoryPair<?>> repositoryList = new ArrayList<>();
+		final List<ClassRepositoryPair<?>> repositories = new ArrayList<>();
 		entityManager.getMetamodel().getEntities().forEach(
-			entityType -> this.createRepositoryForType(entityType, repositoryList)
+			entityType -> this.createRepositoryForType(entityType, repositories)
 		);
 		
-		return new EntityManagerSupplierRepositoryListPair(()->entityManager, repositoryList);
+		return new EntityManagerSupplierRepositoryListPair(() -> entityManager, repositories);
 	}
 	
 	private <T> void createRepositoryForType(
 		final EntityType<T> entityType,
-		final List<ClassRepositoryPair<?>> repositoryList)
+		final List<ClassRepositoryPair<?>> repositories)
 	{
 		final Class<T> javaType = entityType.getJavaType();
-		repositoryList.add(new ClassRepositoryPair<>(javaType, this.createEclipseStoreRepo(javaType)));
+		repositories.add(new ClassRepositoryPair<>(javaType, this.createEclipseStoreRepo(javaType)));
 	}
 	
 	private <T> SimpleEclipseStoreRepository<T, ?> createEclipseStoreRepo(final Class<T> domainClass)

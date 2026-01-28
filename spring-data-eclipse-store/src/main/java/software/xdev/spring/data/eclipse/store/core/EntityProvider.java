@@ -29,6 +29,7 @@ import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 @SuppressWarnings("java:S119")
 public class EntityProvider<T, ID>
 {
+	@SuppressWarnings("checkstyle:IllegalIdentifierName")
 	private final List<EntityData<? extends T, ID>> entityDataList = new ArrayList<>();
 	
 	public void addEntityData(final EntityData<? extends T, ID> entityData)

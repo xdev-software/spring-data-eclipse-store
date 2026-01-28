@@ -34,6 +34,7 @@ import org.springframework.lang.NonNull;
  **/
 public class IdentitySet<E> implements Set<E>
 {
+	@SuppressWarnings("checkstyle:IllegalIdentifierName")
 	private final IdentityHashMap<E, Boolean> internalMap;
 	
 	public IdentitySet()

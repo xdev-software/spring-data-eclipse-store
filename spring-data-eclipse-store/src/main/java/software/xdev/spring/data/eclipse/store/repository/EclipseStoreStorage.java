@@ -322,7 +322,7 @@ public class EclipseStoreStorage
 			objectsToStore.add(entityToStore);
 			// Add the separate lists of entities to store.
 			this.repositorySynchronizer.syncAndReturnChangedObjectLists(entityToStore).forEach(
-				changedEntityList -> objectsToStore.addAll(changedEntityList.getObjectsToStore())
+				changedEntities -> objectsToStore.addAll(changedEntities.getObjectsToStore())
 			);
 		}
 		return objectsToStore;

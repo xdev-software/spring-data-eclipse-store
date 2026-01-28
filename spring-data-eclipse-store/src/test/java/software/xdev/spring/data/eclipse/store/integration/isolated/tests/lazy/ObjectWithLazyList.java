@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.lazy;
 import org.eclipse.serializer.collections.lazy.LazyList;
 
 
+@SuppressWarnings("checkstyle:IllegalIdentifierName")
 public class ObjectWithLazyList
 {
 	private LazyList<SimpleObject> lazyList;

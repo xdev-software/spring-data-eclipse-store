@@ -63,14 +63,14 @@ class HashSetTest
 	@Test
 	void testSaveAndResaveFindAll()
 	{
-		final CustomerWithHashSet customer = new CustomerWithHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
-		customer.getValues().add("Test");
-		this.repository.save(customer);
+		final CustomerWithHashSet initial = new CustomerWithHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
+		initial.getValues().add("Test");
+		this.repository.save(initial);
 		
-		final CustomerWithHashSet customerWithHashSet =
+		final CustomerWithHashSet resolved =
 			TestUtil.iterableToList(this.repository.findAll()).stream().findFirst().get();
-		customerWithHashSet.getValues().add("Test2");
-		this.repository.save(customerWithHashSet);
+		resolved.getValues().add("Test2");
+		this.repository.save(resolved);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
@@ -123,15 +123,15 @@ class HashSetTest
 	@Test
 	void testSaveAndResetAndFindAllNonFinal()
 	{
-		final CustomerWithNonFinalHashSet customer =
+		final CustomerWithNonFinalHashSet initial =
 			new CustomerWithNonFinalHashSet(TestData.FIRST_NAME, TestData.LAST_NAME);
-		customer.setValues(Set.of("Test"));
-		this.nonFinalRepository.save(customer);
+		initial.setValues(Set.of("Test"));
+		this.nonFinalRepository.save(initial);
 		
-		final CustomerWithNonFinalHashSet customerWithHashSet =
+		final CustomerWithNonFinalHashSet resolved =
 			TestUtil.iterableToList(this.nonFinalRepository.findAll()).stream().findFirst().get();
-		customerWithHashSet.setValues(Set.of("Test", "Test2"));
-		this.nonFinalRepository.save(customerWithHashSet);
+		resolved.setValues(Set.of("Test", "Test2"));
+		this.nonFinalRepository.save(resolved);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
