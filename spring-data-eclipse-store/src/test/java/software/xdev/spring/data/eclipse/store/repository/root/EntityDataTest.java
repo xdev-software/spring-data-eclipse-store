@@ -113,7 +113,7 @@ class EntityDataTest
 		Assertions.assertEquals(2, testData.getEntities().size());
 		
 		testData.setIdGetter(this.idGetter);
-		final Person foundPerson = testData.getEntities().stream().findFirst().get();
+		final Person foundPerson = testData.getEntities().stream().findFirst().orElseThrow();
 		testData.ensureEntityAndReturnObjectsToStore(foundPerson);
 		Assertions.assertEquals(2, testData.getEntitiesById().size());
 		Assertions.assertEquals(2, testData.getEntities().size());
@@ -130,7 +130,7 @@ class EntityDataTest
 		Assertions.assertEquals(2, testData.getEntities().size());
 		
 		testData.setIdGetter(this.idGetter);
-		final Person foundPerson = testData.getEntities().stream().findFirst().get();
+		final Person foundPerson = testData.getEntities().stream().findFirst().orElseThrow();
 		testData.ensureEntityAndReturnObjectsToStore(foundPerson);
 		Assertions.assertEquals(2, testData.getEntitiesById().size());
 		Assertions.assertEquals(2, testData.getEntities().size());

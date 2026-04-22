@@ -116,7 +116,7 @@ class ConcurrencyTest
 			customer ->
 				service.execute(() ->
 					{
-						final Customer existingCustomer = this.repository.findByFirstName(CUSTOMER_NO + 1).get();
+						final Customer existingCustomer = this.repository.findByFirstName(CUSTOMER_NO + 1).orElseThrow();
 						existingCustomer.setLastName("something");
 						this.repository.save(existingCustomer);
 						latch.countDown();
@@ -126,7 +126,7 @@ class ConcurrencyTest
 		
 		assertTrue(latch.await(5, TimeUnit.SECONDS));
 		
-		final Customer customer = this.repository.findByFirstName(CUSTOMER_NO + 1).get();
+		final Customer customer = this.repository.findByFirstName(CUSTOMER_NO + 1).orElseThrow();
 		assertTrue(Strings.isNotEmpty(customer.getFirstName()));
 	}
 	

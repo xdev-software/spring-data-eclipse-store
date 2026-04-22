@@ -300,8 +300,8 @@ class VersionTest
 			this.configuration,
 			() -> {
 				Assertions.assertTrue(repository.findById(existingId).isPresent());
-				Assertions.assertEquals(1, repository.findById(existingId).get().getVersion());
-				Assertions.assertEquals(existingId, repository.findById(existingId).get().getId());
+				Assertions.assertEquals(1, repository.findById(existingId).orElseThrow().getVersion());
+				Assertions.assertEquals(existingId, repository.findById(existingId).orElseThrow().getId());
 			}
 		);
 	}

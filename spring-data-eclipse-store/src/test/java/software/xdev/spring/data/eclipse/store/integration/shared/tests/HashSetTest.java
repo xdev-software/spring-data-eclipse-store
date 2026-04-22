@@ -68,7 +68,7 @@ class HashSetTest
 		this.repository.save(initial);
 		
 		final CustomerWithHashSet resolved =
-			TestUtil.iterableToList(this.repository.findAll()).stream().findFirst().get();
+			TestUtil.iterableToList(this.repository.findAll()).stream().findFirst().orElseThrow();
 		resolved.getValues().add("Test2");
 		this.repository.save(resolved);
 		
@@ -129,7 +129,7 @@ class HashSetTest
 		this.nonFinalRepository.save(initial);
 		
 		final CustomerWithNonFinalHashSet resolved =
-			TestUtil.iterableToList(this.nonFinalRepository.findAll()).stream().findFirst().get();
+			TestUtil.iterableToList(this.nonFinalRepository.findAll()).stream().findFirst().orElseThrow();
 		resolved.setValues(Set.of("Test", "Test2"));
 		this.nonFinalRepository.save(resolved);
 		

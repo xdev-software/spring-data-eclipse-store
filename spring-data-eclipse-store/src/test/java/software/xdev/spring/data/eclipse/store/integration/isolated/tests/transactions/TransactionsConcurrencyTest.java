@@ -112,7 +112,7 @@ class TransactionsConcurrencyTest
 						{
 							Assertions.assertEquals(
 								BigDecimal.TEN,
-								repository.findById(account.getId()).get().getBalance());
+								repository.findById(account.getId()).orElseThrow().getBalance());
 						}
 						new TransactionTemplate(transactionManager).execute(
 							status ->
@@ -123,7 +123,7 @@ class TransactionsConcurrencyTest
 							});
 						Assertions.assertEquals(
 							BigDecimal.valueOf(9),
-							repository.findById(account.getId()).get().getBalance());
+							repository.findById(account.getId()).orElseThrow().getBalance());
 						latch.countDown();
 					}
 				)
@@ -159,7 +159,7 @@ class TransactionsConcurrencyTest
 						new TransactionTemplate(transactionManager).execute(
 							status ->
 							{
-								final AccountNoVersion loadedAccount = repository.findById(1).get();
+								final AccountNoVersion loadedAccount = repository.findById(1).orElseThrow();
 								loadedAccount.setBalance(loadedAccount.getBalance().add(BigDecimal.ONE));
 								repository.save(loadedAccount);
 								return null;
@@ -196,7 +196,7 @@ class TransactionsConcurrencyTest
 									status ->
 									{
 										final T loadedAccount =
-											repository.findById(1).get();
+											repository.findById(1).orElseThrow();
 										loadedAccount.setBalance(loadedAccount.getBalance().add(BigDecimal.ONE));
 										repository.save(loadedAccount);
 										throw new RuntimeException("Random exception");
@@ -208,6 +208,6 @@ class TransactionsConcurrencyTest
 		);
 		
 		assertTrue(latch.await(5, TimeUnit.SECONDS));
-		Assertions.assertEquals(BigDecimal.TEN, repository.findById(1).get().getBalance());
+		Assertions.assertEquals(BigDecimal.TEN, repository.findById(1).orElseThrow().getBalance());
 	}
 }

@@ -80,10 +80,10 @@ class TransactionsTest
 		
 		Assertions.assertEquals(
 			BigDecimal.valueOf(9),
-			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+			this.accountRepository.findById(this.account1.getId()).orElseThrow().getBalance());
 		Assertions.assertEquals(
 			BigDecimal.ONE,
-			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+			this.accountRepository.findById(this.account2.getId()).orElseThrow().getBalance());
 	}
 	
 	/**
@@ -107,7 +107,7 @@ class TransactionsTest
 		
 		Assertions.assertEquals(
 			BigDecimal.valueOf(8),
-			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+			this.accountRepository.findById(this.account1.getId()).orElseThrow().getBalance());
 	}
 	
 	@Test
@@ -129,10 +129,10 @@ class TransactionsTest
 		
 		Assertions.assertEquals(
 			9,
-			this.counterRepository.findById(this.counter1.getId()).get().getCount());
+			this.counterRepository.findById(this.counter1.getId()).orElseThrow().getCount());
 		Assertions.assertEquals(
 			1,
-			this.counterRepository.findById(this.counter2.getId()).get().getCount());
+			this.counterRepository.findById(this.counter2.getId()).orElseThrow().getCount());
 	}
 	
 	/**
@@ -178,16 +178,16 @@ class TransactionsTest
 		
 		Assertions.assertEquals(
 			BigDecimal.valueOf(9),
-			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+			this.accountRepository.findById(this.account1.getId()).orElseThrow().getBalance());
 		Assertions.assertEquals(
 			BigDecimal.ONE,
-			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+			this.accountRepository.findById(this.account2.getId()).orElseThrow().getBalance());
 		Assertions.assertEquals(
 			9,
-			this.counterRepository.findById(this.counter1.getId()).get().getCount());
+			this.counterRepository.findById(this.counter1.getId()).orElseThrow().getCount());
 		Assertions.assertEquals(
 			1,
-			this.counterRepository.findById(this.counter2.getId()).get().getCount());
+			this.counterRepository.findById(this.counter2.getId()).orElseThrow().getCount());
 	}
 	
 	@Test
@@ -206,10 +206,10 @@ class TransactionsTest
 		
 		Assertions.assertEquals(
 			BigDecimal.TEN,
-			this.accountRepository.findById(this.account1.getId()).get().getBalance());
+			this.accountRepository.findById(this.account1.getId()).orElseThrow().getBalance());
 		Assertions.assertEquals(
 			BigDecimal.ZERO,
-			this.accountRepository.findById(this.account2.getId()).get().getBalance());
+			this.accountRepository.findById(this.account2.getId()).orElseThrow().getBalance());
 	}
 	
 	/**

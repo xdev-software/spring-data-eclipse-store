@@ -237,7 +237,7 @@ class InheritanceTest
 		this.childCustomerRepository.save(customer1);
 		// Change customer
 		final ChildCustomer foundCustomer =
-			TestUtil.iterableToList(this.childCustomerRepository.findAll()).stream().findFirst().get();
+			TestUtil.iterableToList(this.childCustomerRepository.findAll()).stream().findFirst().orElseThrow();
 		foundCustomer.setFirstName(TestData.FIRST_NAME_ALTERNATIVE);
 		this.childCustomerRepository.save(foundCustomer);
 		
