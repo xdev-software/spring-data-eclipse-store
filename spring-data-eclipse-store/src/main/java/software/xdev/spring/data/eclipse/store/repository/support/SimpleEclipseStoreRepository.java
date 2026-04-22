@@ -35,7 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
 import software.xdev.spring.data.eclipse.store.repository.StorageCommunicator;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListCrudRepository;
 import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStoreListPagingAndSortingRepository;
@@ -88,7 +88,7 @@ public class SimpleEclipseStoreRepository<T, ID>
 		this.storage.registerEntity(domainClass, this);
 		this.copier = copier;
 		this.transactionManager = transactionManager;
-		AccessHelper.checkAllFieldsForReadRestrictions(domainClass);
+		FieldAccessor.checkAllFieldsForReadRestrictions(domainClass);
 	}
 	
 	@SuppressWarnings("unchecked")

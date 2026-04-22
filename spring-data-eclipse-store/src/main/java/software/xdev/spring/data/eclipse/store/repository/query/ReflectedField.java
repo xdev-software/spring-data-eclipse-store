@@ -21,12 +21,12 @@ import java.util.Objects;
 import jakarta.annotation.Nonnull;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 
 
 /**
  * Simple wrapper for a field to make it easily readable. If the fields is not accessible, it is made accessible with
- * the {@link AccessHelper#readFieldVariable(Field, Object)}.
+ * the {@link FieldAccessor#readFieldVariable(Field, Object)}.
  *
  * @param <T> Input
  * @param <E> Value
@@ -44,7 +44,7 @@ public class ReflectedField<T, E>
 	{
 		try
 		{
-			return new ReflectedField<>(AccessHelper.getInheritedPrivateField(domainClass, fieldName));
+			return new ReflectedField<>(FieldAccessor.getInheritedPrivateField(domainClass, fieldName));
 		}
 		catch(final NoSuchFieldException e)
 		{
@@ -57,7 +57,7 @@ public class ReflectedField<T, E>
 	
 	/**
 	 * Reads the field of the given object. If the fields is not accessible, it is made accessible with the
-	 * {@link AccessHelper#readFieldVariable(Field, Object)}.
+	 * {@link FieldAccessor#readFieldVariable(Field, Object)}.
 	 *
 	 * @param object to read the field of
 	 * @return value of the field in the given object.
@@ -65,6 +65,6 @@ public class ReflectedField<T, E>
 	@SuppressWarnings("unchecked")
 	public E readValue(@Nonnull final T object)
 	{
-		return (E)AccessHelper.readFieldVariable(Objects.requireNonNull(this.field), Objects.requireNonNull(object));
+		return (E)FieldAccessor.readFieldVariable(Objects.requireNonNull(this.field), Objects.requireNonNull(object));
 	}
 }

@@ -31,7 +31,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 import software.xdev.spring.data.eclipse.store.repository.query.ReflectedField;
 
 
@@ -70,7 +70,7 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 		
 		ExampleMatcher matcher = ExampleMatcher.matching();
 		
-		final Map<String, Field> allFields = AccessHelper.getInheritedPrivateFieldsByName(example.getProbeType());
+		final Map<String, Field> allFields = FieldAccessor.getInheritedPrivateFieldsByName(example.getProbeType());
 		for(final String fieldName : allFields.keySet())
 		{
 			matcher = matcher.withMatcher(fieldName, ExampleMatcher.GenericPropertyMatchers.exact());

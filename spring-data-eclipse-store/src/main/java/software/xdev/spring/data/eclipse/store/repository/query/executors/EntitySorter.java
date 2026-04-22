@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import org.springframework.data.domain.Sort;
 
 import software.xdev.spring.data.eclipse.store.exceptions.NotComparableException;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 import software.xdev.spring.data.eclipse.store.util.GenericObjectComparer;
 
 
@@ -44,7 +44,7 @@ public final class EntitySorter
 				try
 				{
 					final Field fieldForOrder =
-						AccessHelper.getInheritedPrivateField(clazz, order.getProperty());
+						FieldAccessor.getInheritedPrivateField(clazz, order.getProperty());
 					final Comparator<? super T> comparator =
 						EntitySorter.getComparator(fieldForOrder, order.getDirection());
 					return entityStream.sorted(comparator);
@@ -63,8 +63,8 @@ public final class EntitySorter
 	{
 		return (e1, e2) -> {
 			final int result = GenericObjectComparer.compare(
-				AccessHelper.readFieldVariable(fieldForOrder, e1),
-				AccessHelper.readFieldVariable(fieldForOrder, e2)
+				FieldAccessor.readFieldVariable(fieldForOrder, e1),
+				FieldAccessor.readFieldVariable(fieldForOrder, e2)
 			);
 			if(direction.isDescending())
 			{

@@ -28,7 +28,7 @@ import jakarta.persistence.Version;
 
 import software.xdev.spring.data.eclipse.store.exceptions.IdFieldException;
 import software.xdev.spring.data.eclipse.store.exceptions.InvalidVersionException;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 
 
 public final class AnnotatedFieldFinder
@@ -105,7 +105,7 @@ public final class AnnotatedFieldFinder
 		final Collection<Class<? extends Annotation>> annotations)
 	{
 		final ArrayList<Field> foundFields = new ArrayList<>();
-		final Collection<Field> classFields = AccessHelper.getInheritedPrivateFieldsByName(domainClass).values();
+		final Collection<Field> classFields = FieldAccessor.getInheritedPrivateFieldsByName(domainClass).values();
 		for(final Field currentField : classFields)
 		{
 			for(final Class<? extends Annotation> annotation : annotations)

@@ -31,7 +31,7 @@ import com.googlecode.cqengine.query.parser.sql.SQLParser;
 import com.googlecode.cqengine.resultset.ResultSet;
 
 import software.xdev.spring.data.eclipse.store.core.EntityListProvider;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.working.WorkingCopier;
 
 
@@ -92,7 +92,7 @@ public class HSqlQueryExecutor<T>
 	private <O> Map<String, ? extends Attribute<O, ?>> createAttributes(final Class<O> domainClass)
 	{
 		final Map<String, Attribute<O, ?>> attributes = new TreeMap<>();
-		AccessHelper.getInheritedPrivateFieldsByName(domainClass).forEach(
+		FieldAccessor.getInheritedPrivateFieldsByName(domainClass).forEach(
 			(fieldName, field) -> attributes.put(
 				fieldName,
 				new ReflectiveAttribute<>(

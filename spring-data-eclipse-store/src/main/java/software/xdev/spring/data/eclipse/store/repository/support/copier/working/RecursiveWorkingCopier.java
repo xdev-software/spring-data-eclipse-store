@@ -40,7 +40,7 @@ import software.xdev.spring.data.eclipse.store.exceptions.MergeFailedException;
 import software.xdev.spring.data.eclipse.store.repository.PersistableChecker;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
 import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
-import software.xdev.spring.data.eclipse.store.repository.access.AccessHelper;
+import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
@@ -260,7 +260,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 				return;
 			}
 			final Collection<Field> valuesToMerge =
-				AccessHelper.getInheritedPrivateFieldsByName(sourceObject.getClass()).values();
+				FieldAccessor.getInheritedPrivateFieldsByName(sourceObject.getClass()).values();
 			valuesToMerge.forEach(
 				field ->
 					this.mergeValueOfField(

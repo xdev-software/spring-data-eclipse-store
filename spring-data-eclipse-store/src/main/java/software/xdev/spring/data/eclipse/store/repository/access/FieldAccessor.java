@@ -30,11 +30,11 @@ import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldA
 /**
  * Helps finding and handling {@link Field}s.
  */
-public final class AccessHelper
+public final class FieldAccessor
 {
-	private static final Logger LOG = LoggerFactory.getLogger(AccessHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FieldAccessor.class);
 	
-	private AccessHelper()
+	private FieldAccessor()
 	{
 	}
 	
