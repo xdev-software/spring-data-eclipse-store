@@ -116,7 +116,8 @@ class ConcurrencyTest
 			customer ->
 				service.execute(() ->
 					{
-						final Customer existingCustomer = this.repository.findByFirstName(CUSTOMER_NO + 1).orElseThrow();
+						final Customer existingCustomer =
+							this.repository.findByFirstName(CUSTOMER_NO + 1).orElseThrow();
 						existingCustomer.setLastName("something");
 						this.repository.save(existingCustomer);
 						latch.countDown();
