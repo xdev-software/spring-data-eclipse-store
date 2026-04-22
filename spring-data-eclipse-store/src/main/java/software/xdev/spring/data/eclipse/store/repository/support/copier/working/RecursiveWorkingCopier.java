@@ -43,7 +43,7 @@ import software.xdev.spring.data.eclipse.store.repository.WorkingCopyRegistry;
 import software.xdev.spring.data.eclipse.store.repository.access.FieldAccessor;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeDetector;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringObjectCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringStorageToWorkingCopyCopier;
 import software.xdev.spring.data.eclipse.store.repository.support.copier.registering.RegisteringWorkingCopyToStorageCopier;
@@ -309,19 +309,19 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 						targetObject.getClass().getPackageName().startsWith("java.");
 					// Something in the containingObject has changed
 					changedCollector.collectChangedObject(targetObject);
-					if(DataTypeUtil.isPrimitiveType(field.getType()))
+					if(DataTypeDetector.isPrimitiveType(field.getType()))
 					{
 						if(!Objects.equals(valueOfTargetObject, valueOfSourceObject))
 						{
 							fam.writeValueOfField(targetObject, valueOfSourceObject, !targetObjectIsPartOfJavaPackage);
 						}
 					}
-					else if(DataTypeUtil.isPrimitiveArray(valueOfSourceObject))
+					else if(DataTypeDetector.isPrimitiveArray(valueOfSourceObject))
 					{
 						// Copy complete Array
 						fam.writeValueOfField(targetObject, valueOfSourceObject, !targetObjectIsPartOfJavaPackage);
 					}
-					else if(DataTypeUtil.isObjectArray(valueOfSourceObject))
+					else if(DataTypeDetector.isObjectArray(valueOfSourceObject))
 					{
 						// Create new Array with original objects with merged data
 						final Object[] newArray = this.createGenericObjectArray(
@@ -332,7 +332,7 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 						);
 						fam.writeValueOfField(targetObject, newArray, !targetObjectIsPartOfJavaPackage);
 					}
-					else if(DataTypeUtil.isSpringDataEclipseStoreLazy(valueOfSourceObject))
+					else if(DataTypeDetector.isSpringDataEclipseStoreLazy(valueOfSourceObject))
 					{
 						final SpringDataEclipseStoreLazy<?> newLazy =
 							this.createNewLazy(

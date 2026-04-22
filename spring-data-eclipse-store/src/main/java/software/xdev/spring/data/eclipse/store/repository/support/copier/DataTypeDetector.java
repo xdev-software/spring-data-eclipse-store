@@ -23,7 +23,7 @@ import jakarta.annotation.Nonnull;
 import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
 
 
-public final class DataTypeUtil
+public final class DataTypeDetector
 {
 	private static final Set<Class<?>> WRAPPER_TYPES = Set.of(
 		Integer.class,
@@ -38,7 +38,7 @@ public final class DataTypeUtil
 		String.class
 	);
 	
-	private DataTypeUtil()
+	private DataTypeDetector()
 	{
 	}
 	

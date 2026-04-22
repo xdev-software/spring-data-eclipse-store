@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.exceptions.DataTypeNotSupportedException;
 import software.xdev.spring.data.eclipse.store.repository.SupportedChecker;
-import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeUtil;
+import software.xdev.spring.data.eclipse.store.repository.support.copier.DataTypeDetector;
 
 
 /**
@@ -150,7 +150,7 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 				}
 				this.validate(copiedObject);
 				summarizer.incrementCopiedObjectsCount();
-				if(DataTypeUtil.isPrimitiveType(copiedObject.getClass()))
+				if(DataTypeDetector.isPrimitiveType(copiedObject.getClass()))
 				{
 					return;
 				}
