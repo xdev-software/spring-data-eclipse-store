@@ -43,7 +43,7 @@ class ChangeRootTests
 	
 	//@formatter:off
 	/**
-     * ┍-□     □ □-|    => □ └-□     □
+     * /-N     N N-|    => N \-N     N
      **/
 	//@formatter:on
 	@Test
@@ -59,8 +59,8 @@ class ChangeRootTests
 	
 	//@formatter:off
 	/**
-	 * □-□
-	 * □-┘
+	 * N-N
+	 * N-+
 	 **/
 	//@formatter:on
 	@Test
@@ -77,9 +77,9 @@ class ChangeRootTests
 	
 	//@formatter:off
 	/**
-	 *   ┍-□
-	 * □-|
-	 * └-□
+	 *   +-N
+	 * N-/
+	 * +-N
 	 **/
 	//@formatter:on
 	@Test
