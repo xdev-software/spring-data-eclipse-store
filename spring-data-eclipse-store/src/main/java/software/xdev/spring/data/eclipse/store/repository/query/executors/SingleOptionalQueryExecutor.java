@@ -72,7 +72,7 @@ public class SingleOptionalQueryExecutor<T> implements QueryExecutor<T>
 		
 		if(this.staticSort.isPresent())
 		{
-			entityStream = EntitySorter.sortEntitiesStream(clazz, this.staticSort.get(), entityStream);
+			entityStream = EntitySorter.sortEntitiesStream(clazz, this.staticSort.orElseThrow(), entityStream);
 		}
 		
 		final Optional<? extends T> result = entityStream.findFirst();

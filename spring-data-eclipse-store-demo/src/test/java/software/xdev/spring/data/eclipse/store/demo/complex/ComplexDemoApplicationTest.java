@@ -32,7 +32,7 @@ class ComplexDemoApplicationTest
 	private final EclipseStoreClientConfiguration configuration;
 	
 	@Autowired
-	public ComplexDemoApplicationTest(final ComplexConfiguration configuration)
+	ComplexDemoApplicationTest(final ComplexConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}

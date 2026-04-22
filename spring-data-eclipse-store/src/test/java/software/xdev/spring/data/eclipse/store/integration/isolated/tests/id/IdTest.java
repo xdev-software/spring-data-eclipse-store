@@ -51,7 +51,6 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.id.mod
 import software.xdev.spring.data.eclipse.store.repository.EclipseStoreStorage;
 
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {IdTestConfiguration.class})
 class IdTest
@@ -59,7 +58,7 @@ class IdTest
 	private final IdTestConfiguration configuration;
 	
 	@Autowired
-	public IdTest(final IdTestConfiguration configuration)
+	IdTest(final IdTestConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}
@@ -75,7 +74,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -94,11 +93,11 @@ class IdTest
 				
 				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer1.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				Assertions.assertEquals(customer1, loadedCustomer1.orElseThrow());
 				
 				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(2);
 				Assertions.assertTrue(loadedCustomer2.isPresent());
-				Assertions.assertEquals(customer2, loadedCustomer2.get());
+				Assertions.assertEquals(customer2, loadedCustomer2.orElseThrow());
 			}
 		);
 	}
@@ -118,11 +117,11 @@ class IdTest
 				
 				final Optional<CustomerWithIdInt> loadedCustomer1 = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer1.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				Assertions.assertEquals(customer1, loadedCustomer1.orElseThrow());
 				
 				final Optional<CustomerWithIdInt> loadedCustomer2 = customerRepository.findById(2);
 				Assertions.assertTrue(loadedCustomer2.isPresent());
-				Assertions.assertEquals(customer2, loadedCustomer2.get());
+				Assertions.assertEquals(customer2, loadedCustomer2.orElseThrow());
 			}
 		);
 	}
@@ -193,7 +192,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdInteger> loadedCustomer = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -244,9 +243,9 @@ class IdTest
 			this.configuration,
 			() -> {
 				final Optional<CustomerWithIdInteger> loadedCustomer1 = customerRepository.findById(1);
-				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				Assertions.assertEquals(customer1, loadedCustomer1.orElseThrow());
 				final Optional<CustomerWithIdInteger> loadedCustomer2 = customerRepository.findById(2);
-				Assertions.assertEquals(customer2, loadedCustomer2.get());
+				Assertions.assertEquals(customer2, loadedCustomer2.orElseThrow());
 			}
 		);
 	}
@@ -286,7 +285,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdInt> loadedCustomer = customerRepository.findById(1);
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -302,7 +301,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdString> loadedCustomer = customerRepository.findById("1");
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -320,7 +319,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdUuid> loadedCustomer = customerRepository.findById(generatedId);
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -343,7 +342,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdString> loadedCustomer = customerRepository.findById("2");
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer2, loadedCustomer.get());
+				Assertions.assertEquals(customer2, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -379,8 +378,8 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdLong> loadedCustomer = customerRepository.findById(1L);
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
-				Assertions.assertEquals(1L, loadedCustomer.get().getId());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
+				Assertions.assertEquals(1L, loadedCustomer.orElseThrow().getId());
 			}
 		);
 	}
@@ -421,7 +420,7 @@ class IdTest
 			() -> {
 				final Optional<CustomerWithIdIntegerNoAutoGenerate> loadedCustomer = customerRepository.findById(0);
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer.get());
+				Assertions.assertEquals(customer1, loadedCustomer.orElseThrow());
 			}
 		);
 	}

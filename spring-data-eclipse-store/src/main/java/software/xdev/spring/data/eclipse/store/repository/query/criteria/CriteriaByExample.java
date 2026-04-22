@@ -116,7 +116,7 @@ public class CriteriaByExample<T, S extends T> implements Criteria<T>
 			return this.createPredicateForStringMatcher(
 				specifier,
 				setOrDefaultMatcher,
-				transformedExampledValue.get(),
+				transformedExampledValue.orElseThrow(),
 				transformedValue.orElse(null));
 		};
 	}

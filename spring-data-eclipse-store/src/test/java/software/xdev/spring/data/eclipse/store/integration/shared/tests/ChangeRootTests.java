@@ -31,10 +31,10 @@ import software.xdev.spring.data.eclipse.store.integration.shared.repositories.N
 @DefaultTestAnnotations
 class ChangeRootTests
 {
-	public static final String CHILD_1 = "child1";
-	public static final String CHILD_2 = "child2";
-	public static final String PARENT_1 = "parent1";
-	public static final String PARENT_2 = "parent2";
+	static final String CHILD_1 = "child1";
+	static final String CHILD_2 = "child2";
+	static final String PARENT_1 = "parent1";
+	static final String PARENT_2 = "parent2";
 	
 	@Autowired
 	NodeRepository repository;

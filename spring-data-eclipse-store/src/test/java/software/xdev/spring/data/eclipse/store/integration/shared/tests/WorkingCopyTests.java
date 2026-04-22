@@ -34,7 +34,6 @@ import software.xdev.spring.data.eclipse.store.integration.shared.repositories.N
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.NodeRepository;
 
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @DefaultTestAnnotations
 public class WorkingCopyTests
 {
@@ -117,7 +116,7 @@ public class WorkingCopyTests
 				Assertions.assertEquals(3, loadedNodes.size());
 				
 				final Optional<Node> loadedChildNode =
-					loadedNodes.stream().filter(node -> node.getName().equals(CHILD_NAME_1)).findFirst();
+					loadedNodes.stream().filter(node -> CHILD_NAME_1.equals(node.getName())).findFirst();
 				Assertions.assertTrue(loadedChildNode.isPresent());
 				final Optional<Node> loadedParentNode1 =
 					loadedNodes.stream().filter(node -> node.getName().equals(parent1Name)).findFirst();
@@ -126,8 +125,12 @@ public class WorkingCopyTests
 					loadedNodes.stream().filter(node -> node.getName().equals(parent2Name)).findFirst();
 				Assertions.assertTrue(loadedParentNode2.isPresent());
 				
-				Assertions.assertSame(loadedParentNode1.get().getChildren().get(0), loadedChildNode.get());
-				Assertions.assertSame(loadedChildNode.get().getChildren().get(0), loadedParentNode2.get());
+				Assertions.assertSame(
+					loadedParentNode1.orElseThrow().getChildren().get(0),
+					loadedChildNode.orElseThrow());
+				Assertions.assertSame(
+					loadedChildNode.orElseThrow().getChildren().get(0),
+					loadedParentNode2.orElseThrow());
 			}
 		);
 	}
@@ -155,13 +158,13 @@ public class WorkingCopyTests
 				Assertions.assertEquals(3, loadedNodes.size());
 				
 				final Node loadedChildNode =
-					loadedNodes.stream().filter(node -> node.getName().equals(CHILD_NAME_1)).findFirst().get();
+					loadedNodes.stream().filter(node -> CHILD_NAME_1.equals(node.getName())).findFirst().orElseThrow();
 				Assertions.assertEquals(CHILD_NAME_1, loadedChildNode.getName());
 				final Node loadedParentNode1 =
-					loadedNodes.stream().filter(node -> node.getName().equals(PARENT_NAME_1)).findFirst().get();
+					loadedNodes.stream().filter(node -> PARENT_NAME_1.equals(node.getName())).findFirst().orElseThrow();
 				Assertions.assertEquals(PARENT_NAME_1, loadedParentNode1.getName());
 				final Node loadedParentNode2 =
-					loadedNodes.stream().filter(node -> node.getName().equals(PARENT_NAME_2)).findFirst().get();
+					loadedNodes.stream().filter(node -> PARENT_NAME_2.equals(node.getName())).findFirst().orElseThrow();
 				Assertions.assertEquals(PARENT_NAME_2, loadedParentNode2.getName());
 				
 				Assertions.assertSame(loadedParentNode1.getChildren().get(0), loadedChildNode);
@@ -183,16 +186,17 @@ public class WorkingCopyTests
 		final List<Node> loadedNodes1 = TestUtil.iterableToList(this.nodeRepository.findAll());
 		Assertions.assertEquals(3, loadedNodes1.size());
 		Node loadedChildNode =
-			loadedNodes1.stream().filter(node -> node.getName().equals(CHILD_NAME_1)).findFirst().get();
+			loadedNodes1.stream().filter(node -> CHILD_NAME_1.equals(node.getName())).findFirst().orElseThrow();
 		final Node loadedParentNode2 =
-			loadedNodes1.stream().filter(node -> node.getName().equals(PARENT_NAME_2)).findFirst().get();
+			loadedNodes1.stream().filter(node -> PARENT_NAME_2.equals(node.getName())).findFirst().orElseThrow();
 		// Change working copy
 		loadedParentNode2.setName(changedParentNode2Name);
 		Assertions.assertEquals(changedParentNode2Name, loadedChildNode.getChildren().get(0).getName());
 		
 		// No change in stored data before saving
 		final List<Node> loadedNodes2 = TestUtil.iterableToList(this.nodeRepository.findAll());
-		loadedChildNode = loadedNodes2.stream().filter(node -> node.getName().equals(CHILD_NAME_1)).findFirst().get();
+		loadedChildNode =
+			loadedNodes2.stream().filter(node -> CHILD_NAME_1.equals(node.getName())).findFirst().orElseThrow();
 		Assertions.assertEquals(PARENT_NAME_2, loadedChildNode.getChildren().get(0).getName());
 		
 		// Change in stored data after saving
@@ -203,7 +207,7 @@ public class WorkingCopyTests
 			() -> {
 				final List<Node> loadedNodes3 = TestUtil.iterableToList(this.nodeRepository.findAll());
 				final Node loadedChildNode2 =
-					loadedNodes3.stream().filter(node -> node.getName().equals(CHILD_NAME_1)).findFirst().get();
+					loadedNodes3.stream().filter(node -> CHILD_NAME_1.equals(node.getName())).findFirst().orElseThrow();
 				Assertions.assertEquals(changedParentNode2Name, loadedChildNode2.getChildren().get(0).getName());
 			}
 		);
@@ -219,7 +223,7 @@ public class WorkingCopyTests
 			this.configuration,
 			() -> {
 				final Optional<Customer> foundCustomer = this.customerRepository.findByFirstName(TestData.FIRST_NAME);
-				Assertions.assertNotSame(customer1, foundCustomer.get());
+				Assertions.assertNotSame(customer1, foundCustomer.orElseThrow());
 			}
 		);
 	}

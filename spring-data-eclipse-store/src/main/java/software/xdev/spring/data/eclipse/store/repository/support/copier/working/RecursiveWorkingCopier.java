@@ -194,14 +194,14 @@ public class RecursiveWorkingCopier<T> implements WorkingCopier<T>
 			final Optional<E> existingEntity = idManager.findById(id);
 			if(existingEntity.isPresent())
 			{
-				versionManager.ensureSameVersion(workingCopy, existingEntity.get());
+				versionManager.ensureSameVersion(workingCopy, existingEntity.orElseThrow());
 				versionManager.incrementVersion(workingCopy);
 				return this.mergeValueIfNeeded(
 					workingCopy,
 					mergeValues,
 					alreadyMergedTargets,
 					changedCollector,
-					existingEntity.get()
+					existingEntity.orElseThrow()
 				);
 			}
 		}

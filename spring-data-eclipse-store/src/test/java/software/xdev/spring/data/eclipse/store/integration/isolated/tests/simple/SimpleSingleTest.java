@@ -80,7 +80,6 @@ public abstract class SimpleSingleTest
 		);
 	}
 	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void testBasicSaveAndFindMultipleRecords()
 	{
@@ -94,9 +93,9 @@ public abstract class SimpleSingleTest
 			() -> {
 				final List<CustomerAsRecord> customers = TestUtil.iterableToList(this.recordRepository.findAll());
 				final CustomerAsRecord foundCustomer =
-					customers.stream().filter(c -> TestData.FIRST_NAME.equals(c.firstName())).findFirst().get();
+					customers.stream().filter(c -> TestData.FIRST_NAME.equals(c.firstName())).findFirst().orElseThrow();
 				final CustomerAsRecord foundCustomer2 =
-					customers.stream().filter(c -> c.firstName() == null).findFirst().get();
+					customers.stream().filter(c -> c.firstName() == null).findFirst().orElseThrow();
 				Assertions.assertEquals(2, customers.size());
 				Assertions.assertEquals(customer, foundCustomer);
 				Assertions.assertEquals(customer2, foundCustomer2);
@@ -119,7 +118,7 @@ public abstract class SimpleSingleTest
 				final Optional<CustomerAsRecord> foundCustomer =
 					this.recordRepository.findByFirstName(TestData.FIRST_NAME);
 				Assertions.assertTrue(foundCustomer.isPresent());
-				Assertions.assertEquals(customer, foundCustomer.get());
+				Assertions.assertEquals(customer, foundCustomer.orElseThrow());
 			}
 		);
 	}

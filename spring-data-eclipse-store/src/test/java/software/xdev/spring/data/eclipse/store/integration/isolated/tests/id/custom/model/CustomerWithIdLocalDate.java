@@ -52,6 +52,11 @@ public class CustomerWithIdLocalDate
 		return this.id;
 	}
 	
+	public void setId(final LocalDate id)
+	{
+		this.id = id;
+	}
+	
 	@Override
 	public boolean equals(final Object o)
 	{

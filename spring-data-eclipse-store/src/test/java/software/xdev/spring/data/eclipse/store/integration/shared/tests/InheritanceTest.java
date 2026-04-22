@@ -42,7 +42,7 @@ class InheritanceTest
 	private final SharedTestConfiguration configuration;
 	
 	@Autowired
-	public InheritanceTest(
+	InheritanceTest(
 		final ParentCustomerRepository parentCustomerRepository,
 		final ChildCustomerRepository childCustomerRepository,
 		final SubCustomerRepository subCustomerRepository,

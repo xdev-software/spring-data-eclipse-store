@@ -53,13 +53,9 @@ public class IdManager<T, ID> implements EntityGetterById<T, ID>, IdGetter<T, ID
 	
 	public Field ensureIdField()
 	{
-		if(this.idField.isEmpty())
-		{
-			throw new NoIdFieldFoundException(String.format(
-				"Could not find id field in class %s",
-				this.classWithId.getSimpleName()));
-		}
-		return this.idField.get();
+		return this.idField.orElseThrow(() -> new NoIdFieldFoundException(String.format(
+			"Could not find id field in class %s",
+			this.classWithId.getSimpleName())));
 	}
 	
 	@Override

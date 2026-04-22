@@ -40,9 +40,11 @@ public interface EntityVersionIncrementer<T>
 		{
 			return new NotIncrementingEntityVersionIncrementer<>();
 		}
+		
+		final Field field = versionField.orElseThrow();
 		return new SimpleEntityVersionIncrementer<>(
-			versionField.get(),
-			VersionIncrementer.createVersionIncrementer(versionField.get()));
+			field,
+			VersionIncrementer.createVersionIncrementer(field));
 	}
 	
 	/**

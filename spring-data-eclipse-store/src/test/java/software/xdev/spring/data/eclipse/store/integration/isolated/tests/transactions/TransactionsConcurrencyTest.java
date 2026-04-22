@@ -80,7 +80,7 @@ class TransactionsConcurrencyTest
 		boolean previouslyExisting
 	)
 	{
-		public Arguments toArguments()
+		Arguments toArguments()
 		{
 			return Arguments.of(this);
 		}

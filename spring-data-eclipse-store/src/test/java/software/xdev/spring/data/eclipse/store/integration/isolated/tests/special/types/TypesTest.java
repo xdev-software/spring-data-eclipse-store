@@ -38,10 +38,10 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 @ContextConfiguration(classes = {SpecialTypesTestConfiguration.class})
 class TypesTest
 {
-	public static final String TYPES_DATA_SOURCE =
+	static final String TYPES_DATA_SOURCE =
 		"software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types"
 			+ ".TypesData#generateData";
-	public static final String TYPES_NOT_WORKING_DATA_SOURCE =
+	static final String TYPES_NOT_WORKING_DATA_SOURCE =
 		"software.xdev.spring.data.eclipse.store.integration.isolated.tests.special.types"
 			+ ".TypesData#generateNotWorkingData";
 	
@@ -105,12 +105,12 @@ class TypesTest
 		final Optional<T> storedObject = repository.findById(1);
 		Assertions.assertTrue(storedObject.isPresent());
 		
-		objectChanger.accept(storedObject.get());
-		repository.save(storedObject.get());
+		objectChanger.accept(storedObject.orElseThrow());
+		repository.save(storedObject.orElseThrow());
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
 			this.configuration,
-			() -> this.dynamicAssertEquals(1, repository, storedObject.get())
+			() -> this.dynamicAssertEquals(1, repository, storedObject.orElseThrow())
 		);
 	}
 	
@@ -161,17 +161,18 @@ class TypesTest
 	{
 		final Optional<T> storedObject2 = repository.findById(id);
 		Assertions.assertTrue(storedObject2.isPresent());
-		if(storedObject2.get().getValue() instanceof final Map<?, ?> stored)
+		final T storedObject2Raw = storedObject2.orElseThrow();
+		if(storedObject2Raw.getValue() instanceof final Map<?, ?> stored)
 		{
 			Assertions.assertEquals(((Map<?, ?>)objectToStore.getValue()).size(), stored.size());
 		}
-		else if(storedObject2.get().getValue() instanceof final Collection<?> stored)
+		else if(storedObject2Raw.getValue() instanceof final Collection<?> stored)
 		{
 			Assertions.assertEquals(((Collection<?>)objectToStore.getValue()).size(), stored.size());
 		}
 		else
 		{
-			Assertions.assertEquals(objectToStore, storedObject2.get());
+			Assertions.assertEquals(objectToStore, storedObject2Raw);
 		}
 	}
 }

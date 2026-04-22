@@ -198,23 +198,23 @@ public class EclipseSerializerRegisteringCopier implements AutoCloseable
 		}
 	}
 	
-	private static class Summarizer
+	static class Summarizer
 	{
 		private long copiedObjectsCount;
 		private long registeredObjectsCount;
 		
-		public Summarizer()
+		Summarizer()
 		{
 			this.copiedObjectsCount = 0;
 			this.registeredObjectsCount = 0;
 		}
 		
-		public void incrementCopiedObjectsCount()
+		void incrementCopiedObjectsCount()
 		{
 			this.copiedObjectsCount += 1;
 		}
 		
-		public void incrementRegisteredObjectsCount()
+		void incrementRegisteredObjectsCount()
 		{
 			this.registeredObjectsCount += 1;
 		}

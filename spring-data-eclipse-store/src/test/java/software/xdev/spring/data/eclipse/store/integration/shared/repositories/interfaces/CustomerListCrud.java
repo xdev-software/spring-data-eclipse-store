@@ -81,11 +81,13 @@ public class CustomerListCrud
 		return Objects.hash(this.firstName, this.lastName);
 	}
 	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static CustomerListCrud getCustomerWithFirstName(
 		final List<CustomerListCrud> customers,
 		final String firstName)
 	{
-		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();
+		return customers.stream()
+			.filter(customer -> customer.getFirstName().equals(firstName))
+			.findFirst()
+			.orElseThrow();
 	}
 }

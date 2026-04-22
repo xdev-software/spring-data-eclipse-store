@@ -40,7 +40,7 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 @ContextConfiguration(classes = {VersionTestConfiguration.class})
 class VersionTest
 {
-	public static Stream<Arguments> generateData()
+	static Stream<Arguments> generateData()
 	{
 		return Stream.of(
 			new SingleTestDataset<>(
@@ -91,7 +91,7 @@ class VersionTest
 	private final VersionTestConfiguration configuration;
 	
 	@Autowired
-	public VersionTest(final VersionTestConfiguration configuration)
+	VersionTest(final VersionTestConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}

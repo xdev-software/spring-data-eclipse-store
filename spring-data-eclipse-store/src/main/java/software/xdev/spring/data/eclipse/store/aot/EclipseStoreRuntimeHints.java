@@ -15,11 +15,11 @@
  */
 package software.xdev.spring.data.eclipse.store.aot;
 
+import jakarta.annotation.Nonnull;
+
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.lang.Nullable;
-
-import jakarta.annotation.Nonnull;
 
 
 /**
@@ -32,11 +32,6 @@ import jakarta.annotation.Nonnull;
  */
 class EclipseStoreRuntimeHints implements RuntimeHintsRegistrar
 {
-	public EclipseStoreRuntimeHints()
-	{
-		// Is not needed right now, but is left here for future use.
-	}
-	
 	@Override
 	@Nonnull
 	public void registerHints(@Nonnull final RuntimeHints hints, @Nullable final ClassLoader classLoader)

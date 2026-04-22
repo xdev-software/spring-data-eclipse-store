@@ -36,7 +36,7 @@ import software.xdev.spring.data.eclipse.store.helper.TestData;
 import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTestAnnotations;
 
 
-@SuppressWarnings("checkstyle:TodoComment")
+@SuppressWarnings({"checkstyle:TodoComment", "PMD.ReplaceJavaUtilDate"})
 @IsolatedTestAnnotations
 @Disabled("A replacement for cqengine must be found!")
 @ContextConfiguration(classes = {HsqlTestConfiguration.class})
@@ -290,6 +290,7 @@ class HsqlTest
 		assertEquals(expectedSize, result.size());
 	}
 	
+	@SuppressWarnings("PMD.ReplaceJavaUtilCalendar")
 	private static List<MyEntity> createEntityLists(final int testDataSetIndex)
 	{
 		final OtherEntity otherEntity = new OtherEntity();

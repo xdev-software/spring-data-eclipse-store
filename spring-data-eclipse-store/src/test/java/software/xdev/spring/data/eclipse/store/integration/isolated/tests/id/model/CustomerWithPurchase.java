@@ -98,11 +98,13 @@ public class CustomerWithPurchase
 		return Objects.hash(this.firstName, this.lastName);
 	}
 	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static CustomerWithPurchase getCustomerWithLastName(
 		final List<CustomerWithPurchase> customers,
 		final String lastName)
 	{
-		return customers.stream().filter(customer -> customer.getLastName().equals(lastName)).findFirst().get();
+		return customers.stream()
+			.filter(customer -> customer.getLastName().equals(lastName))
+			.findFirst()
+			.orElseThrow();
 	}
 }

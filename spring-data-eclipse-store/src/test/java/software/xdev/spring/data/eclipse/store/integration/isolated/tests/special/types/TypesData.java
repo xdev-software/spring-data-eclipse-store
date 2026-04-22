@@ -62,7 +62,7 @@ final class TypesData
 	
 	public record ListOfTestArguments(List<TestArguments<?>> testArguments)
 	{
-		public Stream<Arguments> toArguments()
+		Stream<Arguments> toArguments()
 		{
 			return this.testArguments.stream().map(TestArguments::toArguments);
 		}
@@ -74,14 +74,14 @@ final class TypesData
 		Function<Integer, T> objectCreator,
 		Consumer<T> objectChanger)
 	{
-		public Arguments toArguments()
+		Arguments toArguments()
 		{
 			return Arguments.of(this.repositoryClass, this.objectCreator, this.objectChanger);
 		}
 	}
 	
-	@SuppressWarnings("checkstyle:MethodLength")
-	public static Stream<Arguments> generateData()
+	@SuppressWarnings({"checkstyle:MethodLength", "PMD.ReplaceJavaUtilDate"})
+	static Stream<Arguments> generateData()
 	{
 		// noinspection RedundantTypeArguments (explicit type arguments speedup compilation and analysis time)
 		return new ListOfTestArguments(
@@ -401,7 +401,7 @@ final class TypesData
 	 * {@link
 	 * software.xdev.spring.data.eclipse.store.repository.SupportedChecker.Implementation#UNSUPPORTED_DATA_TYPES}
 	 */
-	public static Stream<Arguments> generateNotWorkingData()
+	static Stream<Arguments> generateNotWorkingData()
 	{
 		return new ListOfTestArguments(
 			List.of(

@@ -38,11 +38,10 @@ import software.xdev.spring.data.eclipse.store.integration.shared.repositories.C
 import software.xdev.spring.data.eclipse.store.integration.shared.repositories.CustomerRepository;
 
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @DefaultTestAnnotations
 class ConcurrencyTest
 {
-	public static final String CUSTOMER_NO = "Customer No.";
+	static final String CUSTOMER_NO = "Customer No.";
 	@Autowired
 	private CustomerRepository repository;
 	

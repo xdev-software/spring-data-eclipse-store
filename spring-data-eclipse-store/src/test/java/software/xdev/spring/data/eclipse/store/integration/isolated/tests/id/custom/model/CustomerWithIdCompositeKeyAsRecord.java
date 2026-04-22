@@ -51,6 +51,11 @@ public class CustomerWithIdCompositeKeyAsRecord
 		return this.id;
 	}
 	
+	public void setId(final CompositeKeyAsRecord id)
+	{
+		this.id = id;
+	}
+	
 	@Override
 	public boolean equals(final Object o)
 	{

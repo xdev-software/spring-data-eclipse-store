@@ -18,6 +18,7 @@ package software.xdev.spring.data.eclipse.store.integration.isolated.tests.speci
 import java.util.Date;
 
 
+@SuppressWarnings("PMD.ReplaceJavaUtilDate")
 public class DateDaoObject extends ComplexObject<Date>
 {
 	public DateDaoObject(final Integer id, final Date value)

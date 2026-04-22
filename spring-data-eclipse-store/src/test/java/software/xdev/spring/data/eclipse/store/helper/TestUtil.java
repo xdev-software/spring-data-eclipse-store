@@ -23,6 +23,7 @@ import org.opentest4j.AssertionFailedError;
 import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
 
+@SuppressWarnings("checkstyle:IllegalIdentifierName") // Legacy - Fix in future
 public final class TestUtil
 {
 	public static <T> List<T> iterableToList(final Iterable<T> iterable)

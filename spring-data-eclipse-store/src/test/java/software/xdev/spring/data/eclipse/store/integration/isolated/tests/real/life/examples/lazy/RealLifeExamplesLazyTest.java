@@ -27,7 +27,7 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.tests.real.l
 class RealLifeExamplesLazyTest extends RealLifeExamplesTest
 {
 	@Autowired
-	public RealLifeExamplesLazyTest(
+	RealLifeExamplesLazyTest(
 		final InvoiceLazyRepository invoiceRepository,
 		final PositionLazyRepository positionRepository,
 		final RealLifeExamplesLazyTestConfiguration configuration)

@@ -20,7 +20,7 @@ class LazyDemoApplicationTest
 	private final EclipseStoreClientConfiguration configuration;
 	
 	@Autowired
-	public LazyDemoApplicationTest(final LazyConfiguration configuration)
+	LazyDemoApplicationTest(final LazyConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}

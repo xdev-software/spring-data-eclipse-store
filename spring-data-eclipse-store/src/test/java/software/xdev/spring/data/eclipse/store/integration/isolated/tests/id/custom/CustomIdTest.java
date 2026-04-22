@@ -46,12 +46,11 @@ import software.xdev.spring.data.eclipse.store.repository.interfaces.EclipseStor
 import software.xdev.spring.data.eclipse.store.repository.root.v2_4.EntityData;
 
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {IdTestConfiguration.class})
 class CustomIdTest
 {
-	public static Stream<Arguments> generateData()
+	static Stream<Arguments> generateData()
 	{
 		return Stream.of(
 			new SingleTestDataset<>(
@@ -84,7 +83,7 @@ class CustomIdTest
 	private final IdTestConfiguration configuration;
 	
 	@Autowired
-	public CustomIdTest(final IdTestConfiguration configuration)
+	CustomIdTest(final IdTestConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}
@@ -104,7 +103,7 @@ class CustomIdTest
 			() -> {
 				final Optional<T> loadedCustomer = repository.findById(data.firstIdSupplier().get());
 				Assertions.assertTrue(loadedCustomer.isPresent());
-				Assertions.assertEquals(customer, loadedCustomer.get());
+				Assertions.assertEquals(customer, loadedCustomer.orElseThrow());
 			}
 		);
 	}
@@ -133,11 +132,11 @@ class CustomIdTest
 				
 				final Optional<T> loadedCustomer1 = repository.findById(data.firstIdSupplier().get());
 				Assertions.assertTrue(loadedCustomer1.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer1.get());
+				Assertions.assertEquals(customer1, loadedCustomer1.orElseThrow());
 				
 				final Optional<T> loadedCustomer2 = repository.findById(data.secondIdSupplier().get());
 				Assertions.assertTrue(loadedCustomer2.isPresent());
-				Assertions.assertEquals(customer2, loadedCustomer2.get());
+				Assertions.assertEquals(customer2, loadedCustomer2.orElseThrow());
 			}
 		);
 	}
@@ -165,8 +164,8 @@ class CustomIdTest
 				
 				final Optional<T> loadedCustomer1 = repository.findById(data.firstIdSupplier().get());
 				Assertions.assertTrue(loadedCustomer1.isPresent());
-				Assertions.assertEquals(customer1, loadedCustomer1.get());
-				Assertions.assertEquals(customer2, loadedCustomer1.get());
+				Assertions.assertEquals(customer1, loadedCustomer1.orElseThrow());
+				Assertions.assertEquals(customer2, loadedCustomer1.orElseThrow());
 			}
 		);
 	}

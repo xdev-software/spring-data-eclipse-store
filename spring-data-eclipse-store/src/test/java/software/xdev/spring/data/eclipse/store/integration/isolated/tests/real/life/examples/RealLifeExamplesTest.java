@@ -91,8 +91,8 @@ public abstract class RealLifeExamplesTest
 		final List<Position> positions = invoice.getPositions();
 		final Optional<Position> positionOfBrick = getPositionWithArticleWithName(positions, BRICK);
 		final Optional<Position> positionOfPen = getPositionWithArticleWithName(positions, PEN);
-		positions.remove(positionOfBrick.get());
-		positions.add(new Position(positionOfPen.get().getArticle(), 4));
+		positions.remove(positionOfBrick.orElseThrow());
+		positions.add(new Position(positionOfPen.orElseThrow().getArticle(), 4));
 		this.invoiceRepository.save(invoice);
 		
 		TestUtil.doBeforeAndAfterRestartOfDatastore(
@@ -182,7 +182,7 @@ public abstract class RealLifeExamplesTest
 		Assertions.assertEquals(expectedSize, positions.size());
 		Assertions.assertTrue(positionWithAmount4.isPresent());
 		Assertions.assertTrue(positionOfShoe.isPresent());
-		Assertions.assertEquals(SHOES_ARTICLE_GROUP, positionOfShoe.get().getArticle().getGroup().getName());
+		Assertions.assertEquals(SHOES_ARTICLE_GROUP, positionOfShoe.orElseThrow().getArticle().getGroup().getName());
 		Assertions.assertSame(
 			positions.get(0).getArticle().getWarehouses().get(0),
 			positions.get(1).getArticle().getWarehouses().get(0));

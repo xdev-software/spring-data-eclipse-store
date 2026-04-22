@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 public class CalendarDaoObject extends ComplexObject<Calendar>
 {
+	@SuppressWarnings("PMD.ReplaceJavaUtilCalendar")
 	public CalendarDaoObject(final Integer id, final Calendar value)
 	{
 		super(id, value);

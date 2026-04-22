@@ -20,11 +20,13 @@ import java.util.List;
 
 public record CustomerAsRecord(String firstName, String lastName)
 {
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public CustomerAsRecord getCustomerWithFirstName(
 		final List<CustomerAsRecord> customers,
 		final String firstNameToFind)
 	{
-		return customers.stream().filter(customer -> customer.firstName.equals(firstNameToFind)).findFirst().get();
+		return customers.stream()
+			.filter(customer -> customer.firstName.equals(firstNameToFind))
+			.findFirst()
+			.orElseThrow();
 	}
 }

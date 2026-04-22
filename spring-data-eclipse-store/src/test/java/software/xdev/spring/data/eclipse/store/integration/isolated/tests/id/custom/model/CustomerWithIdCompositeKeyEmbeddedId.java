@@ -51,6 +51,11 @@ public class CustomerWithIdCompositeKeyEmbeddedId
 		return this.id;
 	}
 	
+	public void setId(final CompositeKey id)
+	{
+		this.id = id;
+	}
+	
 	@Override
 	public boolean equals(final Object o)
 	{

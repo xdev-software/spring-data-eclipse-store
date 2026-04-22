@@ -63,8 +63,9 @@ public class VersionManager<T>
 	{
 		if(this.versionField.isPresent() && original != null)
 		{
+			final Field field = this.versionField.orElseThrow();
 			try(final FieldAccessModifier<T> fam1 = FieldAccessModifier.prepareForField(
-				this.versionField.get(),
+				field,
 				original))
 			{
 				final Object originalValue = fam1.getValueOfField(original);
@@ -73,7 +74,7 @@ public class VersionManager<T>
 					return;
 				}
 				try(final FieldAccessModifier<T> fam2 = FieldAccessModifier.prepareForField(
-					this.versionField.get(),
+					field,
 					workingCopy))
 				{
 					final Object workingCopyValue = fam2.getValueOfField(workingCopy);
@@ -101,7 +102,7 @@ public class VersionManager<T>
 			}
 			catch(final Exception e)
 			{
-				throw new FieldAccessReflectionException(this.versionField.get(), e);
+				throw new FieldAccessReflectionException(field, e);
 			}
 		}
 	}

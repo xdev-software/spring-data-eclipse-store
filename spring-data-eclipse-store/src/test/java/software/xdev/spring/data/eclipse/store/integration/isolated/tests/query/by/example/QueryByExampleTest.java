@@ -46,7 +46,7 @@ class QueryByExampleTest
 	private User user2;
 	
 	@Autowired
-	public QueryByExampleTest(final QueryByExampleTestConfiguration configuration, final UserRepository userRepository)
+	QueryByExampleTest(final QueryByExampleTestConfiguration configuration, final UserRepository userRepository)
 	{
 		this.configuration = configuration;
 		this.userRepository = userRepository;
@@ -89,7 +89,7 @@ class QueryByExampleTest
 							.first()
 					);
 				Assertions.assertTrue(foundUser.isPresent());
-				Assertions.assertEquals(this.user1, foundUser.get());
+				Assertions.assertEquals(this.user1, foundUser.orElseThrow());
 			}
 		);
 	}

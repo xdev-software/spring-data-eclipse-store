@@ -23,6 +23,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 
+@SuppressWarnings("PMD.ReplaceJavaUtilDate")
 public class MyEntity
 {
 	@Id

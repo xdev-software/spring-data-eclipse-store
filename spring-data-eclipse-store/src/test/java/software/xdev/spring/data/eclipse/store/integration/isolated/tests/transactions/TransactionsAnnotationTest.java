@@ -36,7 +36,7 @@ class TransactionsAnnotationTest
 	private final AccountNoVersionRepository repository;
 	
 	@Autowired
-	public TransactionsAnnotationTest(final AccountNoVersionRepository repository)
+	TransactionsAnnotationTest(final AccountNoVersionRepository repository)
 	{
 		this.repository = repository;
 	}

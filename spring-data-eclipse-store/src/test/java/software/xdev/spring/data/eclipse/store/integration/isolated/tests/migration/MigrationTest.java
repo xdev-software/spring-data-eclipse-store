@@ -44,13 +44,13 @@ import software.xdev.spring.data.eclipse.store.repository.root.VersionedRoot;
 @ContextConfiguration(classes = {MigrationTestConfiguration.class})
 class MigrationTest
 {
-	public static final User TEST_USER = new User(TestData.FIRST_NAME, BigDecimal.ONE);
+	static final User TEST_USER = new User(TestData.FIRST_NAME, BigDecimal.ONE);
 	
 	private final MigrationTestConfiguration configuration;
 	private final UserRepository userRepository;
 	
 	@Autowired
-	public MigrationTest(final MigrationTestConfiguration configuration, final UserRepository userRepository)
+	MigrationTest(final MigrationTestConfiguration configuration, final UserRepository userRepository)
 	{
 		this.configuration = configuration;
 		this.userRepository = userRepository;

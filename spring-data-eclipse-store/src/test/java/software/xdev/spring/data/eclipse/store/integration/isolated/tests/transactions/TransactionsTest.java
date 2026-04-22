@@ -43,7 +43,7 @@ class TransactionsTest
 	private Counter counter2;
 	
 	@Autowired
-	public TransactionsTest(
+	TransactionsTest(
 		final AccountNoVersionRepository accountRepository,
 		final CounterRepository counterRepository)
 	{

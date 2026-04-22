@@ -46,14 +46,15 @@ public interface IdSetter<T>
 		{
 			return new NotSettingIdSetter<>();
 		}
-		final GeneratedValue generatedValueAnnotation = idField.get().getAnnotation(GeneratedValue.class);
+		final Field field = idField.orElseThrow();
+		final GeneratedValue generatedValueAnnotation = field.getAnnotation(GeneratedValue.class);
 		if(generatedValueAnnotation == null)
 		{
 			return new NotSettingIdSetter<>();
 		}
 		return new SimpleIdSetter<>(
-			idField.get(),
-			IdFinder.createIdFinder(idField.get(), generatedValueAnnotation, lastIdGetter),
+			field,
+			IdFinder.createIdFinder(field, generatedValueAnnotation, lastIdGetter),
 			lastIdPersister);
 	}
 	

@@ -79,9 +79,11 @@ public class Owner
 		return Objects.hash(this.firstName, this.lastName);
 	}
 	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static Owner getOwnerWithFirstName(final List<Owner> owners, final String firstName)
 	{
-		return owners.stream().filter(owner -> owner.getFirstName().equals(firstName)).findFirst().get();
+		return owners.stream()
+			.filter(owner -> owner.getFirstName().equals(firstName))
+			.findFirst()
+			.orElseThrow();
 	}
 }

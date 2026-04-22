@@ -92,7 +92,7 @@ class QueryTest
 			() -> {
 				final Optional<Customer> foundCustomer = this.customerRepository.findByFirstName(TestData.FIRST_NAME);
 				Assertions.assertTrue(foundCustomer.isPresent());
-				Assertions.assertEquals(TestData.FIRST_NAME, foundCustomer.get().getFirstName());
+				Assertions.assertEquals(TestData.FIRST_NAME, foundCustomer.orElseThrow().getFirstName());
 			}
 		);
 	}

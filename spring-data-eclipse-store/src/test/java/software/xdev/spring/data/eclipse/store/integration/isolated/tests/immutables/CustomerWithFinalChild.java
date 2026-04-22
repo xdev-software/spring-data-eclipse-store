@@ -79,11 +79,13 @@ public class CustomerWithFinalChild
 		return Objects.hash(this.firstName, this.lastName);
 	}
 	
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static CustomerWithFinalChild getCustomerWithFirstName(
 		final List<CustomerWithFinalChild> customers,
 		final String firstName)
 	{
-		return customers.stream().filter(customer -> customer.getFirstName().equals(firstName)).findFirst().get();
+		return customers.stream()
+			.filter(customer -> customer.getFirstName().equals(firstName))
+			.findFirst()
+			.orElseThrow();
 	}
 }

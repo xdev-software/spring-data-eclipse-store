@@ -41,7 +41,7 @@ import software.xdev.spring.data.eclipse.store.integration.isolated.IsolatedTest
  */
 @IsolatedTestAnnotations
 @ContextConfiguration(classes = {ConstraintsTestConfiguration.class})
-@SuppressWarnings("checkstyle:MethodName")
+@SuppressWarnings({"checkstyle:MethodName", "PMD.GodClass"})
 @DirtiesContext(classMode = BEFORE_CLASS)
 class ConstraintsTest
 {

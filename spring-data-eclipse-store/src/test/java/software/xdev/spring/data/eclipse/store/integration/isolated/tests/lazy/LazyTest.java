@@ -530,7 +530,7 @@ class LazyTest
 				LazyReferenceManager.get().cleanUp();
 				final Optional<SimpleEntityWithId> reloadedObject = repository.findById(object1Id);
 				assertTrue(reloadedObject.isPresent());
-				assertEquals(objectToStore1, reloadedObject.get());
+				assertEquals(objectToStore1, reloadedObject.orElseThrow());
 			}
 		);
 	}

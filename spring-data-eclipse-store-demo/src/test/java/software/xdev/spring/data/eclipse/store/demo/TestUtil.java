@@ -17,9 +17,8 @@ package software.xdev.spring.data.eclipse.store.demo;
 
 import java.io.File;
 
-import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
 
-
+@SuppressWarnings("checkstyle:IllegalIdentifierName") // Legacy - Fix in future
 public final class TestUtil
 {
 	public static boolean deleteDirectory(final File directoryToDelete)
@@ -33,12 +32,6 @@ public final class TestUtil
 			}
 		}
 		return directoryToDelete.delete();
-	}
-	
-	public static void restartDatastore(final EclipseStoreClientConfiguration configuration)
-	{
-		configuration.getStorageInstance().stop();
-		// Storage starts automatically again, if the repo is accessed
 	}
 	
 	private TestUtil()

@@ -16,11 +16,11 @@ import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreCli
 @SpringBootTest(classes = SimpleDemoApplication.class)
 class SimpleDemoApplicationTest
 {
-	public static final String STORAGE_PATH = "storage";
+	static final String STORAGE_PATH = "storage";
 	private final EclipseStoreClientConfiguration configuration;
 	
 	@Autowired
-	public SimpleDemoApplicationTest(final DefaultEclipseStoreClientConfiguration configuration)
+	SimpleDemoApplicationTest(final DefaultEclipseStoreClientConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}

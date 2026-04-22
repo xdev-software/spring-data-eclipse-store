@@ -20,7 +20,7 @@ class DualStorageDemoApplicationTest
 	private final PersistencePersonConfiguration personConfiguration;
 	
 	@Autowired
-	public DualStorageDemoApplicationTest(
+	DualStorageDemoApplicationTest(
 		final PersistenceInvoiceConfiguration invoiceConfiguration,
 		final PersistencePersonConfiguration personConfiguration)
 	{

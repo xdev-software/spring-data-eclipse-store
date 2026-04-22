@@ -35,6 +35,16 @@ public class CustomerWithIdStringNoAutoGenerate
 		this.lastName = lastName;
 	}
 	
+	public String getId()
+	{
+		return this.id;
+	}
+	
+	public void setId(final String id)
+	{
+		this.id = id;
+	}
+	
 	public String getFirstName()
 	{
 		return this.firstName;

@@ -98,6 +98,6 @@ public class Owner extends Person
 		
 		Assert.isTrue(pet.isPresent(), "Invalid Pet name!");
 		
-		pet.get().addVisit(visit);
+		pet.orElseThrow().addVisit(visit);
 	}
 }

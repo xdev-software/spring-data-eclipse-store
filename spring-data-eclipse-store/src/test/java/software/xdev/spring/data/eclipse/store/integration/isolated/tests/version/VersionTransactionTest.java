@@ -37,7 +37,7 @@ class VersionTransactionTest
 	private final VersionTestConfiguration configuration;
 	
 	@Autowired
-	public VersionTransactionTest(final VersionTestConfiguration configuration)
+	VersionTransactionTest(final VersionTestConfiguration configuration)
 	{
 		this.configuration = configuration;
 	}

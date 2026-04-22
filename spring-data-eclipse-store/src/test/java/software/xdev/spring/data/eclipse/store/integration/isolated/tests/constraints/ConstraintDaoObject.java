@@ -47,6 +47,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 
+@SuppressWarnings("PMD.ReplaceJavaUtilDate")
 public class ConstraintDaoObject
 {
 	@Id
