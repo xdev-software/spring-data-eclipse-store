@@ -15,9 +15,6 @@
  */
 package software.xdev.spring.data.eclipse.store.exceptions;
 
-import software.xdev.spring.data.eclipse.store.util.StringUtil;
-
-
 public class DataTypeNotSupportedException extends RuntimeException
 {
 	public DataTypeNotSupportedException(final String message)
@@ -29,10 +26,9 @@ public class DataTypeNotSupportedException extends RuntimeException
 	{
 		this(
 			String.format(
-				"Datatype %s is not supported right now. Please open a ticket at %s if you feel that this type should "
+				"Datatype %s is not supported right now. Please open a ticket at if you feel that this type should "
 					+ "be supported.",
-				clazz.getSimpleName(),
-				StringUtil.REPOSITORY_URL
+				clazz.getSimpleName()
 			)
 		);
 	}

@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import software.xdev.spring.data.eclipse.store.exceptions.FieldAccessReflectionException;
 import software.xdev.spring.data.eclipse.store.repository.access.modifier.FieldAccessModifier;
-import software.xdev.spring.data.eclipse.store.util.StringUtil;
 
 
 /**
@@ -76,7 +75,10 @@ public final class AccessHelper
 		throws NoSuchFieldException
 	{
 		Objects.requireNonNull(clazz);
-		StringUtil.requireNonNullAndNonBlank(fieldName);
+		if(fieldName == null || fieldName.isBlank())
+		{
+			throw new IllegalArgumentException("fieldName can't be null or blank");
+		}
 		
 		final Map<String, Field> inheritedPrivateFieldsByName = getInheritedPrivateFieldsByName(clazz);
 		if(LOG.isDebugEnabled())
