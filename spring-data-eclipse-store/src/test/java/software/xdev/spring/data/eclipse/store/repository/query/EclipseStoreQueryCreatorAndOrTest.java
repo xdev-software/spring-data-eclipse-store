@@ -37,26 +37,26 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfFirstNameAndLastName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 0)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 0)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstNameAndLastName")
 	void findByFirstNameAndLastName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method =
 			CustomerRepository.class.getMethod("findByFirstNameAndLastName", String.class, String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{TestData.FIRST_NAME, TestData.LAST_NAME});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -65,26 +65,26 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfFirstNameOrLastName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 3),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 0)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 3),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 0)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstNameOrLastName")
 	void findByFirstNameOrLastName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method =
 			CustomerRepository.class.getMethod("findByFirstNameOrLastName", String.class, String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{TestData.FIRST_NAME, TestData.LAST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -93,25 +93,25 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfId2AndFirstName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 0)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 0)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfId2AndFirstName")
 	void findByIdAndFirstName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdAndFirstName", int.class, String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{2, TestData.FIRST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -120,18 +120,18 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfIdAndFirstNameAndLastName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 0)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 0)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdAndFirstNameAndLastName")
 	void findByIdAndFirstNameAndLastName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -139,10 +139,10 @@ class EclipseStoreQueryCreatorAndOrTest
 			int.class,
 			String.class,
 			String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{2, TestData.FIRST_NAME_ALTERNATIVE, TestData.LAST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -151,18 +151,18 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfIdOrFirstNameOrLastName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 3),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 2)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 3),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 2)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdOrFirstNameOrLastName")
 	void findByIdOrFirstNameOrLastName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -170,10 +170,10 @@ class EclipseStoreQueryCreatorAndOrTest
 			int.class,
 			String.class,
 			String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{1, "B", TestData.LAST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -182,11 +182,11 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfIdAndFirstNameOrLastName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 1)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 1)
 		);
 	}
 	
@@ -196,7 +196,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdAndFirstNameOrLastName")
 	void findByIdAndFirstNameOrLastName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -204,10 +204,10 @@ class EclipseStoreQueryCreatorAndOrTest
 			int.class,
 			String.class,
 			String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{1, "D", TestData.LAST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -225,7 +225,7 @@ class EclipseStoreQueryCreatorAndOrTest
 	@Disabled("This fails because AND is not prioritized higher then OR. Since this is a lot of work "
 		+ "in the criteria tree, this is postponed.")
 	void findByLastNameOrIdAndFirstName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -233,10 +233,10 @@ class EclipseStoreQueryCreatorAndOrTest
 			String.class,
 			int.class,
 			String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{1, "D", TestData.LAST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -245,18 +245,18 @@ class EclipseStoreQueryCreatorAndOrTest
 	static Stream<Arguments> generateDataWithCountOfIdOrFirstNameAndLastName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 1)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 1)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfIdOrFirstNameAndLastName")
 	void findByIdOrFirstNameAndLastName(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
@@ -264,45 +264,45 @@ class EclipseStoreQueryCreatorAndOrTest
 			int.class,
 			String.class,
 			String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{1, TestData.FIRST_NAME, TestData.LAST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
 	}
 	
-	private interface CustomerRepository extends Repository<QueryCreatorUtil.Customer, Void>
+	private interface CustomerRepository extends Repository<QueryCreator.Customer, Void>
 	{
 		
-		List<QueryCreatorUtil.Customer> findByFirstNameAndLastName(final String firstName, String lastName);
+		List<QueryCreator.Customer> findByFirstNameAndLastName(final String firstName, String lastName);
 		
-		List<QueryCreatorUtil.Customer> findByFirstNameOrLastName(final String firstName, String lastName);
+		List<QueryCreator.Customer> findByFirstNameOrLastName(final String firstName, String lastName);
 		
-		List<QueryCreatorUtil.Customer> findByIdAndFirstName(final int id, final String firstName);
+		List<QueryCreator.Customer> findByIdAndFirstName(final int id, final String firstName);
 		
-		List<QueryCreatorUtil.Customer> findByIdAndFirstNameAndLastName(
+		List<QueryCreator.Customer> findByIdAndFirstNameAndLastName(
 			final int id,
 			final String firstName,
 			String lastName);
 		
-		List<QueryCreatorUtil.Customer> findByIdOrFirstNameOrLastName(
+		List<QueryCreator.Customer> findByIdOrFirstNameOrLastName(
 			final int id,
 			final String firstName,
 			String lastName);
 		
-		List<QueryCreatorUtil.Customer> findByIdAndFirstNameOrLastName(
+		List<QueryCreator.Customer> findByIdAndFirstNameOrLastName(
 			final int id,
 			final String firstName,
 			String lastName);
 		
-		List<QueryCreatorUtil.Customer> findByLastNameOrIdAndFirstName(
+		List<QueryCreator.Customer> findByLastNameOrIdAndFirstName(
 			String lastName,
 			final int id,
 			final String firstName);
 		
-		List<QueryCreatorUtil.Customer> findByIdOrFirstNameAndLastName(
+		List<QueryCreator.Customer> findByIdOrFirstNameAndLastName(
 			final int id,
 			final String firstName,
 			String lastName);

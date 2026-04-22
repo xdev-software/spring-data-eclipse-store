@@ -37,24 +37,24 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithIdLessThan()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 2)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 2)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdLessThan")
-	void findByIdLessThan(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByIdLessThan(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdLessThan", int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{3});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -63,24 +63,24 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithIdLessThanEqual()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 3),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 3)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 3),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 3)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdLessThanEqual")
-	void findByIdLessThanEqual(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByIdLessThanEqual(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdLessThanEqual", int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{3});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -89,24 +89,24 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithIdGreaterThan()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 2)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 2)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdGreaterThan")
-	void findByIdGreaterThan(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByIdGreaterThan(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdGreaterThan", int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{2});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -115,26 +115,26 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithIdGreaterThanEqual()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 3)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 3)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdGreaterThanEqual")
 	void findByIdGreaterThanEqual(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdGreaterThanEqual", int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{2});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -143,24 +143,24 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithIdBetween()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 3)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 3)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdBetween")
-	void findByIdBetween(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByIdBetween(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdBetween", int.class, int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{2, 4});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -168,14 +168,14 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIdBetween")
-	void findByIdBetweenInvalidRange(final EntityProvider<QueryCreatorUtil.Customer, Void> entities)
+	void findByIdBetweenInvalidRange(final EntityProvider<QueryCreator.Customer, Void> entities)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIdBetween", int.class, int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{4, 2});
 		Assertions.assertEquals(0, foundCustomer.size());
@@ -184,26 +184,26 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithFirstNameGreaterThan()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 0)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 0)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameGreaterThan")
 	void findByFirstNameGreaterThan(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameGreaterThan", String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{TestData.FIRST_NAME});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -212,26 +212,26 @@ class EclipseStoreQueryCreatorGreaterLessTest
 	static Stream<Arguments> generateDataWithFirstNameLessThan()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 4)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 4)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithFirstNameLessThan")
 	void findByFirstNameLessThan(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstNameLessThan", String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{TestData.FIRST_NAME_ALTERNATIVE});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -242,33 +242,33 @@ class EclipseStoreQueryCreatorGreaterLessTest
 		throws NoSuchMethodException
 	{
 		final Method method =
-			CustomerRepository.class.getMethod("findByIncomparableLessThan", QueryCreatorUtil.Incomparable.class);
-		final QueryCreatorUtil.Incomparable incomparable = new QueryCreatorUtil.Incomparable("");
+			CustomerRepository.class.getMethod("findByIncomparableLessThan", QueryCreator.Incomparable.class);
+		final QueryCreator.Incomparable incomparable = new QueryCreator.Incomparable("");
 		Assertions.assertThrows(NotComparableException.class, () ->
-			QueryCreatorUtil.executeQuery(
-				QueryCreatorUtil.DATA_CUSTOMERS_THREE,
-				QueryCreatorUtil.Customer.class,
+			QueryCreator.executeQuery(
+				QueryCreator.DATA_CUSTOMERS_THREE,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{incomparable}));
 	}
 	
-	private interface CustomerRepository extends Repository<QueryCreatorUtil.Customer, Void>
+	private interface CustomerRepository extends Repository<QueryCreator.Customer, Void>
 	{
-		List<QueryCreatorUtil.Customer> findByIdLessThan(final int maxIdExcluding);
+		List<QueryCreator.Customer> findByIdLessThan(final int maxIdExcluding);
 		
-		List<QueryCreatorUtil.Customer> findByIdLessThanEqual(final int maxIdIncluding);
+		List<QueryCreator.Customer> findByIdLessThanEqual(final int maxIdIncluding);
 		
-		List<QueryCreatorUtil.Customer> findByIdGreaterThan(final int minIdExcluding);
+		List<QueryCreator.Customer> findByIdGreaterThan(final int minIdExcluding);
 		
-		List<QueryCreatorUtil.Customer> findByIdGreaterThanEqual(final int minIdIncluding);
+		List<QueryCreator.Customer> findByIdGreaterThanEqual(final int minIdIncluding);
 		
-		List<QueryCreatorUtil.Customer> findByFirstNameGreaterThan(final String minStringExcluding);
+		List<QueryCreator.Customer> findByFirstNameGreaterThan(final String minStringExcluding);
 		
-		List<QueryCreatorUtil.Customer> findByFirstNameLessThan(final String maxStringExcluding);
+		List<QueryCreator.Customer> findByFirstNameLessThan(final String maxStringExcluding);
 		
-		List<QueryCreatorUtil.Customer> findByIncomparableLessThan(
-			final QueryCreatorUtil.Incomparable lessIncomparable);
+		List<QueryCreator.Customer> findByIncomparableLessThan(
+			final QueryCreator.Incomparable lessIncomparable);
 		
-		List<QueryCreatorUtil.Customer> findByIdBetween(final int minIdIncluding, final int maxIdIncluding);
+		List<QueryCreator.Customer> findByIdBetween(final int minIdIncluding, final int maxIdIncluding);
 	}
 }

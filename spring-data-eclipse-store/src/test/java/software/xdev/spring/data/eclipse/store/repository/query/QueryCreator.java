@@ -31,7 +31,7 @@ import software.xdev.spring.data.eclipse.store.helper.DummyWorkingCopier;
 import software.xdev.spring.data.eclipse.store.helper.TestData;
 
 
-public final class QueryCreatorUtil
+public final class QueryCreator
 {
 	public static final DummyEntityProvider<Customer> DATA_CUSTOMERS_EMPTY = DummyEntityProvider.of();
 	public static final DummyEntityProvider<Customer> DATA_CUSTOMERS_ONE =
@@ -91,7 +91,7 @@ public final class QueryCreatorUtil
 	{
 	}
 	
-	private QueryCreatorUtil()
+	private QueryCreator()
 	{
 	}
 }

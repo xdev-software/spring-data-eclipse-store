@@ -15,14 +15,14 @@
  */
 package software.xdev.spring.data.eclipse.store.repository.query;
 
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.Customer;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.DATA_CUSTOMERS_EMPTY;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.DATA_CUSTOMERS_ONE;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.DATA_CUSTOMERS_THREE;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.DATA_CUSTOMERS_TWO;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.DATA_CUSTOMERS_WITH_NULL_STRING;
-import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreatorUtil.executeQuery;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.Customer;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.DATA_CUSTOMERS_DABC_ABCD;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.DATA_CUSTOMERS_EMPTY;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.DATA_CUSTOMERS_ONE;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.DATA_CUSTOMERS_THREE;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.DATA_CUSTOMERS_TWO;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.DATA_CUSTOMERS_WITH_NULL_STRING;
+import static software.xdev.spring.data.eclipse.store.repository.query.QueryCreator.executeQuery;
 
 import java.lang.reflect.Method;
 import java.util.Collection;

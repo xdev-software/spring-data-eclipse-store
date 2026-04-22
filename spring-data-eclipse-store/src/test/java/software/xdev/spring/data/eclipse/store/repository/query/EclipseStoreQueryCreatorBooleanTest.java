@@ -35,51 +35,51 @@ class EclipseStoreQueryCreatorBooleanTest
 	static Stream<Arguments> generateDataWithCountOfEnabled()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 2)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 2)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfEnabled")
-	void findByEnabledTrue(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByEnabledTrue(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByEnabledTrue");
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(entities, QueryCreatorUtil.Customer.class, method, new Object[]{});
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(entities, QueryCreator.Customer.class, method, new Object[]{});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
 	}
 	
 	static Stream<Arguments> generateDataWithCountOfEnabledFalse()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 2)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 2)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfEnabledFalse")
-	void findByEnabledFalse(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByEnabledFalse(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByEnabledFalse");
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(entities, QueryCreatorUtil.Customer.class, method, new Object[]{});
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(entities, QueryCreator.Customer.class, method, new Object[]{});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
 	}
 	
-	private interface CustomerRepository extends Repository<QueryCreatorUtil.Customer, Void>
+	private interface CustomerRepository extends Repository<QueryCreator.Customer, Void>
 	{
-		List<QueryCreatorUtil.Customer> findByEnabledTrue();
+		List<QueryCreator.Customer> findByEnabledTrue();
 		
-		List<QueryCreatorUtil.Customer> findByEnabledFalse();
+		List<QueryCreator.Customer> findByEnabledFalse();
 	}
 }

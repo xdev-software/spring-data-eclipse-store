@@ -36,24 +36,24 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	static Stream<Arguments> generateDataWithCountOfFirstName()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 0)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 0)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstName")
-	void findByFirstName(final EntityProvider<QueryCreatorUtil.Customer, Void> entities, final int expectedCount)
+	void findByFirstName(final EntityProvider<QueryCreator.Customer, Void> entities, final int expectedCount)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstName", String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{TestData.FIRST_NAME});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -61,37 +61,37 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfFirstName")
-	void findByFirstNameIsNull(final EntityProvider<QueryCreatorUtil.Customer, Void> entities)
+	void findByFirstNameIsNull(final EntityProvider<QueryCreator.Customer, Void> entities)
 		throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByFirstName", String.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(entities, QueryCreatorUtil.Customer.class, method, new Object[]{null});
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(entities, QueryCreator.Customer.class, method, new Object[]{null});
 		Assertions.assertEquals(0, foundCustomer.size());
 	}
 	
 	static Stream<Arguments> generateDataWithCountOfId1()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 1)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 1)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithCountOfId1")
 	void findById(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findById", int.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{1});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -100,11 +100,11 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	static Stream<Arguments> generateDataWithIncomparable()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 2),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 3)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 2),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 3)
 		);
 	}
 	
@@ -114,33 +114,33 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparable")
 	void findByIncomparable(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
 			"findByIncomparable",
-			QueryCreatorUtil.Incomparable.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+			QueryCreator.Incomparable.class);
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
-				new Object[]{new QueryCreatorUtil.Incomparable("")});
+				new Object[]{new QueryCreator.Incomparable("")});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparable")
 	void findByIncomparableIsNotNull(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
 			"findByIncomparableIsNotNull");
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -149,27 +149,27 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	static Stream<Arguments> generateDataWithIncomparableIsNull()
 	{
 		return Stream.of(
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_EMPTY, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_ONE, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_TWO, 0),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_THREE, 1),
-			Arguments.of(QueryCreatorUtil.DATA_CUSTOMERS_DABC_ABCD, 1)
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_EMPTY, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_ONE, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_TWO, 0),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_THREE, 1),
+			Arguments.of(QueryCreator.DATA_CUSTOMERS_DABC_ABCD, 1)
 		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparableIsNull")
 	void findByIncomparableIsNullDynamic(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod(
 			"findByIncomparable",
-			QueryCreatorUtil.Incomparable.class);
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+			QueryCreator.Incomparable.class);
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{null});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
@@ -178,29 +178,29 @@ class EclipseStoreQueryCreatorIsIsNotTest
 	@ParameterizedTest
 	@MethodSource("generateDataWithIncomparableIsNull")
 	void findByIncomparableIsNull(
-		final EntityProvider<QueryCreatorUtil.Customer, Void> entities,
+		final EntityProvider<QueryCreator.Customer, Void> entities,
 		final int expectedCount) throws NoSuchMethodException
 	{
 		final Method method = CustomerRepository.class.getMethod("findByIncomparableIsNull");
-		final Collection<QueryCreatorUtil.Customer> foundCustomer =
-			QueryCreatorUtil.executeQuery(
+		final Collection<QueryCreator.Customer> foundCustomer =
+			QueryCreator.executeQuery(
 				entities,
-				QueryCreatorUtil.Customer.class,
+				QueryCreator.Customer.class,
 				method,
 				new Object[]{});
 		Assertions.assertEquals(expectedCount, foundCustomer.size());
 	}
 	
-	private interface CustomerRepository extends Repository<QueryCreatorUtil.Customer, Void>
+	private interface CustomerRepository extends Repository<QueryCreator.Customer, Void>
 	{
-		List<QueryCreatorUtil.Customer> findByFirstName(final String firstName);
+		List<QueryCreator.Customer> findByFirstName(final String firstName);
 		
-		List<QueryCreatorUtil.Customer> findById(final int id);
+		List<QueryCreator.Customer> findById(final int id);
 		
-		List<QueryCreatorUtil.Customer> findByIncomparable(final QueryCreatorUtil.Incomparable incomparableObject);
+		List<QueryCreator.Customer> findByIncomparable(final QueryCreator.Incomparable incomparableObject);
 		
-		List<QueryCreatorUtil.Customer> findByIncomparableIsNull();
+		List<QueryCreator.Customer> findByIncomparableIsNull();
 		
-		List<QueryCreatorUtil.Customer> findByIncomparableIsNotNull();
+		List<QueryCreator.Customer> findByIncomparableIsNotNull();
 	}
 }
