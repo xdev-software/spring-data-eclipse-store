@@ -1,0 +1,102 @@
+= Lazy References
+
+Lazy Loading is an essential part of EclipseStore.
+The basic mechanism is best explained in the https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/index.html[EclipseStore-Docs]. +
+In essence java objects which are wrapped in a *Lazy-Reference are not loaded with the startup of the EclipseStore-Storage but only if ``get()`` is called* on them.
+
+Lazy References are essential for big data sets that can't get loaded into memory.
+Since {product-name} operates with xref:working-copies.adoc[working copies] using the EclipseStore-Lazy-References is not possible. +
+If you are using the EclipseStore-Lazy-References, all references would be resolved and loaded into memory as soon as a working copy is created, because the ``get()``-Method is called to create a full working copy.
+
+That's why we implemented ``SpringDataEclipseStoreLazy``. +
+The usage is the same as with the EclipseStore-Lazies, but they are handled very differently.
+
+Simply wrap any kind of java object in the SpringDataEclipseStoreLazy-Wrapper and the wrapped object has a lazy loading behaviour.
+
+CAUTION: Lazy-References are not only loaded when needed, but also https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/clearing-lazy-references.html#automatically[*cleared when they are no longer needed*]!
+
+Example: ``SpringDataEclipseStoreLazy.build(new HashMap<String, Pet>())``
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/owner/Owner.java[Example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.owner;
+//...
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
+
+public class Owner extends Person
+{
+	//...
+	private final Lazy<List<Pet>> pets = SpringDataEclipseStoreLazy.build(new ArrayList<>());
+	//...
+----
+
+== FetchType.LAZY
+
+In Spring JPA, lazy loading is achieved by annotating a field or property with ``FetchType.LAZY``.
+This approach leverages JPA's built-in mechanisms to defer the retrieval of the related entity until it is accessed.
+
+In contrast, {product-name} takes a different approach.
+Instead of using annotations, you wrap the object intended to be loaded lazily in a ``Lazy``-wrapper.
+This wrapper encapsulates the object and ensures it is only loaded when needed.
+
+[source,java,title="JPA Example with lazy"]
+----
+import jakarta.persistence.OneToMany;
+
+public class Owner extends Person
+{
+	@OneToMany(fetch = FetchType.LAZY)
+	private final List<Pet> pets = new ArrayList<>();
+	//...
+----
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/owner/Owner.java[Slightly changed example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.owner;
+//...
+import software.xdev.spring.data.eclipse.store.repository.lazy.SpringDataEclipseStoreLazy;
+
+public class Owner extends Person
+{
+	private final List<Lazy<Pet>> pets = new ArrayList<>();
+	//...
+----
+
+The ``Lazy``-wrapper makes lazy loading **explicit and flexible**, avoiding JPA-specific overhead and potential exceptions.
+But it introduces a custom, less-standardized approach that may increase boilerplate and requires developers to remember to use the wrapper, which could lead to errors if overlooked.
+
+== Repositories
+
+Entities in a repository are by default **not lazy**.
+But we made it as easy as possible for you to make these entities lazy: Instead of extending the ``EclipseStoreRepository`` (or any similar class from the ``software.xdev.spring.data.eclipse.store.repository.interfaces``-Package), you simply extend the ``LazyEclipseStoreRepository``.
+
+=== https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/lazy/CustomerRepository.java[Example from lazy demo]
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple/CustomerRepository.java[Before (not lazy)]"]
+----
+public interface CustomerRepository extends CrudRepository<Customer, String>
+{
+}
+----
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/lazy/CustomerRepository.java[After (lazy)]"]
+----
+public interface CustomerRepository extends LazyEclipseStoreCrudRepository<Customer, String>
+{
+}
+----
+
+Every instance of the ``Customer``-Entities are now wrapped in a https://docs.eclipsestore.io/manual/storage/loading-data/lazy-loading/index.html[``Lazy``-Reference].
+That means that these objects are **only loaded from the storage, if they are needed** e.g. when ``findAll`` is called.
+
+The method **``findById`` only loads the entities with the corresponding IDs**, because a separate list with all ids is stored.
+But if any method like **``findByName`` or ``findByChild`` is used, all objects are loaded** from the storage.
+This is currently the only way to get the actual values of the entities.
+
+== Internals
+
+SpringDataEclipseStoreLazies work as a proxy for the EclipseStore-Lazies.
+As far as EclipseStore is concerned, a SpringDataEclipseStoreLazy-Object is a normal Java object that contains a Lazy-Reference.
+
+But when {product-name} creates the working copy, *the SpringDataEclipseStoreLazy-Reference is not resolved* but instead only a reference to the original Lazy-Object in EclipseStore is loaded.
+As soon as ``get()`` is called on the SpringDataEclipseStoreLazy, a *new working copy of the lazy object* is created.
