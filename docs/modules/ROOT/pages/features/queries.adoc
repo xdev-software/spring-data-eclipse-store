@@ -1,0 +1,73 @@
+= Queries
+
+== Keywords
+
+It is possible to use **most of the standard query keywords** for repositories defined in Spring Data JPA: https://docs.spring.io/spring-data/jpa/reference/repositories/query-keywords-reference.html[Spring Data JPA - Repository query keywords].
+
+Here are a few examples:
+
+[source,java]
+----
+@Repository
+public interface UserRepository extends EclipseStoreRepository<User, Long>
+{
+  List<User> findByFirstName(String firstName, String lastName);
+  List<User> findByFirstNameAndLastName(String firstName, String lastName);
+  List<User> findByDateOfBirthBefore(LocalDate date);
+  List<User> findByAgeIn(List<Integer> ages);
+  List<User> findByIsActiveFalse();
+}
+----
+
+More examples are in the https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store/src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/string/UserRepository.java[test-cases].
+
+== Query by Example
+
+Developers can also use https://docs.spring.io/spring-data/jpa/reference/repositories/query-by-example.html[Query by Example] if preferred.
+
+An example:
+
+[source,java]
+----
+public List<User> findAllUsersNamedMick()
+{
+  final User probe = new User(1, "Mick", BigDecimal.TEN);
+  return userRepository.findAll(Example.of(probe));
+}
+----
+
+More examples are in the https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store/src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/by/example/QueryByExampleTest.java[test-cases].
+
+== @Query annotation
+
+The support for a ``@Query``-Annotation is currently quite limited, but useful nonetheless.
+
+To keep parse and execute SQL-Queries we use the https://github.com/npgall/cqengine[cqengine] by https://github.com/npgall[Niall Gallagher].
+It offers rudimentary support of some SQL-Queries, but not all.
+
+[NOTE]
+====
+https://github.com/npgall/cqengine[cqengine] parses the SQL String as a SQLite-SQL-String and is therefore different from the https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html#jpa.query-methods.at-query[HQL or JPQL] of Spring Data JPA.
+====
+
+Here are some working examples:
+
+[source,java]
+----
+public interface MyEntityRepository extends ListCrudRepository<MyEntity, Long>
+{
+  @Query("SELECT * FROM MyEntity WHERE name = '?1'")
+  List<MyEntity> findByName(String name);
+
+  @Query("SELECT * FROM MyEntity WHERE (name = '?1' AND age > ?2)")
+  List<MyEntity> findByNameAndAgeGreaterThan(String name, int age);
+
+  @Query("SELECT * FROM MyEntity WHERE 'name' LIKE '%?1%'")
+  List<MyEntity> findByNameContaining(String keyword);
+
+  @Query("SELECT * FROM MyEntity WHERE otherEntity IS NOT NULL")
+  List<MyEntity> findWhereOtherEntityIsNotNull();
+}
+----
+
+More examples are in the https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store/src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/query/hsql/MyEntityRepository.java[test-cases].
