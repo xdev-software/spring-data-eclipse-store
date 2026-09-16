@@ -1,0 +1,5 @@
+org.springframework.aot.hint.RuntimeHintsRegistrar=\
+	software.xdev.spring.data.eclipse.store.aot.EclipseStoreRuntimeHints
+
+
+

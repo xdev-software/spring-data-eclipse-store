@@ -1,0 +1,55 @@
+= REST Interface
+
+To utilize the https://docs.eclipsestore.io/manual/storage/rest-interface/index.html[REST interface provided by EclipseStore], only a small adjustment is needed.
+
+First add the dependency described in the https://docs.eclipsestore.io/manual/storage/rest-interface/setup.html#_spring_boot_rest_service[EclipseStore documentation]:
+
+[source,xml,subs=attributes+,title="Maven [pom.xml]"]
+----
+<dependencies>
+    <dependency>
+      <groupId>org.eclipse.store</groupId>
+      <artifactId>storage-restservice-springboot</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+----
+
+Next a few adjustments are needed in your configuration:
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/ComplexConfiguration.java[Example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex;
+
+//...
+import org.eclipse.store.storage.restadapter.types.StorageRestAdapter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+import software.xdev.spring.data.eclipse.store.repository.config.EclipseStoreClientConfiguration;
+import software.xdev.spring.data.eclipse.store.repository.config.EnableEclipseStoreRepositories;
+
+
+@ComponentScan({"org.eclipse.store.storage.restservice.spring.boot.types.rest"})
+@Configuration
+@EnableEclipseStoreRepositories
+public class ComplexConfiguration extends EclipseStoreClientConfiguration
+{
+	//...
+	@Bean
+	@DependsOn({"embeddedStorageFoundationFactory"})
+	public Map<String, StorageRestAdapter> storageRestAdapters(final Map<String, EmbeddedStorageManager> storages)
+	{
+		return Map.of(
+			"defaultStorageManager", StorageRestAdapter.New(this.storageInstance.getInstanceOfStorageManager())
+		);
+	}
+	//...
+----
+
+After that the API is usable just like https://docs.eclipsestore.io/manual/storage/rest-interface/rest-api.html[plain EclipseStore].
+The ``instance-name`` in this case would be ``default`` which means, the active URL in the ComplexDemo is ``http://localhost:8080/store-data/default/root``.

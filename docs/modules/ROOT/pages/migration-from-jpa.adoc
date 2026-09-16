@@ -1,0 +1,36 @@
+= Migration from JPA
+
+Migrating from Spring Data JPA is very easy.
+We implemented a https://github.com/xdev-software/spring-data-eclipse-store-migration[OpenRewrite recipe] for that.
+It can be executed with a simple Maven command:
+
+[source,title="Maven"]
+----
+mvn org.openrewrite.maven:rewrite-maven-plugin:run \
+-Drewrite.recipeArtifactCoordinates=software.xdev:spring-data-eclipse-store-migration \
+-Drewrite.activeRecipes=software.xdev.spring.data.eclipse.store.JpaMigration
+----
+
+[CAUTION]
+====
+Since {product-name} can't handle ``@Query``-Annotations, these annotations are getting removed by the Rewrite-Recipe.
+====
+
+== Data
+
+To import data from different data sources like JPA, you can simply let the ``EclipseStoreDataImporterComponent`` get injected and then call ``importData()``.
+This reads all instances of ``EntityManagerFactory``, creates EclipseStoreRepositories for it and then imports that data.
+This can take quite some time if you have a lot of data.
+
+[source,java]
+----
+@Autowired
+private EclipseStoreDataImporterComponent eclipseStoreDataImporter;
+
+void importDataFromJpaToEclipseStore()
+{
+    final List<SimpleEclipseStoreRepository<?, ?>> repositories = this.eclipseStoreDataImporter.importData();
+}
+----
+
+After that you can change your JpaRepositories to EclipseStoreRepositories and you're done.

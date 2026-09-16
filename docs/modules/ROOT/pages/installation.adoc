@@ -1,0 +1,57 @@
+= Installation
+
+== Build Configuration
+
+You can find the {product-name} libraries in the Maven Central repository.
+
+Simply add the following dependency to your maven project
+
+[source,xml,subs=attributes+,title="Maven [pom.xml]"]
+----
+<dependencies>
+    <dependency>
+       <groupId>software.xdev</groupId>
+       <artifactId>spring-data-eclipse-store</artifactId>
+       <version>{maven-version}</version>
+    </dependency>
+</dependencies>
+----
+
+Also see the https://github.com/xdev-software/spring-data-eclipse-store/releases/latest#Installation[installation guide for the latest release].
+
+== Configuration
+
+After adding the library in your dependencies, using it is as easy as adding the ``@EnableEclipseStoreRepositories`` annotation to your ``@SpringBootApplication`` annotation.
+
+=== Merge behavior
+
+To merge data of the xref:working-copies.adoc[working copy] into the original object graph, the library is using reflection.
+Therefore, the following *JVM-Arguments* may have to be set:
+
+[source,title="JVM Arguments"]
+----
+--add-opens=java.base/java.util=ALL-UNNAMED
+--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/java.time=ALL-UNNAMED
+----
+
+[NOTE]
+====
+To access ``private`` variables, the library uses reflection and sets the access level to ``public`` (see https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store/src/main/java/software/xdev/spring/data/eclipse/store/repository/access/modifier/FieldAccessibleMaker.java[FieldAccessibleMaker]).
+For performance reasons, *this change stays permanent* during runtime.
+====
+
+== Demo
+
+To see how easy it is to implement EclipseStore in your Spring project, take a look at the https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo[demos]:
+
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/simple[Simple demo]
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex[Complex demo]
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-jpa/src/main/java/software/xdev/spring/data/eclipse/store/jpa[Demo with coexisting JPA]
+* https://github.com/xdev-software/spring-data-eclipse-store/tree/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/dual/storage[Dual storage demo]
+
+== Drop in compatible [[drop-in-compatible]]
+
+After adding the dependency and the annotation you are ready to go.
+This makes this library drop in compatible for Spring-Data projects.

@@ -1,0 +1,116 @@
+= Versioned Migration
+
+To keep the data in the store up-to-date, {product-name} utilizes https://github.com/xdev-software/micro-migration[XDEV's Micro-Migration].
+This means the user can use versioning for the stored data and only apply changes for certain versions of data.
+This can be very useful specifically with build-pipelines. https://github.com/xdev-software/micro-migration#intro[More info at Micro-Migration...]
+
+== Implementation
+
+This can be easily achieved by either of these 3 methods:
+
+=== 1. Reflective Scripts
+
+Simply implement a new component with a specific pattern of naming, that extends the ``ReflectiveDataMigrationScript``.
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/migration/v1_0_0_Init.java[Reflective example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.migration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+//...
+import software.xdev.spring.data.eclipse.store.repository.root.data.version.ReflectiveDataMigrationScript;
+
+@Component
+public class v1_0_0_Init extends ReflectiveDataMigrationScript
+{
+	private final OwnerService service;
+
+	@Autowired
+	public v1_0_0_Init(final OwnerService service)
+	{
+		this.service = service;
+	}
+
+	@Override
+	public void migrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
+	{
+		this.service.createNewOwnerAndVisit("Mick", "Fleetwood", "Isabella");
+	}
+}
+----
+
+Here the version number on which the data is updated on execution is derived from the class name.
+
+The ``MigrationVersion`` is stored in the root object in the data store.
+Therefore, the storage always knows on which version the current data is and the ``DataMigrater`` will only execute the newer scripts.
+
+The scripts are automatically registered by declaring them as ``@Component``s.
+That means that they can be anywhere as long as they are discovered by Spring as a component.
+
+=== 2. Custom Scripts
+
+Implementing a script without special naming is possible by implementing the
+``DataMigrationScript``.
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store-demo/src/main/java/software/xdev/spring/data/eclipse/store/demo/complex/migration/CustomNameScript.java[Custom script example from complex demo]"]
+----
+package software.xdev.spring.data.eclipse.store.demo.complex.migration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+//...
+import software.xdev.spring.data.eclipse.store.repository.root.data.version.DataMigrationScript;
+
+@Component
+public class CustomNameScriptAddOwner implements DataMigrationScript
+{
+	private final OwnerService service;
+
+	public CustomNameScriptAddOwner(@Autowired final OwnerService service)
+	{
+		this.service = service;
+	}
+
+	@Override
+	public MigrationVersion getTargetVersion()
+	{
+		return new MigrationVersion(1, 1, 0);
+	}
+
+	@Override
+	public void migrate(final Context<VersionedRoot, MigrationEmbeddedStorageManager> context)
+	{
+		this.service.createNewOwnerAndVisit("John", "McVie", "Ivan");
+	}
+}
+----
+
+The version number must be returned explicitly in the ``#getTargetVersion``-method.
+
+=== 3. Custom Migrater
+
+If more customization is needed it is also possible to replace the ``DataMigrater`` completely and implement your own ``MicroMigrater``.
+This should only be used if necessary since it adds a lot of complexity to the code.
+
+[source,java,title="https://github.com/xdev-software/spring-data-eclipse-store/blob/develop/spring-data-eclipse-store/src/test/java/software/xdev/spring/data/eclipse/store/integration/isolated/tests/data/migration/with/migrater/CustomMigrater.java[Custom migrater from tests]"]
+----
+package software.xdev.spring.data.eclipse.store.integration.isolated.tests.data.migration.with.migrater;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import software.xdev.micromigration.migrater.ExplicitMigrater;
+import software.xdev.micromigration.migrater.MicroMigrater;
+//...
+
+@Component
+public class CustomMigrater implements MicroMigrater
+{
+private final ExplicitMigrater explicitMigrater;
+
+	@Autowired
+	public CustomMigrater(final PersistedEntityRepository repository)
+	{
+		this.explicitMigrater = new ExplicitMigrater(new v1_0_0_Init(repository));
+	}
+----

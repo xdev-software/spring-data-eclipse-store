@@ -1,0 +1,12 @@
+= Versions
+
+To implement Optimistic Locking {product-name} supports the `@Version` annotation in entities.
+The following types can be used as version:
+
+* `int`
+* `Integer`
+* `long`
+* `Long`
+* `UUID` (will be randomly generated)
+* `String` (UUID will be converted to String)
+
